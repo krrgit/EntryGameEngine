@@ -52,10 +52,12 @@ Mkfile.old
 dkms.conf
 
 
-# Compiled 3DS Files
+# Build Files
 *.3dsx
 *.elf
 *.smdh
+build/
 
 # Shortcuts
 *.lnk
+
