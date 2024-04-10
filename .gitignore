@@ -57,6 +57,10 @@ dkms.conf
 *.elf
 *.smdh
 build/
+FileContentIndex/
+.vs/
+.vscode/
+vendor/c3d/
 
 # Shortcuts
 *.lnk
