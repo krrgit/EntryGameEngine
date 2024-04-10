@@ -24,6 +24,28 @@ static C3D_Mtx projection;
 std::shared_ptr<VertexBuffer> m_VertexBuffer;
 std::shared_ptr<IndexBuffer> m_IndexBuffer;
 
+static GPU_FORMATS ShaderDataTypeToCitro3DDataType(ShaderDataType type) 
+{
+	switch(type) {
+		case ShaderDataType::Float:     return GPU_FLOAT;
+		case ShaderDataType::Float2:    return GPU_FLOAT;
+		case ShaderDataType::Float3:    return GPU_FLOAT;
+		case ShaderDataType::Float4:    return GPU_FLOAT;
+		case ShaderDataType::Mat3:      return GPU_FLOAT;
+		case ShaderDataType::Mat4:      return GPU_FLOAT;
+		case ShaderDataType::Int:       return GPU_SHORT;
+		case ShaderDataType::Int2:      return GPU_SHORT;
+		case ShaderDataType::Int3:      return GPU_SHORT;
+		case ShaderDataType::Int4:      return GPU_SHORT;
+		case ShaderDataType::Bool:      return GPU_BYTE;
+		default:
+			break;
+	}
+
+	printf("Unknown ShaderDataType!");
+	return GPU_BYTE;
+}
+
 static void sceneInit(void)
 {
 	// Load the vertex shader, create a shader program and bind it
@@ -34,27 +56,47 @@ static void sceneInit(void)
 
 	// Get the location of the uniforms
 	uLoc_projection = shaderInstanceGetUniformLocation(program.vertexShader, "projection");
-
-	// Configure attributes for use with the vertex shader
-	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
-	AttrInfo_Init(attrInfo);
-	AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
 	
 	// Compute the projection matrix
 	Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
 
-	float vertices[3 * 3] =
+	float vertices[3 * 7] =
 	{
-		200.0f, 180.0f, 0.5f,
-		100.0f,  60.0f, 0.5f,
-		300.0f,  60.0f, 0.5f
+		200.0f, 180.0f, 0.5f, 0.8f, 0.2f, 0.8f, 1.0f,
+		100.0f,  60.0f, 0.5f, 0.2f, 0.2f, 0.8f, 1.0f,
+		300.0f,  60.0f, 0.5f, 0.8f, 0.8f, 0.2f, 1.0f
 	};
 
-	// Configure buffer
+	// Vertex buffer
+	// Needs to be below layout to get stride.
 	m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-	// Index buffer
+	BufferLayout layout = {
+		{ ShaderDataType::Float3, "a_Position" },
+		{ ShaderDataType::Float4, "a_Color" },
+	};
+
+	m_VertexBuffer->SetLayout(layout);
+	
+	// Configure attributes for use with the vertex shader
+	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+	AttrInfo_Init(attrInfo);
+
+	uint32_t index = 0;
+	for (const auto& element : layout) {
+		AttrInfo_AddLoader(attrInfo, 
+			index, 
+			ShaderDataTypeToCitro3DDataType(element.Type), 
+			element.GetComponentCount());
+		index++;
+	}
+	
+	m_VertexBuffer->Bind();
+	layout.DebugPrint();
+
 	u16 indices[3] = { 0, 1, 2 };
+	
+	// Index buffer
 	m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
 
 	// Configure the first fragment shading substage to just pass through the vertex color
@@ -90,6 +132,10 @@ int main()
 	// Initialize graphics
 	gfxInitDefault();
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+
+	consoleInit(GFX_BOTTOM, NULL);
+
+	printf("\nHello World!\n");
 
 	// Initialize the render target
 	C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);

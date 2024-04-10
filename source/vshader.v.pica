@@ -7,14 +7,10 @@
 .constf myconst(0.0, 1.0, 0.5, 2.0)
 .constf myconst2(-1.0, 0.0, 0.0, 0.0)
 .constf screeninv(0.0025, 0.0042, 0.0, 1.0)
-.constf screen(400.0, 240.0, 0.0, 0.0)
-.constf screenmin(100, 60.0, 0.0, 0.0)
 
 .alias  zeros myconst.xxxx ; Vector full of zeros
 .alias  ones  myconst.yyyy ; Vector full of ones
 .alias  halfs myconst.zzzz
-.alias  twos  myconst.wwww
-.alias  minusones myconst2.xxxx ;
 
 
 ; Outputs
@@ -40,12 +36,12 @@
 	dp4 outpos.w, projection[3], r0
 
 	; outclr = inclr
-	; mov outclr, inclr ; default
+	mov outclr, inclr
 
 	; get the color from the position
-	mul r1, screeninv, outpos
-	mov r1.z, halfs
-	mov outclr, r1
+	; mul r1, screeninv, outpos
+	; mov r1.z, halfs
+	; mov outclr, r1
 
 
 	; We're finished

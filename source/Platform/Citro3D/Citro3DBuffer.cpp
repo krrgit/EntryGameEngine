@@ -4,20 +4,37 @@
 
 namespace Entry
 {
+
+    u64 ComputePermutation(int attribCount) {
+        u64 perm = 0;
+        if (attribCount == 1)
+            return 0;
+        else {
+            // Calculate the value for the current iteration
+            for (int i = 0; i <= attribCount; ++i) {
+                perm |= (i << (i * 4));
+            }
+            
+            return perm;
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // VertexBuffer ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
     Citro3DVertexBuffer::Citro3DVertexBuffer(float *vertices, uint32_t size)
     {
+        // Size is for all vertices, stride is per vertex
+
         m_DataPointer = linearAlloc(size);
 	    memcpy(m_DataPointer, vertices, size);
 
-        C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+        bufInfo = C3D_GetBufInfo();
         BufInfo_Init(bufInfo);
 
-        // TODO: pass # of attributes; figure out last argument
-        BufInfo_Add(bufInfo, m_DataPointer, 3 * sizeof(float), 1, 0x0);
+        // TODO: pass # of attributes; permutation for attribute things?
+        // BufInfo_Add(bufInfo, m_DataPointer, 28, 2, ComputePermutation(2));
     }
 
     Citro3DVertexBuffer::~Citro3DVertexBuffer()
@@ -29,6 +46,8 @@ namespace Entry
     void Citro3DVertexBuffer::Bind() const
     {
         // might be redundant here
+        printf("s: %d | ac: %d | perm: %d\n", m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
+        BufInfo_Add(bufInfo, m_DataPointer, m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
     }
     void Citro3DVertexBuffer::Unbind() const
     {
