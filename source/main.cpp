@@ -1,7 +1,11 @@
+#include "etpch.h"
 #include <3ds.h>
 #include <citro3d.h>
 #include <string.h>
 #include "vshader_shbin.h"
+#include "Buffer.h"
+
+using namespace Entry;
 
 #define CLEAR_COLOR 0x191919FF
 
@@ -17,8 +21,8 @@ static shaderProgram_s program;
 static int uLoc_projection;
 static C3D_Mtx projection;
 
-static void* vbo_data;
-static void* ibo_data;
+std::shared_ptr<VertexBuffer> m_VertexBuffer;
+std::shared_ptr<IndexBuffer> m_IndexBuffer;
 
 static void sceneInit(void)
 {
@@ -46,20 +50,12 @@ static void sceneInit(void)
 		300.0f,  60.0f, 0.5f
 	};
 
-	// Create the VBO (vertex buffer object)
-	vbo_data = linearAlloc(sizeof(vertices));
-	memcpy(vbo_data, vertices, sizeof(vertices));
-
-	// Configure buffers
-	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
-	BufInfo_Init(bufInfo);
-	BufInfo_Add(bufInfo, vbo_data, 3 * sizeof(float), 1, 0x10);
+	// Configure buffer
+	m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
 	// Index buffer
 	u16 indices[3] = { 0, 1, 2 };
-
-	ibo_data = linearAlloc(sizeof(indices));
-	memcpy(ibo_data, indices, sizeof(indices));
+	m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
 
 	// Configure the first fragment shading substage to just pass through the vertex color
 	// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -76,13 +72,13 @@ static void sceneRender(void)
 
 	// Draw the VBO
 	// C3D_DrawArrays(GPU_TRIANGLES, 0, vertex_list_count);
-	C3D_DrawElements(GPU_TRIANGLES, 3, C3D_UNSIGNED_SHORT, ibo_data);
+	C3D_DrawElements(GPU_TRIANGLES, m_IndexBuffer->GetCount(), C3D_UNSIGNED_SHORT, m_IndexBuffer->GetDataPointer());
 }
 
 static void sceneExit(void)
 {
 	// Free the VBO
-	linearFree(vbo_data);
+	// linearFree(vbo_data);
 
 	// Free the shader program
 	shaderProgramFree(&program);

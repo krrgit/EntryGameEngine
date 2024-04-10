@@ -23,8 +23,8 @@ namespace Entry
         virtual void Unbind() const = 0;
 
         virtual uint16_t GetCount() const = 0;
-        virtual void* GetDataPointer() = 0;
+        virtual void* GetDataPointer() const = 0;
 
-        static IndexBuffer* Create(uint16_t *indices, uint32_t count);
+        static IndexBuffer* Create(uint16_t *indices, uint16_t count);
     };
 }

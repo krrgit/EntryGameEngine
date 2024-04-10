@@ -13,8 +13,11 @@ namespace Entry
         m_DataPointer = linearAlloc(size);
 	    memcpy(m_DataPointer, vertices, size);
 
+        C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+        BufInfo_Init(bufInfo);
+
         // TODO: pass # of attributes; figure out last argument
-        BufInfo_Add(C3D_GetBufInfo(), m_DataPointer, size, 1, 0x0);
+        BufInfo_Add(bufInfo, m_DataPointer, 3 * sizeof(float), 1, 0x0);
     }
 
     Citro3DVertexBuffer::~Citro3DVertexBuffer()
@@ -43,8 +46,7 @@ namespace Entry
 	    memcpy(m_DataPointer, indices, count * sizeof(uint16_t));
 
         // TODO: pass # of attributes; figure out last argument
-        BufInfo_Add(C3D_GetBufInfo(), m_DataPointer, count * sizeof(uint16_t), 1, 0x10);
-
+        // BufInfo_Add(C3D_GetBufInfo(), m_DataPointer, sizeof(uint16_t), 1, 0x1);
     }
 
     Citro3DIndexBuffer::~Citro3DIndexBuffer()

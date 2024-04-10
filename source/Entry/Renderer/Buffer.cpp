@@ -15,11 +15,11 @@ namespace Entry
         return nullptr;
     }
 
-    IndexBuffer *IndexBuffer::Create(uint16_t *indices, uint32_t size)
+    IndexBuffer *IndexBuffer::Create(uint16_t *indices, uint16_t count)
     {
         switch(Renderer::GetAPI()) {
             case RendererAPI::None:     return nullptr;
-            case RendererAPI::Citro3D:  return new Citro3DIndexBuffer(indices, size);
+            case RendererAPI::Citro3D:  return new Citro3DIndexBuffer(indices, count);
         }
 
         return nullptr;

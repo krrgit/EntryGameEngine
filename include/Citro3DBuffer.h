@@ -29,7 +29,7 @@ namespace Entry
         virtual void Unbind() const;
 
         virtual uint16_t GetCount() const { return m_Count; }
-        virtual void* GetDataPointer() { return m_DataPointer; }
+        virtual void* GetDataPointer() const { return m_DataPointer; }
     private:
         // uint32_t m_RendererID;
         void *m_DataPointer;
