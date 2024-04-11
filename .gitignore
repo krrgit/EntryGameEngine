@@ -65,3 +65,5 @@ vendor/c3d/
 # Shortcuts
 *.lnk
 
+# library sources
+lib_src/

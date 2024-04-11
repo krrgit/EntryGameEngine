@@ -11,7 +11,7 @@ namespace Entry
         Citro3DVertexBuffer(float *vertices, uint32_t size);
         virtual ~Citro3DVertexBuffer();
 
-        virtual void Bind() const override;
+        virtual void Bind(C3D_BufInfo* bufInfo) const override;
         virtual void Unbind() const override;
 
         virtual const BufferLayout& GetLayout() const override { return m_Layout; }
@@ -22,7 +22,6 @@ namespace Entry
         // uint32_t m_RendererID;
         void *m_DataPointer; 
         BufferLayout m_Layout;
-        C3D_BufInfo* bufInfo;
     };
 
 

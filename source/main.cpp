@@ -4,6 +4,7 @@
 #include <string.h>
 #include "vshader_shbin.h"
 #include "Buffer.h"
+#include "VertexArray.h"
 
 using namespace Entry;
 
@@ -21,30 +22,8 @@ static shaderProgram_s program;
 static int uLoc_projection;
 static C3D_Mtx projection;
 
-std::shared_ptr<VertexBuffer> m_VertexBuffer;
-std::shared_ptr<IndexBuffer> m_IndexBuffer;
-
-static GPU_FORMATS ShaderDataTypeToCitro3DDataType(ShaderDataType type) 
-{
-	switch(type) {
-		case ShaderDataType::Float:     return GPU_FLOAT;
-		case ShaderDataType::Float2:    return GPU_FLOAT;
-		case ShaderDataType::Float3:    return GPU_FLOAT;
-		case ShaderDataType::Float4:    return GPU_FLOAT;
-		case ShaderDataType::Mat3:      return GPU_FLOAT;
-		case ShaderDataType::Mat4:      return GPU_FLOAT;
-		case ShaderDataType::Int:       return GPU_SHORT;
-		case ShaderDataType::Int2:      return GPU_SHORT;
-		case ShaderDataType::Int3:      return GPU_SHORT;
-		case ShaderDataType::Int4:      return GPU_SHORT;
-		case ShaderDataType::Bool:      return GPU_BYTE;
-		default:
-			break;
-	}
-
-	printf("Unknown ShaderDataType!");
-	return GPU_BYTE;
-}
+std::shared_ptr<VertexArray> m_VertexArray;
+std::shared_ptr<VertexArray> m_SquareVA;
 
 static void sceneInit(void)
 {
@@ -52,6 +31,7 @@ static void sceneInit(void)
 	vshader_dvlb = DVLB_ParseFile((u32*)vshader_shbin, vshader_shbin_size);
 	shaderProgramInit(&program);
 	shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
+	shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[1]);
 	C3D_BindProgram(&program);
 
 	// Get the location of the uniforms
@@ -60,46 +40,53 @@ static void sceneInit(void)
 	// Compute the projection matrix
 	Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
 
+	m_VertexArray.reset(VertexArray::Create());
+
 	float vertices[3 * 7] =
 	{
-		200.0f, 180.0f, 0.5f, 0.8f, 0.2f, 0.8f, 1.0f,
-		100.0f,  60.0f, 0.5f, 0.2f, 0.2f, 0.8f, 1.0f,
-		300.0f,  60.0f, 0.5f, 0.8f, 0.8f, 0.2f, 1.0f
+		200.0f, 180.0f, 0.4f, 0.8f, 0.8f, 0.2f, 1.0f,
+		100.0f,  60.0f, 0.4f, 0.8f, 0.2f, 0.8f, 1.0f,
+		300.0f,  60.0f, 0.4f, 0.2f, 0.2f, 0.8f, 1.0f
 	};
 
-	// Vertex buffer
-	m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+	std::shared_ptr<VertexBuffer> vertexBuffer;
+	vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+	BufferLayout layout = {
+		{ ShaderDataType::Float3, "a_Position" },
+		{ ShaderDataType::Float4, "a_Color" },
+	};
 
-	// Configure attributes for use with the vertex shader
-	{
-		BufferLayout layout = {
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
-		};
-
-		m_VertexBuffer->SetLayout(layout);
-	}
+	vertexBuffer->SetLayout(layout);
+	m_VertexArray->AddVertexBuffer(vertexBuffer);
 	
-	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
-	AttrInfo_Init(attrInfo);
-
-	uint32_t index = 0;
-	const auto& layout = m_VertexBuffer->GetLayout();
-	for (const auto& element : layout) {
-		AttrInfo_AddLoader(attrInfo, 
-			index, 
-			ShaderDataTypeToCitro3DDataType(element.Type), 
-			element.GetComponentCount());
-		index++;
-	}
-	
-	m_VertexBuffer->Bind();
-	// layout.DebugPrint();
 
 	u16 indices[3] = { 0, 1, 2 };
-	
-	// Index buffer
-	m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
+	std::shared_ptr<IndexBuffer> indexBuffer;
+	indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
+	m_VertexArray->SetIndexBuffer(indexBuffer);
+
+	m_SquareVA.reset(VertexArray::Create());
+	float squareVertices[4 * 7] =
+	{
+		350.0f,  210.0f,  0.5f,  0.2f, 0.2f, 0.8f, 1.0f,
+		 50.0f,  210.0f,  0.5f,  0.2f, 0.2f, 0.8f, 1.0f,
+		 50.0f,  30.0f,   0.5f,  0.2f, 0.2f, 0.8f, 1.0f,
+		350.0f,  30.0f,   0.5f,  0.2f, 0.2f, 0.8f, 1.0f,
+	};
+
+	std::shared_ptr<VertexBuffer> squareVB;
+	squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+	BufferLayout squareVBLayout = {
+		{ ShaderDataType::Float3, "a_Position" },
+		{ ShaderDataType::Float4, "a_Color" },
+	};
+	squareVB->SetLayout(squareVBLayout);
+	m_SquareVA->AddVertexBuffer(squareVB);
+
+	u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0};
+	std::shared_ptr<IndexBuffer> squareIB;
+	squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
+	m_SquareVA->SetIndexBuffer(squareIB);
 
 	// Configure the first fragment shading substage to just pass through the vertex color
 	// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -116,7 +103,11 @@ static void sceneRender(void)
 
 	// Draw the VBO
 	// C3D_DrawArrays(GPU_TRIANGLES, 0, vertex_list_count);
-	C3D_DrawElements(GPU_TRIANGLES, m_IndexBuffer->GetCount(), C3D_UNSIGNED_SHORT, m_IndexBuffer->GetDataPointer());
+	m_SquareVA->Bind();
+	C3D_DrawElements(GPU_GEOMETRY_PRIM, m_SquareVA->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_SquareVA->GetIndexBuffer()->GetDataPointer());
+	
+	m_VertexArray->Bind();
+	C3D_DrawElements(GPU_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_VertexArray->GetIndexBuffer()->GetDataPointer());
 }
 
 static void sceneExit(void)

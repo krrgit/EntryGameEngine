@@ -1,6 +1,7 @@
 #pragma once
 #include <3ds.h>
 #include "etpch.h"
+#include<citro3d.h>
 
 namespace Entry
 {
@@ -153,7 +154,7 @@ namespace Entry
     public:
         virtual ~VertexBuffer() {}
 
-        virtual void Bind() const = 0;
+        virtual void Bind(C3D_BufInfo* bufInfo) const = 0;
         virtual void Unbind() const = 0;
 
         virtual const BufferLayout& GetLayout() const = 0;
