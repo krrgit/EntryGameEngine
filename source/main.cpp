@@ -68,21 +68,23 @@ static void sceneInit(void)
 	};
 
 	// Vertex buffer
-	// Needs to be below layout to get stride.
 	m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-	BufferLayout layout = {
-		{ ShaderDataType::Float3, "a_Position" },
-		{ ShaderDataType::Float4, "a_Color" },
-	};
-
-	m_VertexBuffer->SetLayout(layout);
-	
 	// Configure attributes for use with the vertex shader
+	{
+		BufferLayout layout = {
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float4, "a_Color" },
+		};
+
+		m_VertexBuffer->SetLayout(layout);
+	}
+	
 	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
 	AttrInfo_Init(attrInfo);
 
 	uint32_t index = 0;
+	const auto& layout = m_VertexBuffer->GetLayout();
 	for (const auto& element : layout) {
 		AttrInfo_AddLoader(attrInfo, 
 			index, 
@@ -92,7 +94,7 @@ static void sceneInit(void)
 	}
 	
 	m_VertexBuffer->Bind();
-	layout.DebugPrint();
+	// layout.DebugPrint();
 
 	u16 indices[3] = { 0, 1, 2 };
 	
@@ -119,9 +121,6 @@ static void sceneRender(void)
 
 static void sceneExit(void)
 {
-	// Free the VBO
-	// linearFree(vbo_data);
-
 	// Free the shader program
 	shaderProgramFree(&program);
 	DVLB_Free(vshader_dvlb);
@@ -133,9 +132,9 @@ int main()
 	gfxInitDefault();
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
+	// Initialize debug console
 	consoleInit(GFX_BOTTOM, NULL);
-
-	printf("\nHello World!\n");
+	printf("\nconsole:\n");
 
 	// Initialize the render target
 	C3D_RenderTarget* target = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
