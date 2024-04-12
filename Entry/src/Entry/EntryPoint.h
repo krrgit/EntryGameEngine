@@ -9,12 +9,11 @@ int main(int argc, char** argv)
     gfxInitDefault();
     Entry::Log::Init();
 
-    ET_CORE_WARN("Initialized Log!");
-    int a = 5;
-    ET_INFO("Hello! Var = %d", a);
-    ET_FATAL("FATAL TEXT DEMO");
+    Entry::Log::GetCoreLogger()->warn("Initialized Log!");
+    Entry::Log::GetClientLogger()->info("Hello!");
 
-    // Heap allocate; can be large, and want to control memory explicitly
+
+    // Heap allocate; Program can be large, and want to control memory explicitly
     auto app = Entry::CreateApplication();
     app->Run();
     delete app;

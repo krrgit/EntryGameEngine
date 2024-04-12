@@ -1,58 +1,26 @@
 #include "Log.h"
-#include <cstring>
+
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Entry
 {
-    std::shared_ptr<PrintConsole> Log::s_CoreLogger;
+    std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
+    std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
     void Log::Init()
     {
-        s_CoreLogger.reset(consoleInit(GFX_BOTTOM, NULL));
-    }
+        consoleInit(GFX_BOTTOM, NULL);
+        spdlog::set_pattern("%^[%T] %n: %v%$");
+        s_CoreLogger = spdlog::stdout_color_mt("ENTRY");
+        s_CoreLogger->set_level(spdlog::level::trace);
 
-    void Log::Trace(const char* format, ...) {
-        va_list args;
-        va_start(args, format);
-        std::printf("%s: ", "ENTRY");
-        std::vprintf(format, args);
-        std::printf("\n");
-        va_end(args);
-    }
+        s_ClientLogger = spdlog::stdout_color_mt("APP");
+        s_ClientLogger->set_level(spdlog::level::trace);
 
-    void Log::Info(const char* format, ...) {
-        va_list args;
-        va_start(args, format);
-        std::printf("%s%s: ", ANSI_COLOR_GREEN, "ENTRY");
-        std::vprintf(format, args);
-        std::printf("%s\n", ANSI_COLOR_RESET);
-        va_end(args);
-    }
+        auto color_sink = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_CoreLogger->sinks().back().get());
+        color_sink->set_color_mode(spdlog::color_mode::always);
 
-    void Log::Warn(const char* format, ...) {
-        va_list args;
-        va_start(args, format);
-        std::printf("%s%s: ", ANSI_COLOR_YELLOW, "ENTRY");
-        std::vprintf(format, args);
-        std::printf("%s\n", ANSI_COLOR_RESET);
-        va_end(args);
-    }
-
-    void Log::Error(const char* format, ...) {
-        va_list args;
-        va_start(args, format);
-        std::printf("%s%s: ", ANSI_COLOR_RED, "ENTRY");
-        std::vprintf(format, args);
-        std::printf("%s\n", ANSI_COLOR_RESET);
-        va_end(args);
-    }
-
-    void Log::Fatal(const char* format, ...) {
-        // Set text color to magenta for Fatal
-        va_list args;
-        va_start(args, format);
-        std::printf("%s%s: ", COLOR_WHITE_ON_RED, "ENTRY");
-        std::vprintf(format, args);
-        std::printf("%s\n", ANSI_COLOR_RESET);
-        va_end(args);
+        auto color_sink2 = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_ClientLogger->sinks().back().get());
+        color_sink2->set_color_mode(spdlog::color_mode::always);
     }
 }
