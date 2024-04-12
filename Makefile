@@ -33,9 +33,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source source/Entry/Renderer source/Platform/Citro3D
+SOURCES		:=	$(shell find source -type d)
 DATA		:=	data
-INCLUDES	:=	include source/Entry/Renderer source/Platform/Citro3D
+INCLUDES	:=	$(shell find source -type d)
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs
