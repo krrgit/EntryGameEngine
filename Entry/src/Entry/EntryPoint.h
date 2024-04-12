@@ -9,8 +9,8 @@ int main(int argc, char** argv)
     gfxInitDefault();
     Entry::Log::Init();
 
-    Entry::Log::GetCoreLogger()->warn("Initialized Log!");
-    Entry::Log::GetClientLogger()->info("Hello!");
+    ET_CORE_WARN("Initialized Log!");
+    ET_INFO("Hello!");
 
 
     // Heap allocate; Program can be large, and want to control memory explicitly

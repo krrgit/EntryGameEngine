@@ -22,15 +22,15 @@ namespace Entry
 }
 
 // Core Log Macros
-// #define ET_CORE_TRACE(...)  ::Entry::Log::Trace(__VA_ARGS__)
-// #define ET_CORE_INFO(...)   ::Entry::Log::Info(__VA_ARGS__)
-// #define ET_CORE_WARN(...)   ::Entry::Log::Warn(__VA_ARGS__)
-// #define ET_CORE_ERROR(...)  ::Entry::Log::Error(__VA_ARGS__)
-// #define ET_CORE_FATAL(...)  ::Entry::Log::Fatal(__VA_ARGS__)
+#define ET_CORE_TRACE(...)  ::Entry::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define ET_CORE_INFO(...)   ::Entry::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define ET_CORE_WARN(...)   ::Entry::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define ET_CORE_ERROR(...)  ::Entry::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define ET_CORE_FATAL(...)  ::Entry::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
-// // Client Log Macros (TODO: separate header)
-// #define ET_TRACE(...)  ::Entry::Log::Trace(__VA_ARGS__)
-// #define ET_INFO(...)   ::Entry::Log::Info(__VA_ARGS__)
-// #define ET_WARN(...)   ::Entry::Log::Warn(__VA_ARGS__)
-// #define ET_ERROR(...)  ::Entry::Log::Error(__VA_ARGS__)
-// #define ET_FATAL(...)  ::Entry::Log::Fatal(__VA_ARGS__)
+// Client Log Macros (TODO: separate header)
+#define ET_TRACE(...)  ::Entry::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define ET_INFO(...)   ::Entry::Log::GetClientLogger()->info(__VA_ARGS__)
+#define ET_WARN(...)   ::Entry::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define ET_ERROR(...)  ::Entry::Log::GetClientLogger()->error(__VA_ARGS__)
+#define ET_FATAL(...)  ::Entry::Log::GetClientLogger()->fatal(__VA_ARGS__)
