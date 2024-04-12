@@ -33,9 +33,9 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	$(shell find source -type d)
+SOURCES		:=	$(shell find Entry/src -type d) $(shell find Sandbox -type d)
 DATA		:=	data
-INCLUDES	:=	$(shell find source -type d)
+INCLUDES	:=	$(shell find Entry/src -type d) $(shell find Sandbox -type d) #$(shell find Entry/vendor -type d)
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs
