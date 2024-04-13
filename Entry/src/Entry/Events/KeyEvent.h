@@ -28,7 +28,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::string result = "KeyPressedEvent: ";
-			result += std::to_string(m_KeyCode);
+			result += keysNames[m_KeyCode];
 			result += " (" + std::to_string(m_RepeatCount) + " repeats)";
 			return result;
 		}
@@ -46,7 +46,9 @@ namespace Entry {
 
 		std::string ToString() const override
 		{
-			return "KeyReleasedEvent: " + std::to_string(m_KeyCode);
+			std::string result = "KeyReleasedEvent: ";
+			result += keysNames[m_KeyCode];
+			return result;
 		}
 
 		EVENT_CLASS_TYPE(KeyReleased)

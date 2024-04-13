@@ -19,9 +19,11 @@ namespace Entry
 		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
+
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
+		void TriggerEvents();
 	private:
 		C3D_RenderTarget* m_Window;
 		C3D_RenderTarget* m_WindowR;
@@ -37,5 +39,6 @@ namespace Entry
 		};
 
 		WindowData m_Data;
+
 	};
 }

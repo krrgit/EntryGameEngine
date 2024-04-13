@@ -64,6 +64,7 @@ namespace Entry
 		C3D_FrameEnd(0);
 
 		hidScanInput();
+		TriggerEvents();
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)
@@ -73,5 +74,33 @@ namespace Entry
 	bool Citro3DWindow::IsVSync() const
 	{
 		return m_Data.VSync;
+	}
+
+	void Citro3DWindow::TriggerEvents() {
+		u32 kDown = hidKeysDown();
+		u32 kHeld = hidKeysHeld();
+		u32 kUp = hidKeysUp();
+		//Check if some of the keys are down, held or up
+		int i;
+		for (i = 0; i < 32; i++)
+		{
+			if (kDown & BIT(i))
+			{
+				// call keydown callback
+				KeyPressedEvent event(i, 0);
+				m_Data.EventCallback(event);
+			}
+
+			if (kHeld & BIT(i)) {
+				KeyPressedEvent event(i, 1);
+				m_Data.EventCallback(event);
+			}
+
+			if (kUp & BIT(i)) {
+				// call keyup callback
+				KeyReleasedEvent event(i);
+				m_Data.EventCallback(event);
+			}
+		}
 	}
 }
