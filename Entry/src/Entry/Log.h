@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
-#include <3ds.h>
 #include "Core.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 namespace Entry
 {
@@ -28,7 +27,7 @@ namespace Entry
 #define ET_CORE_ERROR(...)  ::Entry::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define ET_CORE_FATAL(...)  ::Entry::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
-// Client Log Macros (TODO: separate header)
+// Client Log Macros
 #define ET_TRACE(...)  ::Entry::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define ET_INFO(...)   ::Entry::Log::GetClientLogger()->info(__VA_ARGS__)
 #define ET_WARN(...)   ::Entry::Log::GetClientLogger()->warn(__VA_ARGS__)

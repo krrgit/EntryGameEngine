@@ -1,4 +1,4 @@
-#include <3ds.h>
+#include "etpch.h"
 #include <citro3d.h>
 #include "Citro3DBuffer.h"
 

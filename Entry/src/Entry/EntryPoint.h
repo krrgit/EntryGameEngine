@@ -1,5 +1,5 @@
 #pragma once
-#include <3ds.h>
+#include "etpch.h"
 #include "Core.h"
 
 extern Entry::Application* Entry::CreateApplication();

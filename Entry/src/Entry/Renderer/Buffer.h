@@ -1,7 +1,6 @@
 #pragma once
-#include <3ds.h>
-#include<citro3d.h>
 #include "etpch.h"
+#include<citro3d.h>
 
 namespace Entry
 {
