@@ -1,6 +1,5 @@
 #include "Application.h"
 
-#include "Entry/Events/ApplicationEvent.h"
 #include "Log.h"
 
 
@@ -21,7 +20,9 @@ namespace Entry
 
     void Application::OnEvent(Event& e)
     {
-        ET_CORE_INFO("{0}", e);
+        EventDispatcher dispatcher(e);
+
+        ET_CORE_TRACE("{0}", e);
     }
 
     void Application::Run()

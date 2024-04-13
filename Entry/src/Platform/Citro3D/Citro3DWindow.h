@@ -39,6 +39,9 @@ namespace Entry
 		};
 
 		WindowData m_Data;
-
+		uint32_t anyKeyPressed, anyKeyHeld, anyKeyReleased;
+		bool readTouchPos;
+		touchPosition touchPos;
+		circlePosition circlePadPos;
 	};
 }

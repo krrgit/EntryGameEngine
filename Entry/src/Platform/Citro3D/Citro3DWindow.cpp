@@ -2,7 +2,7 @@
 #include "Citro3DWindow.h"
 
 #include "Entry/Events/ApplicationEvent.h"
-#include "Entry/Events/MouseEvent.h"
+#include "Entry/Events/ScreenEvent.h"
 #include "Entry/Events/KeyEvent.h"
 
 #define CLEAR_COLOR 0x68B0D8FF
@@ -77,30 +77,55 @@ namespace Entry
 	}
 
 	void Citro3DWindow::TriggerEvents() {
-		u32 kDown = hidKeysDown();
-		u32 kHeld = hidKeysHeld();
-		u32 kUp = hidKeysUp();
+		anyKeyPressed = hidKeysDown();
+		anyKeyHeld = hidKeysHeld();
+		anyKeyReleased = hidKeysUp();
+
 		//Check if some of the keys are down, held or up
-		int i;
+		uint8_t i;
 		for (i = 0; i < 32; i++)
 		{
-			if (kDown & BIT(i))
+			if (i == KEY_TOUCH) {
+				if (anyKeyPressed & BIT(i))
+				{
+					hidTouchRead(&touchPos);
+					ScreenTouchedEvent event(touchPos.px, touchPos.py);
+					m_Data.EventCallback(event);
+				}
+
+				if (anyKeyHeld & BIT(i)) {
+					hidTouchRead(&touchPos);
+					ScreenTouchedEvent event(touchPos.px, touchPos.py);
+					m_Data.EventCallback(event);
+				}
+
+				if (anyKeyReleased & BIT(i))
+				{
+					hidTouchRead(&touchPos);
+					ScreenReleasedEvent event(touchPos.px, touchPos.py);
+					m_Data.EventCallback(event);
+				}
+
+				continue;
+			}
+
+			if (anyKeyPressed & BIT(i))
 			{
-				// call keydown callback
 				KeyPressedEvent event(i, 0);
 				m_Data.EventCallback(event);
 			}
 
-			if (kHeld & BIT(i)) {
+			if (anyKeyHeld & BIT(i)) {
 				KeyPressedEvent event(i, 1);
 				m_Data.EventCallback(event);
 			}
 
-			if (kUp & BIT(i)) {
-				// call keyup callback
+			if (anyKeyReleased & BIT(i)) {
 				KeyReleasedEvent event(i);
 				m_Data.EventCallback(event);
 			}
 		}
+
+		hidCircleRead(&circlePadPos);
 	}
 }

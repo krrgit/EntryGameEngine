@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Entry/Events/ApplicationEvent.h"
 #include "Events/Event.h"
 #include "Window.h"
 
