@@ -58,13 +58,16 @@ namespace Entry
 
 	void Citro3DWindow::OnUpdate()
 	{
+		hidScanInput();
+		TriggerEvents();
+
+
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C3D_RenderTargetClear(m_Window, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
 			C3D_FrameDrawOn(m_Window);
 		C3D_FrameEnd(0);
 
-		hidScanInput();
-		TriggerEvents();
+		gspWaitForVBlank();
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)
