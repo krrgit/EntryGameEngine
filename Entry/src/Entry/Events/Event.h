@@ -42,6 +42,7 @@ namespace Entry {
 	};
 
 #define KEY_TOUCH 20
+#define ALL_KEYS_COUNT 32
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); }\

@@ -83,23 +83,23 @@ namespace Entry
 
 		//Check if some of the keys are down, held or up
 		uint8_t i;
-		for (i = 0; i < 32; i++)
+		for (i = 0; i < ALL_KEYS_COUNT; i++)
 		{
-			if (i == KEY_TOUCH) {
+			if (i == KEY_TOUCH) 
+			{
 				if (anyKeyPressed & BIT(i))
 				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
-				}
 
-				if (anyKeyHeld & BIT(i)) {
+				} else if (anyKeyHeld & BIT(i)) 
+				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
-				}
 
-				if (anyKeyReleased & BIT(i))
+				} else if (anyKeyReleased & BIT(i))
 				{
 					hidTouchRead(&touchPos);
 					ScreenReleasedEvent event(touchPos.px, touchPos.py);
