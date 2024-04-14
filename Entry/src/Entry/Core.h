@@ -9,3 +9,6 @@
 	#define ET_CORE_ASSERT(x, ...)
 #endif
 
+#define SCREEN_NULL  -1
+#define SCREEN_TOP    0
+#define SCREEN_BOTTOM 1

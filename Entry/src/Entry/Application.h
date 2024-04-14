@@ -8,6 +8,7 @@
 #include "Entry/Events/ApplicationEvent.h"
 
 namespace Entry {
+
     class Application{
         public:
         Application();

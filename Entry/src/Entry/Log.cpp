@@ -8,14 +8,15 @@ namespace Entry
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
     std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
 
-    void Log::Init()
+    void Log::Init(int screen)
     {
-        consoleInit(GFX_TOP, NULL);
+        ET_CORE_ASSERT(screen >= 0, "Console Initialization skipped.");
+        consoleInit((gfxScreen_t)screen, NULL);
         spdlog::set_pattern("%^[%T] %n: %v%$");
-        s_CoreLogger = spdlog::stdout_color_mt("ENTRY");
+        s_CoreLogger = spdlog::stdout_color_mt("ET");
         s_CoreLogger->set_level(spdlog::level::trace);
 
-        s_ClientLogger = spdlog::stdout_color_mt("APP");
+        s_ClientLogger = spdlog::stdout_color_mt("AP");
         s_ClientLogger->set_level(spdlog::level::trace);
 
         auto color_sink = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_CoreLogger->sinks().back().get());

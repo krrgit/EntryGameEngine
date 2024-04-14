@@ -22,7 +22,6 @@ namespace Entry
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 		C3D_RenderTarget* const GetRenderTarget() { return m_RenderTarget; }
-		void Citro3DWindow::FrameEnd() 
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
@@ -35,6 +34,7 @@ namespace Entry
 		{
 			std::string Title;
 			unsigned int Width, Height;
+			gfxScreen_t Screen;
 			bool Stereo3D;
 			bool VSync;
 

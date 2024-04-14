@@ -34,19 +34,21 @@ namespace Entry
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
+		m_Data.Screen = (gfxScreen_t)props.Screen;
 		m_Data.Stereo3D = false;
 
 		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		m_RenderTarget = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		C3D_RenderTargetSetOutput(m_RenderTarget, GFX_BOTTOM, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+		// 
+		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 		
-		if (m_Data.Stereo3D)
+		if (m_Data.Screen == GFX_TOP && m_Data.Stereo3D)
 		{
-			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-			C3D_RenderTargetSetOutput(m_RenderTargetR, GFX_BOTTOM, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
+			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+			C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
 		}
 	}
 

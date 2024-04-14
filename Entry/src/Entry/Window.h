@@ -11,11 +11,13 @@ namespace Entry {
 		std::string Title;
 		unsigned int Width;
 		unsigned int Height;
+		unsigned int Screen;
 
 		WindowProps(const std::string& title = "Entry Engine",
-			unsigned int width = 240,
-			unsigned int height = 320)
-			: Title(title), Width(width), Height(height)
+			unsigned int width = 400,
+			unsigned int height = 240,
+			unsigned int screen = 0)
+			: Title(title), Width(width), Height(height), Screen(screen)
 		{
 		}
 	};

@@ -15,11 +15,12 @@ namespace Entry {
 
 	private:
 		C3D_Tex* tex;
-		Tex3DS_SubTexture subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-		C3D_RenderTarget* m_renderTarget;
-		std::vector<uint32_t> pixel_buffer;
+		Tex3DS_SubTexture m_subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
+		C3D_RenderTarget* m_RenderTarget;
+		std::vector<uint32_t> m_PixelBuffer;
 		time_t m_Time;
-		C2D_Image image;
+		C2D_Image m_Image;
+		uint16_t m_Width, m_Height;
 
 	};
 }

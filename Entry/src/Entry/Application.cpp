@@ -1,7 +1,5 @@
 #include "etpch.h"
 #include "Application.h"
-#include "Log.h"
-
 
 namespace Entry
 {
@@ -15,7 +13,8 @@ namespace Entry
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        m_Window = std::unique_ptr<Window>(Window::Create());
+        WindowProps topProps("Bottom", 320, 240, SCREEN_BOTTOM);
+        m_Window = std::unique_ptr<Window>(Window::Create(topProps));
         m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
     }
 
@@ -59,6 +58,8 @@ namespace Entry
 
 
             m_Window->OnUpdate();
+
+            m_Window->FrameEnd();
         }
     }
 }
