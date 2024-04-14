@@ -6,7 +6,7 @@ extern Entry::Application* Entry::CreateApplication();
 
 int main(int argc, char** argv) 
 {
-    gfxInitDefault();
+    gfxInitDefault(); // Needed for log
     Entry::Log::Init();
 
     ET_CORE_WARN("Initialized Log!");

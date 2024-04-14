@@ -11,6 +11,8 @@ namespace Entry
 		virtual ~Citro3DWindow();
 
 		void OnUpdate() override;
+		void FrameBegin() override;
+		void FrameEnd() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -19,14 +21,15 @@ namespace Entry
 		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
-
+		C3D_RenderTarget* const GetRenderTarget() { return m_RenderTarget; }
+		void Citro3DWindow::FrameEnd() 
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 		void TriggerEvents();
 	private:
-		C3D_RenderTarget* m_Window;
-		C3D_RenderTarget* m_WindowR;
+		C3D_RenderTarget* m_RenderTarget;
+		C3D_RenderTarget* m_RenderTargetR;
 
 		struct WindowData
 		{

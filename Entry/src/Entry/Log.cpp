@@ -10,7 +10,7 @@ namespace Entry
 
     void Log::Init()
     {
-        consoleInit(GFX_BOTTOM, NULL);
+        consoleInit(GFX_TOP, NULL);
         spdlog::set_pattern("%^[%T] %n: %v%$");
         s_CoreLogger = spdlog::stdout_color_mt("ENTRY");
         s_CoreLogger->set_level(spdlog::level::trace);

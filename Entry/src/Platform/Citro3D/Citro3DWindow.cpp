@@ -40,13 +40,13 @@ namespace Entry
 
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		m_Window = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		C3D_RenderTargetSetOutput(m_Window, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+		m_RenderTarget = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		C3D_RenderTargetSetOutput(m_RenderTarget, GFX_BOTTOM, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 		
 		if (m_Data.Stereo3D)
 		{
-			m_WindowR = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-			C3D_RenderTargetSetOutput(m_WindowR, GFX_TOP, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
+			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Width, (int)props.Height, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+			C3D_RenderTargetSetOutput(m_RenderTargetR, GFX_BOTTOM, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
 		}
 	}
 
@@ -60,14 +60,18 @@ namespace Entry
 	{
 		hidScanInput();
 		TriggerEvents();
+	}
 
-
+	void Citro3DWindow::FrameBegin()
+	{
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			C3D_RenderTargetClear(m_Window, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
-			C3D_FrameDrawOn(m_Window);
-		C3D_FrameEnd(0);
+		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+		C3D_FrameDrawOn(m_RenderTarget);
+	}
 
-		gspWaitForVBlank();
+	void Citro3DWindow::FrameEnd() 
+	{
+		C3D_FrameEnd(0);
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)

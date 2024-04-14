@@ -14,7 +14,7 @@ namespace Entry {
 
 		WindowProps(const std::string& title = "Entry Engine",
 			unsigned int width = 240,
-			unsigned int height = 400)
+			unsigned int height = 320)
 			: Title(title), Width(width), Height(height)
 		{
 		}
@@ -29,6 +29,8 @@ namespace Entry {
 		virtual ~Window() {}
 
 		virtual void OnUpdate() = 0;
+		virtual void FrameBegin() = 0;
+		virtual void FrameEnd() = 0;
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;

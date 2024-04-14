@@ -1,5 +1,5 @@
+#include "etpch.h"
 #include "Application.h"
-
 #include "Log.h"
 
 
@@ -8,8 +8,13 @@ namespace Entry
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
+    Application* Application::s_Instance = nullptr;
+
     Application::Application()
     {
+        ET_CORE_ASSERT(!s_Instance, "Application already exists!");
+        s_Instance = this;
+
         m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
     }
@@ -21,11 +26,13 @@ namespace Entry
     void Application::PushLayer(Layer* layer)
     {
         m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer)
     {
         m_LayerStack.PushOverlay(layer);
+        layer->OnAttach();
     }
 
     void Application::OnEvent(Event& e)
@@ -38,15 +45,18 @@ namespace Entry
             if (e.Handled)
                 break;
         }
+        
     }
 
     void Application::Run()
     {
-       
+
         while (aptMainLoop() && m_Running) {
+            m_Window->FrameBegin();
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
+
 
             m_Window->OnUpdate();
         }
