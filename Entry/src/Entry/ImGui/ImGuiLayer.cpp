@@ -129,6 +129,7 @@ namespace Entry {
 		// fill clear (this could be any previous rendering)
 		std::fill_n(m_PixelBuffer.data(), m_Width * m_Height, 0x00000000u);
 
+
 		// overlay the GUI
 		imgui_sw::paint_imgui(m_PixelBuffer.data(), m_Width, m_Height, sw_options);
 

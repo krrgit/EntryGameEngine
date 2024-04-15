@@ -1,6 +1,8 @@
 #include "etpch.h"
 #include "Application.h"
 
+#include "Input.h"
+
 namespace Entry
 {
 
@@ -56,6 +58,8 @@ namespace Entry
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
 
+            touchPosition pos = Input::GetTouchPos();
+            ET_CORE_TRACE("{0},{1}", pos.px, pos.py);
 
             m_Window->OnUpdate();
 
