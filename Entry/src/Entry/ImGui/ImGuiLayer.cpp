@@ -8,6 +8,51 @@
 #include "Entry/Application.h"
 
 namespace Entry {
+	typedef enum {
+		BTN_A = 0,       ///< A
+		BTN_B ,       ///< B
+		BTN_SELECT,       ///< Select
+		BTN_START,       ///< Start
+		BTN_DRIGHT,       ///< D-Pad Right
+		BTN_DLEFT,       ///< D-Pad Left
+		BTN_DUP,       ///< D-Pad Up
+		BTN_DDOWN,       ///< D-Pad Down
+		BTN_R,       ///< R
+		BTN_L,       ///< L
+		BTN_X,      ///< X
+		BTN_Y,      ///< Y
+		BTN_ZL = 14,      ///< ZL (New 3DS only)
+		BTN_ZR,      ///< ZR (New 3DS only)
+		BTN_TOUCH = 20,      ///< Touch (Not actually provided by HID)
+		BTN_CSTICK_RIGHT = 24, ///< C-Stick Right (New 3DS only)
+		BTN_CSTICK_LEFT, ///< C-Stick Left (New 3DS only)
+		BTN_CSTICK_UP, ///< C-Stick Up (New 3DS only)
+		BTN_CSTICK_DOWN, ///< C-Stick Down (New 3DS only)
+		BTN_CPAD_RIGHT,   ///< Circle Pad Right
+		BTN_CPAD_LEFT,   ///< Circle Pad Left
+		BTN_CPAD_UP,   ///< Circle Pad Up
+		BTN_CPAD_DOWN 
+	} KeyCode;
+
+	ImGuiNavInput_ MapKeyCodeToImGuiNavInput(KeyCode keycode) {
+		switch (keycode) {
+		case BTN_A:			return ImGuiNavInput_Activate;	// A
+		case BTN_B:			return ImGuiNavInput_Cancel;	// B
+		case BTN_Y:			return ImGuiNavInput_Menu;	// X
+		case BTN_X:			return ImGuiNavInput_Input; // Y
+		case BTN_DLEFT:		return ImGuiNavInput_DpadLeft;
+		case BTN_DRIGHT:	return ImGuiNavInput_DpadRight;
+		case BTN_DUP:		return ImGuiNavInput_DpadUp;
+		case BTN_DDOWN:		return ImGuiNavInput_DpadDown;
+		case BTN_L:			return ImGuiNavInput_FocusPrev; // L
+		case BTN_R:			return ImGuiNavInput_FocusNext; // R
+		default:
+			break;
+		}
+		return ImGuiNavInput_FocusNext;
+
+	}
+
 	ImGuiLayer::ImGuiLayer() 
 		: Layer("ImGuiLayer") 
 	{
@@ -37,13 +82,20 @@ namespace Entry {
 		m_RenderTarget = citroWindow->GetRenderTarget();
 		m_Width = citroWindow->GetWidth();
 		m_Height = citroWindow->GetHeight();
-		 
 
 		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
 		//ImGui::SetMouseCursor()
 		
 		imgui_sw::bind_imgui_painting();
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+		io.MouseDrawCursor = true;
+
+		memset(io.NavInputs, 0, sizeof(io.NavInputs));
+		m_PixelBuffer = std::vector<uint32_t>(m_Width * m_Height, 0);
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -52,18 +104,13 @@ namespace Entry {
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnUpdate() 
+	void ImGuiLayer::OnUpdate()
 	{
-		std::vector<uint32_t> m_pixelBuffer(m_Width * m_Height, 0);
-
 		imgui_sw::SwOptions sw_options;
 		imgui_sw::make_style_fast();
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = 1.0f / 60.0f;
 		io.DisplaySize = ImVec2((float)m_Width, (float)m_Height);
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-		io.MouseDrawCursor = true;
 
 		time_t f_time = time(NULL);
 		io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
@@ -76,41 +123,14 @@ namespace Entry {
 
 		ImGui::Render();
 
-
 		// I/O
-		touchPosition touch;
-		u32 kHeld = keysDown();
-		memset(io.NavInputs, 0, sizeof(io.NavInputs));
-#define MAP_BUTTON(NAV, BUTTON)       { if (kHeld & BUTTON) io.NavInputs[NAV] = 1.0f; }
-		MAP_BUTTON(ImGuiNavInput_Activate, KEY_A);
-		MAP_BUTTON(ImGuiNavInput_Cancel, KEY_B);
-		MAP_BUTTON(ImGuiNavInput_Menu, KEY_Y);
-		MAP_BUTTON(ImGuiNavInput_Input, KEY_X);
-		MAP_BUTTON(ImGuiNavInput_DpadLeft, KEY_DLEFT);
-		MAP_BUTTON(ImGuiNavInput_DpadRight, KEY_DRIGHT);
-		MAP_BUTTON(ImGuiNavInput_DpadUp, KEY_DUP);
-		MAP_BUTTON(ImGuiNavInput_DpadDown, KEY_DDOWN);
-		MAP_BUTTON(ImGuiNavInput_FocusPrev, KEY_L);
-		MAP_BUTTON(ImGuiNavInput_FocusNext, KEY_R);
-		//MAP_BUTTON(ImGuiNavInput_TweakSlow,   KEY_L);
-		//MAP_BUTTON(ImGuiNavInput_TweakFast,   KEY_R);
-#undef MAP_BUTTON
-		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
-		hidTouchRead(&touch);
-
-		if (touch.px && touch.py)
-		{
-			io.MouseDown[0] = true;
-			io.MousePos = ImVec2(touch.px, touch.py);
-		}
-		else
-			io.MouseDown[0] = false;
+		io.MouseDown[0] = false; // Reset mouse button down
 
 		// fill clear (this could be any previous rendering)
-		std::fill_n(m_pixelBuffer.data(), m_Width * m_Height, 0x00000000u);
+		std::fill_n(m_PixelBuffer.data(), m_Width * m_Height, 0x00000000u);
 
 		// overlay the GUI
-		imgui_sw::paint_imgui(m_pixelBuffer.data(), m_Width, m_Height, sw_options);
+		imgui_sw::paint_imgui(m_PixelBuffer.data(), m_Width, m_Height, sw_options);
 
 		for (u32 x = 0; x < m_Width; x++)
 		{
@@ -118,7 +138,7 @@ namespace Entry {
 			{
 				u32 dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3))) * 4;
 				u32 srcPos = (y * m_Width + x) * 4;
-				memcpy(&((u8*)m_Image.tex->data)[dstPos], &((u8*)m_pixelBuffer.data())[srcPos], 4);
+				memcpy(&((u8*)m_Image.tex->data)[dstPos], &((u8*)m_PixelBuffer.data())[srcPos], 4);
 			}
 		}
 
@@ -128,5 +148,40 @@ namespace Entry {
 
 	void ImGuiLayer::OnEvent(Event& event) 
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<ScreenTouchedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenTouchedEvent));
+		dispatcher.Dispatch<ScreenReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenReleasedEvent));
+		dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<KeyReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
+		dispatcher.Dispatch<CirclePadEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnCirclePadMovedEvent));
+	}
+
+	bool ImGuiLayer::OnScreenTouchedEvent(ScreenTouchedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[0] = true;
+		io.MousePos = ImVec2(e.GetX(), e.GetY());
+
+		return false;
+	}
+	bool ImGuiLayer::OnScreenReleasedEvent(ScreenReleasedEvent& e)
+	{
+		// Mouse doesn't work when this function is implemented here
+		return false;
+	}
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.NavInputs[MapKeyCodeToImGuiNavInput((KeyCode)e.GetKeyCode())] = 1.0f;
+		return false;
+	}
+	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
+	{
+		return false;
+	}
+	bool ImGuiLayer::OnCirclePadMovedEvent(CirclePadEvent& e)
+	{
+		return false;
 	}
 }

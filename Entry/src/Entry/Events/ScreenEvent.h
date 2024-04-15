@@ -7,11 +7,11 @@ namespace Entry {
 	class ScreenTouchedEvent : public Event
 	{
 	public:
-		ScreenTouchedEvent(float x, float y)
+		ScreenTouchedEvent(uint16_t x, uint16_t y)
 			: m_TouchX(x), m_TouchY(y) {}
 
-		inline float GetX() const { return m_TouchX; }
-		inline float GetY() const { return m_TouchY; }
+		inline uint16_t GetX() const { return m_TouchX; }
+		inline uint16_t GetY() const { return m_TouchY; }
 
 		std::string ToString() const override
 		{
@@ -21,17 +21,17 @@ namespace Entry {
 		EVENT_CLASS_TYPE(ScreenTouched)
 			EVENT_CLASS_CATEGORY(EventCategoryScreen | EventCategoryInput)
 	private:
-		float m_TouchX, m_TouchY;
+		uint16_t m_TouchX, m_TouchY;
 	};
 
 	class ScreenReleasedEvent : public Event
 	{
 	public:
-		ScreenReleasedEvent(float x, float y)
+		ScreenReleasedEvent(uint16_t x, uint16_t y)
 			: m_TouchX(x), m_TouchY(y) {}
 
-		inline float GetX() const { return m_TouchX; }
-		inline float GetY() const { return m_TouchY; }
+		inline uint16_t GetX() const { return m_TouchX; }
+		inline uint16_t GetY() const { return m_TouchY; }
 
 		std::string ToString() const override
 		{
@@ -41,6 +41,6 @@ namespace Entry {
 		EVENT_CLASS_TYPE(ScreenTouched)
 			EVENT_CLASS_CATEGORY(EventCategoryScreen | EventCategoryInput)
 	private:
-		float m_TouchX, m_TouchY;
+		uint16_t m_TouchX, m_TouchY;
 	};
 }

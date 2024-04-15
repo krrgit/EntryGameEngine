@@ -12,3 +12,6 @@
 #define SCREEN_NULL  -1
 #define SCREEN_TOP    0
 #define SCREEN_BOTTOM 1
+
+
+#define ET_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)

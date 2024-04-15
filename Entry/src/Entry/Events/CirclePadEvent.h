@@ -21,6 +21,6 @@ namespace Entry {
 		EVENT_CLASS_TYPE(CirclePadMoved)
 			EVENT_CLASS_CATEGORY(EventCategoryCirclePad | EventCategoryInput)
 	private:
-		uint16_t m_PadX, m_PadY;
+		float m_PadX, m_PadY;
 	};
 }

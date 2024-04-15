@@ -4,6 +4,7 @@
 #include "Entry/Events/ApplicationEvent.h"
 #include "Entry/Events/ScreenEvent.h"
 #include "Entry/Events/KeyEvent.h"
+#include "Entry/Events/CirclePadEvent.h"
 
 #define CLEAR_COLOR 0x68B0D8FF
 
@@ -41,7 +42,7 @@ namespace Entry
 
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		// 
+		// C3D flips height and width?
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 		
@@ -110,7 +111,6 @@ namespace Entry
 
 				} else if (anyKeyReleased & BIT(i))
 				{
-					hidTouchRead(&touchPos);
 					ScreenReleasedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
 				}
@@ -136,5 +136,10 @@ namespace Entry
 		}
 
 		hidCircleRead(&circlePadPos);
+		float deadzone = 0.05f;
+		if (sqrt(circlePadPos.dx * circlePadPos.dx + circlePadPos.dy * circlePadPos.dy) >= deadzone) {
+			CirclePadEvent event(circlePadPos.dx, circlePadPos.dy);
+			m_Data.EventCallback(event);
+		}
 	}
 }
