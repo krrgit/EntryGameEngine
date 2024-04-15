@@ -2,10 +2,11 @@
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
-#include "imgui_sw.h"
-#include <time.h>
-#include "Platform/Citro3D/Citro3DWindow.h"
+#include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
+
 #include "Entry/Application.h"
+#include <time.h>
+
 
 namespace Entry {
 	typedef enum {
@@ -65,57 +66,31 @@ namespace Entry {
 
 	void ImGuiLayer::OnAttach()
 	{
-
-		C3D_Tex* tex = (C3D_Tex*)malloc(sizeof(C3D_Tex));
-		//static const Tex3DS_SubTexture subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-
-		m_Image = (C2D_Image){ tex, &m_subt3x };
-		C3D_TexInit(m_Image.tex, 512, 256, GPU_RGBA8);
-		C3D_TexSetFilter(m_Image.tex, GPU_LINEAR, GPU_LINEAR);
-		C3D_TexSetWrap(m_Image.tex, GPU_REPEAT, GPU_REPEAT);
-
-		C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
-		C2D_Prepare();
-
-		Window* window = &Application::Get().GetWindow();
-		Citro3DWindow* citroWindow = static_cast<Citro3DWindow*>(window);
-		m_RenderTarget = citroWindow->GetRenderTarget();
-		m_Width = citroWindow->GetWidth();
-		m_Height = citroWindow->GetHeight();
-
 		ImGui::CreateContext();
-		//ImGui::SetMouseCursor()
-		
-		imgui_sw::bind_imgui_painting();
-
 		ImGuiIO& io = ImGui::GetIO();
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 		io.MouseDrawCursor = true;
-
-		memset(io.NavInputs, 0, sizeof(io.NavInputs));
-		m_PixelBuffer = std::vector<uint32_t>(m_Width * m_Height, 0);
+		
+		ImGui_ImplC3D_InitForCitro3D();
 	}
 
 	void ImGuiLayer::OnDetach()
 	{
-		imgui_sw::unbind_imgui_painting();
+		ImGui_ImplC3D_Shutdown();
 		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::OnUpdate()
 	{
-		imgui_sw::SwOptions sw_options;
-		imgui_sw::make_style_fast();
-
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)m_Width, (float)m_Height);
+		Application& app = Application::Get();
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
 		time_t f_time = time(NULL);
 		io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
 		m_Time = f_time;
 
+		ImGui_ImplC3D_NewFrame();
 		ImGui::NewFrame();
 
 		static bool show = true;
@@ -126,25 +101,7 @@ namespace Entry {
 		// I/O
 		io.MouseDown[0] = false; // Reset mouse button down
 
-		// fill clear (this could be any previous rendering)
-		std::fill_n(m_PixelBuffer.data(), m_Width * m_Height, 0x00000000u);
-
-
-		// overlay the GUI
-		imgui_sw::paint_imgui(m_PixelBuffer.data(), m_Width, m_Height, sw_options);
-
-		for (u32 x = 0; x < m_Width; x++)
-		{
-			for (u32 y = 0; y < m_Height; y++)
-			{
-				u32 dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3))) * 4;
-				u32 srcPos = (y * m_Width + x) * 4;
-				memcpy(&((u8*)m_Image.tex->data)[dstPos], &((u8*)m_PixelBuffer.data())[srcPos], 4);
-			}
-		}
-
-		C2D_SceneBegin(m_RenderTarget);
-		C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+		ImGui_ImplC3D_RenderDrawData();
 	}
 
 	void ImGuiLayer::OnEvent(Event& event) 

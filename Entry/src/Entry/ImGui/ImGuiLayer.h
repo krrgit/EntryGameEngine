@@ -24,12 +24,6 @@ namespace Entry {
 		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
 		bool OnCirclePadMovedEvent(CirclePadEvent& e);
 	private:
-		C3D_Tex* tex;
-		Tex3DS_SubTexture m_subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-		C3D_RenderTarget* m_RenderTarget;
-		std::vector<uint32_t> m_PixelBuffer;
 		time_t m_Time;
-		C2D_Image m_Image;
-		uint16_t m_Width, m_Height;
 	};
 }
