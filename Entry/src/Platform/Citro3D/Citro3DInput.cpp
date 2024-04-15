@@ -8,13 +8,12 @@ namespace Entry {
 
 	bool Citro3DInput::IsKeyPressedImpl(int keycode)
 	{
-		auto state = (hidKeysDownRepeat() & BIT(keycode)) >> (keycode - 1) == 1;
-		return state;
+		uint32_t bitToCheck = BIT(keycode);
+		return ((hidKeysDownRepeat() & bitToCheck) == bitToCheck);
 	}
 	bool Citro3DInput::IsScreenTouchedImpl()
 	{
-		auto state = (hidKeysDownRepeat() & BIT(KEY_TOUCH)) >> (KEY_TOUCH - 1) == 1;
-		return state;
+		return IsKeyPressedImpl(KEY_TOUCH);
 	}
 	int Citro3DInput::GetTouchXImpl()
 	{

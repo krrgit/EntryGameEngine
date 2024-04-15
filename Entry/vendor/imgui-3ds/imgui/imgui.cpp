@@ -869,7 +869,7 @@ void ImGuiStyle::ScaleAllSizes(float scale_factor)
 ImGuiIO::ImGuiIO()
 {
     // Most fields are initialized with zero
-    memset(this, 0, sizeof(*this));
+    //memset(this, 0, sizeof(*this));
 
     // Settings
     ConfigFlags = 0x00;

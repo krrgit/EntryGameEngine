@@ -390,7 +390,8 @@ struct IMGUI_API ImGuiTextEditState
     bool                CursorFollow;
     bool                SelectedAllMouseLock;
 
-    ImGuiTextEditState()                            { memset(this, 0, sizeof(*this)); }
+    //ImGuiTextEditState()                            { memset(this, 0, sizeof(*this)); }
+    ImGuiTextEditState() : Id(), Text(), InitialText(), TempTextBuffer(), CurLenA(), CurLenW(), BufSizeA(), ScrollX(), StbState(), CursorAnim(), SelectedAllMouseLock() {}
     void                CursorAnimReset()           { CursorAnim = -0.30f; }                                   // After a user-input the cursor stays on for a while without blinking
     void                CursorClamp()               { StbState.cursor = ImMin(StbState.cursor, CurLenW); StbState.select_start = ImMin(StbState.select_start, CurLenW); StbState.select_end = ImMin(StbState.select_end, CurLenW); }
     bool                HasSelection() const        { return StbState.select_start != StbState.select_end; }
@@ -420,7 +421,8 @@ struct ImGuiSettingsHandler
     void        (*WriteAllFn)(ImGuiContext* ctx, ImGuiSettingsHandler* handler, ImGuiTextBuffer* out_buf);
     void*       UserData;
 
-    ImGuiSettingsHandler() { memset(this, 0, sizeof(*this)); }
+    //ImGuiSettingsHandler() { memset(this, 0, sizeof(*this)); }
+    ImGuiSettingsHandler() : TypeName(), TypeHash(), ReadOpenFn(), ReadLineFn(), WriteAllFn(), UserData() {}
 };
 
 // Storage for current popup stack

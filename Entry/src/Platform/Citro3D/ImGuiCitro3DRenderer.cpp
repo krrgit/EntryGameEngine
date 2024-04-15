@@ -20,7 +20,7 @@ struct ImGui_ImplC3D_Data {
 	uint16_t					m_Width, m_Height;
 	imgui_sw::SwOptions			sw_options;
 
-	ImGui_ImplC3D_Data() { memset((void*)this, 0, sizeof(*this)); }
+	ImGui_ImplC3D_Data() {} //memset((void*)this, 0, sizeof(*this));
 };
 
 // Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
@@ -51,8 +51,7 @@ bool ImGui_ImplC3D_InitForCitro3D()
 	C2D_Prepare();
 
 	// Set render target and parameters
-	Window* window = &Application::Get().GetWindow();
-	Citro3DWindow* citroWindow = static_cast<Citro3DWindow*>(window);
+	Citro3DWindow* citroWindow = static_cast<Citro3DWindow*>(&Application::Get().GetWindow());
 	bd->m_RenderTarget = citroWindow->GetRenderTarget();
 	bd->m_Width = citroWindow->GetWidth();
 	bd->m_Height = citroWindow->GetHeight();
@@ -82,7 +81,7 @@ bool ImGui_ImplC3D_Shutdown()
 bool ImGui_ImplC3D_NewFrame()
 {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
-	std::fill_n(bd->m_PixelBuffer, bd->m_Width * bd->m_Height, 0x001919FFu);
+	std::fill_n(bd->m_PixelBuffer, bd->m_Width * bd->m_Height, 0x00000000u);
 
 	imgui_sw::paint_imgui(bd->m_PixelBuffer, bd->m_Width, bd->m_Height, bd->sw_options);
 
@@ -101,7 +100,6 @@ bool ImGui_ImplC3D_NewFrame()
 
 void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
-	ET_CORE_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
 
 	C2D_SceneBegin(bd->m_RenderTarget);
 	C2D_DrawImageAt(bd->m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
