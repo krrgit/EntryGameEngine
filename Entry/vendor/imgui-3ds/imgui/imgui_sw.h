@@ -19,7 +19,6 @@ namespace imgui_sw {
 struct SwOptions
 {
 	bool optimize_rectangles = true; // No reason to turn this off.
-	bool alpha_blend = false;
 	// TODO: add some options for balancing accuracy and speed?
 };
 

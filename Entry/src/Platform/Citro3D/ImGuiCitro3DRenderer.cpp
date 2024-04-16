@@ -43,7 +43,7 @@ bool ImGui_ImplC3D_Init()
 	// Setup Citro2D, textures and images
 	bd->m_subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
 	bd->m_Image = (C2D_Image){ &(bd->m_tex), &(bd->m_subt3x) };
-	C3D_TexInit(&bd->m_tex, 512, 256, GPU_RGBA8);
+	C3D_TexInitVRAM(&bd->m_tex, 512, 256, GPU_RGBA8);
 	C3D_TexSetFilter(&bd->m_tex, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetWrap(&bd->m_tex, GPU_REPEAT, GPU_REPEAT);
 
@@ -81,22 +81,17 @@ bool ImGui_ImplC3D_Shutdown()
 bool ImGui_ImplC3D_NewFrame()
 {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
-	std::fill_n(bd->m_PixelBuffer, bd->m_Width * bd->m_Height, 0x00000000u);
 
-	imgui_sw::paint_imgui(bd->m_PixelBuffer, bd->m_Width, bd->m_Height, bd->sw_options);
-
-	for (u32 x = 0; x < bd->m_Width; x++)
-	{
-		for (u32 y = 0; y < bd->m_Height; y++)
-		{
-			u32 dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3))) * 4;
-			u32 srcPos = (y * bd->m_Width + x) * 4;
-			memcpy(&((u8*)bd->m_Image.tex->data)[dstPos], &((u8*)bd->m_PixelBuffer)[srcPos], 4);
-		}
+	// Clear buffer by setting alpha to 0
+	static size_t size = bd->m_Image.tex->width * bd->m_Image.tex->height;
+	for (size_t i = 0; i < size; ++i) {
+		((uint8_t*)bd->m_Image.tex->data)[i * 4] = 0x00;
 	}
 
+	imgui_sw::paint_imgui((uint32_t*)bd->m_Image.tex->data, bd->m_Width, bd->m_Height, bd->sw_options);
 	return true;
 }
+
 
 void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();

@@ -47,6 +47,7 @@ namespace Entry {
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 		io.MouseDrawCursor = true;
 		
+		
 		ImGui_ImplC3D_Init();
 	}
 
