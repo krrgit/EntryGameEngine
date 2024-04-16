@@ -6,10 +6,9 @@ namespace Entry {
 
 	Input* Input::s_Instance = new Citro3DInput();
 
-	bool Citro3DInput::IsKeyPressedImpl(int keycode)
+	bool Citro3DInput::IsKeyPressedImpl(uint32_t keycode)
 	{
-		uint32_t bitToCheck = BIT(keycode);
-		return ((hidKeysDownRepeat() & bitToCheck) == bitToCheck);
+		return ((hidKeysDownRepeat() & keycode) == keycode);
 	}
 	bool Citro3DInput::IsScreenTouchedImpl()
 	{

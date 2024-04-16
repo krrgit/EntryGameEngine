@@ -93,23 +93,25 @@ namespace Entry
 
 		//Check if some of the keys are down, held or up
 		uint8_t i;
+		uint32_t keyCode;
 		for (i = 0; i < ALL_KEYS_COUNT; i++)
 		{
+			keyCode = BIT(i);
 			if (i == KEY_TOUCH) 
 			{
-				if (anyKeyPressed & BIT(i))
+				if (anyKeyPressed & keyCode)
 				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
 
-				} else if (anyKeyHeld & BIT(i)) 
+				} else if (anyKeyHeld & keyCode)
 				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
 
-				} else if (anyKeyReleased & BIT(i))
+				} else if (anyKeyReleased & keyCode)
 				{
 					ScreenReleasedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
@@ -118,19 +120,19 @@ namespace Entry
 				continue;
 			}
 
-			if (anyKeyPressed & BIT(i))
+			if (anyKeyPressed & keyCode)
 			{
-				KeyPressedEvent event(i, 0);
+				KeyPressedEvent event(keyCode, 0);
 				m_Data.EventCallback(event);
 			}
 
-			if (anyKeyHeld & BIT(i)) {
-				KeyPressedEvent event(i, 1);
+			if (anyKeyHeld & keyCode) {
+				KeyPressedEvent event(keyCode, 1);
 				m_Data.EventCallback(event);
 			}
 
-			if (anyKeyReleased & BIT(i)) {
-				KeyReleasedEvent event(i);
+			if (anyKeyReleased & keyCode) {
+				KeyReleasedEvent event(keyCode);
 				m_Data.EventCallback(event);
 			}
 		}

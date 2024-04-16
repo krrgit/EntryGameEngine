@@ -31,7 +31,7 @@ static ImGui_ImplC3D_Data* ImGui_ImplC3D_GetBackendData()
 }
 
 
-bool ImGui_ImplC3D_InitForCitro3D()
+bool ImGui_ImplC3D_Init()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");

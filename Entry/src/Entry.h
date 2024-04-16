@@ -5,6 +5,10 @@
 #include "Entry/Application.h"
 #include "Entry/Layer.h"
 #include "Entry/Log.h"
+
+#include "Entry/Input.h"
+#include "Entry/KeyCodes.h"
+
 #include "Entry/ImGui/ImGuiLayer.h"
 
 // --- Entry Point --------------------

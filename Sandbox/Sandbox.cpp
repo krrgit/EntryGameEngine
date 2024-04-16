@@ -15,7 +15,8 @@ public:
 
 	void OnEvent(Entry::Event& event) override
 	{
-		ET_TRACE("{0}", event);
+		if (Entry::Input::IsKeyPressed(ET_KEY_A))
+			ET_TRACE("A Button is pressed!");
 	}
 
 };

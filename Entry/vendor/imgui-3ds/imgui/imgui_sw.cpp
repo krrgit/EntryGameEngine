@@ -56,14 +56,15 @@ struct ColorInt
 
 	uint32_t toUint32() const
 	{
-		return (a << 24u) | (b << 16u) | (g << 8u) | r;
+		return (r << IM_COL32_R_SHIFT) | (g << IM_COL32_G_SHIFT) | (b << IM_COL32_B_SHIFT) | (a << IM_COL32_A_SHIFT);
 	}
 };
 
 ColorInt blend(ColorInt target, ColorInt source)
 {
+
 	ColorInt result;
-	result.a = 0; // Whatever.
+	result.a = 255;
 	result.b = (source.b * source.a + target.b * (255 - source.a)) / 255;
 	result.g = (source.g * source.a + target.g * (255 - source.a)) / 255;
 	result.r = (source.r * source.a + target.r * (255 - source.a)) / 255;

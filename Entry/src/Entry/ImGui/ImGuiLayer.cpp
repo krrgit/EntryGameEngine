@@ -4,49 +4,24 @@
 #include "imgui.h"
 #include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
 
+#include "KeyCodes.h"
 #include "Entry/Application.h"
 #include <time.h>
 
-
 namespace Entry {
-	typedef enum {
-		BTN_A = 0,       ///< A
-		BTN_B ,       ///< B
-		BTN_SELECT,       ///< Select
-		BTN_START,       ///< Start
-		BTN_DRIGHT,       ///< D-Pad Right
-		BTN_DLEFT,       ///< D-Pad Left
-		BTN_DUP,       ///< D-Pad Up
-		BTN_DDOWN,       ///< D-Pad Down
-		BTN_R,       ///< R
-		BTN_L,       ///< L
-		BTN_X,      ///< X
-		BTN_Y,      ///< Y
-		BTN_ZL = 14,      ///< ZL (New 3DS only)
-		BTN_ZR,      ///< ZR (New 3DS only)
-		BTN_TOUCH = 20,      ///< Touch (Not actually provided by HID)
-		BTN_CSTICK_RIGHT = 24, ///< C-Stick Right (New 3DS only)
-		BTN_CSTICK_LEFT, ///< C-Stick Left (New 3DS only)
-		BTN_CSTICK_UP, ///< C-Stick Up (New 3DS only)
-		BTN_CSTICK_DOWN, ///< C-Stick Down (New 3DS only)
-		BTN_CPAD_RIGHT,   ///< Circle Pad Right
-		BTN_CPAD_LEFT,   ///< Circle Pad Left
-		BTN_CPAD_UP,   ///< Circle Pad Up
-		BTN_CPAD_DOWN 
-	} KeyCode;
 
-	ImGuiNavInput_ MapKeyCodeToImGuiNavInput(KeyCode keycode) {
+	static ImGuiNavInput_ MapKeyCodeToImGuiNavInput(uint32_t keycode) {
 		switch (keycode) {
-		case BTN_A:			return ImGuiNavInput_Activate;	// A
-		case BTN_B:			return ImGuiNavInput_Cancel;	// B
-		case BTN_Y:			return ImGuiNavInput_Menu;	// X
-		case BTN_X:			return ImGuiNavInput_Input; // Y
-		case BTN_DLEFT:		return ImGuiNavInput_DpadLeft;
-		case BTN_DRIGHT:	return ImGuiNavInput_DpadRight;
-		case BTN_DUP:		return ImGuiNavInput_DpadUp;
-		case BTN_DDOWN:		return ImGuiNavInput_DpadDown;
-		case BTN_L:			return ImGuiNavInput_FocusPrev; // L
-		case BTN_R:			return ImGuiNavInput_FocusNext; // R
+		case ET_KEY_A:			return ImGuiNavInput_Activate;
+		case ET_KEY_B:			return ImGuiNavInput_Cancel;
+		case ET_KEY_Y:			return ImGuiNavInput_Menu;
+		case ET_KEY_X:			return ImGuiNavInput_Input;
+		case ET_KEY_DLEFT:		return ImGuiNavInput_DpadLeft;
+		case ET_KEY_DRIGHT:		return ImGuiNavInput_DpadRight;
+		case ET_KEY_DUP:		return ImGuiNavInput_DpadUp;
+		case ET_KEY_DDOWN:		return ImGuiNavInput_DpadDown;
+		case ET_KEY_L:			return ImGuiNavInput_FocusPrev;
+		case ET_KEY_R:			return ImGuiNavInput_FocusNext;
 		default:
 			break;
 		}
@@ -67,11 +42,12 @@ namespace Entry {
 	void ImGuiLayer::OnAttach()
 	{
 		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 		io.MouseDrawCursor = true;
 		
-		ImGui_ImplC3D_InitForCitro3D();
+		ImGui_ImplC3D_Init();
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -99,7 +75,7 @@ namespace Entry {
 		ImGui::Render();
 
 		// I/O
-		io.MouseDown[0] = false; // Reset mouse button down
+		io.MouseDown[0] = false; // Reset io.MouseDown
 
 		ImGui_ImplC3D_RenderDrawData();
 	}
@@ -130,8 +106,7 @@ namespace Entry {
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-
-		io.NavInputs[MapKeyCodeToImGuiNavInput((KeyCode)e.GetKeyCode())] = 1.0f;
+		io.NavInputs[MapKeyCodeToImGuiNavInput(e.GetKeyCode())] = 1.0f;
 		return false;
 	}
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
