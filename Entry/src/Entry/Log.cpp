@@ -7,12 +7,16 @@ namespace Entry
 {
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
     std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+    std::shared_ptr<PrintConsole> Log::s_PrintConsole;
 
     void Log::Init(int screen)
     {
         ET_CORE_ASSERT(screen >= 0, "Console Initialization skipped.");
-        consoleInit((gfxScreen_t)screen, NULL);
+
+        gfxInitDefault(); // Needed for log
+        s_PrintConsole = static_cast<std::shared_ptr<PrintConsole>>(consoleInit((gfxScreen_t)screen, NULL));
         spdlog::set_pattern("%^[%T] %n: %v%$");
+
         s_CoreLogger = spdlog::stdout_color_mt("ET");
         s_CoreLogger->set_level(spdlog::level::trace);
 

@@ -82,13 +82,18 @@ bool ImGui_ImplC3D_NewFrame()
 {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
+	uint32_t* texData = (uint32_t*)bd->m_Image.tex->data;
+	uint16_t texWidth = bd->m_Image.tex->width;
+	uint16_t texHeight = bd->m_Image.tex->height;
+
 	// Clear buffer by setting alpha to 0
-	static size_t size = bd->m_Image.tex->width * bd->m_Image.tex->height;
+	static const size_t size = texWidth * texHeight;
+	uint8_t* textData8 = (uint8_t*)bd->m_Image.tex->data;
 	for (size_t i = 0; i < size; ++i) {
-		((uint8_t*)bd->m_Image.tex->data)[i * 4] = 0x00;
+		textData8[i * 4] = 0x00 << IM_COL32_A_SHIFT;
 	}
 
-	imgui_sw::paint_imgui((uint32_t*)bd->m_Image.tex->data, bd->m_Width, bd->m_Height, bd->sw_options);
+	imgui_sw::paint_imgui(texData, bd->m_Width, bd->m_Height, bd->sw_options);
 	return true;
 }
 

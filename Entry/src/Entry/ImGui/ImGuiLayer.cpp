@@ -85,10 +85,11 @@ namespace Entry {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<ScreenTouchedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenTouchedEvent));
-		dispatcher.Dispatch<ScreenReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenReleasedEvent));
 		dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-		dispatcher.Dispatch<KeyReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
-		dispatcher.Dispatch<CirclePadEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnCirclePadMovedEvent));
+		// Touch Doesn't work properly when ScreenReleasedEvent implemented
+		//dispatcher.Dispatch<ScreenReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenReleasedEvent));
+		//dispatcher.Dispatch<KeyReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
+		//dispatcher.Dispatch<CirclePadEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnCirclePadMovedEvent));
 	}
 
 	bool ImGuiLayer::OnScreenTouchedEvent(ScreenTouchedEvent& e)
@@ -97,11 +98,6 @@ namespace Entry {
 		io.MouseDown[0] = true;
 		io.MousePos = ImVec2(e.GetX(), e.GetY());
 
-		return false;
-	}
-	bool ImGuiLayer::OnScreenReleasedEvent(ScreenReleasedEvent& e)
-	{
-		// Mouse doesn't work when this function is implemented here
 		return false;
 	}
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)

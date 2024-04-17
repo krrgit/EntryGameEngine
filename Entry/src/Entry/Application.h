@@ -11,7 +11,7 @@ namespace Entry {
 
     class Application{
         public:
-        Application();
+            Application();
         virtual ~Application();
 
         void Run();

@@ -10,6 +10,8 @@
 
 #include "imgui.h"
 
+#define ALPHA_BLEND_DISABLED
+
 namespace imgui_sw {
 namespace {
 
@@ -160,6 +162,7 @@ void paint_uniform_rectangle(
 	max_x_i = std::min(max_x_i, target.width);
 	max_y_i = std::min(max_y_i, target.height);
 
+#ifndef  ALPHA_BLEND_DISABLED
 	// We often blend the same colors over and over again, so optimize for this (saves 25% total cpu):
 	uint32_t last_target_pixel = target.pixels[min_y_i * target.width + min_x_i];
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, color);
@@ -179,6 +182,18 @@ void paint_uniform_rectangle(
 			last_output = target_pixel;
 		}
 	}
+#else
+	for (int y = min_y_i; y < max_y_i; ++y) {
+		for (int x = min_x_i; x < max_x_i; ++x) {
+			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
+				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
+					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
+			target.pixels[dstPos] = color;
+		}
+	}
+#endif // ! ALPHA_BLEND_DISABLED
+
+	
 }
 
 void paint_triangle(
@@ -260,6 +275,7 @@ void paint_triangle(
 	const ImVec4 c1 = color_convert_u32_to_float4(v1.col);
 	const ImVec4 c2 = color_convert_u32_to_float4(v2.col);
 
+#ifndef  ALPHA_BLEND_DISABLED
 	// We often blend the same colors over and over again, so optimize for this (saves 10% total cpu):
 	uint32_t last_target_pixel = 0;
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, v0.col);
@@ -326,6 +342,65 @@ void paint_triangle(
 
 		bary_current_row += bary_dy;
 	}
+#else
+	for (int y = min_y_i; y <= max_y_i; ++y) {
+		auto bary = bary_current_row;
+
+		for (int x = min_x_i; x <= max_x_i; ++x) {
+			const auto w0 = bary.w0;
+			const auto w1 = bary.w1;
+			const auto w2 = bary.w2;
+			bary += bary_dx;
+
+			const float kEps = 1e-4f;
+			if (w0 < -kEps || w1 < -kEps || w2 < -kEps) { continue; } // Outside triangle
+			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
+				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
+					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
+			uint32_t& target_pixel = target.pixels[dstPos];
+
+			if (has_uniform_color && !texture) {
+				stats->uniform_triangle_pixels += 1;
+				target_pixel = v0.col;
+				continue;
+			}
+
+			ImVec4 src_color;
+
+			if (has_uniform_color) {
+				src_color = color_convert_u32_to_float4(v0.col);
+			}
+			else {
+				stats->gradient_triangle_pixels += 1;
+				src_color = w0 * c0 + w1 * c1 + w2 * c2;
+			}
+
+			if (texture) {
+				stats->textured_triangle_pixels += 1;
+				const ImVec2 uv = w0 * v0.uv + w1 * v1.uv + w2 * v2.uv;
+				const int tx = uv.x * (texture->width - 1.0f) + 0.5f;
+				const int ty = uv.y * (texture->height - 1.0f) + 0.5f;
+				assert(0 <= tx && tx < texture->width);
+				assert(0 <= ty && ty < texture->height);
+				const uint8_t texel = texture->pixels[ty * texture->width + tx];
+				src_color.w *= texel / 255.0f;
+			}
+
+			if (src_color.w <= 0.0f) { continue; } // Transparent.
+			if (src_color.w >= 1.0f) {
+				// Opaque, no blending needed:
+				target_pixel = color_convert_float4_to_u32(src_color);
+				continue;
+			}
+
+			ImVec4 target_color = color_convert_u32_to_float4(target_pixel);
+			const auto blended_color = src_color.w * src_color + (1.0f - src_color.w) * target_color;
+			target_pixel = color_convert_float4_to_u32(blended_color);
+		}
+
+		bary_current_row += bary_dy;
+	}
+#endif
 }
 
 void paint_draw_cmd(

@@ -7,18 +7,42 @@ namespace Entry
 {
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define CONSOLE_SCREEN SCREEN_NULL
 
     Application* Application::s_Instance = nullptr;
 
     Application::Application()
     {
+        int logScreen = SCREEN_TOP;
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
+        ET_CORE_ASSERT(logScreen > 1 && logScreen < -1, "Improper screen selected for console.");
 
-        WindowProps topProps("Bottom", 320, 240, SCREEN_BOTTOM);
-        m_Window = std::unique_ptr<Window>(Window::Create(topProps));
-        m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        if (logScreen == SCREEN_NULL) 
+        {
+            WindowProps topProps("Top", 400, 240, SCREEN_TOP);
+            std::unique_ptr<Window>(Window::Create(topProps));
+
+            WindowProps bottomProps("Bottom", 320, 240, SCREEN_BOTTOM);
+            m_Window = std::unique_ptr<Window>(Window::Create(bottomProps));
+            m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+        } else {
+            Entry::Log::Init(logScreen);
+            
+            ET_CORE_WARN("Initialized Log!");
+            ET_INFO("Hello!");
+
+            uint8_t otherScreen = logScreen ^ 1;
+            int width = otherScreen == SCREEN_TOP ? 400 : 320;
+            std::string name = otherScreen == SCREEN_TOP ? "Top" : "Bottom";
+
+            WindowProps props(name, width, 240, otherScreen);
+            m_Window = std::unique_ptr<Window>(Window::Create(props));
+            m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        }
     }
+
 
     Application::~Application()
     {
@@ -57,9 +81,6 @@ namespace Entry
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
-
-            //touchPosition pos = Input::GetTouchPos();
-            //ET_CORE_TRACE("{0},{1}", pos.px, pos.py);
 
             m_Window->OnUpdate();
 
