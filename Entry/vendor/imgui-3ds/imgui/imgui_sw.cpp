@@ -9,8 +9,11 @@
 #include <vector>
 
 #include "imgui.h"
-
-#define ALPHA_BLEND_DISABLED
+<<<<<<< Updated upstream
+#include "imgui_internal.h"
+=======
+#include "citro2d.h"
+>>>>>>> Stashed changes
 
 namespace imgui_sw {
 namespace {
@@ -34,7 +37,6 @@ struct Texture
 
 struct PaintTarget
 {
-	uint32_t* pixels;
 	int       width;
 	int       height;
 	ImVec2    scale; // Multiply ImGui (point) coordinates with this to get pixel coordinates.
@@ -94,7 +96,7 @@ ImVec4 operator+(const ImVec4& a, const ImVec4& b)
 
 // ----------------------------------------------------------------------------
 // Copies of functions in ImGui, inlined for speed:
-static inline int ImLerp(int a, int b, float t) { return (int)(a + (b - a) * t); }
+#define IM_F32_TO_INT8_SAT(_VAL)        ((int)(ImSaturate(_VAL) * 255.0f + 0.5f))               // Saturated, always output 0..255
 
 static inline ImU32 alpha_blend_colors(ImU32 col_a, ImU32 col_b)
 {
@@ -118,10 +120,10 @@ ImVec4 color_convert_u32_to_float4(ImU32 in)
 ImU32 color_convert_float4_to_u32(const ImVec4& in)
 {
 	ImU32 out;
-	out  = uint32_t(in.x * 255.0f + 0.5f) << IM_COL32_R_SHIFT;
-	out |= uint32_t(in.y * 255.0f + 0.5f) << IM_COL32_G_SHIFT;
-	out |= uint32_t(in.z * 255.0f + 0.5f) << IM_COL32_B_SHIFT;
-	out |= uint32_t(in.w * 255.0f + 0.5f) << IM_COL32_A_SHIFT;
+	out = ((ImU32)IM_F32_TO_INT8_SAT(in.x)) << IM_COL32_R_SHIFT;
+	out |= ((ImU32)IM_F32_TO_INT8_SAT(in.y)) << IM_COL32_G_SHIFT;
+	out |= ((ImU32)IM_F32_TO_INT8_SAT(in.z)) << IM_COL32_B_SHIFT;
+	out |= ((ImU32)IM_F32_TO_INT8_SAT(in.w)) << IM_COL32_A_SHIFT;
 	return out;
 }
 
@@ -148,7 +150,7 @@ void paint_uniform_rectangle(
 	const PaintTarget& target,
 	const ImVec2&      min_f,
 	const ImVec2&      max_f,
-	const ImU32&    color)
+	const uint32_t&    color)
 {
 	// Integer bounding box [min, max):
 	int min_x_i = static_cast<int>(target.scale.x * min_f.x + 0.5f);
@@ -162,17 +164,15 @@ void paint_uniform_rectangle(
 	max_x_i = std::min(max_x_i, target.width);
 	max_y_i = std::min(max_y_i, target.height);
 
-#ifndef  ALPHA_BLEND_DISABLED
+<<<<<<< Updated upstream
 	// We often blend the same colors over and over again, so optimize for this (saves 25% total cpu):
 	uint32_t last_target_pixel = target.pixels[min_y_i * target.width + min_x_i];
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, color);
 
 	for (int y = min_y_i; y < max_y_i; ++y) {
 		for (int x = min_x_i; x < max_x_i; ++x) {
-			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
-				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
-					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-			uint32_t& target_pixel = target.pixels[dstPos];
+			uint32_t& target_pixel = target.pixels[y * target.width + x];
+
 			if (target_pixel == last_target_pixel) {
 				target_pixel = last_output;
 				continue;
@@ -180,20 +180,38 @@ void paint_uniform_rectangle(
 			last_target_pixel = target_pixel;
 			target_pixel = alpha_blend_colors(target_pixel, color);
 			last_output = target_pixel;
+
 		}
 	}
-#else
+}
+
+void paint_uniform_rectangle_noblend(
+	const PaintTarget & target,
+	const ImVec2 & min_f,
+	const ImVec2 & max_f,
+	const uint32_t & color)
+{
+	// Integer bounding box [min, max):
+	int min_x_i = static_cast<int>(target.scale.x * min_f.x + 0.5f);
+	int min_y_i = static_cast<int>(target.scale.y * min_f.y + 0.5f);
+	int max_x_i = static_cast<int>(target.scale.x * max_f.x + 0.5f);
+	int max_y_i = static_cast<int>(target.scale.y * max_f.y + 0.5f);
+
+	// Clamp to render target:
+	min_x_i = std::max(min_x_i, 0);
+	min_y_i = std::max(min_y_i, 0);
+	max_x_i = std::min(max_x_i, target.width);
+	max_y_i = std::min(max_y_i, target.height);
+
 	for (int y = min_y_i; y < max_y_i; ++y) {
 		for (int x = min_x_i; x < max_x_i; ++x) {
-			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
-				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
-					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-			target.pixels[dstPos] = color;
+			uint32_t& target_pixel = target.pixels[y * target.width + x];
+			target_pixel = color;
 		}
 	}
-#endif // ! ALPHA_BLEND_DISABLED
-
-	
+=======
+	C2D_DrawRectangle(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i, color, color, color, color);
+>>>>>>> Stashed changes
 }
 
 void paint_triangle(
@@ -275,11 +293,13 @@ void paint_triangle(
 	const ImVec4 c1 = color_convert_u32_to_float4(v1.col);
 	const ImVec4 c2 = color_convert_u32_to_float4(v2.col);
 
-#ifndef  ALPHA_BLEND_DISABLED
+<<<<<<< Updated upstream
 	// We often blend the same colors over and over again, so optimize for this (saves 10% total cpu):
 	uint32_t last_target_pixel = 0;
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, v0.col);
 
+=======
+>>>>>>> Stashed changes
 	for (int y = min_y_i; y <= max_y_i; ++y) {
 		auto bary = bary_current_row;
 
@@ -291,10 +311,9 @@ void paint_triangle(
 
 			const float kEps = 1e-4f;
 			if (w0 < -kEps || w1 < -kEps || w2 < -kEps) { continue; } // Outside triangle
-			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
-				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
-					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-			uint32_t& target_pixel = target.pixels[dstPos];
+<<<<<<< Updated upstream
+
+			uint32_t& target_pixel = target.pixels[y * target.width + x];
 
 			if (has_uniform_color && !texture) {
 				stats->uniform_triangle_pixels += 1;
@@ -342,7 +361,87 @@ void paint_triangle(
 
 		bary_current_row += bary_dy;
 	}
-#else
+}
+
+void paint_triangle_noblend(
+	const PaintTarget& target,
+	const Texture* texture,
+	const ImVec4& clip_rect,
+	const ImDrawVert& v0,
+	const ImDrawVert& v1,
+	const ImDrawVert& v2,
+	Stats* stats)
+{
+	const ImVec2 p0 = ImVec2(target.scale.x * v0.pos.x, target.scale.y * v0.pos.y);
+	const ImVec2 p1 = ImVec2(target.scale.x * v1.pos.x, target.scale.y * v1.pos.y);
+	const ImVec2 p2 = ImVec2(target.scale.x * v2.pos.x, target.scale.y * v2.pos.y);
+
+	const auto rect_area = barycentric(p0, p1, p2); // Can be negative
+	if (rect_area == 0.0f) { return; }
+
+	// Find bounding box:
+	float min_x_f = min3(p0.x, p1.x, p2.x);
+	float min_y_f = min3(p0.y, p1.y, p2.y);
+	float max_x_f = max3(p0.x, p1.x, p2.x);
+	float max_y_f = max3(p0.y, p1.y, p2.y);
+
+	// Clamp to clip_rect:
+	min_x_f = std::max(min_x_f, target.scale.x * clip_rect.x);
+	min_y_f = std::max(min_y_f, target.scale.y * clip_rect.y);
+	max_x_f = std::min(max_x_f, target.scale.x * clip_rect.z);
+	max_y_f = std::min(max_y_f, target.scale.y * clip_rect.w);
+
+	// Inclusive [min, max] integer bounding box:
+	int min_x_i = static_cast<int>(min_x_f + 0.5f);
+	int min_y_i = static_cast<int>(min_y_f + 0.5f);
+	int max_x_i = static_cast<int>(max_x_f + 0.5f);
+	int max_y_i = static_cast<int>(max_y_f + 0.5f);
+
+	// Clamp to render target:
+	min_x_i = std::max(min_x_i, 0);
+	min_y_i = std::max(min_y_i, 0);
+	max_x_i = std::min(max_x_i, target.width - 1);
+	max_y_i = std::min(max_y_i, target.height - 1);
+
+	// ------------------------------------------------------------------------
+	// Set up interpolation of barycentric coordinates:
+
+	const auto topleft = ImVec2(min_x_i + 0.5f * target.scale.x,
+		min_y_i + 0.5f * target.scale.y);
+	const auto dx = ImVec2(1, 0);
+	const auto dy = ImVec2(0, 1);
+
+	const auto w0_topleft = barycentric(p1, p2, topleft);
+	const auto w1_topleft = barycentric(p2, p0, topleft);
+	const auto w2_topleft = barycentric(p0, p1, topleft);
+
+	const auto w0_dx = barycentric(p1, p2, topleft + dx) - w0_topleft;
+	const auto w1_dx = barycentric(p2, p0, topleft + dx) - w1_topleft;
+	const auto w2_dx = barycentric(p0, p1, topleft + dx) - w2_topleft;
+
+	const auto w0_dy = barycentric(p1, p2, topleft + dy) - w0_topleft;
+	const auto w1_dy = barycentric(p2, p0, topleft + dy) - w1_topleft;
+	const auto w2_dy = barycentric(p0, p1, topleft + dy) - w2_topleft;
+
+	const Barycentric bary_0{ 1, 0, 0 };
+	const Barycentric bary_1{ 0, 1, 0 };
+	const Barycentric bary_2{ 0, 0, 1 };
+
+	const auto inv_area = 1 / rect_area;
+	const Barycentric bary_topleft = inv_area * (w0_topleft * bary_0 + w1_topleft * bary_1 + w2_topleft * bary_2);
+	const Barycentric bary_dx = inv_area * (w0_dx * bary_0 + w1_dx * bary_1 + w2_dx * bary_2);
+	const Barycentric bary_dy = inv_area * (w0_dy * bary_0 + w1_dy * bary_1 + w2_dy * bary_2);
+
+	Barycentric bary_current_row = bary_topleft;
+
+	// ------------------------------------------------------------------------
+
+	const bool has_uniform_color = (v0.col == v1.col && v0.col == v2.col);
+
+	const ImVec4 c0 = color_convert_u32_to_float4(v0.col);
+	const ImVec4 c1 = color_convert_u32_to_float4(v1.col);
+	const ImVec4 c2 = color_convert_u32_to_float4(v2.col);
+
 	for (int y = min_y_i; y <= max_y_i; ++y) {
 		auto bary = bary_current_row;
 
@@ -354,14 +453,18 @@ void paint_triangle(
 
 			const float kEps = 1e-4f;
 			if (w0 < -kEps || w1 < -kEps || w2 < -kEps) { continue; } // Outside triangle
-			uint32_t dstPos = ((((y >> 3) * (512 >> 3) + (x >> 3)) << 6) +
-				((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) |
-					((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-			uint32_t& target_pixel = target.pixels[dstPos];
+
+			uint32_t& target_pixel = target.pixels[y * target.width + x];
 
 			if (has_uniform_color && !texture) {
 				stats->uniform_triangle_pixels += 1;
 				target_pixel = v0.col;
+=======
+
+			if (has_uniform_color && !texture) {
+				stats->uniform_triangle_pixels += 1;
+				C2D_DrawLine(x, y, v0.col, x + 0.5f, y + 0.5f, v0.col, 1.0f, 0.0f);
+>>>>>>> Stashed changes
 				continue;
 			}
 
@@ -389,18 +492,15 @@ void paint_triangle(
 			if (src_color.w <= 0.0f) { continue; } // Transparent.
 			if (src_color.w >= 1.0f) {
 				// Opaque, no blending needed:
-				target_pixel = color_convert_float4_to_u32(src_color);
+				C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y + 0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
 				continue;
 			}
+			C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y+0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
 
-			ImVec4 target_color = color_convert_u32_to_float4(target_pixel);
-			const auto blended_color = src_color.w * src_color + (1.0f - src_color.w) * target_color;
-			target_pixel = color_convert_float4_to_u32(blended_color);
 		}
 
 		bary_current_row += bary_dy;
 	}
-#endif
 }
 
 void paint_draw_cmd(
@@ -474,7 +574,8 @@ void paint_draw_cmd(
 				const auto num_pixels = (max.x - min.x) * (max.y - min.y) * target.scale.x * target.scale.y;
 
 				if (!has_texture && has_uniform_color) {
-					paint_uniform_rectangle(target, min, max, v0.col);
+					if (!options.alpha_blend) paint_uniform_rectangle_noblend(target, min, max, v0.col);
+					else paint_uniform_rectangle(target, min, max, v0.col);
 					stats->uniform_rectangle_pixels += num_pixels;
 					i += 6;
 					continue;
@@ -489,7 +590,8 @@ void paint_draw_cmd(
 		}
 
 		const bool has_texture = (v0.uv != white_uv || v1.uv != white_uv || v2.uv != white_uv);
-		paint_triangle(target, has_texture ? texture : nullptr, pcmd.ClipRect, v0, v1, v2, stats);
+		if (!options.alpha_blend) paint_triangle_noblend(target, has_texture ? texture : nullptr, pcmd.ClipRect, v0, v1, v2, stats);
+		else paint_triangle(target, has_texture ? texture : nullptr, pcmd.ClipRect, v0, v1, v2, stats);
 		i += 3;
 	}
 }
@@ -537,12 +639,12 @@ void bind_imgui_painting()
 
 static Stats s_stats; // TODO: pass as an argument?
 
-void paint_imgui(uint32_t* pixels, int width_pixels, int height_pixels, const SwOptions& options)
+void paint_imgui(int width_pixels, int height_pixels, const SwOptions& options)
 {
 	const float width_points = ImGui::GetIO().DisplaySize.x;
 	const float height_points = ImGui::GetIO().DisplaySize.y;
 	const ImVec2 scale{width_pixels / width_points, height_pixels / height_points};
-	PaintTarget target{pixels, width_pixels, height_pixels, scale};
+	PaintTarget target{width_pixels, height_pixels, scale};
 	const ImDrawData* draw_data = ImGui::GetDrawData();
 
 	s_stats = Stats{};
@@ -563,6 +665,7 @@ bool show_options(SwOptions* io_options)
 	assert(io_options);
 	bool changed = false;
 	changed |= ImGui::Checkbox("optimize_rectangles", &io_options->optimize_rectangles);
+	changed |= ImGui::Checkbox("alpha_blend", &io_options->alpha_blend);
 	return changed;
 }
 
