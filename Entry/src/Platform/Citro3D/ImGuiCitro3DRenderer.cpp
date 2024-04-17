@@ -13,10 +13,6 @@ using namespace Entry;
 
 struct ImGui_ImplC3D_Data {
 	C3D_RenderTarget*			m_RenderTarget;
-	C3D_Tex						m_tex;
-	Tex3DS_SubTexture			m_subt3x;// = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-	uint32_t*					m_PixelBuffer;
-	C2D_Image					m_Image;
 	uint16_t					m_Width, m_Height;
 	imgui_sw::SwOptions			sw_options;
 
@@ -40,6 +36,7 @@ bool ImGui_ImplC3D_Init()
 	ImGui_ImplC3D_Data* bd = IM_NEW(ImGui_ImplC3D_Data)();
 	io.BackendRendererUserData = (void*)bd;
 
+<<<<<<< Updated upstream
 	// Setup Citro2D, textures and images
 	bd->m_subt3x = { 512, 256, 0.0f, 1.0f, 1.0f, 0.0f };
 	bd->m_Image = (C2D_Image){ &(bd->m_tex), &(bd->m_subt3x) };
@@ -47,6 +44,8 @@ bool ImGui_ImplC3D_Init()
 	C3D_TexSetFilter(&bd->m_tex, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetWrap(&bd->m_tex, GPU_REPEAT, GPU_REPEAT);
 
+=======
+>>>>>>> Stashed changes
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 
@@ -56,7 +55,6 @@ bool ImGui_ImplC3D_Init()
 	bd->m_Width = citroWindow->GetWidth();
 	bd->m_Height = citroWindow->GetHeight();
 
-	bd->m_PixelBuffer = (uint32_t*)malloc(bd->m_Width * bd->m_Height * sizeof(uint32_t));
 	memset(io.NavInputs, 0, sizeof(io.NavInputs));
 	
 	imgui_sw::bind_imgui_painting();
@@ -83,6 +81,7 @@ bool ImGui_ImplC3D_NewFrame()
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 	std::fill_n(bd->m_PixelBuffer, bd->m_Width * bd->m_Height, 0x00000000u);
 
+<<<<<<< Updated upstream
 	imgui_sw::paint_imgui(bd->m_PixelBuffer, bd->m_Width, bd->m_Height, bd->sw_options);
 
 	for (u32 x = 0; x < bd->m_Width; x++)
@@ -95,6 +94,9 @@ bool ImGui_ImplC3D_NewFrame()
 		}
 	}
 
+=======
+	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
+>>>>>>> Stashed changes
 	return true;
 }
 
@@ -102,5 +104,5 @@ void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
 	C2D_SceneBegin(bd->m_RenderTarget);
-	C2D_DrawImageAt(bd->m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+	//C2D_DrawImageAt(bd->m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 }

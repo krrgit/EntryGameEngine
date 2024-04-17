@@ -9,7 +9,11 @@
 #include <vector>
 
 #include "imgui.h"
+<<<<<<< Updated upstream
 #include "imgui_internal.h"
+=======
+#include "citro2d.h"
+>>>>>>> Stashed changes
 
 namespace imgui_sw {
 namespace {
@@ -33,7 +37,6 @@ struct Texture
 
 struct PaintTarget
 {
-	uint32_t* pixels;
 	int       width;
 	int       height;
 	ImVec2    scale; // Multiply ImGui (point) coordinates with this to get pixel coordinates.
@@ -161,6 +164,7 @@ void paint_uniform_rectangle(
 	max_x_i = std::min(max_x_i, target.width);
 	max_y_i = std::min(max_y_i, target.height);
 
+<<<<<<< Updated upstream
 	// We often blend the same colors over and over again, so optimize for this (saves 25% total cpu):
 	uint32_t last_target_pixel = target.pixels[min_y_i * target.width + min_x_i];
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, color);
@@ -205,6 +209,9 @@ void paint_uniform_rectangle_noblend(
 			target_pixel = color;
 		}
 	}
+=======
+	C2D_DrawRectangle(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i, color, color, color, color);
+>>>>>>> Stashed changes
 }
 
 void paint_triangle(
@@ -286,10 +293,13 @@ void paint_triangle(
 	const ImVec4 c1 = color_convert_u32_to_float4(v1.col);
 	const ImVec4 c2 = color_convert_u32_to_float4(v2.col);
 
+<<<<<<< Updated upstream
 	// We often blend the same colors over and over again, so optimize for this (saves 10% total cpu):
 	uint32_t last_target_pixel = 0;
 	uint32_t last_output = alpha_blend_colors(last_target_pixel, v0.col);
 
+=======
+>>>>>>> Stashed changes
 	for (int y = min_y_i; y <= max_y_i; ++y) {
 		auto bary = bary_current_row;
 
@@ -301,6 +311,7 @@ void paint_triangle(
 
 			const float kEps = 1e-4f;
 			if (w0 < -kEps || w1 < -kEps || w2 < -kEps) { continue; } // Outside triangle
+<<<<<<< Updated upstream
 
 			uint32_t& target_pixel = target.pixels[y * target.width + x];
 
@@ -448,6 +459,12 @@ void paint_triangle_noblend(
 			if (has_uniform_color && !texture) {
 				stats->uniform_triangle_pixels += 1;
 				target_pixel = v0.col;
+=======
+
+			if (has_uniform_color && !texture) {
+				stats->uniform_triangle_pixels += 1;
+				C2D_DrawLine(x, y, v0.col, x + 0.5f, y + 0.5f, v0.col, 1.0f, 0.0f);
+>>>>>>> Stashed changes
 				continue;
 			}
 
@@ -475,13 +492,11 @@ void paint_triangle_noblend(
 			if (src_color.w <= 0.0f) { continue; } // Transparent.
 			if (src_color.w >= 1.0f) {
 				// Opaque, no blending needed:
-				target_pixel = color_convert_float4_to_u32(src_color);
+				C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y + 0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
 				continue;
 			}
+			C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y+0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
 
-			ImVec4 target_color = color_convert_u32_to_float4(target_pixel);
-			const auto blended_color = src_color.w * src_color + (1.0f - src_color.w) * target_color;
-			target_pixel = color_convert_float4_to_u32(blended_color);
 		}
 
 		bary_current_row += bary_dy;
@@ -624,12 +639,12 @@ void bind_imgui_painting()
 
 static Stats s_stats; // TODO: pass as an argument?
 
-void paint_imgui(uint32_t* pixels, int width_pixels, int height_pixels, const SwOptions& options)
+void paint_imgui(int width_pixels, int height_pixels, const SwOptions& options)
 {
 	const float width_points = ImGui::GetIO().DisplaySize.x;
 	const float height_points = ImGui::GetIO().DisplaySize.y;
 	const ImVec2 scale{width_pixels / width_points, height_pixels / height_points};
-	PaintTarget target{pixels, width_pixels, height_pixels, scale};
+	PaintTarget target{width_pixels, height_pixels, scale};
 	const ImDrawData* draw_data = ImGui::GetDrawData();
 
 	s_stats = Stats{};

@@ -43,8 +43,9 @@ namespace Entry
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width?
-		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+		//m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		m_RenderTarget = C2D_CreateScreenTarget(m_Data.Screen, GFX_LEFT);
+		//C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 		
 		if (m_Data.Screen == GFX_TOP && m_Data.Stereo3D)
 		{
