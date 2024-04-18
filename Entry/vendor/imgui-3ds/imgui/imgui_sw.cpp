@@ -26,7 +26,7 @@ namespace imgui_sw {
 
 		struct Texture
 		{
-			const uint8_t* pixels; // 8-bit.
+			uint8_t* pixels; // 8-bit.
 			int            width;
 			int            height;
 		};
@@ -160,7 +160,7 @@ namespace imgui_sw {
 			max_x_i = std::min(max_x_i, target.width);
 			max_y_i = std::min(max_y_i, target.height);
 
-			C2D_DrawRectangle(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i, color, color, color, color);
+			C2D_DrawRectSolid(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i, color);
 		}
 
 		void paint_triangle(
@@ -256,7 +256,8 @@ namespace imgui_sw {
 
 					if (has_uniform_color && !texture) {
 						stats->uniform_triangle_pixels += 1;
-						C2D_DrawLine(x, y, v0.col, x + 0.5f, y + 0.5f, v0.col, 1.0f, 0.0f);
+						C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, v0.col);
+						//C2D_DrawLine(x, y, v0.col, x + 0.5f, y + 0.5f, v0.col, 1.0f, 0.0f);
 						continue;
 					}
 
@@ -277,6 +278,7 @@ namespace imgui_sw {
 						const int ty = uv.y * (texture->height - 1.0f) + 0.5f;
 						assert(0 <= tx && tx < texture->width);
 						assert(0 <= ty && ty < texture->height);
+
 						const uint8_t texel = texture->pixels[ty * texture->width + tx];
 						src_color.w *= texel / 255.0f;
 					}
@@ -284,11 +286,12 @@ namespace imgui_sw {
 					if (src_color.w <= 0.0f) { continue; } // Transparent.
 					if (src_color.w >= 1.0f) {
 						// Opaque, no blending needed:
-						C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y + 0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
+						uint32_t new_col = color_convert_float4_to_u32(src_color);
+						C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, new_col);
 						continue;
 					}
-					C2D_DrawLine(x, y, color_convert_float4_to_u32(src_color), x + 0.5f, y + 0.5f, color_convert_float4_to_u32(src_color), 1.0f, 0.0f);
-
+					uint32_t new_col = color_convert_float4_to_u32(src_color);
+					C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, new_col);
 				}
 
 				bary_current_row += bary_dy;

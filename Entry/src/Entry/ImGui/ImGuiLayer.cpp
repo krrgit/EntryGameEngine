@@ -48,6 +48,7 @@ namespace Entry {
 		io.MouseDrawCursor = true;
 		
 		
+		
 		ImGui_ImplC3D_Init();
 	}
 
@@ -62,6 +63,9 @@ namespace Entry {
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		// Fullscreen
+		ImGui::SetNextWindowSize(io.DisplaySize);
+		ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 		time_t f_time = time(NULL);
 		io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
