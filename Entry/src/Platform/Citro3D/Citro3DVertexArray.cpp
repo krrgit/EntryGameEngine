@@ -26,15 +26,11 @@ namespace Entry
     }
 
     Citro3DVertexArray::Citro3DVertexArray() {
-        attrInfo = C3D_GetAttrInfo();
-        AttrInfo_Init(attrInfo);
+        AttrInfo_Init(&m_attrInfo);
     }
 
     void Citro3DVertexArray::Bind() const {
-        C3D_BufInfo* bufInfo = C3D_GetBufInfo();
-        BufInfo_Init(bufInfo);
-
-        m_VertexBuffers.front()->Bind(bufInfo);
+        m_VertexBuffers.front()->Bind();
     }
 
     void Citro3DVertexArray::Unbind() const
@@ -51,7 +47,7 @@ namespace Entry
         int32_t index = 0;
         const auto& layout = vertexBuffer->GetLayout();
         for (const auto& element : layout) {
-            AttrInfo_AddLoader(attrInfo, 
+            AttrInfo_AddLoader(&m_attrInfo, 
                 index, 
                 ShaderDataTypeToCitro3DDataType(element.Type), 
                 element.GetComponentCount());

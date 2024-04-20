@@ -4,14 +4,10 @@
 .fvec projection[4]
 
 ; Constants
-.constf myconst(0.0, 1.0, 0.5, 2.0)
-.constf myconst2(-1.0, 0.0, 0.0, 0.0)
-.constf screeninv(0.0025, 0.0042, 0.0, 1.0)
-
+.constf myconst(0.0, 1.0, -1.0, 0.1)
+.constf myconst2(0.3, 0.0, 0.0, 0.0)
 .alias  zeros myconst.xxxx ; Vector full of zeros
 .alias  ones  myconst.yyyy ; Vector full of ones
-.alias  halfs myconst.zzzz
-
 
 ; Outputs
 .out outpos position
@@ -26,9 +22,6 @@
 	mov r0.xyz, inpos
 	mov r0.w,   ones
 
-	; shift right and up
-	; add r0, screenmin, r0 
-
 	; outpos = projectionMatrix * inpos
 	dp4 outpos.x, projection[0], r0
 	dp4 outpos.y, projection[1], r0
@@ -37,12 +30,6 @@
 
 	; outclr = inclr
 	mov outclr, inclr
-
-	; get the color from the position
-	; mul r1, screeninv, outpos
-	; mov r1.z, halfs
-	; mov outclr, r1
-
 
 	; We're finished
 	end

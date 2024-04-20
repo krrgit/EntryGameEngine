@@ -109,7 +109,7 @@ namespace Entry
         void DebugPrint() const {
             for(auto& element: m_Elements) 
             {
-                ET_CORE_ERROR("Name: %s\n Type: %u\n Size: %u\n Offset:%u\n\n",
+                ET_CORE_INFO("Name:{0}\n Type:{1}\n Size:{2}\n Offset:{3}\n\n",
                     element.Name.data(), (unsigned int)element.Type,
                     (unsigned int)element.Size, (unsigned int)element.Offset);
             }
@@ -153,7 +153,8 @@ namespace Entry
     public:
         virtual ~VertexBuffer() {}
 
-        virtual void Bind(C3D_BufInfo* bufInfo) const = 0;
+        //virtual void Bind() const = 0;
+        virtual void Bind() = 0;
         virtual void Unbind() const = 0;
 
         virtual const BufferLayout& GetLayout() const = 0;

@@ -22,6 +22,6 @@ namespace Entry
     private:
         std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
         std::shared_ptr<IndexBuffer> m_IndexBuffer;
-        C3D_AttrInfo* attrInfo;
+        C3D_AttrInfo m_attrInfo;
     };
 }

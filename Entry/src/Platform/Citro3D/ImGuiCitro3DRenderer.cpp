@@ -69,14 +69,15 @@ bool ImGui_ImplC3D_Shutdown()
 bool ImGui_ImplC3D_NewFrame()
 {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
-
-	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
+	//C2D_SceneTarget(bd->m_RenderTarget);
+	//C2D_Prepare();
 	return true;
 }
 
 void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
-	C2D_SceneBegin(bd->m_RenderTarget);
+	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
+
 	//C2D_DrawImageAt(bd->m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 }

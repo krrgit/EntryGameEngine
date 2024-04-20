@@ -43,15 +43,8 @@ namespace Entry
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width?
-		//m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		m_RenderTarget = C2D_CreateScreenTarget(m_Data.Screen, GFX_LEFT);
-		//C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
-		
-		if (m_Data.Screen == GFX_TOP && m_Data.Stereo3D)
-		{
-			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-			C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
-		}
+		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 	}
 
 	void Citro3DWindow::Shutdown()
@@ -71,6 +64,7 @@ namespace Entry
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
 		C3D_FrameDrawOn(m_RenderTarget);
+		C2D_SceneTarget(m_RenderTarget);
 	}
 
 	void Citro3DWindow::FrameEnd() 
