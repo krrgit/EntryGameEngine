@@ -78,6 +78,4 @@ void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
 	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
-
-	//C2D_DrawImageAt(bd->m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 }

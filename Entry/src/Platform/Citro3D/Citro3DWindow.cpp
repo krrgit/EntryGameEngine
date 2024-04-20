@@ -6,7 +6,8 @@
 #include "Entry/Events/KeyEvent.h"
 #include "Entry/Events/CirclePadEvent.h"
 
-#define CLEAR_COLOR 0x68B0D8FF
+//#define CLEAR_COLOR 0x68B0D8FF
+#define CLEAR_COLOR 0x191919FF
 
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
@@ -42,7 +43,8 @@ namespace Entry
 
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		// C3D flips height and width?
+		if (m_Data.Screen)
+		// C3D flips height and width (screen draws left to right)
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 	}

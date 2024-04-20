@@ -9,6 +9,7 @@
 
 #include "Buffer.h"
 #include "VertexArray.h"
+#include "Entry/Renderer/Shader.h"
 
 namespace Entry {
 
@@ -45,6 +46,8 @@ namespace Entry {
 
         C3D_AttrInfo m_AttrInfo;
         C3D_BufInfo m_BufInfo;
+
+        std::unique_ptr<Shader> m_Shader;
 
     private:
         static Application* s_Instance;

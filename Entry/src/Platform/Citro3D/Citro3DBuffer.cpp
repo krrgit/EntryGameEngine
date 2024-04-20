@@ -11,6 +11,7 @@ namespace Entry
     Citro3DVertexBuffer::Citro3DVertexBuffer(float *vertices, uint32_t size)
     {
         // Size is for all vertices, stride is per vertex
+        // Allocate on VRAM
         m_DataPointer = linearAlloc(size);
 	    memcpy(m_DataPointer, vertices, size);
 
@@ -31,7 +32,7 @@ namespace Entry
     }
     void Citro3DVertexBuffer::Unbind() const
     {
-        // not implemented in Citro3D
+        C3D_SetBufInfo(0);
     }
 
     ////////////////////////////////////////////////////////////////////////

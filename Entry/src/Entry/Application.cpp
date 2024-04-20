@@ -3,7 +3,7 @@
 
 #include "Input.h"
 
-#include "vshader_shbin.h"
+#include "vshader00_shbin.h"
 
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
@@ -53,10 +53,12 @@ namespace Entry
         }
 
         // Load the vertex shader, create a shader program and bind it
-        vshader_dvlb = DVLB_ParseFile((u32*)vshader_shbin, vshader_shbin_size);
+        vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
         shaderProgramInit(&program);
         shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
         C3D_BindProgram(&program);
+
+        m_Shader.reset(new Shader(0));
 
         // Get the location of the uniforms
         uLoc_projection = shaderInstanceGetUniformLocation(program.vertexShader, "projection");
@@ -65,20 +67,9 @@ namespace Entry
         AttrInfo_Init(&m_AttrInfo);
         AttrInfo_AddLoader(&m_AttrInfo, 0, GPU_FLOAT, 3); // v0=position
         AttrInfo_AddLoader(&m_AttrInfo, 1, GPU_FLOAT, 4); // v0=position
-        //AttrInfo_AddFixed(&m_AttrInfo, 1); // v1=color
-
-        // Set the fixed attribute (color) to solid white
-        //C3D_FixedAttribSet(1, 1.0, 1.0, 1.0, 1.0);
 
         // Compute the projection matrix
         Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
-
-        vertex vertex_list[] =
-        {
-            { 200.0f, 200.0f, 0.5f },
-            { 100.0f, 40.0f, 0.5f },
-            { 300.0f, 40.0f, 0.5f },
-        };
 
         float vertices[] = {
             200.0f, 200.0f, 0.5f,0.8f, 0.8f, 0.2f, 1.0f,
@@ -140,7 +131,8 @@ namespace Entry
         while (aptMainLoop() && m_Running) {
             m_Window->FrameBegin();
 
-            C3D_BindProgram(&program);
+            //C3D_BindProgram(&program);
+            m_Shader->Bind();
             C3D_SetAttrInfo(&m_AttrInfo);
             C3D_SetBufInfo(&m_BufInfo);
             // Update the uniforms
