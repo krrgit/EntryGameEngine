@@ -10,6 +10,8 @@ namespace Entry {
 
 		void Bind();
 		void Unbind() const;
+
+		int8_t GetUniformLocation(const char* name);
 	private:
 		DVLB_s* vshader_dvlb;
 		shaderProgram_s program;

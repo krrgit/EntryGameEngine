@@ -7,9 +7,9 @@
 #include "Entry/Events/Event.h"
 #include "Entry/Events/ApplicationEvent.h"
 
-#include "Buffer.h"
 #include "VertexArray.h"
 #include "Entry/Renderer/Shader.h"
+#include "Entry/Renderer/Buffer.h"
 
 namespace Entry {
 
@@ -32,23 +32,17 @@ namespace Entry {
         bool m_Running = true;
         LayerStack m_LayerStack;
 
-        std::shared_ptr<VertexArray> m_VertexArray;
-        std::shared_ptr<VertexArray> m_SquareVA;
-
-        DVLB_s* vshader_dvlb;
-        shaderProgram_s program;
         int uLoc_projection;
         C3D_Mtx projection;
 
         void* vbo_data;
 
-        C3D_RenderTarget* target;
-
         C3D_AttrInfo m_AttrInfo;
         C3D_BufInfo m_BufInfo;
 
         std::unique_ptr<Shader> m_Shader;
-
+        std::unique_ptr <VertexBuffer> m_VertexBuffer;
+        std::unique_ptr <IndexBuffer> m_IndexBuffer;
     private:
         static Application* s_Instance;
     };

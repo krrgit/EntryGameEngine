@@ -3,8 +3,6 @@
 
 #include "Input.h"
 
-#include "vshader00_shbin.h"
-
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
 	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
@@ -52,21 +50,15 @@ namespace Entry
             m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
         }
 
-        // Load the vertex shader, create a shader program and bind it
-        vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
-        shaderProgramInit(&program);
-        shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
-        C3D_BindProgram(&program);
-
         m_Shader.reset(new Shader(0));
 
         // Get the location of the uniforms
-        uLoc_projection = shaderInstanceGetUniformLocation(program.vertexShader, "projection");
+        uLoc_projection = m_Shader->GetUniformLocation("projection");
 
         // Configure attributes for use with the vertex shader
         AttrInfo_Init(&m_AttrInfo);
         AttrInfo_AddLoader(&m_AttrInfo, 0, GPU_FLOAT, 3); // v0=position
-        AttrInfo_AddLoader(&m_AttrInfo, 1, GPU_FLOAT, 4); // v0=position
+        AttrInfo_AddLoader(&m_AttrInfo, 1, GPU_FLOAT, 4); // v1=color
 
         // Compute the projection matrix
         Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
@@ -76,14 +68,10 @@ namespace Entry
             100.0f, 40.0f, 0.5f, 0.8f, 0.2f, 0.8f, 1.0f,
             300.0f, 40.0f, 0.5f, 0.2f, 0.2f, 0.8f, 1.0f,
         };
+        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-        // Create the VBO (vertex buffer object)
-        vbo_data = linearAlloc(sizeof(vertices));
-        memcpy(vbo_data, vertices, sizeof(vertices));
-
-        // Configure buffers
-        BufInfo_Init(&m_BufInfo);
-        BufInfo_Add(&m_BufInfo, vbo_data, sizeof(float)*7, 2, 0x10);
+        uint16_t indices[] = { 0, 1, 2 };
+        m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -131,15 +119,17 @@ namespace Entry
         while (aptMainLoop() && m_Running) {
             m_Window->FrameBegin();
 
-            //C3D_BindProgram(&program);
+
             m_Shader->Bind();
             C3D_SetAttrInfo(&m_AttrInfo);
-            C3D_SetBufInfo(&m_BufInfo);
+            m_VertexBuffer->Bind();
+
             // Update the uniforms
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
 
             // Draw the VBO
-            C3D_DrawArrays(GPU_TRIANGLES, 0, 3);
+            //C3D_DrawArrays(GPU_TRIANGLES, 0, 3);
+            C3D_DrawElements(GPU_TRIANGLES, m_IndexBuffer->GetCount(), C3D_UNSIGNED_SHORT, m_IndexBuffer->GetDataPointer());
 
             C2D_Prepare();
 

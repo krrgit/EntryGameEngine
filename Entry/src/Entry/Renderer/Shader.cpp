@@ -43,4 +43,9 @@ void Shader::Unbind() const
     C3D_BindProgram(0);
 }
 
+int8_t Shader::GetUniformLocation(const char* name)
+{
+    return shaderInstanceGetUniformLocation(program.vertexShader, name);
+}
+
 }
