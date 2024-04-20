@@ -7,6 +7,7 @@ namespace Entry
     
     VertexBuffer* VertexBuffer::Create(float *vertices, uint32_t size)
     {
+
         switch(Renderer::GetAPI()) {
             case RendererAPI::None:     return nullptr;
             case RendererAPI::Citro3D:  return new Citro3DVertexBuffer(vertices, size);

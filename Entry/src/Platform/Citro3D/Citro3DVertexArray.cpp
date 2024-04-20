@@ -21,7 +21,7 @@ namespace Entry
                 break;
         }
 
-        printf("Unknown ShaderDataType!");
+        //ET_CORE_ERROR("Unknown ShaderDataType!");
         return GPU_BYTE;
     }
 
@@ -44,7 +44,7 @@ namespace Entry
     void Citro3DVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &vertexBuffer)
     {
         if (vertexBuffer->GetLayout().GetElements().size() == 0) {
-            printf("Vertex buffer has no layout!");
+            //ET_CORE_ERROR("Vertex buffer has no layout!");
         }
 
         // vertexBuffer->Bind(bufInfo);

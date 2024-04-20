@@ -39,7 +39,7 @@ namespace Entry
                 break;
         }
 
-        printf("Unknown ShaderDataType!");
+        //ET_CORE_ERROR("Unknown ShaderDataType!");
         return 0;
     }
 
@@ -76,7 +76,7 @@ namespace Entry
                     break;
             }
 
-            printf("Unknown ShaderDataType!");
+            //ET_CORE_ERROR("Unknown ShaderDataType!");
             return 0;
         }
     };
@@ -109,7 +109,7 @@ namespace Entry
         void DebugPrint() const {
             for(auto& element: m_Elements) 
             {
-                printf("Name: %s\n Type: %u\n Size: %u\n Offset:%u\n\n", 
+                ET_CORE_ERROR("Name: %s\n Type: %u\n Size: %u\n Offset:%u\n\n",
                     element.Name.data(), (unsigned int)element.Type,
                     (unsigned int)element.Size, (unsigned int)element.Offset);
             }

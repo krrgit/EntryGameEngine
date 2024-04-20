@@ -11,7 +11,6 @@ namespace Entry
     Citro3DVertexBuffer::Citro3DVertexBuffer(float *vertices, uint32_t size)
     {
         // Size is for all vertices, stride is per vertex
-
         m_DataPointer = linearAlloc(size);
 	    memcpy(m_DataPointer, vertices, size);
     }
@@ -24,8 +23,8 @@ namespace Entry
 
     void Citro3DVertexBuffer::Bind(C3D_BufInfo* bufInfo) const
     {
-        // printf("s: %d | ac: %d | perm: %d\n", m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
-        BufInfo_Add(bufInfo, m_DataPointer, m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
+        // ET_CORE_INFO("s: %d | ac: %d | perm: %d\n", m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
+        //BufInfo_Add(bufInfo, m_DataPointer, m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
     }
     void Citro3DVertexBuffer::Unbind() const
     {
