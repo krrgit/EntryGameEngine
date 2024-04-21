@@ -5,5 +5,7 @@
 #include "Renderer.h"
 
 namespace Entry {
+	class VertexArray {
 
+	};
 }

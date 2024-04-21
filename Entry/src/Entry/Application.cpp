@@ -11,6 +11,29 @@
 namespace Entry
 {
 
+    static GPU_FORMATS ShaderDataTypeToCitro3DDataType(ShaderDataType type)
+    {
+        switch (type) {
+        case ShaderDataType::Float:     return GPU_FLOAT;
+        case ShaderDataType::Float2:    return GPU_FLOAT;
+        case ShaderDataType::Float3:    return GPU_FLOAT;
+        case ShaderDataType::Float4:    return GPU_FLOAT;
+        case ShaderDataType::Mat3:      return GPU_FLOAT;
+        case ShaderDataType::Mat4:      return GPU_FLOAT;
+        case ShaderDataType::Int:       return GPU_SHORT;
+        case ShaderDataType::Int2:      return GPU_SHORT;
+        case ShaderDataType::Int3:      return GPU_SHORT;
+        case ShaderDataType::Int4:      return GPU_SHORT;
+        case ShaderDataType::Bool:      return GPU_BYTE;
+        default:
+            break;
+        }
+
+        //ET_CORE_ERROR("Unknown ShaderDataType!");
+        return GPU_BYTE;
+    }
+
+
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 #define CONSOLE_SCREEN SCREEN_NULL
 
@@ -55,20 +78,38 @@ namespace Entry
         // Get the location of the uniforms
         uLoc_projection = m_Shader->GetUniformLocation("projection");
 
-        // Configure attributes for use with the vertex shader
-        AttrInfo_Init(&m_AttrInfo);
-        AttrInfo_AddLoader(&m_AttrInfo, 0, GPU_FLOAT, 3); // v0=position
-        AttrInfo_AddLoader(&m_AttrInfo, 1, GPU_FLOAT, 4); // v1=color
 
         // Compute the projection matrix
         Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
-
+        
         float vertices[] = {
             200.0f, 200.0f, 0.5f,0.8f, 0.8f, 0.2f, 1.0f,
             100.0f, 40.0f, 0.5f, 0.8f, 0.2f, 0.8f, 1.0f,
             300.0f, 40.0f, 0.5f, 0.2f, 0.2f, 0.8f, 1.0f,
         };
-        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));        
+
+        //const BufferLayout layout = {
+        //    {ShaderDataType::Float3, "a_Position"},
+        //    {ShaderDataType::Float4, "a_Color"}
+        //};
+
+        m_VertexBuffer->SetLayout({
+            {ShaderDataType::Float3, "a_Position"},
+            {ShaderDataType::Float4, "a_Color"}
+         });
+
+        // Configure attributes for use with the vertex shader
+        AttrInfo_Init(&m_AttrInfo);
+        uint32_t index = 0;
+        const auto& layout = m_VertexBuffer->GetLayout();
+        for (const auto& element : layout) {
+            AttrInfo_AddLoader(&m_AttrInfo,
+                index++,
+                ShaderDataTypeToCitro3DDataType(element.Type),
+                element.GetComponentCount());
+        }
+
 
         uint16_t indices[] = { 0, 1, 2 };
         m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));

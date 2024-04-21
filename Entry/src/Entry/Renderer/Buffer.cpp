@@ -5,6 +5,7 @@
 
 namespace Entry
 {
+    
     VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
     {
 
