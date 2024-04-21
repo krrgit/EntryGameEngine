@@ -7,7 +7,7 @@
 #include "Entry/Events/Event.h"
 #include "Entry/Events/ApplicationEvent.h"
 
-#include "VertexArray.h"
+#include "Entry/Renderer/VertexArray.h"
 #include "Entry/Renderer/Shader.h"
 #include "Entry/Renderer/Buffer.h"
 
@@ -40,9 +40,14 @@ namespace Entry {
         C3D_AttrInfo m_AttrInfo;
         C3D_BufInfo m_BufInfo;
 
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr <VertexBuffer> m_VertexBuffer;
-        std::unique_ptr <IndexBuffer> m_IndexBuffer;
+        std::shared_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
+        std::shared_ptr<VertexBuffer> m_VertexBuffer;
+        std::shared_ptr<IndexBuffer> m_IndexBuffer;
+
+        std::shared_ptr<VertexArray> m_SquareVA;
+        std::shared_ptr<Shader> m_BlueShader;
+
     private:
         static Application* s_Instance;
     };

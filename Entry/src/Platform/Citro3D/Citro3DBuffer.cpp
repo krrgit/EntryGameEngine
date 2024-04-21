@@ -13,7 +13,6 @@ namespace Entry
 		memcpy(m_DataPointer, vertices, size);
 
 		BufInfo_Init(&m_bufInfo);
-		BufInfo_Add(&m_bufInfo, m_DataPointer, sizeof(float) * 7, 2, 0x10);
 	}
 
 	Citro3DVertexBuffer::~Citro3DVertexBuffer() {
@@ -26,6 +25,12 @@ namespace Entry
 
 	void Citro3DVertexBuffer::Unbind() const {
 		C3D_SetBufInfo(0);
+	}
+
+	void Citro3DVertexBuffer::SetLayout(const BufferLayout layout) 
+	{
+		m_Layout = layout;
+		BufInfo_Add(&m_bufInfo, m_DataPointer, m_Layout.GetStride(), m_Layout.GetAttribCount(), m_Layout.GetPermutation());
 	}
 
 	////////////////////////////////////////////////////////////////////////

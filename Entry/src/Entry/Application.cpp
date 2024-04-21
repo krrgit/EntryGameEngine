@@ -11,29 +11,6 @@
 namespace Entry
 {
 
-    static GPU_FORMATS ShaderDataTypeToCitro3DDataType(ShaderDataType type)
-    {
-        switch (type) {
-        case ShaderDataType::Float:     return GPU_FLOAT;
-        case ShaderDataType::Float2:    return GPU_FLOAT;
-        case ShaderDataType::Float3:    return GPU_FLOAT;
-        case ShaderDataType::Float4:    return GPU_FLOAT;
-        case ShaderDataType::Mat3:      return GPU_FLOAT;
-        case ShaderDataType::Mat4:      return GPU_FLOAT;
-        case ShaderDataType::Int:       return GPU_SHORT;
-        case ShaderDataType::Int2:      return GPU_SHORT;
-        case ShaderDataType::Int3:      return GPU_SHORT;
-        case ShaderDataType::Int4:      return GPU_SHORT;
-        case ShaderDataType::Bool:      return GPU_BYTE;
-        default:
-            break;
-        }
-
-        //ET_CORE_ERROR("Unknown ShaderDataType!");
-        return GPU_BYTE;
-    }
-
-
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 #define CONSOLE_SCREEN SCREEN_NULL
 
@@ -81,6 +58,8 @@ namespace Entry
 
         // Compute the projection matrix
         Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
+
+        m_VertexArray.reset(VertexArray::Create());
         
         float vertices[] = {
             200.0f, 200.0f, 0.5f,0.8f, 0.8f, 0.2f, 1.0f,
@@ -89,30 +68,42 @@ namespace Entry
         };
         m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));        
 
-        //const BufferLayout layout = {
-        //    {ShaderDataType::Float3, "a_Position"},
-        //    {ShaderDataType::Float4, "a_Color"}
-        //};
-
         m_VertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"},
             {ShaderDataType::Float4, "a_Color"}
          });
 
-        // Configure attributes for use with the vertex shader
-        AttrInfo_Init(&m_AttrInfo);
-        uint32_t index = 0;
-        const auto& layout = m_VertexBuffer->GetLayout();
-        for (const auto& element : layout) {
-            AttrInfo_AddLoader(&m_AttrInfo,
-                index++,
-                ShaderDataTypeToCitro3DDataType(element.Type),
-                element.GetComponentCount());
-        }
-
+        m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
         uint16_t indices[] = { 0, 1, 2 };
         m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
+
+        m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+        m_SquareVA.reset(VertexArray::Create());
+
+        float squareVertices[4 * 3] =
+        {
+            350.0f,  210.0f,  0.5f,
+             50.0f,  210.0f,  0.5f,
+             50.0f,  30.0f,   0.5f,
+            350.0f,  30.0f,   0.5f,
+        };
+
+        std::shared_ptr<VertexBuffer> squareVB;
+        squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+
+        squareVB->SetLayout({
+            { ShaderDataType::Float3, "a_Position" }
+         });
+        m_SquareVA->AddVertexBuffer(squareVB);
+
+        m_BlueShader.reset(new Shader(1));
+
+        u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+        std::shared_ptr<IndexBuffer> squareIB;
+        squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
+        m_SquareVA->SetIndexBuffer(squareIB);
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -160,17 +151,17 @@ namespace Entry
         while (aptMainLoop() && m_Running) {
             m_Window->FrameBegin();
 
-
-            m_Shader->Bind();
-            C3D_SetAttrInfo(&m_AttrInfo);
-            m_VertexBuffer->Bind();
-
             // Update the uniforms
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
 
-            // Draw the VBO
-            //C3D_DrawArrays(GPU_TRIANGLES, 0, 3);
-            C3D_DrawElements(GPU_TRIANGLES, m_IndexBuffer->GetCount(), C3D_UNSIGNED_SHORT, m_IndexBuffer->GetDataPointer());
+            m_BlueShader->Bind();
+            m_SquareVA->Bind();
+            C3D_DrawElements(GPU_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_SquareVA->GetIndexBuffer()->GetDataPointer());
+            
+            m_Shader->Bind();
+            m_VertexArray->Bind();
+            C3D_DrawElements(GPU_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_VertexArray->GetIndexBuffer()->GetDataPointer());
+
 
             C2D_Prepare();
 
