@@ -43,9 +43,10 @@ void Shader::Unbind() const
     C3D_BindProgram(0);
 }
 
-int8_t Shader::GetUniformLocation(const char* name)
+void Shader::UploadUniformMat4(std::string name, const C3D_Mtx* matrix)
 {
-    return shaderInstanceGetUniformLocation(program.vertexShader, name);
+    s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, location, matrix);
 }
 
 }

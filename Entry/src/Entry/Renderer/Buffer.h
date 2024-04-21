@@ -4,18 +4,7 @@ namespace Entry
 {
     enum class ShaderDataType : uint8_t
     {
-        None = 0,
-        Float,
-        Float2,
-        Float3,
-        Float4,
-        Mat3,
-        Mat4,
-        Int,
-        Int2,
-        Int3,
-        Int4,
-        Bool
+        None = 0, Float,Float2,Float3,Float4,Mat3,Mat4,Int,Int2,Int3,Int4,Bool
     };
 
     static uint32_t ShaderDataTypeSize(ShaderDataType type)
@@ -111,7 +100,7 @@ namespace Entry
     private:
         void CalculateOffsetsAndStride()
         {
-            ET_CORE_INFO("BufferLayout:{0} elements", m_Elements.size());
+            //ET_CORE_INFO("BufferLayout:{0} elements", m_Elements.size());
             //uint32_t offset = 0;
             m_Stride = 0;
             m_attribCount = 0;

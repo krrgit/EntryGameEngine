@@ -10,6 +10,7 @@
 #include "Entry/Renderer/VertexArray.h"
 #include "Entry/Renderer/Shader.h"
 #include "Entry/Renderer/Buffer.h"
+#include "Entry/Renderer/PerspectiveCamera.h"
 
 namespace Entry {
 
@@ -33,6 +34,8 @@ namespace Entry {
         LayerStack m_LayerStack;
 
         int uLoc_projection;
+        int uLoc_modelView;
+        int uLoc_ViewProjection;
         C3D_Mtx projection;
 
         void* vbo_data;
@@ -47,6 +50,8 @@ namespace Entry {
 
         std::shared_ptr<VertexArray> m_SquareVA;
         std::shared_ptr<Shader> m_BlueShader;
+
+        PerspectiveCamera m_Camera;
 
     private:
         static Application* s_Instance;

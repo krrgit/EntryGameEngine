@@ -4,6 +4,8 @@
 #include "Input.h"
 #include "Entry/Renderer/Renderer.h"
 
+
+
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
 	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
@@ -21,6 +23,7 @@ namespace Entry
 
 
     Application::Application()
+        : m_Camera(-1.0f, 1.0f, -1.0f, 1.0f )
     {
         int logScreen = SCREEN_TOP;
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
@@ -53,20 +56,14 @@ namespace Entry
 
         m_Shader.reset(new Shader(0));
 
-        // Get the location of the uniforms
-        uLoc_projection = m_Shader->GetUniformLocation("projection");
-
-
-        // Compute the projection matrix
-        Mtx_OrthoTilt(&projection, 0.0, 400.0, 0.0, 240.0, 0.0, 1.0, true);
-
         m_VertexArray.reset(VertexArray::Create());
         
         float vertices[] = {
-            200.0f, 200.0f, 0.5f,0.8f, 0.8f, 0.2f, 1.0f,
-            100.0f, 40.0f, 0.5f, 0.8f, 0.2f, 0.8f, 1.0f,
-            300.0f, 40.0f, 0.5f, 0.2f, 0.2f, 0.8f, 1.0f,
+            0.0f,  0.5f,  0.0f, 0.8f, 0.8f, 0.2f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+            0.5f,  -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f,
         };
+
         m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));        
 
         m_VertexBuffer->SetLayout({
@@ -85,10 +82,10 @@ namespace Entry
 
         float squareVertices[4 * 3] =
         {
-            350.0f,  210.0f,  0.5f,
-             50.0f,  210.0f,  0.5f,
-             50.0f,  30.0f,   0.5f,
-            350.0f,  30.0f,   0.5f,
+            0.75f,  0.75f,  0.0f,
+           -0.75f,  0.75f,  0.0f,
+           -0.75f, -0.75f,  0.0f,
+            0.75f, -0.75f,  0.0f,
         };
 
         std::shared_ptr<VertexBuffer> squareVB;
@@ -147,22 +144,21 @@ namespace Entry
     void Application::Run()
     {
         
-
-
         while (aptMainLoop() && m_Running) {
             m_Window->FrameBegin();
             
             //RenderCommand::SetClearColor(0x191919FF);
             //RenderComand::Clear();
 
-            // Update the uniforms
-            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
+            m_Camera.SetPosition({0.5f, 0.5f,1.0f});
+            m_Camera.SetRotation({ 0.0f,0.0f,45.0f,1.0f });
 
-            m_BlueShader->Bind();
-            Renderer::Submit(m_SquareVA);
+            Renderer::BeginScene(m_Camera);
 
-            m_Shader->Bind();
-            Renderer::Submit(m_VertexArray);
+            Renderer::Submit(m_BlueShader, m_SquareVA);
+            Renderer::Submit(m_Shader, m_VertexArray);
+
+            Renderer::EndScene();
 
             C2D_Prepare();
 
