@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "Input.h"
+#include "Entry/Renderer/Renderer.h"
 
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
@@ -150,18 +151,18 @@ namespace Entry
 
         while (aptMainLoop() && m_Running) {
             m_Window->FrameBegin();
+            
+            //RenderCommand::SetClearColor(0x191919FF);
+            //RenderComand::Clear();
 
             // Update the uniforms
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLoc_projection, &projection);
 
             m_BlueShader->Bind();
-            m_SquareVA->Bind();
-            C3D_DrawElements(GPU_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_SquareVA->GetIndexBuffer()->GetDataPointer());
-            
-            m_Shader->Bind();
-            m_VertexArray->Bind();
-            C3D_DrawElements(GPU_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), C3D_UNSIGNED_SHORT, m_VertexArray->GetIndexBuffer()->GetDataPointer());
+            Renderer::Submit(m_SquareVA);
 
+            m_Shader->Bind();
+            Renderer::Submit(m_VertexArray);
 
             C2D_Prepare();
 
