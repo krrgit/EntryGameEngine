@@ -1,6 +1,7 @@
 #include "etpch.h"
 #include "Citro3DInput.h"
 
+#define STICK_MAX_VALUE 154.0f
 
 namespace Entry {
 
@@ -8,7 +9,8 @@ namespace Entry {
 
 	bool Citro3DInput::IsKeyPressedImpl(uint32_t keycode)
 	{
-		return ((hidKeysDownRepeat() & keycode) == keycode);
+		uint32_t state = ((hidKeysDown() | hidKeysHeld()) & keycode);
+		return (state == keycode);
 	}
 	bool Citro3DInput::IsScreenTouchedImpl()
 	{
@@ -16,20 +18,25 @@ namespace Entry {
 	}
 	int Citro3DInput::GetTouchXImpl()
 	{
-		touchPosition pos;
-		hidTouchRead(&pos);
-		return pos.px;
+		hidTouchRead(&m_TouchPosition);
+		return m_TouchPosition.px;
 	}
 	int Citro3DInput::GetTouchYImpl()
 	{
-		touchPosition pos;
-		hidTouchRead(&pos);
-		return pos.py;
+		hidTouchRead(&m_TouchPosition);
+		return m_TouchPosition.py;
 	}
 	touchPosition Citro3DInput::GetTouchPosImpl()
 	{
-		touchPosition pos;
-		hidTouchRead(&pos);
-		return pos;
+		hidTouchRead(&m_TouchPosition);
+		return m_TouchPosition;
+	}
+
+	glm::vec2 Citro3DInput::GetJoystickPosImpl() {
+		circlePosition circlePos;
+		hidCircleRead(&circlePos);
+		m_JoystickPos.x = circlePos.dx / STICK_MAX_VALUE;
+		m_JoystickPos.y = circlePos.dy / STICK_MAX_VALUE;
+		return m_JoystickPos;
 	}
 }

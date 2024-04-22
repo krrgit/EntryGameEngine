@@ -59,9 +59,9 @@ namespace Entry
         m_VertexArray.reset(VertexArray::Create());
         
         float vertices[] = {
-            0.0f,  0.5f,  0.0f, 0.8f, 0.8f, 0.2f, 1.0f,
-            -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
-            0.5f,  -0.5f, 0.0f, 0.2f, 0.2f, 0.8f, 1.0f,
+            0.0f,  0.5f,  0.2f, 0.8f, 0.8f, 0.2f, 1.0f,
+            -0.5f, -0.5f, 0.2f, 0.8f, 0.2f, 0.8f, 1.0f,
+            0.5f,  -0.5f, 0.2f, 0.2f, 0.2f, 0.8f, 1.0f,
         };
 
         m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));        
@@ -150,8 +150,27 @@ namespace Entry
             //RenderCommand::SetClearColor(0x191919FF);
             //RenderComand::Clear();
 
-            m_Camera.SetPosition({0.5f, 0.5f,1.0f});
-            m_Camera.SetRotation({ 0.0f,0.0f,45.0f,1.0f });
+
+            glm::vec2 cp = Input::GetJoystickPos();
+            
+            glm::vec3 forward = m_Camera.forward;
+            forward.y = 0;
+            glm::vec3 right = m_Camera.right;
+            right.y = 0;
+            m_CamPos = m_CamPos + forward * (cp.y * 0.1f) + (right * (cp.x * 0.1f));
+            int LandR = (Input::IsKeyPressed(ET_KEY_R) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_L) ? 1 : 0);
+            m_CamPos.y += LandR * 0.05f;
+            //ET_CORE_INFO("Cam Pos:({0},{1})", m_CamPos.x, m_CamPos.z);
+
+            int cStickX = (Input::IsKeyPressed(ET_KEY_CSTICK_LEFT) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_CSTICK_RIGHT) ? 1 : 0);
+            int cStickY = (Input::IsKeyPressed(ET_KEY_CSTICK_UP) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_CSTICK_DOWN) ? 1 : 0);
+
+            m_CamRot = glm::vec4(m_CamRot.x + (cStickY * 2.0f), m_CamRot.y + (cStickX * 2.0f), m_CamRot.z, m_CamRot.w);
+
+
+
+            m_Camera.SetPosition(m_CamPos);
+            m_Camera.SetRotation(m_CamRot);
 
             Renderer::BeginScene(m_Camera);
 

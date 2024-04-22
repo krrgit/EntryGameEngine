@@ -52,6 +52,8 @@ namespace Entry {
         std::shared_ptr<Shader> m_BlueShader;
 
         PerspectiveCamera m_Camera;
+        glm::vec3 m_CamPos = {0.0f, 0.0f, 1.0f};
+        glm::vec4 m_CamRot = {0.0f, 0.0f, 0.0f, 0.0f};
 
     private:
         static Application* s_Instance;
