@@ -11,9 +11,6 @@ namespace Entry
 
     void Log::Init(int screen)
     {
-        ET_CORE_ASSERT(screen >= 0, "Console Initialization skipped.");
-
-        gfxInitDefault(); // Needed for log
         s_PrintConsole = static_cast<std::shared_ptr<PrintConsole>>(consoleInit((gfxScreen_t)screen, NULL));
         spdlog::set_pattern("%^[%T] %n: %v%$");
 
@@ -28,5 +25,6 @@ namespace Entry
 
         auto color_sink2 = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_ClientLogger->sinks().back().get());
         color_sink2->set_color_mode(spdlog::color_mode::always);
+        
     }
 }

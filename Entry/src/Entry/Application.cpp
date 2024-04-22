@@ -5,7 +5,6 @@
 #include "Entry/Renderer/Renderer.h"
 
 
-
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
 	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
@@ -25,34 +24,21 @@ namespace Entry
     Application::Application()
         : m_Camera(-1.0f, 1.0f, -1.0f, 1.0f )
     {
-        int logScreen = SCREEN_TOP;
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
-        ET_CORE_ASSERT(logScreen > 1 && logScreen < -1, "Improper screen selected for console.");
 
-        if (logScreen == SCREEN_NULL) 
-        {
-            WindowProps topProps("Top", 400, 240, SCREEN_TOP);
-            std::unique_ptr<Window>(Window::Create(topProps));
+        gfxInitDefault();
+        C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
-            WindowProps bottomProps("Bottom", 320, 240, SCREEN_BOTTOM);
-            m_Window = std::unique_ptr<Window>(Window::Create(bottomProps));
-            m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        WindowProps topProps("Top", 400, 240, GFX_TOP);
+        m_WindowTop = std::unique_ptr<Window>(Window::Create(topProps));
 
-        } else {
-            Entry::Log::Init(logScreen);
-            
-            ET_CORE_WARN("Initialized Log!");
-            ET_INFO("Hello!");
+        WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
+        m_Window = std::unique_ptr<Window>(Window::Create(props));
+        m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-            uint8_t otherScreen = logScreen ^ 1;
-            int width = otherScreen == SCREEN_TOP ? 400 : 320;
-            std::string name = otherScreen == SCREEN_TOP ? "Top" : "Bottom";
 
-            WindowProps props(name, width, 240, otherScreen);
-            m_Window = std::unique_ptr<Window>(Window::Create(props));
-            m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-        }
+        RenderCommand::SetClearColor(0x191919FF);
 
         m_Shader.reset(new Shader(0));
 
@@ -145,11 +131,11 @@ namespace Entry
     {
         
         while (aptMainLoop() && m_Running) {
-            m_Window->FrameBegin();
+            C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+            m_WindowTop->FrameDrawOn();
             
             //RenderCommand::SetClearColor(0x191919FF);
             //RenderComand::Clear();
-
 
             glm::vec2 cp = Input::GetJoystickPos();
             
@@ -160,14 +146,11 @@ namespace Entry
             m_CamPos = m_CamPos + forward * (cp.y * 0.1f) + (right * (cp.x * 0.1f));
             int LandR = (Input::IsKeyPressed(ET_KEY_R) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_L) ? 1 : 0);
             m_CamPos.y += LandR * 0.05f;
-            //ET_CORE_INFO("Cam Pos:({0},{1})", m_CamPos.x, m_CamPos.z);
 
             int cStickX = (Input::IsKeyPressed(ET_KEY_CSTICK_LEFT) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_CSTICK_RIGHT) ? 1 : 0);
             int cStickY = (Input::IsKeyPressed(ET_KEY_CSTICK_UP) ? 1 : 0) - (Input::IsKeyPressed(ET_KEY_CSTICK_DOWN) ? 1 : 0);
 
             m_CamRot = glm::vec4(m_CamRot.x + (cStickY * 2.0f), m_CamRot.y + (cStickX * 2.0f), m_CamRot.z, m_CamRot.w);
-
-
 
             m_Camera.SetPosition(m_CamPos);
             m_Camera.SetRotation(m_CamRot);
@@ -179,6 +162,8 @@ namespace Entry
 
             Renderer::EndScene();
 
+
+            m_Window->FrameDrawOn();
             C2D_Prepare();
 
             for (Layer* layer : m_LayerStack)
@@ -186,9 +171,10 @@ namespace Entry
 
             C2D_Flush();
 
+
             m_Window->OnUpdate();
 
-            m_Window->FrameEnd();
+            C3D_FrameEnd(0);
         }
     }
 }

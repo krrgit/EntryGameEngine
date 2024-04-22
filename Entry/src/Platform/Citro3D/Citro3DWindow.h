@@ -11,8 +11,7 @@ namespace Entry
 		virtual ~Citro3DWindow();
 
 		void OnUpdate() override;
-		void FrameBegin() override;
-		void FrameEnd() override;
+		void FrameDrawOn() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -25,6 +24,8 @@ namespace Entry
 		inline virtual void* GetNativeWindow() const { return m_RenderTarget; }
 
 		C3D_RenderTarget* const GetRenderTarget() { return m_RenderTarget; }
+
+		void SetClearColor(uint32_t color) { m_ClearColor = color; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
@@ -45,9 +46,12 @@ namespace Entry
 		};
 
 		WindowData m_Data;
+		
 		uint32_t anyKeyPressed, anyKeyHeld, anyKeyReleased;
 		bool readTouchPos;
 		touchPosition touchPos;
 		circlePosition circlePadPos;
+
+		uint32_t m_ClearColor = 0x68B0D8FF;
 	};
 }

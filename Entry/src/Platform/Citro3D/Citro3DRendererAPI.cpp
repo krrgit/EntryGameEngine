@@ -2,12 +2,14 @@
 #include "Citro3DRendererAPI.h"
 
 #include<citro3d.h>
+#include"Citro3DWindow.h"
+#include"Entry/Application.h"
 
 namespace Entry {
 
 void Citro3DRendererAPI::SetClearColor(const uint32_t color)
 {
-	m_ClearColor = color;
+	static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
 }
 
 void Citro3DRendererAPI::Clear()

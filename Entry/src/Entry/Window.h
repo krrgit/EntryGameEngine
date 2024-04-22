@@ -11,13 +11,13 @@ namespace Entry {
 		std::string Title;
 		unsigned int Width;
 		unsigned int Height;
-		unsigned int Screen;
+		gfxScreen_t Screen;
 
 
 		WindowProps(const std::string& title = "Entry Engine",
 			unsigned int width = 400,
 			unsigned int height = 240,
-			unsigned int screen = 0)
+			gfxScreen_t screen = GFX_TOP)
 			: Title(title), Width(width), Height(height), Screen(screen)
 		{
 		}
@@ -32,8 +32,7 @@ namespace Entry {
 		virtual ~Window() {}
 
 		virtual void OnUpdate() = 0;
-		virtual void FrameBegin() = 0;
-		virtual void FrameEnd() = 0;
+		virtual void FrameDrawOn() = 0;
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;

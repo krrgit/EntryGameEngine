@@ -30,6 +30,7 @@ namespace Entry {
         inline Window& GetWindow() { return *m_Window; }
     private:
         std::unique_ptr<Window> m_Window;
+        std::unique_ptr<Window> m_WindowTop;
         bool m_Running = true;
         LayerStack m_LayerStack;
 

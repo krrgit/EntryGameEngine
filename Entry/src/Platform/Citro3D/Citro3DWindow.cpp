@@ -7,7 +7,7 @@
 #include "Entry/Events/CirclePadEvent.h"
 
 //#define CLEAR_COLOR 0x68B0D8FF
-#define CLEAR_COLOR 0x191919FF
+#define CLEAR_COLOR 0x68B0D8FF //0x191919FF
 
 #define DISPLAY_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
@@ -36,14 +36,11 @@ namespace Entry
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
-		m_Data.Screen = (gfxScreen_t)props.Screen;
+		m_Data.Screen = props.Screen;
 		m_Data.Stereo3D = false;
-
-		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 
 		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		if (m_Data.Screen)
 		// C3D flips height and width (screen draws left to right)
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
@@ -61,17 +58,11 @@ namespace Entry
 		TriggerEvents();
 	}
 
-	void Citro3DWindow::FrameBegin()
+	void Citro3DWindow::FrameDrawOn()
 	{
-		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, CLEAR_COLOR, 0);
+		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
 		C3D_FrameDrawOn(m_RenderTarget);
 		C2D_SceneTarget(m_RenderTarget);
-	}
-
-	void Citro3DWindow::FrameEnd() 
-	{
-		C3D_FrameEnd(0);
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)

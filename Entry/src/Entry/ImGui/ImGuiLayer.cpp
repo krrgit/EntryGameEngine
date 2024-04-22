@@ -46,9 +46,7 @@ namespace Entry {
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 		io.MouseDrawCursor = true;
-		
-		
-		
+
 		ImGui_ImplC3D_Init();
 	}
 

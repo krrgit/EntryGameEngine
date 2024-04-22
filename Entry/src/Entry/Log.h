@@ -22,6 +22,9 @@ namespace Entry
     };
 }
 
+// #define LOG_CONSOLE_ENABLED
+
+#ifdef LOG_CONSOLE_ENABLED
 // Core Log Macros
 #define ET_CORE_TRACE(...)  ::Entry::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define ET_CORE_INFO(...)   ::Entry::Log::GetCoreLogger()->info(__VA_ARGS__)
@@ -35,3 +38,19 @@ namespace Entry
 #define ET_WARN(...)   ::Entry::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define ET_ERROR(...)  ::Entry::Log::GetClientLogger()->error(__VA_ARGS__)
 #define ET_FATAL(...)  ::Entry::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#else
+// Core Log Macros
+#define ET_CORE_TRACE(...)
+#define ET_CORE_INFO(...) 
+#define ET_CORE_WARN(...) 
+#define ET_CORE_ERROR(...)
+#define ET_CORE_FATAL(...)
+
+// Client Log Macros
+#define ET_TRACE(...)
+#define ET_INFO(...) 
+#define ET_WARN(...) 
+#define ET_ERROR(...)
+#define ET_FATAL(...)
+
+#endif
