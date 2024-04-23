@@ -36,9 +36,6 @@ bool ImGui_ImplC3D_Init()
 	ImGui_ImplC3D_Data* bd = IM_NEW(ImGui_ImplC3D_Data)();
 	io.BackendRendererUserData = (void*)bd;
 
-	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
-	C2D_Prepare();
-
 	// Set render target and parameters
 	Citro3DWindow* citroWindow = static_cast<Citro3DWindow*>(&Application::Get().GetWindow());
 	bd->m_RenderTarget = citroWindow->GetRenderTarget();

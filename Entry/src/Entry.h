@@ -10,6 +10,7 @@
 #include "Entry/KeyCodes.h"
 
 #include "Entry/ImGui/ImGuiLayer.h"
+#include "Entry/Log/LogLayer.h"
 
 // --- Entry Point --------------------
 #include "Entry/EntryPoint.h"

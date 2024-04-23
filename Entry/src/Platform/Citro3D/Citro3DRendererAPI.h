@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entry/Window.h"
 #include "Entry/Renderer/RendererAPI.h"
 
 namespace Entry {
@@ -11,5 +12,6 @@ namespace Entry {
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
 	private:
 		uint32_t m_ClearColor;
+		C3D_RenderTarget* m_RenderTarget;
 	};
 }

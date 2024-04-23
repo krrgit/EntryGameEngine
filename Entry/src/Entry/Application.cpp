@@ -24,20 +24,24 @@ namespace Entry
     Application::Application()
         : m_Camera(-1.0f, 1.0f, -1.0f, 1.0f )
     {
-        ET_CORE_ASSERT(!s_Instance, "Application already exists!");
+        //ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
         gfxInitDefault();
         C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+        C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 
         WindowProps topProps("Top", 400, 240, GFX_TOP);
         m_WindowTop = std::unique_ptr<Window>(Window::Create(topProps));
+        m_CurrentWindow = m_WindowTop.get();
+        RenderCommand::SetClearColor(0x68B0D8FF);
+
 
         WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
-        m_Window = std::unique_ptr<Window>(Window::Create(props));
-        m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        m_WindowBottom = std::unique_ptr<Window>(Window::Create(props));
+        m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-
+        m_CurrentWindow = m_WindowBottom.get();
         RenderCommand::SetClearColor(0x191919FF);
 
         m_Shader.reset(new Shader(0));
@@ -73,6 +77,7 @@ namespace Entry
            -0.75f, -0.75f,  0.0f,
             0.75f, -0.75f,  0.0f,
         };
+
 
         std::shared_ptr<VertexBuffer> squareVB;
         squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
@@ -132,9 +137,10 @@ namespace Entry
         
         while (aptMainLoop() && m_Running) {
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-            m_WindowTop->FrameDrawOn();
+
+            m_CurrentWindow = m_WindowTop.get();
+            m_CurrentWindow->FrameDrawOn();
             
-            //RenderCommand::SetClearColor(0x191919FF);
             //RenderComand::Clear();
 
             glm::vec2 cp = Input::GetJoystickPos();
@@ -162,8 +168,10 @@ namespace Entry
 
             Renderer::EndScene();
 
+            // Temporary
+            m_CurrentWindow = m_WindowBottom.get();
+            m_CurrentWindow->FrameDrawOn();
 
-            m_Window->FrameDrawOn();
             C2D_Prepare();
 
             for (Layer* layer : m_LayerStack)
@@ -171,8 +179,7 @@ namespace Entry
 
             C2D_Flush();
 
-
-            m_Window->OnUpdate();
+            m_CurrentWindow->OnUpdate();
 
             C3D_FrameEnd(0);
         }

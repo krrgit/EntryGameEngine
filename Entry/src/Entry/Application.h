@@ -27,10 +27,11 @@ namespace Entry {
         void PushOverlay(Layer* layer);
 
         inline static Application& Get() { return *s_Instance; }
-        inline Window& GetWindow() { return *m_Window; }
+        inline Window& GetWindow() { return *m_CurrentWindow; }
     private:
-        std::unique_ptr<Window> m_Window;
+        Window* m_CurrentWindow;
         std::unique_ptr<Window> m_WindowTop;
+        std::unique_ptr<Window> m_WindowBottom;
         bool m_Running = true;
         LayerStack m_LayerStack;
 
