@@ -39,6 +39,10 @@ namespace Entry {
 		// Initialize console
 		m_Console = consoleGetDefault();
 		consoleInit(screen, m_Console);
+		// Set text to pure white. with RGBA1, bg is transparent.
+		// Will cause issues with certain colors 
+		//m_Console->fg = 15; 
+
 
 		// Restore GFX values
 		gfxSetScreenFormat(screen, fbFormat);
@@ -52,8 +56,8 @@ namespace Entry {
 		C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
 		static const Tex3DS_SubTexture subt3x = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
 		image = (C2D_Image){ tex, &subt3x };
-		C3D_TexInit(image.tex, 256, 256, GPU_RGB565);
-		C3D_TexSetFilter(image.tex, GPU_LINEAR, GPU_LINEAR);
+		C3D_TexInit(image.tex, 256, 256, GPU_RGBA5551);
+		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
 
 		m_ConsoleBuffer = (u16*)linearAlloc(m_Width * m_Height * sizeof(u16));
@@ -86,20 +90,20 @@ namespace Entry {
 	}
 
 	void LogLayer::OnUpdate() {
-		// TODO: Modify console.c to draw directly to correct coordinates.
+		// TODO: Find way to avoid this copy
 		for (u32 y = 0; y < m_Height; ++y) 
 		{
 			for (u32 x = 0; x < m_Width; ++x) 
 			{
 				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
 				u16& pixel = ((u16*)image.tex->data)[dest];
-				pixel = m_ConsoleBuffer[(x * m_Width) + (m_Width- 1 - y)];
+				pixel = m_ConsoleBuffer[(x * m_Width) + (m_Width - 1 - y)];
+				pixel |= pixel == 0 ? 0 : 1;
 			}
 		}
-
-		printf("%lu Hello, World!\n", index++);
 		C2D_DrawImageAt(image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 	}
+
 	void LogLayer::OnEvent(Event& event)
 	{
 	}

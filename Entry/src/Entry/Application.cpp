@@ -140,11 +140,11 @@ namespace Entry
 
             m_CurrentWindow = m_WindowTop.get();
             m_CurrentWindow->FrameDrawOn();
-            
+
             //RenderComand::Clear();
 
             glm::vec2 cp = Input::GetJoystickPos();
-            
+
             glm::vec3 forward = m_Camera.forward;
             forward.y = 0;
             glm::vec3 right = m_Camera.right;
@@ -173,7 +173,6 @@ namespace Entry
             m_CurrentWindow->FrameDrawOn();
 
             C2D_Prepare();
-
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
 

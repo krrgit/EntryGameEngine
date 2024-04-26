@@ -69,6 +69,7 @@ namespace Entry {
 		io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
 		m_Time = f_time;
 
+
 		ImGui_ImplC3D_NewFrame();
 		ImGui::NewFrame();
 

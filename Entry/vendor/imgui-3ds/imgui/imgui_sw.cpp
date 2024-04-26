@@ -9,7 +9,8 @@
 #include <vector>
 
 #include "imgui.h"
-#include "citro2d.h"
+#include <citro2d.h>
+#include <memory>
 
 namespace imgui_sw {
 	namespace {
@@ -162,10 +163,10 @@ namespace imgui_sw {
 
 			C2D_DrawRectSolid(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i, color);
 		}
-
-		void paint_triangle(
+		static int s_imageCount;
+		void paint_uniform_texture (
 			const PaintTarget& target,
-			const Texture* texture,
+			C3D_Tex* texture,
 			const ImVec4& clip_rect,
 			const ImDrawVert& v0,
 			const ImDrawVert& v1,
@@ -232,70 +233,44 @@ namespace imgui_sw {
 			const Barycentric bary_dx = inv_area * (w0_dx * bary_0 + w1_dx * bary_1 + w2_dx * bary_2);
 			const Barycentric bary_dy = inv_area * (w0_dy * bary_0 + w1_dy * bary_1 + w2_dy * bary_2);
 
-			Barycentric bary_current_row = bary_topleft;
+			Barycentric bary = bary_topleft;
 
-			// ------------------------------------------------------------------------
+			//------------------------------------------------------
+			// (0,0) in imgui is topleft
+			// (0,1) in c2d is topleft
+			const ImVec2 uv = bary.w0 * v0.uv + bary.w1 * v1.uv + bary.w2 * v2.uv;
+			uint16_t pixelWidth = max_x_i - min_x_i;
+			uint16_t pixelHeight = max_y_i - min_y_i;
+			float C2D_uv_left = uv.x - (0.5f / texture->width);
+			float C2D_uv_top = 1.0f - uv.y + (0.5f / texture->height);
+			float C2D_uv_right = C2D_uv_left + ((pixelWidth + 0.5f) / texture->width);
+			float C2D_uv_bot = C2D_uv_top - ((pixelHeight + 0.5f) / texture->height);
 
-			const bool has_uniform_color = (v0.col == v1.col && v0.col == v2.col);
 
-			const ImVec4 c0 = color_convert_u32_to_float4(v0.col);
-			const ImVec4 c1 = color_convert_u32_to_float4(v1.col);
-			const ImVec4 c2 = color_convert_u32_to_float4(v2.col);
+			Tex3DS_SubTexture subt3x = { pixelWidth, pixelHeight, C2D_uv_left, C2D_uv_top, C2D_uv_right, C2D_uv_bot };
+			C2D_Image image = (C2D_Image){ texture, &subt3x };
 
-			for (int y = min_y_i; y <= max_y_i; ++y) {
-				auto bary = bary_current_row;
+			const C2D_ImageTint tint = { {
+				{v0.col, 1.0f},
+				{v0.col, 1.0f},
+				{v0.col, 1.0f},
+				{v0.col, 1.0f}
+			} };
+			C2D_DrawImageAt(image, min_x_i, min_y_i, 0.0f, &tint, 1.0f, 1.0f);
+			s_imageCount++;
+		}
 
-				for (int x = min_x_i; x <= max_x_i; ++x) {
-					const auto w0 = bary.w0;
-					const auto w1 = bary.w1;
-					const auto w2 = bary.w2;
-					bary += bary_dx;
-
-					const float kEps = 1e-4f;
-					if (w0 < -kEps || w1 < -kEps || w2 < -kEps) { continue; } // Outside triangle
-
-					if (has_uniform_color && !texture) {
-						stats->uniform_triangle_pixels += 1;
-						C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, v0.col);
-						//C2D_DrawLine(x, y, v0.col, x + 0.5f, y + 0.5f, v0.col, 1.0f, 0.0f);
-						continue;
-					}
-
-					ImVec4 src_color;
-
-					if (has_uniform_color) {
-						src_color = color_convert_u32_to_float4(v0.col);
-					}
-					else {
-						stats->gradient_triangle_pixels += 1;
-						src_color = w0 * c0 + w1 * c1 + w2 * c2;
-					}
-
-					if (texture) {
-						stats->textured_triangle_pixels += 1;
-						const ImVec2 uv = w0 * v0.uv + w1 * v1.uv + w2 * v2.uv;
-						const int tx = uv.x * (texture->width - 1.0f) + 0.5f;
-						const int ty = uv.y * (texture->height - 1.0f) + 0.5f;
-						assert(0 <= tx && tx < texture->width);
-						assert(0 <= ty && ty < texture->height);
-
-						const uint8_t texel = texture->pixels[ty * texture->width + tx];
-						src_color.w *= texel / 255.0f;
-					}
-
-					if (src_color.w <= 0.0f) { continue; } // Transparent.
-					if (src_color.w >= 1.0f) {
-						// Opaque, no blending needed:
-						uint32_t new_col = color_convert_float4_to_u32(src_color);
-						C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, new_col);
-						continue;
-					}
-					uint32_t new_col = color_convert_float4_to_u32(src_color);
-					C2D_DrawRectSolid(x, y, 0.0f, 1.0f, 1.0f, new_col);
-				}
-
-				bary_current_row += bary_dy;
-			}
+		void paint_uniform_triangle(
+			const PaintTarget& target,
+			const ImDrawVert& v0,
+			const ImDrawVert& v1,
+			const ImDrawVert& v2,
+			Stats* stats)
+		{
+			C2D_DrawTriangle(v0.pos.x, v0.pos.y, v0.col,
+				v1.pos.x, v1.pos.y, v1.col,
+				v2.pos.x, v2.pos.y, v2.col, 0.0f
+			);
 		}
 
 		void paint_draw_cmd(
@@ -306,7 +281,7 @@ namespace imgui_sw {
 			const SwOptions& options,
 			Stats* stats)
 		{
-			const auto texture = reinterpret_cast<const Texture*>(pcmd.TextureId);
+			auto texture = reinterpret_cast<C3D_Tex*>(pcmd.TextureId);
 			assert(texture);
 
 			// ImGui uses the first pixel for "white".
@@ -374,19 +349,20 @@ namespace imgui_sw {
 							i += 6;
 							continue;
 						}
-						else if (has_uniform_color) {
-							// TODO: optimize this path.
+						else if (has_texture && has_uniform_color) {
+							paint_uniform_texture(target, texture, pcmd.ClipRect, v0, v1, v2, stats);
 							stats->textured_rectangle_pixels += num_pixels;
+							i += 6;
+							continue;
 						}
-						else if (!has_texture) {
+						else if (!has_texture && !has_uniform_color) {
 							// TODO: optimize this path.
 							stats->gradient_rectangle_pixels += num_pixels;
 						}
 					}
 				}
 
-				const bool has_texture = (v0.uv != white_uv || v1.uv != white_uv || v2.uv != white_uv);
-				paint_triangle(target, has_texture ? texture : nullptr, pcmd.ClipRect, v0, v1, v2, stats);
+				paint_uniform_triangle(target, v0, v1, v2, stats);
 				i += 3;
 			}
 		}
@@ -426,11 +402,27 @@ namespace imgui_sw {
 		ImGuiIO& io = ImGui::GetIO();
 
 		// Load default font (embedded in code):
+		static C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
 		uint8_t* tex_data;
 		int font_width, font_height;
 		io.Fonts->GetTexDataAsAlpha8(&tex_data, &font_width, &font_height);
-		const auto texture = new Texture{ tex_data, font_width, font_height };
-		io.Fonts->TexID = texture;
+
+		C3D_TexInit(tex, font_width, font_height, GPU_A8);
+		C3D_TexSetFilter(tex, GPU_NEAREST, GPU_NEAREST);
+		C3D_TexSetWrap(tex, GPU_REPEAT, GPU_REPEAT);
+
+		// Copy font texture to RAM
+		for (u32 y = 0; y < tex->height; ++y)
+		{
+			for (u32 x = 0; x < tex->width; ++x)
+			{
+				uint32_t dest = ((((y >> 3) * (tex->width >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
+				uint8_t& pixel = ((uint8_t*)tex->data)[dest];
+				pixel = tex_data[(y * tex->width) + x];
+			}
+		}
+
+		io.Fonts->TexID = tex;
 	}
 
 	static Stats s_stats; // TODO: pass as an argument?
@@ -442,17 +434,21 @@ namespace imgui_sw {
 		const ImVec2 scale{ width_pixels / width_points, height_pixels / height_points };
 		PaintTarget target{ width_pixels, height_pixels, scale };
 		const ImDrawData* draw_data = ImGui::GetDrawData();
-
+		s_imageCount = 0;
 		s_stats = Stats{};
 		for (int i = 0; i < draw_data->CmdListsCount; ++i) {
 			paint_draw_list(target, draw_data->CmdLists[i], options, &s_stats);
 		}
+
+		//consoleClear();
+		//printf("image draw calls: %d\n", s_imageCount);
+
 	}
 
 	void unbind_imgui_painting()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		delete reinterpret_cast<Texture*>(io.Fonts->TexID);
+		delete reinterpret_cast<C3D_Tex*>(io.Fonts->TexID);
 		io.Fonts = nullptr;
 	}
 

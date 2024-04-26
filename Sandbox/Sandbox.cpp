@@ -27,8 +27,8 @@ public:
     Sandbox()
     {
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Entry::LogLayer());
 		PushOverlay(new Entry::ImGuiLayer());
+		PushOverlay(new Entry::LogLayer());
     }
 
     ~Sandbox()
