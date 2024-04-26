@@ -42,7 +42,7 @@ namespace Entry
 		m_Data.Screen = props.Screen;
 		m_Data.Stereo3D = false;
 
-		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		ET_CORE_INFO("Create screen {0} ({1},{2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width (screen draws left to right)
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);

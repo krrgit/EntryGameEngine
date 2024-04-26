@@ -25,36 +25,14 @@ namespace Entry {
 	// LOG LAYER ////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////// 
 
-
-	std::shared_ptr<spdlog::logger> LogLayer::s_CoreLogger;
-	std::shared_ptr<spdlog::logger> LogLayer::s_ClientLogger;
-	std::shared_ptr<PrintConsole> LogLayer::s_PrintConsole;
-
 	void LogLayer::OnAttach()
 	{
 		showLogs = true;
 
-		// Store current GFX values
-		gfxScreen_t screen = GFX_BOTTOM;
-		GSPGPU_FramebufferFormat fbFormat = gfxGetScreenFormat(screen);
-		bool doubleBuffering = false;
-		
-		// Initialize console
-		m_Console = consoleGetDefault();
-		consoleInit(screen, m_Console);
-		// Set text to pure white. with RGBA1, bg is transparent.
-		// Will cause issues with certain colors 
-		//m_Console->fg = 15; 
-
-
-		// Restore GFX values
-		gfxSetScreenFormat(screen, fbFormat);
-		gfxSetDoubleBuffering(screen, doubleBuffering);
-		gfxSwapBuffersGpu();
-		gspWaitForVBlank();
+		m_Console = Log::GetPrintConsole().get();
 
 		m_Width = 240;
-		m_Height = 120;
+		m_Height = 240;
 		// Initialize console buffer texture
 		C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
 		static const Tex3DS_SubTexture subt3x = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
@@ -63,34 +41,11 @@ namespace Entry {
 		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
 
-		m_ConsoleBuffer = (u16*)linearAlloc(m_Width * m_Height * sizeof(u16));
-		m_Console->frameBuffer = m_ConsoleBuffer;
-
-		consoleSetWindow(m_Console, 0, 0, 15, 30);
-
-		Initspdlog();
-
-		printf("Hello, World!\n");
+		consoleSetWindow(m_Console, 0, 0, 30, 30);
 	}
 
 	void LogLayer::OnDetach()
 	{
-	}
-
-	void LogLayer::Initspdlog() {
-		spdlog::set_pattern("%^[%T] %n: %v%$");
-
-		s_CoreLogger = spdlog::stdout_color_mt("ET");
-		s_CoreLogger->set_level(spdlog::level::trace);
-
-		s_ClientLogger = spdlog::stdout_color_mt("AP");
-		s_ClientLogger->set_level(spdlog::level::trace);
-
-		auto color_sink = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_CoreLogger->sinks().back().get());
-		color_sink->set_color_mode(spdlog::color_mode::always);
-
-		auto color_sink2 = static_cast<spdlog::sinks::stdout_color_sink_mt*>(s_ClientLogger->sinks().back().get());
-		color_sink2->set_color_mode(spdlog::color_mode::always);
 	}
 
 	void LogLayer::OnUpdate() {
@@ -108,7 +63,7 @@ namespace Entry {
 			{
 				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
 				u16& pixel = ((u16*)image.tex->data)[dest];
-				pixel = m_ConsoleBuffer[(x * m_Width) + (m_Width - 1 - y)];
+				pixel = m_Console->frameBuffer[(x * m_Width) + (m_Width - 1 - y)];
 				pixel |= pixel == 0 ? 0 : 1;
 			}
 		}

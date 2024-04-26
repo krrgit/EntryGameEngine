@@ -24,10 +24,13 @@ namespace Entry
     Application::Application()
         : m_Camera(-1.0f, 1.0f, -1.0f, 1.0f )
     {
-        //ET_CORE_ASSERT(!s_Instance, "Application already exists!");
-        s_Instance = this;
 
         gfxInitDefault();
+        Log::Init();
+
+        ET_CORE_ASSERT(!s_Instance, "Application already exists!");
+        s_Instance = this;
+
         C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
         C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 

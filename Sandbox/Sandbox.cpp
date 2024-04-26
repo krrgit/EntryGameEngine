@@ -10,7 +10,7 @@ public:
 
 	void OnUpdate() override
 	{
-		//ET_INFO("ExampleLayer::Update");
+
 	}
 
 	void OnEvent(Entry::Event& event) override
@@ -28,7 +28,7 @@ public:
     {
 		PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
 		PushOverlay(new Entry::ImGuiLayer(), ET_WINDOW_BOTTOM);
-		PushOverlay(new Entry::LogLayer(), ET_WINDOW_TOP);
+		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
     }
 
     ~Sandbox()
