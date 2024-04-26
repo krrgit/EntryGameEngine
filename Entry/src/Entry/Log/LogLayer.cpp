@@ -28,11 +28,10 @@ namespace Entry {
 	void LogLayer::OnAttach()
 	{
 		showLogs = true;
-
 		m_Console = Log::GetPrintConsole().get();
+		m_Width = m_Console->windowWidth * 8;
+		m_Height = m_Console->windowHeight * 8;
 
-		m_Width = 240;
-		m_Height = 240;
 		// Initialize console buffer texture
 		C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
 		static const Tex3DS_SubTexture subt3x = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
@@ -40,8 +39,6 @@ namespace Entry {
 		C3D_TexInit(image.tex, 256, 256, GPU_RGBA5551);
 		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
-
-		consoleSetWindow(m_Console, 0, 0, 30, 30);
 	}
 
 	void LogLayer::OnDetach()
@@ -57,6 +54,7 @@ namespace Entry {
 		//printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
 
 		// TODO: Find way to avoid this copy
+		// Copy from console framebuffer to texture
 		for (u32 y = 0; y < m_Height; ++y) 
 		{
 			for (u32 x = 0; x < m_Width; ++x) 
@@ -68,7 +66,6 @@ namespace Entry {
 			}
 		}
 		C2D_DrawImageAt(image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
-		//consoleClear();
 	}
 
 	void LogLayer::OnEvent(Event& event)

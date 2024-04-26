@@ -22,7 +22,7 @@ namespace Entry
         GSPGPU_FramebufferFormat fbFormat = gfxGetScreenFormat(screen);
         bool doubleBuffering = false;
 
-        // Initialize console
+        // Initialize console.
         int width = 240;
         int height = 240;
         consoleInit(screen, s_PrintConsole.get());
