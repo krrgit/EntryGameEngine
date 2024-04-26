@@ -12,6 +12,10 @@
 #include "Entry/Renderer/Buffer.h"
 #include "Entry/Renderer/PerspectiveCamera.h"
 
+#define ET_WINDOW_TOP 0
+#define ET_WINDOW_BOTTOM 1
+
+
 namespace Entry {
 
     class Application{
@@ -23,8 +27,8 @@ namespace Entry {
 
         void OnEvent(Event& e);
 
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* layer);
+        void PushLayer(Layer* layer, int window);
+        void PushOverlay(Layer* layer, int window);
 
         inline static Application& Get() { return *s_Instance; }
         inline Window& GetWindow() { return *m_CurrentWindow; }

@@ -34,6 +34,7 @@ namespace Entry
         WindowProps topProps("Top", 400, 240, GFX_TOP);
         m_WindowTop = std::unique_ptr<Window>(Window::Create(topProps));
         m_CurrentWindow = m_WindowTop.get();
+
         RenderCommand::SetClearColor(0x68B0D8FF);
 
 
@@ -107,29 +108,26 @@ namespace Entry
     {
     }
 
-    void Application::PushLayer(Layer* layer)
+    void Application::PushLayer(Layer* layer, int window)
     {
-        m_LayerStack.PushLayer(layer);
-        layer->OnAttach();
+        if (window == 0)
+            m_WindowTop->PushLayer(layer);
+        else if (window == 1)
+            m_WindowBottom->PushLayer(layer);
     }
 
-    void Application::PushOverlay(Layer* layer)
+    void Application::PushOverlay(Layer* layer, int window)
     {
-        m_LayerStack.PushOverlay(layer);
-        layer->OnAttach();
+        if (window == 0)
+            m_WindowTop->PushOverlay(layer);
+        else if (window == 1)
+            m_WindowBottom->PushOverlay(layer);
     }
 
     void Application::OnEvent(Event& e)
     {
-        EventDispatcher dispatcher(e);
-
-        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
-        {
-            (*--it)->OnEvent(e);
-            if (e.Handled)
-                break;
-        }
-        
+        m_WindowTop->OnEvent(e);
+        m_WindowBottom->OnEvent(e);
     }
 
     void Application::Run()
@@ -168,15 +166,11 @@ namespace Entry
 
             Renderer::EndScene();
 
+            m_CurrentWindow->OnUpdate();
+
             // Temporary
             m_CurrentWindow = m_WindowBottom.get();
             m_CurrentWindow->FrameDrawOn();
-
-            C2D_Prepare();
-            for (Layer* layer : m_LayerStack)
-                layer->OnUpdate();
-
-            C2D_Flush();
 
             m_CurrentWindow->OnUpdate();
 

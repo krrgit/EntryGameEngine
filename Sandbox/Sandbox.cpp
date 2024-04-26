@@ -26,9 +26,9 @@ class Sandbox : public Entry::Application
 public:
     Sandbox()
     {
-		PushLayer(new ExampleLayer());
-		PushOverlay(new Entry::ImGuiLayer());
-		PushOverlay(new Entry::LogLayer());
+		PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
+		PushOverlay(new Entry::ImGuiLayer(), ET_WINDOW_BOTTOM);
+		PushOverlay(new Entry::LogLayer(), ET_WINDOW_TOP);
     }
 
     ~Sandbox()

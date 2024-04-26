@@ -69,6 +69,8 @@ namespace Entry {
 		consoleSetWindow(m_Console, 0, 0, 15, 30);
 
 		Initspdlog();
+
+		printf("Hello, World!\n");
 	}
 
 	void LogLayer::OnDetach()
@@ -97,8 +99,7 @@ namespace Entry {
 		}
 
 		if (!showLogs) return;
-		consoleClear();
-		printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
+		//printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
 
 		// TODO: Find way to avoid this copy
 		for (u32 y = 0; y < m_Height; ++y) 
@@ -112,6 +113,7 @@ namespace Entry {
 			}
 		}
 		C2D_DrawImageAt(image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+		//consoleClear();
 	}
 
 	void LogLayer::OnEvent(Event& event)

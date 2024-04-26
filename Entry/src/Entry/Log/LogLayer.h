@@ -8,6 +8,9 @@
 namespace Entry {
 	class LogLayer : public Layer {
 	public:
+		LogLayer() {}
+		~LogLayer() {}
+
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnUpdate() override;

@@ -6,6 +6,9 @@
 #include "Entry/Events/KeyEvent.h"
 #include "Entry/Events/CirclePadEvent.h"
 
+#include "Platform/Citro3D/C2DPrepareLayer.h"
+
+
 //#define CLEAR_COLOR 0x68B0D8FF
 #define CLEAR_COLOR 0x68B0D8FF //0x191919FF
 
@@ -52,8 +55,45 @@ namespace Entry
 		gfxExit();
 	}
 
+	void Citro3DWindow::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
+	}
+
+	void Citro3DWindow::PushOverlay(Layer* layer)
+	{
+		// Add Layer to prepare 2D overlays
+		if (!m_Data.has2D) {
+			m_LayerStack.PushOverlay(new C2DPrepareLayer());
+			m_Data.has2D = true;
+		}
+
+		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
+	}
+
+	void Citro3DWindow::OnEvent(Event& e) {
+		EventDispatcher dispatcher(e);
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+				break;
+		}
+	}
+
 	void Citro3DWindow::OnUpdate()
 	{
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnUpdate();
+
+		C2D_Flush();
+
+		if (!hasEventCallback) return;
+
 		hidScanInput();
 		TriggerEvents();
 	}

@@ -101,7 +101,6 @@ namespace Entry {
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDown[0] = true;
 		io.MousePos = ImVec2(e.GetX(), e.GetY());
-
 		return false;
 	}
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
