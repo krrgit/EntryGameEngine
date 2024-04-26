@@ -6,6 +6,9 @@
 #include "Entry/Events/KeyEvent.h"
 #include "Entry/Events/CirclePadEvent.h"
 
+#include "Platform/Citro3D/C2DPrepareLayer.h"
+
+
 //#define CLEAR_COLOR 0x68B0D8FF
 #define CLEAR_COLOR 0x68B0D8FF //0x191919FF
 
@@ -39,7 +42,7 @@ namespace Entry
 		m_Data.Screen = props.Screen;
 		m_Data.Stereo3D = false;
 
-		ET_CORE_INFO("Creating screen {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		ET_CORE_INFO("Create screen {0} ({1},{2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width (screen draws left to right)
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
@@ -52,8 +55,45 @@ namespace Entry
 		gfxExit();
 	}
 
+	void Citro3DWindow::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
+	}
+
+	void Citro3DWindow::PushOverlay(Layer* layer)
+	{
+		// Add Layer to prepare 2D overlays
+		if (!m_Data.has2D) {
+			m_LayerStack.PushOverlay(new C2DPrepareLayer());
+			m_Data.has2D = true;
+		}
+
+		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
+	}
+
+	void Citro3DWindow::OnEvent(Event& e) {
+		EventDispatcher dispatcher(e);
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+				break;
+		}
+	}
+
 	void Citro3DWindow::OnUpdate()
 	{
+
+		for (Layer* layer : m_LayerStack)
+			layer->OnUpdate();
+
+		C2D_Flush();
+
+		if (!hasEventCallback) return;
+
 		hidScanInput();
 		TriggerEvents();
 	}

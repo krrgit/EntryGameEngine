@@ -37,6 +37,10 @@ namespace Entry {
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
+		virtual void PushLayer(Layer* layer) = 0;
+		virtual void PushOverlay(Layer* layer) = 0;
+		virtual void OnEvent(Event& e) = 0;
+
 		// Window attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
