@@ -9,7 +9,7 @@ A 3D game engine for the 3DS. The goal of this project is to lower the barrier t
 ### Entrypoint
 This is what's called when the application starts.
 ### Logging
-Currently, logging is done by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. This part of the engine is not optimal, but allows users to render a scene and see the logs on the same screen.
+Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. This part of the engine is not optimal, but allows users to render a scene and see the logs on the same screen.
 ### Event System
 Event driven inputs supported.
 ### Application Layer
