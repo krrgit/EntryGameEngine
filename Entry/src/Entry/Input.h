@@ -10,6 +10,7 @@ namespace Entry {
 
 	public:
 		inline static bool IsKeyPressed(uint32_t keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
+		inline static bool GetButtonDown(uint32_t keycode) { return s_Instance->GetButtonDownImpl(keycode); }
 		inline static bool IsScreenTouched() { return s_Instance->IsScreenTouchedImpl(); }
 		inline static int GetTouchX() { return s_Instance->GetTouchXImpl(); }
 		inline static int GetTouchY() { return s_Instance->GetTouchYImpl(); }
@@ -18,7 +19,7 @@ namespace Entry {
 
 	protected:
 		virtual bool IsKeyPressedImpl(uint32_t keycode) = 0;
-
+		virtual bool GetButtonDownImpl(uint32_t keycode) = 0;
 		virtual bool IsScreenTouchedImpl() = 0;
 		virtual int GetTouchXImpl() = 0;
 		virtual int GetTouchYImpl() = 0;

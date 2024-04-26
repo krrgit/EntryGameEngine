@@ -9,8 +9,12 @@ namespace Entry {
 
 	bool Citro3DInput::IsKeyPressedImpl(uint32_t keycode)
 	{
-		uint32_t state = ((hidKeysDown() | hidKeysHeld()) & keycode);
-		return (state == keycode);
+		return ((hidKeysDown() | hidKeysHeld()) & keycode) == keycode;
+	}
+
+	bool Citro3DInput::GetButtonDownImpl(uint32_t keycode)
+	{
+		return (hidKeysDown() & keycode) == keycode;
 	}
 	bool Citro3DInput::IsScreenTouchedImpl()
 	{

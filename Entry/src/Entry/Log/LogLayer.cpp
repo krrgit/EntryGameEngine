@@ -1,5 +1,6 @@
 
 #include "Entry/Log/LogLayer.h"
+#include "Entry/Input.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <stdio.h>
@@ -31,6 +32,8 @@ namespace Entry {
 
 	void LogLayer::OnAttach()
 	{
+		showLogs = true;
+
 		// Store current GFX values
 		gfxScreen_t screen = GFX_BOTTOM;
 		GSPGPU_FramebufferFormat fbFormat = gfxGetScreenFormat(screen);
@@ -51,7 +54,7 @@ namespace Entry {
 		gspWaitForVBlank();
 
 		m_Width = 240;
-		m_Height = 240;
+		m_Height = 120;
 		// Initialize console buffer texture
 		C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
 		static const Tex3DS_SubTexture subt3x = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
@@ -63,9 +66,8 @@ namespace Entry {
 		m_ConsoleBuffer = (u16*)linearAlloc(m_Width * m_Height * sizeof(u16));
 		m_Console->frameBuffer = m_ConsoleBuffer;
 
-		consoleSetWindow(m_Console, 0, 0, 30, 30);
-		index = 0;
-		printf("Hello, World!\n");
+		consoleSetWindow(m_Console, 0, 0, 15, 30);
+
 		Initspdlog();
 	}
 
@@ -90,6 +92,14 @@ namespace Entry {
 	}
 
 	void LogLayer::OnUpdate() {
+		if (Input::GetButtonDown(ET_KEY_SELECT)) {
+			showLogs = !showLogs;
+		}
+
+		if (!showLogs) return;
+		consoleClear();
+		printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
+
 		// TODO: Find way to avoid this copy
 		for (u32 y = 0; y < m_Height; ++y) 
 		{
@@ -106,5 +116,6 @@ namespace Entry {
 
 	void LogLayer::OnEvent(Event& event)
 	{
+
 	}
 }

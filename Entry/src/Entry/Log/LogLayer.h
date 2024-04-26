@@ -23,8 +23,8 @@ namespace Entry {
 		u16 m_Width, m_Height;
 		C2D_Image image;
 		u16* m_ConsoleBuffer;
-		u32* m_PixelBuffer;
-		u32 index;
+
+		bool showLogs;
 
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;

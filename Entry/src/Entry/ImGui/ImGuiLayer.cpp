@@ -65,9 +65,10 @@ namespace Entry {
 		ImGui::SetNextWindowSize(io.DisplaySize);
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 
-		time_t f_time = time(NULL);
-		io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
-		m_Time = f_time;
+		//time_t f_time = time(NULL);
+		//io.DeltaTime = m_Time > 0 ? difftime(f_time, m_Time) : (1.0f / 60.0f);
+		//m_Time = f_time;
+		io.DeltaTime = C3D_GetProcessingTime() / 1000.0f;
 
 
 		ImGui_ImplC3D_NewFrame();

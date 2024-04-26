@@ -12,6 +12,16 @@
 #include "Entry/ImGui/ImGuiLayer.h"
 #include "Entry/Log/LogLayer.h"
 
-// --- Entry Point --------------------
+// ---Renderer--------------------------
+#include "Entry/Renderer/Renderer.h"
+#include "Entry/Renderer/RenderCommand.h"
+
+#include "Entry/Renderer/Buffer.h"
+#include "Entry/Renderer/Shader.h"
+#include "Entry/Renderer/VertexArray.h"
+
+#include "Entry/Renderer/PerspectiveCamera.h"
+
+// ----Entry Point---------------------
 #include "Entry/EntryPoint.h"
 // ------------------------------------
