@@ -13,7 +13,7 @@ namespace Entry {
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnUpdate() override;
+		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnEvent(Event& event) override;
 
 	private:
@@ -24,6 +24,6 @@ namespace Entry {
 		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
 		bool OnCirclePadMovedEvent(CirclePadEvent& e);
 	private:
-		time_t m_Time;
+
 	};
 }

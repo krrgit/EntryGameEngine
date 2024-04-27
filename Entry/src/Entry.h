@@ -6,6 +6,8 @@
 #include "Entry/Layer.h"
 #include "Entry/Log.h"
 
+#include "Entry/Core/Timestep.h"
+
 #include "Entry/Input.h"
 #include "Entry/KeyCodes.h"
 

@@ -3,12 +3,8 @@
 
 #include "Input.h"
 #include "Entry/Renderer/Renderer.h"
-
-
-#define DISPLAY_TRANSFER_FLAGS \
-	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
-	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
-	GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+#include "Entry/Core/Timestep.h"
+#include <time.h>
 
 namespace Entry
 {
@@ -39,6 +35,7 @@ namespace Entry
         m_CurrentWindow = m_WindowBottom.get();
         RenderCommand::SetClearColor(0x191919FF);
 
+        osTickCounterStart(&m_FrameTime);
     }
 
 
@@ -74,16 +71,20 @@ namespace Entry
         while (aptMainLoop() && m_Running) {
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
+            osTickCounterUpdate(&m_FrameTime);
+            Timestep timestep = osTickCounterRead(&m_FrameTime) * 0.001f;
+            osTickCounterStart(&m_FrameTime);
+
             m_CurrentWindow = m_WindowTop.get();
             m_CurrentWindow->FrameDrawOn();
 
-            m_CurrentWindow->OnUpdate();
+            m_CurrentWindow->OnUpdate(timestep);
 
             // Temporary
             m_CurrentWindow = m_WindowBottom.get();
             m_CurrentWindow->FrameDrawOn();
 
-            m_CurrentWindow->OnUpdate();
+            m_CurrentWindow->OnUpdate(timestep);
 
             C3D_FrameEnd(0);
         }

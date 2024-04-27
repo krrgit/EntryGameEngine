@@ -9,7 +9,7 @@ namespace Entry {
 	void C2DPrepareLayer::OnDetach()
 	{
 	}
-	void C2DPrepareLayer::OnUpdate()
+	void C2DPrepareLayer::OnUpdate(Timestep ts)
 	{
 		C2D_Prepare();
 	}

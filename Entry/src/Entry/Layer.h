@@ -2,6 +2,7 @@
 
 #include "Entry/Core.h"
 #include "Entry/Events/Event.h"
+#include "Entry/Core/Timestep.h"
 
 namespace Entry {
 
@@ -13,7 +14,7 @@ namespace Entry {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }

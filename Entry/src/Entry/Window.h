@@ -31,7 +31,7 @@ namespace Entry {
 
 		virtual ~Window() {}
 
-		virtual void OnUpdate() = 0;
+		virtual void OnUpdate(Timestep ts) = 0;
 		virtual void FrameDrawOn() = 0;
 
 		virtual unsigned int GetWidth() const = 0;

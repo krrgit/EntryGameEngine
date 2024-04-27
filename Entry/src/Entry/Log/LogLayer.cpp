@@ -45,7 +45,7 @@ namespace Entry {
 	{
 	}
 
-	void LogLayer::OnUpdate() {
+	void LogLayer::OnUpdate(Timestep ts) {
 		if (Input::GetButtonDown(ET_KEY_SELECT)) {
 			showLogs = !showLogs;
 		}

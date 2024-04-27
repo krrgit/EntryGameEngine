@@ -11,7 +11,7 @@ namespace Entry
 		Citro3DWindow(const WindowProps& props);
 		virtual ~Citro3DWindow();
 
-		void OnUpdate() override;
+		void OnUpdate(Timestep ts) override;
 		void FrameDrawOn() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }

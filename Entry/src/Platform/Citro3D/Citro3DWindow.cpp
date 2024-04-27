@@ -84,11 +84,11 @@ namespace Entry
 		}
 	}
 
-	void Citro3DWindow::OnUpdate()
+	void Citro3DWindow::OnUpdate(Timestep ts)
 	{
 
 		for (Layer* layer : m_LayerStack)
-			layer->OnUpdate();
+			layer->OnUpdate(ts);
 
 		C2D_Flush();
 

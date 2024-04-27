@@ -32,6 +32,7 @@ namespace Entry {
         std::unique_ptr<Window> m_WindowBottom;
         bool m_Running = true;
         LayerStack m_LayerStack;
+        TickCounter m_FrameTime;
     private:
         static Application* s_Instance;
     };
