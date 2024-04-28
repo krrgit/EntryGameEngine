@@ -27,7 +27,7 @@ namespace Entry
         int height = 240;
         consoleInit(screen, s_PrintConsole.get());
         s_PrintConsole->frameBuffer = (u16*)linearAlloc(width * height * sizeof(u16));
-        consoleSetWindow(s_PrintConsole.get(), 0, 0, 30, 30);
+        consoleSetWindow(s_PrintConsole.get(), 0, 0, width/8, height/8);
 
         // Restore GFX settings
         gfxSetScreenFormat(screen, fbFormat);

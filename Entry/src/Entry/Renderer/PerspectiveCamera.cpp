@@ -19,10 +19,9 @@ namespace Entry {
 		m_ViewMatrix.r[3].x = (_right + _left) / (_top - _bottom);
 		m_ViewMatrix.r[3].y = (_top + _bottom) / (_top - _bottom);
 
-		// Calculate ViewProjection & Projection (Unused)
+		// Calculate ViewProjection & Projection
 		Mtx_PerspTilt(&m_ProjectionMatrix, C3D_AngleFromDegrees(80.0f), C3D_AspectRatioBot, 0.01f, 1000.0f, false);
 		Mtx_Multiply(&m_ViewProjectionMatrix, &m_ProjectionMatrix, &m_ViewMatrix);
-
 
 		// Calculate normals
 		Mtx_Transpose(&m_ViewMatrix);
@@ -42,8 +41,7 @@ namespace Entry {
 		Mtx_Inverse(&transform);
 		m_ViewMatrix = transform;
 
-		// (Unused)
-		Mtx_Multiply(&m_ViewProjectionMatrix, &m_ViewMatrix, &m_ProjectionMatrix);
+		Mtx_Multiply(&m_ViewProjectionMatrix, &m_ProjectionMatrix, &m_ViewMatrix);
 
 		C3D_Mtx normals;
 		Mtx_Copy(&normals, &transform);

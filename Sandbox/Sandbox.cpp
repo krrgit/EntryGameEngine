@@ -34,10 +34,10 @@ public:
 
         float squareVertices[4 * 3] =
         {
-            0.75f,  0.75f,  0.0f,
-           -0.75f,  0.75f,  0.0f,
-           -0.75f, -0.75f,  0.0f,
-            0.75f, -0.75f,  0.0f,
+            0.5f,  0.5f,  0.0f,
+           -0.5f,  0.5f,  0.0f,
+           -0.5f, -0.5f,  0.0f,
+            0.5f, -0.5f,  0.0f,
         };
 
 
@@ -66,7 +66,6 @@ public:
 
 	void OnUpdate(Entry::Timestep ts) override
 	{
-        ET_CORE_TRACE("dt:{0}",ts);
         glm::vec2 cp = Entry::Input::GetJoystickPos();
 
         glm::vec3 forward = m_Camera.forward;
@@ -87,7 +86,20 @@ public:
 
         Entry::Renderer::BeginScene(m_Camera);
 
-        Entry::Renderer::Submit(m_BlueShader, m_SquareVA);
+        C3D_Mtx transform;
+        C3D_Mtx scale;
+        Mtx_Identity(&scale);
+        Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
+
+        for (int y = 0; y < 20; ++y) {
+            for (int x = 0; x < 20; ++x) {
+                Mtx_Identity(&transform);
+                Mtx_Translate(&transform, x * 0.11f, y * 0.11f, 0.0f, true);
+                Mtx_Multiply(&transform, &transform, &scale);
+                Entry::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+            }
+        }
+
         Entry::Renderer::Submit(m_Shader, m_VertexArray);
 
         Entry::Renderer::EndScene();
@@ -124,7 +136,7 @@ public:
     {
 		PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
 		PushOverlay(new Entry::ImGuiLayer(), ET_WINDOW_BOTTOM);
-		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
+		//PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
     }
 
     ~Sandbox()
