@@ -27,4 +27,4 @@ Same as Citro3D.
 ### Renderer
 
 ### Renderer API Abstraction
-There exists some abstraction between the renderer and the Citro3D library. If there are no plants to implement an editor which runs on PC, or support other APIs, this abstraction may be removed for potentially better performance.
+There exists some abstraction between the renderer and the Citro3D library. If there are no plans to implement an editor application on PC, or support other APIs, this abstraction may be removed for potentially better performance.
