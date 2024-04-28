@@ -1,6 +1,6 @@
 # Entry Game Engine
  
-A 3D game engine for the 3DS. The goal of this project is to simplify 3DS game development while remaining somewhat performant. This project follows "The Cherno" game engine series on YouTube while trying to adapt it to the 3DS.
+A 3D game engine for the 3DS. The goal of this project is to simplify 3DS game development while remaining somewhat performant. This project follows "The Cherno" game engine series on YouTube while deviating to adapt it to the 3DS and use 3D.
 
 ## Status Demo 
 // TODO
