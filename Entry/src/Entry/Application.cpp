@@ -5,6 +5,7 @@
 #include "Entry/Renderer/Renderer.h"
 #include "Entry/Core/Timestep.h"
 #include <time.h>
+#include <memory>
 
 namespace Entry
 {
@@ -34,6 +35,9 @@ namespace Entry
         m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
         m_CurrentWindow = m_WindowBottom.get();
         RenderCommand::SetClearColor(0x191919FF);
+
+        m_ImGuiLayer = new Entry::ImGuiLayer();
+        PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
 
         osTickCounterStart(&m_FrameTime);
     }
@@ -75,6 +79,8 @@ namespace Entry
             Timestep timestep = osTickCounterRead(&m_FrameTime) * 0.001f;
             osTickCounterStart(&m_FrameTime);
 
+            m_ImGuiLayer->Begin(timestep);
+
             m_CurrentWindow = m_WindowTop.get();
             m_CurrentWindow->FrameDrawOn();
 
@@ -85,6 +91,10 @@ namespace Entry
             m_CurrentWindow->FrameDrawOn();
 
             m_CurrentWindow->OnUpdate(timestep);
+
+            m_ImGuiLayer->End();
+
+            m_CurrentWindow->ScanHIDEvents();
 
             C3D_FrameEnd(0);
         }

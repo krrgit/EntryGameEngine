@@ -2,6 +2,8 @@
 #include "etpch.h"
 #include "Renderer.h"
 
+#include "Platform/Citro3D/Citro3DShader.h"
+
 namespace Entry {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
@@ -19,8 +21,8 @@ namespace Entry {
 	{
 
 		shader->Bind();
-		shader->UploadUniformMat4("u_ViewProjection", &m_SceneData->ViewProjectionMatrix);
-		shader->UploadUniformMat4("u_Transform", &transform);
+		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_ViewProjection", &m_SceneData->ViewProjectionMatrix);
+		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_Transform", &transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

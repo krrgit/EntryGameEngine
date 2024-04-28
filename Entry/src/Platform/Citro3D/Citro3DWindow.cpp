@@ -86,12 +86,19 @@ namespace Entry
 
 	void Citro3DWindow::OnUpdate(Timestep ts)
 	{
-
 		for (Layer* layer : m_LayerStack)
 			layer->OnUpdate(ts);
 
+		for (Layer* layer : m_LayerStack)
+			layer->OnImGuiRender();
+
 		C2D_Flush();
 
+
+	}
+
+	void Citro3DWindow::ScanHIDEvents()
+	{
 		if (!hasEventCallback) return;
 
 		hidScanInput();

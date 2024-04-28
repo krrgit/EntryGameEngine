@@ -1,59 +1,20 @@
 #include "etpch.h"
 #include "Shader.h"
 
-
-#include "vshader00_shbin.h"
-#include "vshader01_shbin.h"
+#include "Renderer.h"
+#include "Platform/Citro3D/Citro3DShader.h"
 
 namespace Entry {
 
-Shader::Shader(int src_id)
-{
-    // TODO: switch to runtime compilation or make a better LUT
-    switch (src_id) {
-    case 0:
-        vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
-        break;
-    case 1:
-        vshader_dvlb = DVLB_ParseFile((u32*)vshader01_shbin, vshader01_shbin_size);
-        break;
-    default:
-        ET_CORE_ASSERT(false, "Shader ID out of bounds. Using ID 0.");
-        vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
-        break;
+    Shader* Shader::Create(int src_id)
+    {
+
+        switch (Renderer::GetAPI()) 
+        {
+            case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::Citro3D:  return new Citro3DShader(src_id);
+        }
+
+        return nullptr;
     }
-
-    shaderProgramInit(&program);
-    shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
-}
-
-Shader::~Shader()
-{
-    shaderProgramFree(&program);
-    DVLB_Free(vshader_dvlb);
-}
-
-void Shader::Bind()
-{
-    C3D_BindProgram(&program);
-}
-
-void Shader::Unbind() const
-{
-    C3D_BindProgram(0);
-}
-
-void Shader::UploadUniformFloat4(std::string name, const glm::vec4 values) 
-{
-    s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
-    C3D_FVUnifSet(GPU_VERTEX_SHADER, location, values.x, values.y, values.z, values.w);
-}
-
-
-void Shader::UploadUniformMat4(std::string name, const C3D_Mtx* matrix)
-{
-    s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, location, matrix);
-}
-
 }

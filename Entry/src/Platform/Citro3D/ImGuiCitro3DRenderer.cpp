@@ -65,9 +65,6 @@ bool ImGui_ImplC3D_Shutdown()
 
 bool ImGui_ImplC3D_NewFrame()
 {
-	//ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
-	//C2D_SceneTarget(bd->m_RenderTarget);
-	//C2D_Prepare();
 	return true;
 }
 

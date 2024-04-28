@@ -1,4 +1,9 @@
 #include <Entry.h>
+#include <Platform/Citro3D/Citro3DShader.h>
+
+#include "imgui.h"
+
+#include <glm/gtc/type_ptr.hpp>
 
 class ExampleLayer : public Entry::Layer
 {
@@ -6,7 +11,7 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.0f, 1.0f, -1.0f, 1.0f)
 	{
-        m_Shader.reset(new Entry::Shader(0));
+        m_Shader.reset(Entry::Shader::Create(0));
 
         m_VertexArray.reset(Entry::VertexArray::Create());
 
@@ -49,7 +54,7 @@ public:
             });
         m_SquareVA->AddVertexBuffer(squareVB);
 
-        m_FlatColor.reset(new Entry::Shader(1));
+        m_FlatColor.reset(Entry::Shader::Create(1));
 
         u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         std::shared_ptr<Entry::IndexBuffer> squareIB;
@@ -91,19 +96,13 @@ public:
         Mtx_Identity(&scale);
         Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
 
-        glm::vec4 redColor(0.8f, 0.2f, 0.3f, 1.0f);
-        glm::vec4 blueColor(0.2f, 0.3f, 0.8f, 1.0f);
+        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_SquareColor);
 
         for (int y = 0; y < 20; ++y) {
             for (int x = 0; x < 20; ++x) {
                 Mtx_Identity(&transform);
                 Mtx_Translate(&transform, x * 0.11f, y * 0.11f, 0.0f, true);
                 Mtx_Multiply(&transform, &transform, &scale);
-                if ((x + y) % 2 == 0)
-                    m_FlatColor->UploadUniformFloat4("u_Color", redColor);
-                else
-                    m_FlatColor->UploadUniformFloat4("u_Color", blueColor);
-
                 Entry::Renderer::Submit(m_FlatColor, m_SquareVA, transform);
             }
         }
@@ -112,6 +111,13 @@ public:
 
         Entry::Renderer::EndScene();
 	}
+
+    virtual void OnImGuiRender() override 
+    {
+        ImGui::Begin("Settings");
+        ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+        ImGui::End();
+    }
 
 	void OnEvent(Entry::Event& event) override
 	{
@@ -134,6 +140,7 @@ private:
     float m_CameraMoveSpeed = 6.0f;
     float m_CameraVertSpeed = 3.0f;
     float m_CameraRotationSpeed = 120.0f;
+    glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f};
 
 };
 
@@ -143,8 +150,7 @@ public:
     Sandbox()
     {
 		PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
-		PushOverlay(new Entry::ImGuiLayer(), ET_WINDOW_BOTTOM);
-		//PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
+		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
     }
 
     ~Sandbox()

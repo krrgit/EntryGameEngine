@@ -6,6 +6,7 @@
 #include "Entry/LayerStack.h"
 #include "Entry/Events/Event.h"
 #include "Entry/Events/ApplicationEvent.h"
+#include "Entry/ImGui/ImGuiLayer.h"
 
 #define ET_WINDOW_TOP 0
 #define ET_WINDOW_BOTTOM 1
@@ -30,6 +31,7 @@ namespace Entry {
         Window* m_CurrentWindow;
         std::unique_ptr<Window> m_WindowTop;
         std::unique_ptr<Window> m_WindowBottom;
+        ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
         TickCounter m_FrameTime;

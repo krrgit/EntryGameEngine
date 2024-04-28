@@ -12,6 +12,7 @@ namespace Entry
 		virtual ~Citro3DWindow();
 
 		void OnUpdate(Timestep ts) override;
+		void ScanHIDEvents() override;
 		void FrameDrawOn() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }

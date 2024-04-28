@@ -46,6 +46,9 @@ namespace Entry {
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 		io.MouseDrawCursor = true;
 
+		Application& app = Application::Get();
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+
 		ImGui_ImplC3D_Init();
 	}
 
@@ -53,27 +56,6 @@ namespace Entry {
 	{
 		ImGui_ImplC3D_Shutdown();
 		ImGui::DestroyContext();
-	}
-
-	void ImGuiLayer::OnUpdate(Timestep ts)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
-		io.DeltaTime = ts;
-
-		ImGui_ImplC3D_NewFrame();
-		ImGui::NewFrame();
-
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
-
-		ImGui::Render();
-
-		// I/O
-		io.MouseDown[0] = false; // Reset io.MouseDown
-
-		ImGui_ImplC3D_RenderDrawData();
 	}
 
 	void ImGuiLayer::OnEvent(Event& event) 
@@ -87,11 +69,40 @@ namespace Entry {
 		//dispatcher.Dispatch<CirclePadEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnCirclePadMovedEvent));
 	}
 
+	void ImGuiLayer::Begin(Timestep ts)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.DeltaTime = ts;
+
+		//ImGui_ImplC3D_NewFrame();
+		ImGui::NewFrame();
+	}
+
+	void ImGuiLayer::OnImGuiRender()
+	{
+		static bool show = true;
+		ImGui::ShowDemoWindow(&show);
+	}
+
+	void ImGuiLayer::End()
+	{
+		ImGui::Render();
+		ImGui_ImplC3D_RenderDrawData();
+
+		// I/O
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[0] = false;
+	}
+
 	bool ImGuiLayer::OnScreenTouchedEvent(ScreenTouchedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDown[0] = true;
 		io.MousePos = ImVec2(e.GetX(), e.GetY());
+		return false;
+	}
+	bool ImGuiLayer::OnScreenReleasedEvent(ScreenReleasedEvent& e)
+	{
 		return false;
 	}
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
