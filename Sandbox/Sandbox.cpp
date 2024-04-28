@@ -49,7 +49,7 @@ public:
             });
         m_SquareVA->AddVertexBuffer(squareVB);
 
-        m_BlueShader.reset(new Entry::Shader(1));
+        m_FlatColor.reset(new Entry::Shader(1));
 
         u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         std::shared_ptr<Entry::IndexBuffer> squareIB;
@@ -91,12 +91,20 @@ public:
         Mtx_Identity(&scale);
         Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
 
+        glm::vec4 redColor(0.8f, 0.2f, 0.3f, 1.0f);
+        glm::vec4 blueColor(0.2f, 0.3f, 0.8f, 1.0f);
+
         for (int y = 0; y < 20; ++y) {
             for (int x = 0; x < 20; ++x) {
                 Mtx_Identity(&transform);
                 Mtx_Translate(&transform, x * 0.11f, y * 0.11f, 0.0f, true);
                 Mtx_Multiply(&transform, &transform, &scale);
-                Entry::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+                if ((x + y) % 2 == 0)
+                    m_FlatColor->UploadUniformFloat4("u_Color", redColor);
+                else
+                    m_FlatColor->UploadUniformFloat4("u_Color", blueColor);
+
+                Entry::Renderer::Submit(m_FlatColor, m_SquareVA, transform);
             }
         }
 
@@ -118,7 +126,7 @@ private:
     std::shared_ptr<Entry::IndexBuffer> m_IndexBuffer;
 
     std::shared_ptr<Entry::VertexArray> m_SquareVA;
-    std::shared_ptr<Entry::Shader> m_BlueShader;
+    std::shared_ptr<Entry::Shader> m_FlatColor;
 
     Entry::PerspectiveCamera m_Camera;
     glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };

@@ -2,6 +2,7 @@
 
 ; Uniforms
 .fvec u_ViewProjection[4], u_Transform[4]
+.fvec u_Color
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
@@ -16,7 +17,6 @@
 
 ; Inputs (defined as aliases for convenience)
 .alias inpos v0
-.alias inclr v1
 
 .proc main
 	; Force the w component of inpos to be 1.0
@@ -35,9 +35,8 @@
 	dp4 outpos.z, u_ViewProjection[2], r1
 	dp4 outpos.w, u_ViewProjection[3], r1
 
-
-	; outclr = blue
-	mov outclr, blue
+	; outclr = color
+	mov outclr, u_Color
 
 	; We're finished
 	end

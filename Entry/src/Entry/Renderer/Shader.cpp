@@ -43,6 +43,13 @@ void Shader::Unbind() const
     C3D_BindProgram(0);
 }
 
+void Shader::UploadUniformFloat4(std::string name, const glm::vec4 values) 
+{
+    s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
+    C3D_FVUnifSet(GPU_VERTEX_SHADER, location, values.x, values.y, values.z, values.w);
+}
+
+
 void Shader::UploadUniformMat4(std::string name, const C3D_Mtx* matrix)
 {
     s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
