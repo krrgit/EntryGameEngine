@@ -1,6 +1,6 @@
 # Entry Game Engine
  
-A 3D game engine for the 3DS. The goal of this project is simplify to 3DS game development. This project follows "The Cherno" game engine series on YouTube while trying to adapt it to the 3DS.
+A 3D game engine for the 3DS. The goal of this project is to simplify 3DS game development while remaining somewhat performant. This project follows "The Cherno" game engine series on YouTube while trying to adapt it to the 3DS.
 
 ## Status Demo 
 // TODO
@@ -9,7 +9,7 @@ A 3D game engine for the 3DS. The goal of this project is simplify to 3DS game d
 ### Entrypoint
 This is what's called when the application starts.
 ### Logging
-Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. This part of the engine is not optimal, but allows users to render a scene and see the logs on the same screen.
+Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. This part of the engine is not optimal (tanks fps in some cases), but allows users to render a scene and see the logs on the same screen. SELECT toggles the Logs display.
 ### Event System
 Event driven inputs supported.
 ### Application Layer
