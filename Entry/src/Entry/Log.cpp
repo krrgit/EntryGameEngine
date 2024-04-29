@@ -35,7 +35,7 @@ namespace Entry
         gfxSwapBuffersGpu();
         gspWaitForVBlank();
         
-        spdlog::set_pattern("%^[%M:%S]%n:%v%$");
+        spdlog::set_pattern("%^%M:%S|%n:%v%$");
 
         s_CoreLogger = spdlog::stdout_color_mt("ET");
         s_CoreLogger->set_level(spdlog::level::trace);
