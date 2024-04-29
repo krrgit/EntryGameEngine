@@ -90,9 +90,12 @@ namespace Entry {
 	}
 	void LogLayer::CopyFramebufferToTexture()
 	{
+		u32 endY = (m_Console->cursorY + 1) * 8;
+		endY = m_Console->cursorY == 0 ? m_Height : endY;
+
 		// TODO: Minimize how often this copy is done
 		// Copy from console framebuffer to texture
-		for (u32 y = 0; y < m_Height; ++y)
+		for (u32 y = 0; y < endY; ++y)
 		{
 			for (u32 x = 0; x < m_Width; ++x)
 			{
