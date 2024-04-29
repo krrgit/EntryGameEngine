@@ -27,7 +27,7 @@ namespace Entry {
 
 	void LogLayer::OnAttach()
 	{
-		showLogs = true;
+		m_ShowLogs = true;
 		m_Console = Log::GetPrintConsole().get();
 		m_Width = m_Console->windowWidth * 8;
 		m_Height = m_Console->windowHeight * 8;
@@ -46,23 +46,39 @@ namespace Entry {
 	}
 
 	void LogLayer::OnUpdate(Timestep ts) {
+		//printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
 		if (Input::GetButtonDown(ET_KEY_SELECT)) {
-			showLogs = !showLogs;
+			m_ShowLogs = !m_ShowLogs;
 		}
 
-		if (!showLogs) return;
-		//printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
+		if (Input::GetButtonDown(ET_KEY_A)) {
+			ET_CORE_TRACE("A Button Pressed.");
+		}
 
-		// TODO: Find way to avoid this copy
-		// Copy from console framebuffer to texture
-		for (u32 y = 0; y < m_Height; ++y) 
-		{
-			for (u32 x = 0; x < m_Width; ++x) 
-			{
-				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-				u16& pixel = ((u16*)image.tex->data)[dest];
-				pixel = m_Console->frameBuffer[(x * m_Width) + (m_Width - 1 - y)];
-				pixel |= pixel == 0 ? 0 : 1;
+		if (!m_ShowLogs) return;
+
+		// Only update once per second.
+		static float redrawTimer = 1.0f;
+		static int clearCounter = 0;
+		redrawTimer += ts;
+		
+		if (redrawTimer >= 1.0f || m_LastX != m_Console->cursorX || m_LastY != m_Console->cursorY) {
+			redrawTimer = 0.0f;
+			
+			if (clearCounter > 5) {
+				std::fill_n(m_Console->frameBuffer, m_Height * m_Width, 0x0);
+				clearCounter = 0;
+				m_Console->cursorX = 0;
+				m_Console->cursorY = 0;
+				CopyFramebufferToTexture();
+			}else if (m_LastX == m_Console->cursorX && m_LastY == m_Console->cursorY) {
+				clearCounter++;
+			}
+			else {
+				m_LastX = m_Console->cursorX;
+				m_LastY = m_Console->cursorY;
+				clearCounter = 0;
+				CopyFramebufferToTexture();
 			}
 		}
 		C2D_DrawImageAt(image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
@@ -71,5 +87,20 @@ namespace Entry {
 	void LogLayer::OnEvent(Event& event)
 	{
 
+	}
+	void LogLayer::CopyFramebufferToTexture()
+	{
+		// TODO: Minimize how often this copy is done
+		// Copy from console framebuffer to texture
+		for (u32 y = 0; y < m_Height; ++y)
+		{
+			for (u32 x = 0; x < m_Width; ++x)
+			{
+				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
+				u16& pixel = ((u16*)image.tex->data)[dest];
+				pixel = m_Console->frameBuffer[(x * m_Width) + (m_Width - 1 - y)];
+				pixel |= pixel == 0 ? 0 : 1;
+			}
+		}
 	}
 }

@@ -61,6 +61,30 @@ public:
         squareIB.reset(Entry::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
         m_SquareVA->SetIndexBuffer(squareIB);
 
+        m_FloorVA.reset(Entry::VertexArray::Create());
+
+        float floorVertices[4 * 3] =
+        {
+           5.0f, -0.75f,  5.0f,
+          -5.0f, -0.75f,  5.0f,
+          -5.0f, -0.75f, -5.0f,
+           5.0f, -0.75f, -5.0f,
+        };
+
+
+        std::shared_ptr<Entry::VertexBuffer> floorVB;
+        floorVB.reset(Entry::VertexBuffer::Create(floorVertices, sizeof(floorVertices)));
+
+        floorVB->SetLayout({
+            { Entry::ShaderDataType::Float3, "a_Position" }
+            });
+        m_FloorVA->AddVertexBuffer(floorVB);
+
+        u16 floorIndices[6] = { 0, 1, 2, 2, 3, 0 };
+        std::shared_ptr<Entry::IndexBuffer> floorIB;
+        floorIB.reset(Entry::IndexBuffer::Create(floorIndices, sizeof(floorIndices) / sizeof(uint16_t)));
+        m_FloorVA->SetIndexBuffer(floorIB);
+
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
         C3D_TexEnv* env = C3D_GetTexEnv(0);
@@ -107,7 +131,12 @@ public:
             }
         }
 
+        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
+
+        Entry::Renderer::Submit(m_FlatColor, m_FloorVA);
+
         Entry::Renderer::Submit(m_Shader, m_VertexArray);
+
 
         Entry::Renderer::EndScene();
 	}
@@ -133,6 +162,7 @@ private:
 
     std::shared_ptr<Entry::VertexArray> m_SquareVA;
     std::shared_ptr<Entry::Shader> m_FlatColor;
+    std::shared_ptr<Entry::VertexArray> m_FloorVA;
 
     Entry::PerspectiveCamera m_Camera;
     glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };
@@ -140,7 +170,8 @@ private:
     float m_CameraMoveSpeed = 6.0f;
     float m_CameraVertSpeed = 3.0f;
     float m_CameraRotationSpeed = 120.0f;
-    glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f};
+    glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+    glm::vec4 m_floorColor = { 0.25f, 0.25f, 0.25f, 1.0f};
 
 };
 
