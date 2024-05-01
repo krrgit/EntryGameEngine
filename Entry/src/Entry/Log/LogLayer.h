@@ -22,7 +22,6 @@ namespace Entry {
 		PrintConsole* m_Console;
 		u16 m_Width, m_Height;
 		C2D_Image image;
-		u16* m_ConsoleBuffer;
 
 		bool m_ShowLogs;
 		int m_LastX, m_LastY;

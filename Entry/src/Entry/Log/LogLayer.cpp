@@ -17,13 +17,7 @@
 #define G565_MASK 0x07E0
 #define B565_MASK 0x001F
 
-//#define LOG_CONSOLE_ENABLED
-
 namespace Entry {
-
-	/////////////////////////////////////////////////////////////////
-	// LOG LAYER ////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////// 
 
 	void LogLayer::OnAttach()
 	{
@@ -33,9 +27,9 @@ namespace Entry {
 		m_Height = m_Console->windowHeight * 8;
 
 		// Initialize console buffer texture
-		C3D_Tex* tex = (C3D_Tex*)linearAlloc(sizeof(C3D_Tex));
-		static const Tex3DS_SubTexture subt3x = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-		image = (C2D_Image){ tex, &subt3x };
+		static C3D_Tex tex;
+		static const Tex3DS_SubTexture subtex = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
+		image = (C2D_Image){ &tex, &subtex };
 		C3D_TexInit(image.tex, 256, 256, GPU_RGBA5551);
 		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
@@ -62,10 +56,13 @@ namespace Entry {
 		static int clearCounter = 0;
 		redrawTimer += ts;
 		
-		if (redrawTimer >= 1.0f || m_LastX != m_Console->cursorX || m_LastY != m_Console->cursorY) {
+		if (m_LastX != m_Console->cursorX || 
+			m_LastY != m_Console->cursorY || 
+			redrawTimer >= 1.0f) 
+		{
 			redrawTimer = 0.0f;
 			
-			if (clearCounter > 5) {
+			if (clearCounter >= 5) {
 				std::fill_n(m_Console->frameBuffer, m_Height * m_Width, 0x0);
 				clearCounter = 0;
 				m_Console->cursorX = 0;
