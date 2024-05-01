@@ -6,8 +6,14 @@
 #include"Entry/Application.h"
 
 namespace Entry {
+	void Citro3DRendererAPI::Init()
+	{
+		gfxInitDefault();
+		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
+		C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
+	}
 
-void Citro3DRendererAPI::SetClearColor(const uint32_t color)
+	void Citro3DRendererAPI::SetClearColor(const uint32_t color)
 {
 	static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
 }

@@ -6,6 +6,9 @@ namespace Entry {
 	class RenderCommand
 	{
 	public:
+		inline static void Init() {
+			s_RendererAPI->Init();
+		}
 		inline static void SetClearColor(const uint32_t color)
 		{
 			s_RendererAPI->SetClearColor(color);

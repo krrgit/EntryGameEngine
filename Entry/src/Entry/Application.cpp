@@ -16,14 +16,11 @@ namespace Entry
 
     Application::Application()
     {
-        gfxInitDefault();
+        Renderer::Init();
         Log::Init();
 
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
-
-        C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-        C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 
         WindowProps topProps("Top", 400, 240, GFX_TOP);
         m_WindowTop = Scope<Window>(Window::Create(topProps));

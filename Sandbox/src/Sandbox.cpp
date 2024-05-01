@@ -12,6 +12,7 @@
 
 // Texture Headers
 #include "Checkerboard_t3x.h"
+#include "EntryLogo_t3x.h"
 
 
 class ExampleLayer : public Entry::Layer
@@ -103,6 +104,8 @@ public:
         m_Texture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
         m_Texture->Bind();
 
+        m_EntryLogo = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
+
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
         C3D_TexEnv* env = C3D_GetTexEnv(0);
@@ -162,8 +165,12 @@ public:
         C3D_Mtx texturedQuadMtx;
         Mtx_Identity(&texturedQuadMtx);
         Mtx_Scale(&texturedQuadMtx, 1.5f, 1.5f, 1.5f);
-        Mtx_Translate(&texturedQuadMtx, 0, 0, 0.02f, true);
+        Mtx_Translate(&texturedQuadMtx, 0, 0, 0.01f, true);
         m_Texture->Bind();
+        Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
+
+        Mtx_Translate(&texturedQuadMtx, 0.167f, -0.167f, 0.01f, true);
+        m_EntryLogo->Bind();
         Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
 
         Entry::Renderer::EndScene();
@@ -193,6 +200,7 @@ private:
     Entry::Ref<Entry::VertexArray> m_FloorVA;
 
     Entry::Ref<Entry::Texture2D> m_Texture;
+    Entry::Ref<Entry::Texture2D> m_EntryLogo;
 
 
     Entry::PerspectiveCamera m_Camera;

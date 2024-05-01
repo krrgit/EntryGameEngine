@@ -12,6 +12,7 @@ namespace Entry {
 		};
 
 	public:
+		virtual void Init() = 0;
 		virtual void SetClearColor(const uint32_t color) = 0;
 		virtual void Clear() = 0;
 
