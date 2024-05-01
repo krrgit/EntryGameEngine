@@ -155,14 +155,14 @@ public:
 
 private:
 
-    std::shared_ptr<Entry::Shader> m_Shader;
-    std::shared_ptr<Entry::VertexArray> m_VertexArray;
-    std::shared_ptr<Entry::VertexBuffer> m_VertexBuffer;
-    std::shared_ptr<Entry::IndexBuffer> m_IndexBuffer;
+    Entry::Ref<Entry::Shader> m_Shader;
+    Entry::Ref<Entry::VertexArray> m_VertexArray;
+    Entry::Ref<Entry::VertexBuffer> m_VertexBuffer;
+    Entry::Ref<Entry::IndexBuffer> m_IndexBuffer;
 
-    std::shared_ptr<Entry::VertexArray> m_SquareVA;
-    std::shared_ptr<Entry::Shader> m_FlatColor;
-    std::shared_ptr<Entry::VertexArray> m_FloorVA;
+    Entry::Ref<Entry::VertexArray> m_SquareVA;
+    Entry::Ref<Entry::Shader> m_FlatColor;
+    Entry::Ref<Entry::VertexArray> m_FloorVA;
 
     Entry::PerspectiveCamera m_Camera;
     glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };

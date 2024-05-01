@@ -21,7 +21,7 @@ namespace Entry
         static void BeginScene(PerspectiveCamera& camera);
         static void EndScene();
 
-        static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const C3D_Mtx& transform = Identity);
+        static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const C3D_Mtx& transform = Identity);
 
         inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
     private:

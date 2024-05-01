@@ -29,8 +29,8 @@ namespace Entry {
         inline Window& GetWindow() { return *m_CurrentWindow; }
     private:
         Window* m_CurrentWindow;
-        std::unique_ptr<Window> m_WindowTop;
-        std::unique_ptr<Window> m_WindowBottom;
+        Scope<Window> m_WindowTop;
+        Scope<Window> m_WindowBottom;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;

@@ -17,7 +17,7 @@ namespace Entry {
 	{
 	}
 
-	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const C3D_Mtx& transform)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const C3D_Mtx& transform)
 	{
 
 		shader->Bind();

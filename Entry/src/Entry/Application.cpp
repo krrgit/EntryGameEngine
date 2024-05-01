@@ -26,12 +26,12 @@ namespace Entry
         C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 
         WindowProps topProps("Top", 400, 240, GFX_TOP);
-        m_WindowTop = std::unique_ptr<Window>(Window::Create(topProps));
+        m_WindowTop = Scope<Window>(Window::Create(topProps));
         m_CurrentWindow = m_WindowTop.get();
         RenderCommand::SetClearColor(0x68B0D8FF);
 
         WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
-        m_WindowBottom = std::unique_ptr<Window>(Window::Create(props));
+        m_WindowBottom = Scope<Window>(Window::Create(props));
         m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
         m_CurrentWindow = m_WindowBottom.get();
         RenderCommand::SetClearColor(0x191919FF);

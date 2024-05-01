@@ -17,7 +17,7 @@ void Citro3DRendererAPI::Clear()
 	//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
 }
 
-void Citro3DRendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
+void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 {
 	C3D_DrawElements(
 		GPU_TRIANGLES, 
