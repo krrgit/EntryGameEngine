@@ -106,7 +106,10 @@ public:
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
         C3D_TexEnv* env = C3D_GetTexEnv(0);
-        C3D_TexEnvInit(env);
+        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+
+        env = C3D_GetTexEnv(1);
         C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
         C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
@@ -133,10 +136,6 @@ public:
 
         Entry::Renderer::BeginScene(m_Camera);
 
-        C3D_TexEnv* env0 = C3D_GetTexEnv(0);
-        C3D_TexEnvSrc(env0, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env0, C3D_Both, GPU_ADD);
-
         C3D_Mtx transform;
         C3D_Mtx scale;
         Mtx_Identity(&scale);
@@ -159,10 +158,6 @@ public:
 
         // Triangle
         //Entry::Renderer::Submit(m_Shader, m_VertexArray);
-
-        C3D_TexEnv* env1 = C3D_GetTexEnv(1);
-        C3D_TexEnvSrc(env1, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env1, C3D_Both, GPU_MODULATE);
 
         C3D_Mtx texturedQuadMtx;
         Mtx_Identity(&texturedQuadMtx);

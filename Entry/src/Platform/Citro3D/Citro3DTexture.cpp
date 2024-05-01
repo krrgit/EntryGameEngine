@@ -31,6 +31,10 @@ namespace Entry {
 
 	void Citro3DTexture2D::Bind(uint32_t slot)
 	{
+		C3D_TexEnv* env = C3D_GetTexEnv(0);
+		C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+		C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
+
 		C3D_TexBind(slot, &m_Texture);
 	}
 }
