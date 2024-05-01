@@ -34,7 +34,7 @@ namespace Entry
         m_WindowBottom = Scope<Window>(Window::Create(props));
         m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
         m_CurrentWindow = m_WindowBottom.get();
-        RenderCommand::SetClearColor(0x191919FF);
+        RenderCommand::SetClearColor(0x252525FF);
 
         m_ImGuiLayer = new Entry::ImGuiLayer();
         PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);

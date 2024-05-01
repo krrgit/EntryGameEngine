@@ -8,7 +8,7 @@
 namespace Entry {
 	class Citro3DShader : public Shader {
 	public:
-		Citro3DShader(int src_id);
+		Citro3DShader(u32* shbinData, u32 shBinSize);
 		~Citro3DShader();
 
 		virtual void Bind();
@@ -23,6 +23,7 @@ namespace Entry {
 		void UploadUniformMat3(std::string name, const glm::mat3* matrix);
 		void UploadUniformMat4(std::string name, const C3D_Mtx* matrix);
 	private:
+		uint32_t m_RendererID;
 		DVLB_s* vshader_dvlb;
 		shaderProgram_s program;
 	};

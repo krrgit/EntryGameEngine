@@ -20,7 +20,7 @@ namespace Entry {
 		m_ViewMatrix.r[3].y = (_top + _bottom) / (_top - _bottom);
 
 		// Calculate ViewProjection & Projection
-		Mtx_PerspTilt(&m_ProjectionMatrix, C3D_AngleFromDegrees(80.0f), C3D_AspectRatioBot, 0.01f, 1000.0f, false);
+		Mtx_PerspTilt(&m_ProjectionMatrix, C3D_AngleFromDegrees(80.0f), C3D_AspectRatioTop, 0.01f, 1000.0f, false);
 		Mtx_Multiply(&m_ViewProjectionMatrix, &m_ProjectionMatrix, &m_ViewMatrix);
 
 		// Calculate normals

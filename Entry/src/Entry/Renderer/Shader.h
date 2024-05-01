@@ -8,6 +8,6 @@ namespace Entry {
 
 		virtual void Bind() = 0;
 		virtual void Unbind() const = 0;
-		static Shader* Create(int src_id);
+		static Shader* Create(const uint8_t* shbinData, u32 shBinSize);
 	};
 }

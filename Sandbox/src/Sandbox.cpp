@@ -5,15 +5,24 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+// Compiled Shader Headers
+#include "vshader00_shbin.h"
+#include "vshader01_shbin.h"
+#include "vshader02_shbin.h"
+
+// Texture Headers
+#include "Checkerboard_t3x.h"
+
+
 class ExampleLayer : public Entry::Layer
 {
 public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.0f, 1.0f, -1.0f, 1.0f)
 	{
-        m_Shader.reset(Entry::Shader::Create(0));
+        m_Shader.reset(Entry::Shader::Create(vshader00_shbin, vshader00_shbin_size));
 
-        m_VertexArray.reset(Entry::VertexArray::Create());
+        m_VertexArray = Entry::VertexArray::Create();
 
         float vertices[] = {
             0.0f,  0.5f,  0.2f, 0.8f, 0.8f, 0.2f, 1.0f,
@@ -35,33 +44,37 @@ public:
 
         m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
-        m_SquareVA.reset(Entry::VertexArray::Create());
 
-        float squareVertices[4 * 3] =
+
+        m_SquareVA = Entry::VertexArray::Create();
+
+        float squareVertices[5 * 4] =
         {
-            0.5f,  0.5f,  0.0f,
-           -0.5f,  0.5f,  0.0f,
-           -0.5f, -0.5f,  0.0f,
-            0.5f, -0.5f,  0.0f,
+           -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+           -0.5f,  0.5f,  0.0f, 0.0f, 1.0f
         };
-
 
         std::shared_ptr<Entry::VertexBuffer> squareVB;
         squareVB.reset(Entry::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
         squareVB->SetLayout({
-            { Entry::ShaderDataType::Float3, "a_Position" }
+            { Entry::ShaderDataType::Float3, "a_Position" },
+            { Entry::ShaderDataType::Float2, "a_TexCoord" }
             });
         m_SquareVA->AddVertexBuffer(squareVB);
 
-        m_FlatColor.reset(Entry::Shader::Create(1));
+        m_FlatColor.reset(Entry::Shader::Create(vshader01_shbin, vshader01_shbin_size));
 
         u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         std::shared_ptr<Entry::IndexBuffer> squareIB;
         squareIB.reset(Entry::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
         m_SquareVA->SetIndexBuffer(squareIB);
 
-        m_FloorVA.reset(Entry::VertexArray::Create());
+
+
+        m_FloorVA = Entry::VertexArray::Create();
 
         float floorVertices[4 * 3] =
         {
@@ -84,6 +97,11 @@ public:
         std::shared_ptr<Entry::IndexBuffer> floorIB;
         floorIB.reset(Entry::IndexBuffer::Create(floorIndices, sizeof(floorIndices) / sizeof(uint16_t)));
         m_FloorVA->SetIndexBuffer(floorIB);
+
+
+        m_TextureShader.reset(Entry::Shader::Create(vshader02_shbin, vshader02_shbin_size));
+        m_Texture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
+        m_Texture->Bind();
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -115,11 +133,14 @@ public:
 
         Entry::Renderer::BeginScene(m_Camera);
 
+        C3D_TexEnv* env0 = C3D_GetTexEnv(0);
+        C3D_TexEnvSrc(env0, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env0, C3D_Both, GPU_ADD);
+
         C3D_Mtx transform;
         C3D_Mtx scale;
         Mtx_Identity(&scale);
         Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
-
         std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_SquareColor);
 
         for (int y = 0; y < 20; ++y) {
@@ -131,12 +152,24 @@ public:
             }
         }
 
-        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
 
+        // Floor
+        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
         Entry::Renderer::Submit(m_FlatColor, m_FloorVA);
 
-        Entry::Renderer::Submit(m_Shader, m_VertexArray);
+        // Triangle
+        //Entry::Renderer::Submit(m_Shader, m_VertexArray);
 
+        C3D_TexEnv* env1 = C3D_GetTexEnv(1);
+        C3D_TexEnvSrc(env1, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env1, C3D_Both, GPU_MODULATE);
+
+        C3D_Mtx texturedQuadMtx;
+        Mtx_Identity(&texturedQuadMtx);
+        Mtx_Scale(&texturedQuadMtx, 1.5f, 1.5f, 1.5f);
+        Mtx_Translate(&texturedQuadMtx, 0, 0, 0.02f, true);
+        m_Texture->Bind();
+        Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
 
         Entry::Renderer::EndScene();
 	}
@@ -161,8 +194,11 @@ private:
     Entry::Ref<Entry::IndexBuffer> m_IndexBuffer;
 
     Entry::Ref<Entry::VertexArray> m_SquareVA;
-    Entry::Ref<Entry::Shader> m_FlatColor;
+    Entry::Ref<Entry::Shader> m_FlatColor, m_TextureShader;
     Entry::Ref<Entry::VertexArray> m_FloorVA;
+
+    Entry::Ref<Entry::Texture2D> m_Texture;
+
 
     Entry::PerspectiveCamera m_Camera;
     glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };
@@ -171,7 +207,7 @@ private:
     float m_CameraVertSpeed = 3.0f;
     float m_CameraRotationSpeed = 120.0f;
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
-    glm::vec4 m_floorColor = { 0.25f, 0.25f, 0.25f, 1.0f};
+    glm::vec4 m_floorColor = { 0.1f, 0.1f, 0.1f, 1.0f};
 
 };
 

@@ -118,6 +118,13 @@ namespace Entry
 		C3D_TexEnvInit(env);
 		C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
 		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+
+		// Clear out the other texenvs
+		C3D_TexEnvInit(C3D_GetTexEnv(1));
+		C3D_TexEnvInit(C3D_GetTexEnv(2));
+		C3D_TexEnvInit(C3D_GetTexEnv(3));
+		C3D_TexEnvInit(C3D_GetTexEnv(4));
+		C3D_TexEnvInit(C3D_GetTexEnv(5));
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)

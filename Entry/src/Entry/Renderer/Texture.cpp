@@ -1,21 +1,17 @@
 #include "etpch.h"
-#include "VertexArray.h"
+#include "Texture.h"
 
 #include "Renderer.h"
-#include "RendererAPI.h"
-#include "Platform/Citro3D/Citro3DVertexArray.h"
+#include "Platform/Citro3D/Citro3DTexture.h"
 
 namespace Entry {
-
-	Ref<VertexArray> VertexArray::Create()
+	Ref<Texture2D> Texture2D::Create(const void* data, size_t size)
 	{
 		switch (Renderer::GetAPI()) {
 		case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::Citro3D:  return Ref<Citro3DVertexArray>(new Citro3DVertexArray());
+		case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(data, size));
 		}
 
 		return nullptr;
 	}
-
-
 }

@@ -30,7 +30,7 @@ namespace Entry {
 		static C3D_Tex tex;
 		static const Tex3DS_SubTexture subtex = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
 		image = (C2D_Image){ &tex, &subtex };
-		C3D_TexInit(image.tex, 256, 256, GPU_RGBA5551);
+		C3D_TexInitVRAM(image.tex, 256, 256, GPU_RGBA5551);
 		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
 	}

@@ -1,11 +1,8 @@
 #include "etpch.h"
 #include "Citro3DShader.h"
 
-#include "vshader00_shbin.h"
-#include "vshader01_shbin.h"
-
 namespace Entry {
-
+    static uint32_t s_NextRendererID = 0;
     void glm_mat3_to_C3D_mtx(C3D_Mtx* out, const glm::mat3* in) {
         Mtx_Zeros(out);
         for(int i=0;i<3;++i){
@@ -15,22 +12,10 @@ namespace Entry {
         }
     }
 
-    Citro3DShader::Citro3DShader(int src_id)
+    Citro3DShader::Citro3DShader(u32* shbinData, u32 shBinSize)
     {
-        // TODO: switch to runtime compilation or make a better LUT
-        switch (src_id) {
-        case 0:
-            vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
-            break;
-        case 1:
-            vshader_dvlb = DVLB_ParseFile((u32*)vshader01_shbin, vshader01_shbin_size);
-            break;
-        default:
-            ET_CORE_ASSERT(false, "Shader ID out of bounds. Using ID 0.");
-            vshader_dvlb = DVLB_ParseFile((u32*)vshader00_shbin, vshader00_shbin_size);
-            break;
-        }
-
+        vshader_dvlb = DVLB_ParseFile(shbinData, shBinSize);
+        m_RendererID = s_NextRendererID++;
         shaderProgramInit(&program);
         shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
     }
