@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entry/Core.h"
+#include "Entry/Core/Core.h"
 
 namespace Entry {
 	class Texture {

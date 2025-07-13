@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Entry/Window.h"
-#include "Entry/LayerStack.h"
+#include "Entry/Core/Window.h"
+#include "Entry/Core/LayerStack.h"
 
 namespace Entry
 {

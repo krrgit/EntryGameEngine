@@ -3,7 +3,7 @@
 
 #include<citro3d.h>
 #include"Citro3DWindow.h"
-#include"Entry/Application.h"
+#include"Entry/Core/Application.h"
 
 namespace Entry {
 	void Citro3DRendererAPI::Init()

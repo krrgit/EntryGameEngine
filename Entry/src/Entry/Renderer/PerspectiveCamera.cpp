@@ -29,6 +29,29 @@ namespace Entry {
 		up = glm::vec3(m_ViewMatrix.m[2], m_ViewMatrix.m[6], m_ViewMatrix.m[10]);
 		forward = glm::vec3(-m_ViewMatrix.m[1], -m_ViewMatrix.m[5], -m_ViewMatrix.m[9]);
 	}
+
+
+	void PerspectiveCamera::SetProjection(float _left, float _right, float _bottom, float _top)
+	{
+		// Set View Matrix
+		m_ViewMatrix.r[0].x = 2.0f / (_right - _left);
+		m_ViewMatrix.r[1].y = 2.0f / (_top - _bottom);
+		m_ViewMatrix.r[2].z = -1;
+		m_ViewMatrix.r[3].x = (_right + _left) / (_top - _bottom);
+		m_ViewMatrix.r[3].y = (_top + _bottom) / (_top - _bottom);
+
+		// Calculate ViewProjection & Projection
+		Mtx_PerspTilt(&m_ProjectionMatrix, C3D_AngleFromDegrees(80.0f), C3D_AspectRatioTop, 0.01f, 1000.0f, false);
+		Mtx_Multiply(&m_ViewProjectionMatrix, &m_ProjectionMatrix, &m_ViewMatrix);
+
+		// Calculate normals
+		Mtx_Transpose(&m_ViewMatrix);
+		right = glm::vec3(m_ViewMatrix.m[3], m_ViewMatrix.m[7], m_ViewMatrix.m[11]);
+		up = glm::vec3(m_ViewMatrix.m[2], m_ViewMatrix.m[6], m_ViewMatrix.m[10]);
+		forward = glm::vec3(-m_ViewMatrix.m[1], -m_ViewMatrix.m[5], -m_ViewMatrix.m[9]);
+	}
+
+
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
 		C3D_Mtx transform;

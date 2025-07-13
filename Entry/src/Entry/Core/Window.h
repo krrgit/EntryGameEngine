@@ -2,7 +2,7 @@
 
 #include "etpch.h"
 
-#include "Entry/Core.h"
+#include "Entry/Core/Core.h"
 #include "Entry/Events/Event.h"
 
 namespace Entry {

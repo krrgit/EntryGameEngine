@@ -1,6 +1,6 @@
 
 #include "Entry/Log/LogLayer.h"
-#include "Entry/Input.h"
+#include "Entry/Core/Input.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <stdio.h>

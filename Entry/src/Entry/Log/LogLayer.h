@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Entry/Layer.h"
-#include "Core.h"
+#include "Entry/Core/Layer.h"
+#include "Entry/Core/Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entry/Window.h"
+#include "Entry/Core/Window.h"
 #include "Entry/Renderer/RendererAPI.h"
 
 namespace Entry {

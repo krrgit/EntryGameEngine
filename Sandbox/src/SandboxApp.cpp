@@ -1,9 +1,13 @@
 #include <Entry.h>
+#include <Entry/Core/EntryPoint.h>
+
 #include <Platform/Citro3D/Citro3DShader.h>
 
 #include "imgui.h"
 
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Sandbox3D.h"
 
 // Compiled Shader Headers
 #include "vshader00_shbin.h"
@@ -19,7 +23,7 @@ class ExampleLayer : public Entry::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.0f, 1.0f, -1.0f, 1.0f)
+		: Layer("Example"), m_CameraController(1.0f)
 	{
         m_Shader.reset(Entry::Shader::Create(vshader00_shbin, vshader00_shbin_size));
 
@@ -119,25 +123,11 @@ public:
 
 	void OnUpdate(Entry::Timestep ts) override
 	{
-        glm::vec2 cp = Entry::Input::GetJoystickPos();
+        // Update
+        m_CameraController.OnUpdate(ts);
 
-        glm::vec3 forward = m_Camera.forward;
-        forward.y = 0;
-        glm::vec3 right = m_Camera.right;
-        right.y = 0;
-        m_CamPos = m_CamPos + forward * (cp.y * m_CameraMoveSpeed * ts) + (right * (cp.x * m_CameraMoveSpeed * ts));
-        int LandR = (Entry::Input::GetButton(ET_KEY_R) ? 1 : 0) - (Entry::Input::GetButton(ET_KEY_L) ? 1 : 0);
-        m_CamPos.y += LandR * m_CameraVertSpeed * ts;
-
-        int cStickX = (Entry::Input::GetButton(ET_KEY_CSTICK_LEFT) ? 1 : 0) - (Entry::Input::GetButton(ET_KEY_CSTICK_RIGHT) ? 1 : 0);
-        int cStickY = (Entry::Input::GetButton(ET_KEY_CSTICK_UP) ? 1 : 0) - (Entry::Input::GetButton(ET_KEY_CSTICK_DOWN) ? 1 : 0);
-
-        m_CamRot = glm::vec4(m_CamRot.x + (cStickY * m_CameraRotationSpeed * ts), m_CamRot.y + (cStickX * m_CameraRotationSpeed * ts), m_CamRot.z, m_CamRot.w);
-
-        m_Camera.SetPosition(m_CamPos);
-        m_Camera.SetRotation(m_CamRot);
-
-        Entry::Renderer::BeginScene(m_Camera);
+        //Render
+        Entry::Renderer::BeginScene(m_CameraController.GetCamera());
 
         C3D_Mtx transform;
         C3D_Mtx scale;
@@ -154,8 +144,7 @@ public:
             }
         }
 
-
-        // Floor
+        // Ground
         std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
         Entry::Renderer::Submit(m_FlatColor, m_FloorVA);
 
@@ -185,7 +174,7 @@ public:
 
 	void OnEvent(Entry::Event& event) override
 	{
-
+        //m_CameraController.OnEvent(event);
 	}
 
 private:
@@ -203,12 +192,7 @@ private:
     Entry::Ref<Entry::Texture2D> m_EntryLogo;
 
 
-    Entry::PerspectiveCamera m_Camera;
-    glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };
-    glm::vec4 m_CamRot = { 0.0f, 0.0f, 0.0f, 0.0f };
-    float m_CameraMoveSpeed = 6.0f;
-    float m_CameraVertSpeed = 3.0f;
-    float m_CameraRotationSpeed = 120.0f;
+    Entry::PerspectiveCameraController m_CameraController;
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
     glm::vec4 m_floorColor = { 0.1f, 0.1f, 0.1f, 1.0f};
 
@@ -219,7 +203,8 @@ class Sandbox : public Entry::Application
 public:
     Sandbox()
     {
-		PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
+		//PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
+		PushLayer(new Sandbox3D(), ET_WINDOW_TOP);
 		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
     }
 

@@ -4,8 +4,8 @@
 #include "imgui.h"
 #include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
 
-#include "KeyCodes.h"
-#include "Entry/Application.h"
+#include "Entry/Core/KeyCodes.h"
+#include "Entry/Core/Application.h"
 
 namespace Entry {
 

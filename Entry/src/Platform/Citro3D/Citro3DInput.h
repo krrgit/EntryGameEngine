@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entry/Input.h"
+#include "Entry/Core/Input.h"
 #include "glm/glm.hpp"
 
 namespace Entry {

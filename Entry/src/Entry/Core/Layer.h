@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entry/Core.h"
+#include "Entry/Core/Core.h"
 #include "Entry/Events/Event.h"
 #include "Entry/Core/Timestep.h"
 

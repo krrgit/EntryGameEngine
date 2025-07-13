@@ -6,7 +6,7 @@
 #include <imgui_sw.h>
 
 #include "ImGuiCitro3DRenderer.h"
-#include "Entry/Application.h"
+#include "Entry/Core/Application.h"
 #include "Platform/Citro3D/Citro3DWindow.h"
 
 using namespace Entry;
