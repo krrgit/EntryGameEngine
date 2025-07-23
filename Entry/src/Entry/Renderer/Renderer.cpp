@@ -1,6 +1,7 @@
 
 #include "etpch.h"
 #include "Renderer.h"
+#include "Renderer3D.h"
 
 #include "Platform/Citro3D/Citro3DShader.h"
 
@@ -11,6 +12,7 @@ namespace Entry {
 	void Renderer::Init() 
 	{
 		RenderCommand::Init();
+		Renderer3D::Init();
 	}
 
 	void Renderer::BeginScene(PerspectiveCamera& camera)
