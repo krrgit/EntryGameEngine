@@ -11,7 +11,7 @@ namespace Entry {
 
 		const glm::vec3 GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix();
-			//PrintViewMatrix();
+			PrintViewMatrix();
 		}
 		
 		const glm::vec4 GetRotation() const { return m_Rotation; }
@@ -26,11 +26,20 @@ namespace Entry {
 
 		void PrintViewMatrix() {
 			consoleClear();
+			printf("View Matrix\n");
 			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
-				m_ViewMatrix.m[0],m_ViewMatrix.m[1], m_ViewMatrix.m[2],m_ViewMatrix.m[3],
-				m_ViewMatrix.m[4],m_ViewMatrix.m[5],m_ViewMatrix.m[6],m_ViewMatrix.m[7],
-				m_ViewMatrix.m[8],m_ViewMatrix.m[9],m_ViewMatrix.m[10],m_ViewMatrix.m[11],
-				m_ViewMatrix.m[12], m_ViewMatrix.m[13], m_ViewMatrix.m[14], m_ViewMatrix.m[15]
+				m_ViewMatrix.r[0].c[0], m_ViewMatrix.r[0].c[1], m_ViewMatrix.r[0].c[2], m_ViewMatrix.r[0].c[3],
+				m_ViewMatrix.r[1].c[0], m_ViewMatrix.r[1].c[1], m_ViewMatrix.r[1].c[2], m_ViewMatrix.r[1].c[3],
+				m_ViewMatrix.r[2].c[0], m_ViewMatrix.r[2].c[1], m_ViewMatrix.r[2].c[2], m_ViewMatrix.r[2].c[3],
+				m_ViewMatrix.r[3].c[0], m_ViewMatrix.r[3].c[1], m_ViewMatrix.r[3].c[2], m_ViewMatrix.r[3].c[3]
+			);
+			printf("View Projection Matrix\n");
+
+			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
+				m_ViewProjectionMatrix.m[0], m_ViewProjectionMatrix.m[1], m_ViewProjectionMatrix .m[2], m_ViewProjectionMatrix.m[3],
+				m_ViewProjectionMatrix.m[4], m_ViewProjectionMatrix.m[5], m_ViewProjectionMatrix .m[6], m_ViewProjectionMatrix.m[7],
+				m_ViewProjectionMatrix.m[8], m_ViewProjectionMatrix.m[9], m_ViewProjectionMatrix .m[10],m_ViewProjectionMatrix.m[11],
+				m_ViewProjectionMatrix.m[12], m_ViewProjectionMatrix.m[13], m_ViewProjectionMatrix.m[14], m_ViewProjectionMatrix.m[15]
 			);
 		}
 
