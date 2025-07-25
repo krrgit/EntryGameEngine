@@ -12,9 +12,9 @@ namespace Entry {
         glm::vec2 cp = Input::GetJoystickPos();
 
         glm::vec3 forward = m_Camera.forward;
-        //forward.y = 0;
+        //forward.y = 0; // uncomment to only move laterally
         glm::vec3 right = m_Camera.right;
-        //right.y = 0;
+        //right.y = 0; // uncomment to only move laterally
         m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts) + (right * (cp.x * m_CameraTranslationSpeed * ts));
         int LandR = (Input::GetButton(ET_KEY_R) ? 1 : 0) - (Input::GetButton(ET_KEY_L) ? 1 : 0);
         m_CamPos.y += LandR * m_CameraVertSpeed * ts;
