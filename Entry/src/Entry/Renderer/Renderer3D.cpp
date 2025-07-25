@@ -15,6 +15,7 @@ namespace Entry {
     struct Renderer3DStorage 
     {
         Ref <VertexArray> QuadVertexArray;
+        Ref <VertexArray> CubeVertexArray;
         Ref <Shader> FlatColorShader;
     };
 
@@ -47,7 +48,68 @@ namespace Entry {
         u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         std::shared_ptr<IndexBuffer> squareIB;
         squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
-        s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
+        s_Data->QuadVertexArray->SetIndexBuffer(squareIB); 
+
+        // CUBE
+        s_Data->CubeVertexArray = VertexArray::Create();
+
+        float cubeVertices[3* 4 * 6] = {
+            // Back face
+           -0.5f, -0.5f,  0.5f,
+            0.5f, -0.5f,  0.5f,
+            0.5f,  0.5f,  0.5f,
+           -0.5f,  0.5f,  0.5f,
+
+           // Front face
+           -0.5f, -0.5f, -0.5f,
+           -0.5f,  0.5f, -0.5f,
+            0.5f,  0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+
+            // Top face
+            -0.5f,  0.5f, -0.5f, 
+            -0.5f,  0.5f,  0.5f, 
+             0.5f,  0.5f,  0.5f, 
+             0.5f,  0.5f, -0.5f, 
+
+           // Bottom face
+           -0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f,  0.5f,
+           -0.5f, -0.5f,  0.5f,
+
+           // Left face
+            0.5f, -0.5f, -0.5f,
+            0.5f,  0.5f, -0.5f,
+            0.5f,  0.5f,  0.5f,
+            0.5f, -0.5f,  0.5f,
+
+            // Right face
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f
+         };
+
+        std::shared_ptr<VertexBuffer> cubeVB;
+        cubeVB.reset(VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
+
+        cubeVB->SetLayout({
+            { ShaderDataType::Float3, "a_Position" }
+            });
+        s_Data->CubeVertexArray->AddVertexBuffer(cubeVB);
+
+        u16 cubeIndices[] = {
+            0, 1, 2, 0, 2, 3,    // back
+            4, 5, 6, 4, 6, 7,    // front
+            8, 9, 10, 8, 10, 11,   // top
+            12, 13, 14, 12, 14, 15,   // bottom
+            16, 17, 18, 16, 18, 19,   // left
+            20, 21, 22, 20, 22, 23    // right
+        };
+        std::shared_ptr<IndexBuffer> cubeIB;
+        cubeIB.reset(IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint16_t)));
+        s_Data->CubeVertexArray->SetIndexBuffer(cubeIB);
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -78,12 +140,9 @@ namespace Entry {
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
-
         s_Data->FlatColorShader->SetFloat4("u_Color", color);
 
-
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
-
         s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
         s_Data->QuadVertexArray->Bind();
@@ -93,14 +152,12 @@ namespace Entry {
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
-
         s_Data->FlatColorShader->SetFloat4("u_Color", color);
+        
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
-
         s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
-
-        s_Data->QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+        s_Data->CubeVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
 	}
 }
