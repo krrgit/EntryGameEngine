@@ -26,21 +26,23 @@ namespace Entry {
 
 		void PrintViewMatrix() {
 			consoleClear();
-			printf("View Matrix\n");
+
+			C3D_Mtx print_matrix = m_ProjectionMatrix;
+			printf("Projection Matrix\n");
 			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
-				m_ViewMatrix.r[0].c[0], m_ViewMatrix.r[0].c[1], m_ViewMatrix.r[0].c[2], m_ViewMatrix.r[0].c[3],
-				m_ViewMatrix.r[1].c[0], m_ViewMatrix.r[1].c[1], m_ViewMatrix.r[1].c[2], m_ViewMatrix.r[1].c[3],
-				m_ViewMatrix.r[2].c[0], m_ViewMatrix.r[2].c[1], m_ViewMatrix.r[2].c[2], m_ViewMatrix.r[2].c[3],
-				m_ViewMatrix.r[3].c[0], m_ViewMatrix.r[3].c[1], m_ViewMatrix.r[3].c[2], m_ViewMatrix.r[3].c[3]
+				print_matrix.r[0].c[0], print_matrix.r[0].c[1], print_matrix.r[0].c[2], print_matrix.r[0].c[3],
+				print_matrix.r[1].c[0], print_matrix.r[1].c[1], print_matrix.r[1].c[2], print_matrix.r[1].c[3],
+				print_matrix.r[2].c[0], print_matrix.r[2].c[1], print_matrix.r[2].c[2], print_matrix.r[2].c[3],
+				print_matrix.r[3].c[0], print_matrix.r[3].c[1], print_matrix.r[3].c[2], print_matrix.r[3].c[3]
 			);
-			printf("View Projection Matrix\n");
+			/*printf("View Projection Matrix\n");
 
 			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
 				m_ViewProjectionMatrix.m[0], m_ViewProjectionMatrix.m[1], m_ViewProjectionMatrix .m[2], m_ViewProjectionMatrix.m[3],
 				m_ViewProjectionMatrix.m[4], m_ViewProjectionMatrix.m[5], m_ViewProjectionMatrix .m[6], m_ViewProjectionMatrix.m[7],
 				m_ViewProjectionMatrix.m[8], m_ViewProjectionMatrix.m[9], m_ViewProjectionMatrix .m[10],m_ViewProjectionMatrix.m[11],
 				m_ViewProjectionMatrix.m[12], m_ViewProjectionMatrix.m[13], m_ViewProjectionMatrix.m[14], m_ViewProjectionMatrix.m[15]
-			);
+			);*/
 		}
 
 	public:
