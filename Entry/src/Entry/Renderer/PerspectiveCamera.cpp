@@ -75,11 +75,10 @@ namespace Entry {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 
 		// Get Normals
-		glm::mat4 normalMatrix = glm::transpose(glm::inverse(m_ViewMatrix));
-
-		right = glm::vec3(normalMatrix[0][0], normalMatrix[0][1], normalMatrix[0][2]);
-		up = glm::vec3(normalMatrix[1][0], normalMatrix[1][1], normalMatrix[1][2]);
-		forward = glm::vec3(-normalMatrix[2][0], -normalMatrix[2][1], -normalMatrix[2][2]);
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(m_ViewMatrix)));
+		right = glm::normalize(glm::vec3(normalMatrix[0][0], normalMatrix[1][0], normalMatrix[2][0]));
+		up = glm::normalize(glm::vec3(normalMatrix[0][1], normalMatrix[1][1], normalMatrix[2][1]));
+		forward = glm::normalize(glm::vec3(-normalMatrix[0][2], -normalMatrix[1][2], -normalMatrix[2][2]));
 
 
 		//--------------
@@ -117,7 +116,7 @@ namespace Entry {
 		glm::mat4 transform =	glm::translate(glm::mat4(1.0f), m_Position) *
 								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0,0,1)) *
 								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0,1,0)) *
-								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), right);
+								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), glm::vec3(1,0,0));
 
 		m_ViewMatrix = glm::inverse(transform);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
@@ -125,9 +124,9 @@ namespace Entry {
 
 		// Get Normals
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(m_ViewMatrix)));
-		right = glm::normalize(glm::vec3(normalMatrix[0][0], normalMatrix[0][1], normalMatrix[0][2]));
-		up = glm::normalize(glm::vec3(normalMatrix[1][0], normalMatrix[1][1], normalMatrix[1][2]));
-		forward = glm::normalize(glm::vec3(-normalMatrix[2][0], -normalMatrix[2][1], -normalMatrix[2][2]));
+		right = glm::normalize(glm::vec3(normalMatrix[0][0], normalMatrix[1][0], normalMatrix[2][0]));
+		up = glm::normalize(glm::vec3(normalMatrix[0][1], normalMatrix[1][1], normalMatrix[2][1]));
+		forward = glm::normalize(glm::vec3(-normalMatrix[0][2], -normalMatrix[1][2], -normalMatrix[2][2]));
 
 		consoleClear();
 
