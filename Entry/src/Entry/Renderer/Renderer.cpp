@@ -17,19 +17,19 @@ namespace Entry {
 
 	void Renderer::BeginScene(PerspectiveCamera& camera)
 	{
-		m_SceneData->ViewProjectionMatrix = *camera.GetViewProjectionMatrix();
+		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
 	{
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const C3D_Mtx& transform)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 
 		shader->Bind();
-		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_ViewProjection", &m_SceneData->ViewProjectionMatrix);
-		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_Transform", &transform);
+		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		std::static_pointer_cast<Citro3DShader>(shader)->UploadUniformMat4("u_Transform", transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

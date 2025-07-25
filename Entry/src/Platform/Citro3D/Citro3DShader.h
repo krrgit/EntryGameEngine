@@ -14,6 +14,10 @@ namespace Entry {
 		virtual void Bind();
 		virtual void Unbind() const;
 
+		virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
+		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
+
 		void UploadUniformInt(std::string name, int value);
 		void UploadUniformFloat(std::string name, const float value);
 		void UploadUniformFloat2(std::string name, const glm::vec2& value);
@@ -21,7 +25,7 @@ namespace Entry {
 		void UploadUniformFloat4(std::string name, const glm::vec4& value);
 
 		void UploadUniformMat3(std::string name, const glm::mat3* matrix);
-		void UploadUniformMat4(std::string name, const C3D_Mtx* matrix);
+		void UploadUniformMat4(std::string name, const glm::mat4& matrix);
 	private:
 		uint32_t m_RendererID;
 		DVLB_s* vshader_dvlb;

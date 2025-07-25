@@ -4,8 +4,8 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "RenderCommand.h"
-#include <Platform/Citro3D/Citro3DShader.h>
 
+#include <glm/gtc/matrix_transform.hpp>
 
 //Shader
 #include "vshader01_shbin.h"
@@ -68,30 +68,37 @@ namespace Entry {
 	void Renderer3D::BeginScene(const PerspectiveCamera& camera)
 	{
         s_Data->FlatColorShader->Bind();
-        std::static_pointer_cast<Citro3DShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix() );
+        s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix() );
     }
 
 	void Renderer3D::EndScene()
 	{
 	}
 
-	void Renderer3D::DrawQuad(const C3D_Mtx& transform, glm::vec4& color)
+	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
 
-        std::static_pointer_cast<Entry::Citro3DShader>(s_Data->FlatColorShader)->UploadUniformFloat4("u_Color", color);
-        std::static_pointer_cast<Citro3DShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_Transform", &transform);
+        s_Data->FlatColorShader->SetFloat4("u_Color", color);
+
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
+
+        s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
 	}
 
-	void Renderer3D::DrawCube(const C3D_Mtx& transform, glm::vec4& color)
+	void Renderer3D::DrawCube(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
 
-        std::static_pointer_cast<Entry::Citro3DShader>(s_Data->FlatColorShader)->UploadUniformFloat4("u_Color", color);
-        std::static_pointer_cast<Citro3DShader>(s_Data->FlatColorShader)->UploadUniformMat4("u_Transform", &transform);
+        s_Data->FlatColorShader->SetFloat4("u_Color", color);
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
+
+        s_Data->FlatColorShader->SetMat4("u_Transform", transform);
+
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);

@@ -16,8 +16,8 @@ namespace Entry {
 			static void EndScene();
 
 			// Primitives
-			static void DrawQuad(const C3D_Mtx& transform, glm::vec4& color);
-			static void DrawCube(const C3D_Mtx& transform, glm::vec4& color);
+			static void DrawQuad(const glm::vec3& position, const glm::vec3& size, glm::vec4& color);
+			static void DrawCube(const glm::vec3& position, const glm::vec3& size, glm::vec4& color);
 
 	};
 

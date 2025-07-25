@@ -11,9 +11,9 @@ namespace Entry {
 	void PerspectiveCameraController::OnUpdate(Timestep ts) {
         glm::vec2 cp = Input::GetJoystickPos();
 
-        glm::vec3 forward = m_Camera.forward;
+        glm::vec3 forward = glm::vec3(0,0,-1);// m_Camera.forward;
         forward.y = 0;
-        glm::vec3 right = m_Camera.right;
+        glm::vec3 right = glm::vec3(1, 0, 0);// m_Camera.right;
         right.y = 0;
         m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts) + (right * (cp.x * m_CameraTranslationSpeed * ts));
         int LandR = (Input::GetButton(ET_KEY_R) ? 1 : 0) - (Input::GetButton(ET_KEY_L) ? 1 : 0);
