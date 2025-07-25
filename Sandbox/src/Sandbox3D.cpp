@@ -26,8 +26,6 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 
     //Render
     Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
-
-
 	Entry::Renderer3D::DrawQuad({0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, m_SquareColor);
     Entry::Renderer3D::EndScene();
 
