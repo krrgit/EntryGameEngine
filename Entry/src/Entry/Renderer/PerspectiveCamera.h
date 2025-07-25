@@ -6,43 +6,76 @@
 namespace Entry {
 	class PerspectiveCamera {
 	public:
+
+		inline void glm_mat4_to_C3D_mtx(C3D_Mtx* out, glm::mat4& in)
+		{
+			Mtx_Zeros(out);
+
+			glm::mat4 m = glm::transpose(in);
+
+			for (int i = 0; i < 4; ++i) {
+				out->r[i].x = m[i][0];
+				out->r[i].y = m[i][1];
+				out->r[i].z = m[i][2];
+				out->r[i].w = m[i][3];
+			}
+		}
+
 		PerspectiveCamera(float left, float right, float bottom, float top);
 		void SetProjection(float left, float right, float bottom, float top);
 
 		const glm::vec3 GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix();
-			PrintViewMatrix();
+			//PrintViewMatrix();
+		//PrintPosition();
 		}
 		
 		const glm::vec4 GetRotation() const { return m_Rotation; }
 		void SetRotation(const glm::vec4& rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
 		 
-		const C3D_Mtx* GetProjectionMatrix() const { return &m_ProjectionMatrix; }
-		const C3D_Mtx GetViewMatrix() const { return m_ViewMatrix; }
-		const C3D_Mtx* GetViewProjectionMatrix() const { return &m_ViewProjectionMatrix; }
+		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
+		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 	private:
 		void RecalculateViewMatrix();
+
+		void PrintPosition() {
+			consoleClear();
+			printf("R: %.1f %.1f %.1f\n",
+				m_Position.x, m_Position.y, m_Position.z);
+		}
 
 		void PrintViewMatrix() {
 			consoleClear();
 
-			C3D_Mtx print_matrix = m_ProjectionMatrix;
-			printf("Projection Matrix\n");
-			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
-				print_matrix.r[0].c[0], print_matrix.r[0].c[1], print_matrix.r[0].c[2], print_matrix.r[0].c[3],
-				print_matrix.r[1].c[0], print_matrix.r[1].c[1], print_matrix.r[1].c[2], print_matrix.r[1].c[3],
-				print_matrix.r[2].c[0], print_matrix.r[2].c[1], print_matrix.r[2].c[2], print_matrix.r[2].c[3],
-				print_matrix.r[3].c[0], print_matrix.r[3].c[1], print_matrix.r[3].c[2], print_matrix.r[3].c[3]
-			);
-			/*printf("View Projection Matrix\n");
+			glm::mat4 glm_in = m_ProjectionMatrix;
 
-			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
-				m_ViewProjectionMatrix.m[0], m_ViewProjectionMatrix.m[1], m_ViewProjectionMatrix .m[2], m_ViewProjectionMatrix.m[3],
-				m_ViewProjectionMatrix.m[4], m_ViewProjectionMatrix.m[5], m_ViewProjectionMatrix .m[6], m_ViewProjectionMatrix.m[7],
-				m_ViewProjectionMatrix.m[8], m_ViewProjectionMatrix.m[9], m_ViewProjectionMatrix .m[10],m_ViewProjectionMatrix.m[11],
-				m_ViewProjectionMatrix.m[12], m_ViewProjectionMatrix.m[13], m_ViewProjectionMatrix.m[14], m_ViewProjectionMatrix.m[15]
+
+			/*printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
+				m_ViewProjectionMatrix[0].x, m_ViewProjectionMatrix[0].y, m_ViewProjectionMatrix[0].z, m_ViewProjectionMatrix[0].w,
+				m_ViewProjectionMatrix[1].x, m_ViewProjectionMatrix[1].y, m_ViewProjectionMatrix[1].z, m_ViewProjectionMatrix[1].w,
+				m_ViewProjectionMatrix[2].x, m_ViewProjectionMatrix[2].y, m_ViewProjectionMatrix[2].z, m_ViewProjectionMatrix[2].w,
+				m_ViewProjectionMatrix[3].x, m_ViewProjectionMatrix[3].y, m_ViewProjectionMatrix[3].z, m_ViewProjectionMatrix[3].w
 			);*/
+			
+			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
+				glm_in[0].x, glm_in[0].y, glm_in[0].z, glm_in[0].w,
+				glm_in[1].x, glm_in[1].y, glm_in[1].z, glm_in[1].w,
+				glm_in[2].x, glm_in[2].y, glm_in[2].z, glm_in[2].w,
+				glm_in[3].x, glm_in[3].y, glm_in[3].z, glm_in[3].w
+			);
+
+			C3D_Mtx test_mtx;
+
+			glm_mat4_to_C3D_mtx(&test_mtx, glm_in);
+			printf("==============\n");
+			printf("%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n%.1f %.1f %.1f %.1f\n",
+				test_mtx.r[0].c[0], test_mtx.r[0].c[1], test_mtx.r[0].c[2], test_mtx.r[0].c[3],
+				test_mtx.r[1].c[0], test_mtx.r[1].c[1], test_mtx.r[1].c[2], test_mtx.r[1].c[3],
+				test_mtx.r[2].c[0], test_mtx.r[2].c[1], test_mtx.r[2].c[2], test_mtx.r[2].c[3],
+				test_mtx.r[3].c[0], test_mtx.r[3].c[1], test_mtx.r[3].c[2], test_mtx.r[3].c[3]
+			);
 		}
 
 	public:
@@ -50,11 +83,11 @@ namespace Entry {
 		glm::vec3 right;
 		glm::vec3 up;
 	private:
-		C3D_Mtx m_ProjectionMatrix;
-		C3D_Mtx m_ViewMatrix;
-		C3D_Mtx m_ViewProjectionMatrix;
+		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
+		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
+		glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 
-		glm::vec3 m_Position = {0.0f, 0.0f, 1.0f};
-		glm::vec4 m_Rotation;
+		glm::vec3 m_Position = {0.0f, 0.0f, -1.0f};
+		glm::vec4 m_Rotation = glm::vec4(0.0f);
 	};
 }

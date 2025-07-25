@@ -123,46 +123,46 @@ public:
 
 	void OnUpdate(Entry::Timestep ts) override
 	{
-        // Update
-        m_CameraController.OnUpdate(ts);
+        //// Update
+        //m_CameraController.OnUpdate(ts);
 
-        //Render
-        Entry::Renderer::BeginScene(m_CameraController.GetCamera());
+        ////Render
+        //Entry::Renderer::BeginScene(m_CameraController.GetCamera());
 
-        C3D_Mtx transform;
-        C3D_Mtx scale;
-        Mtx_Identity(&scale);
-        Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
-        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_SquareColor);
+        //C3D_Mtx transform;
+        //C3D_Mtx scale;
+        //Mtx_Identity(&scale);
+        //Mtx_Scale(&scale, 0.1f, 0.1f, 0.1f);
+        //std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_SquareColor);
 
-        for (int y = 0; y < 20; ++y) {
-            for (int x = 0; x < 20; ++x) {
-                Mtx_Identity(&transform);
-                Mtx_Translate(&transform, x * 0.11f, y * 0.11f, 0.0f, true);
-                Mtx_Multiply(&transform, &transform, &scale);
-                Entry::Renderer::Submit(m_FlatColor, m_SquareVA, transform);
-            }
-        }
+        //for (int y = 0; y < 20; ++y) {
+        //    for (int x = 0; x < 20; ++x) {
+        //        Mtx_Identity(&transform);
+        //        Mtx_Translate(&transform, x * 0.11f, y * 0.11f, 0.0f, true);
+        //        Mtx_Multiply(&transform, &transform, &scale);
+        //        Entry::Renderer::Submit(m_FlatColor, m_SquareVA, transform);
+        //    }
+        //}
 
-        // Ground
-        std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
-        Entry::Renderer::Submit(m_FlatColor, m_FloorVA);
+        //// Ground
+        //std::static_pointer_cast<Entry::Citro3DShader>(m_FlatColor)->UploadUniformFloat4("u_Color", m_floorColor);
+        //Entry::Renderer::Submit(m_FlatColor, m_FloorVA);
 
-        // Triangle
-        //Entry::Renderer::Submit(m_Shader, m_VertexArray);
+        //// Triangle
+        ////Entry::Renderer::Submit(m_Shader, m_VertexArray);
 
-        C3D_Mtx texturedQuadMtx;
-        Mtx_Identity(&texturedQuadMtx);
-        Mtx_Scale(&texturedQuadMtx, 1.5f, 1.5f, 1.5f);
-        Mtx_Translate(&texturedQuadMtx, 0, 0, 0.01f, true);
-        m_Texture->Bind();
-        Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
+        //C3D_Mtx texturedQuadMtx;
+        //Mtx_Identity(&texturedQuadMtx);
+        //Mtx_Scale(&texturedQuadMtx, 1.5f, 1.5f, 1.5f);
+        //Mtx_Translate(&texturedQuadMtx, 0, 0, 0.01f, true);
+        //m_Texture->Bind();
+        //Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
 
-        Mtx_Translate(&texturedQuadMtx, 0.167f, -0.167f, 0.01f, true);
-        m_EntryLogo->Bind();
-        Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
+        //Mtx_Translate(&texturedQuadMtx, 0.167f, -0.167f, 0.01f, true);
+        //m_EntryLogo->Bind();
+        //Entry::Renderer::Submit(m_TextureShader, m_SquareVA, texturedQuadMtx);
 
-        Entry::Renderer::EndScene();
+        //Entry::Renderer::EndScene();
 	}
 
     virtual void OnImGuiRender() override 
