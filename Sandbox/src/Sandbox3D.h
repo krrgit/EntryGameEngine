@@ -29,4 +29,11 @@ class Sandbox3D : public Entry::Layer
 
     float m_Rotation = 0.0f;
 
+    struct ProfileResult {
+        const char* Name;
+        float Time;
+    };
+
+    std::vector<ProfileResult> m_ProfileResults;
+
 };
