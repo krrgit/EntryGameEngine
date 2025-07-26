@@ -6,9 +6,11 @@
 #include "RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 //Shader
-#include "vshader01_shbin.h"
+#include "vshader01_shbin.h" // Flat Color Shader
+#include "vshader02_shbin.h" // Texture Shader
 
 namespace Entry {
 
@@ -17,6 +19,8 @@ namespace Entry {
         Ref <VertexArray> QuadVertexArray;
         Ref <VertexArray> CubeVertexArray;
         Ref <Shader> FlatColorShader;
+        Ref <Shader> TextureShader;
+
     };
 
     static Renderer3DStorage* s_Data;
@@ -25,25 +29,26 @@ namespace Entry {
 	void Renderer3D::Init()
 	{
         s_Data = new Renderer3DStorage();
+
+        // QUAD
         s_Data->QuadVertexArray = VertexArray::Create();
 
         float squareVertices[5 * 4] =
         {
-           -0.5f, -0.5f,  0.0f,
-            0.5f, -0.5f,  0.0f,
-            0.5f,  0.5f,  0.0f,
-           -0.5f,  0.5f,  0.0f
+           -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+           -0.5f,  0.5f,  0.0f, 0.0f, 1.0f
         };
 
         std::shared_ptr<VertexBuffer> squareVB;
         squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
         squareVB->SetLayout({
-            { ShaderDataType::Float3, "a_Position" }
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float2, "a_TexCoord" }
         });
         s_Data->QuadVertexArray->AddVertexBuffer(squareVB);
-
-        s_Data->FlatColorShader.reset(Shader::Create(vshader01_shbin, vshader01_shbin_size));
 
         u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         std::shared_ptr<IndexBuffer> squareIB;
@@ -53,49 +58,51 @@ namespace Entry {
         // CUBE
         s_Data->CubeVertexArray = VertexArray::Create();
 
-        float cubeVertices[3* 4 * 6] = {
+        // TODO: FIX TEX COORDS (maybe?)
+        float cubeVertices[5* 4 * 6] = {
             // Back face
-           -0.5f, -0.5f,  0.5f,
-            0.5f, -0.5f,  0.5f,
-            0.5f,  0.5f,  0.5f,
-           -0.5f,  0.5f,  0.5f,
+           -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+           -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
 
            // Front face
-           -0.5f, -0.5f, -0.5f,
-           -0.5f,  0.5f, -0.5f,
-            0.5f,  0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
+           -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+           -0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
             // Top face
-            -0.5f,  0.5f, -0.5f, 
-            -0.5f,  0.5f,  0.5f, 
-             0.5f,  0.5f,  0.5f, 
-             0.5f,  0.5f, -0.5f, 
+            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
 
            // Bottom face
-           -0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f,  0.5f,
-           -0.5f, -0.5f,  0.5f,
+           -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+           -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
 
            // Left face
-            0.5f, -0.5f, -0.5f,
-            0.5f,  0.5f, -0.5f,
-            0.5f,  0.5f,  0.5f,
-            0.5f, -0.5f,  0.5f,
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
 
             // Right face
-            -0.5f, -0.5f, -0.5f,
-            -0.5f, -0.5f,  0.5f,
-            -0.5f,  0.5f,  0.5f,
-            -0.5f,  0.5f, -0.5f
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f, 0.0f, 1.0f
          };
 
         std::shared_ptr<VertexBuffer> cubeVB;
         cubeVB.reset(VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
 
         cubeVB->SetLayout({
-            { ShaderDataType::Float3, "a_Position" }
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float2, "a_TexCoord" }
             });
         s_Data->CubeVertexArray->AddVertexBuffer(cubeVB);
 
@@ -110,6 +117,12 @@ namespace Entry {
         std::shared_ptr<IndexBuffer> cubeIB;
         cubeIB.reset(IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint16_t)));
         s_Data->CubeVertexArray->SetIndexBuffer(cubeIB);
+        
+        // SHADERS
+        s_Data->FlatColorShader.reset(Shader::Create(vshader01_shbin, vshader01_shbin_size));
+        s_Data->TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
+        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetInt("u_Texture", 0);
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -130,34 +143,65 @@ namespace Entry {
 	void Renderer3D::BeginScene(const PerspectiveCamera& camera)
 	{
         s_Data->FlatColorShader->Bind();
-        s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix() );
+        s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
     }
 
 	void Renderer3D::EndScene()
 	{
 	}
 
-	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
+	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
         s_Data->FlatColorShader->SetFloat4("u_Color", color);
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
 	}
 
-	void Renderer3D::DrawCube(const glm::vec3& position, const glm::vec3& size, glm::vec4& color)
+	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
         s_Data->FlatColorShader->Bind();
         s_Data->FlatColorShader->SetFloat4("u_Color", color);
         
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data->FlatColorShader->SetMat4("u_Transform", transform);
 
         s_Data->CubeVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
 	}
+
+
+    void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
+    {
+        s_Data->TextureShader->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+        texture->Bind(); 
+
+        s_Data->QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+    
+    void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
+    {
+        s_Data->TextureShader->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+        texture->Bind();
+
+        s_Data->CubeVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
+    }
 }

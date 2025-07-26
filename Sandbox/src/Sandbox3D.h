@@ -21,5 +21,11 @@ class Sandbox3D : public Entry::Layer
     // Temp
     Entry::Ref<Entry::VertexArray> m_SquareVA;
     Entry::Ref<Entry::Shader> m_FlatColor;
+
+    Entry::Ref<Entry::Texture2D> m_CheckerboardTexture;
+    
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+    float m_Rotation = 0.0f;
+
 };

@@ -56,6 +56,11 @@ namespace Entry {
         C3D_BindProgram(0);
     }
 
+    void Citro3DShader::SetInt(const std::string& name, int value) 
+    {
+        UploadUniformInt(name, value);
+    }
+
     void Citro3DShader::SetFloat3(const std::string& name, const glm::vec3& value)
     {
         UploadUniformFloat3(name, value);
