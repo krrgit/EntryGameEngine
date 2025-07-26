@@ -29,7 +29,7 @@ namespace Entry {
 
 		bool m_Rotation;
 
-		glm::vec3 m_CamPos = { 0.0f, 0.0f, 1.0f };
+		glm::vec3 m_CamPos = { 0.0f, 1.0f, 1.0f };
 		glm::vec4 m_CamRot = { 0.0f, 0.0f, 0.0f, 0.0f };
 		float m_CameraTranslationSpeed = 3.0f;
 		float m_CameraVertSpeed = 3.0f;

@@ -9,7 +9,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 //Shader
-#include "vshader01_shbin.h" // Flat Color Shader
+// #include "vshader01_shbin.h" // Flat Color Shader
 #include "vshader02_shbin.h" // Texture Shader
 
 namespace Entry {
@@ -18,9 +18,8 @@ namespace Entry {
     {
         Ref <VertexArray> QuadVertexArray;
         Ref <VertexArray> CubeVertexArray;
-        Ref <Shader> FlatColorShader;
         Ref <Shader> TextureShader;
-
+        Ref <Texture2D> WhiteTexture;
     };
 
     static Renderer3DStorage* s_Data;
@@ -117,12 +116,19 @@ namespace Entry {
         std::shared_ptr<IndexBuffer> cubeIB;
         cubeIB.reset(IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint16_t)));
         s_Data->CubeVertexArray->SetIndexBuffer(cubeIB);
+
         
         // SHADERS
-        s_Data->FlatColorShader.reset(Shader::Create(vshader01_shbin, vshader01_shbin_size));
         s_Data->TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetInt("u_Texture", 0);
+
+        // WHITE TEXTURE
+        // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
+        s_Data->WhiteTexture = Texture2D::Create(8, 8); 
+        uint32_t whiteTextureData[8 * 8];
+        std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
+        s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -142,12 +148,8 @@ namespace Entry {
 
 	void Renderer3D::BeginScene(const PerspectiveCamera& camera)
 	{
-        s_Data->FlatColorShader->Bind();
-        s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
     }
 
 	void Renderer3D::EndScene()
@@ -156,11 +158,11 @@ namespace Entry {
 
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
-        s_Data->FlatColorShader->Bind();
-        s_Data->FlatColorShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->WhiteTexture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data->FlatColorShader->SetMat4("u_Transform", transform);
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
@@ -168,11 +170,11 @@ namespace Entry {
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
-        s_Data->FlatColorShader->Bind();
-        s_Data->FlatColorShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->WhiteTexture->Bind();
         
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data->FlatColorShader->SetMat4("u_Transform", transform);
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
 
         s_Data->CubeVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
@@ -181,12 +183,12 @@ namespace Entry {
 
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
     {
-        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        texture->Bind(); 
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data->TextureShader->SetMat4("u_Transform", transform);
 
-        texture->Bind(); 
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
@@ -194,12 +196,11 @@ namespace Entry {
     
     void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
     {
-        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        texture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data->TextureShader->SetMat4("u_Transform", transform);
-
-        texture->Bind();
 
         s_Data->CubeVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->CubeVertexArray);

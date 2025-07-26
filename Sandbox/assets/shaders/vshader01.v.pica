@@ -1,8 +1,7 @@
 ; Flat Color Shader
 
 ; Uniforms
-.fvec u_ViewProjection[4], u_Transform[4]
-.fvec u_Color
+.fvec u_ViewProjection[4], u_Transform[4], u_Color[4]
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
