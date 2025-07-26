@@ -31,14 +31,12 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 	m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
     //Render
-	glm::vec4 quadColor(0.8f, 0.2f, 0.3f, 1.0f);
     Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
 	Entry::Renderer3D::DrawQuad({ 0.0f, -0.5f, 0.0f }, glm::quat(glm::vec3(glm::radians(90.0f),0,0)), {10.0f, 10.0f, 1.0f}, m_CheckerboardTexture);
 	Entry::Renderer3D::DrawQuad({ 2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0)), { 1.0f, 1.0f, 1.0f }, m_SquareColor);
 	Entry::Renderer3D::DrawCube({ 0.0f, 0.0f, 0.0f },  glm::quat(glm::vec3(0)), { 1.0f, 1.0f, 1.0f }, m_SquareColor);
 	Entry::Renderer3D::DrawCube({-2.0f, 1.0f, -2.0f},  glm::quat(glm::vec3(m_Rotation, m_Rotation, 0)), {1.0f, 1.0f, 1.0f}, m_CheckerboardTexture);
     Entry::Renderer3D::EndScene();
-
 }
 
 void Sandbox3D::OnImGuiRender() 
