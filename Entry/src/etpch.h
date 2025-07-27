@@ -16,3 +16,5 @@
 #include <unordered_set>
 
 #include "Log.h"
+
+#include "Entry/Debug/Instrumentor.h"

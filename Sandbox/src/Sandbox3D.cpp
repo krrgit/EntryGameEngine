@@ -7,54 +7,6 @@
 // Texture Headers
 #include "Checkerboard_t3x.h"
 
-template<typename Fn>
-class Timer {
-	public:
-		Timer(const char* name, Fn&& func)
-			: m_Name(name), m_Func(func), m_Stopped(false)
-		{
-			m_StartTimepoint = std::chrono::steady_clock::now();
-		}
-	
-		~Timer()
-		{
-			if (!m_Stopped)
-				Stop();
-		}
-
-		void Stop()
-		{
-			auto endTimepoint = std::chrono::steady_clock::now();
-
-			long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-
-			m_Stopped = true;
-			float duration = (end - start) * 0.001f;
-			
-			m_Func({ m_Name, duration });
-		}
-
-	private:
-		const char* m_Name;
-		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-		Fn m_Func;
-		bool m_Stopped;
-};
-
-template<typename Fn>
-Timer<Fn> MakeTimer(const char* name, Fn&& func) {
-	return Timer<Fn>(name, std::forward<Fn>(func));
-}
-
-#define CONCAT_IMPL(x, y) x##y
-#define CONCAT(x, y) CONCAT_IMPL(x, y)
-
-#define PROFILE_SCOPE(name) \
-    auto CONCAT(timer, __LINE__) = MakeTimer(name, [&](ProfileResult profileResult) { m_ProfileResults.push_back(profileResult); })
-
-
-
 Sandbox3D::Sandbox3D()
     : Layer("Sandbox3D"), m_CameraController(1.0f)
 {
@@ -73,17 +25,16 @@ void Sandbox3D::OnDetach()
 
 void Sandbox3D::OnUpdate(Entry::Timestep ts)
 {
-	PROFILE_SCOPE("Sandbox3D::OnUpdate");
+	ET_PROFILE_FUNCTION();
 	
 	// Update
 	{
-		PROFILE_SCOPE("CameraController::OnUpdate");
+		ET_PROFILE_SCOPE("CameraController::OnUpdate");
 		m_CameraController.OnUpdate(ts);
 	}
 
-
 	{
-		PROFILE_SCOPE("Renderer Draw");
+		ET_PROFILE_SCOPE("Renderer Draw");
 
 		m_Rotation += ts.GetSeconds();
 		m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
@@ -103,11 +54,6 @@ void Sandbox3D::OnImGuiRender()
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	//ImGui::Text("Rotation: %.2f\n", m_Rotation);
-
-	for (auto& result : m_ProfileResults) {
-		ImGui::Text("%.3fms %s\n", result.Time, result.Name);
-	}
-	m_ProfileResults.clear();
 
 	ImGui::End();
 }
