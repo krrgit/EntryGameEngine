@@ -78,7 +78,7 @@ namespace Entry {
 
 	void ImGuiLayer::Begin(Timestep ts)
 	{
-		ET_PROFILE_SCOPE("Create Bottom Window");
+		ET_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.DeltaTime = ts;
