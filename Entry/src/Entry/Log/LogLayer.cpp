@@ -9,6 +9,8 @@
 #include <3ds/gfx.h>
 #include <3ds/svc.h>
 
+#include "imgui.h"
+
 
 #define R565_SHIFT 11
 #define G565_SHIFT 5
@@ -16,6 +18,9 @@
 #define R565_MASK 0xF800
 #define G565_MASK 0x07E0
 #define B565_MASK 0x001F
+
+#define UV_LINE_HEIGHT 0.0313f // Height of one text line in UV tex coords
+ 
 
 namespace Entry {
 
@@ -25,22 +30,30 @@ namespace Entry {
 		m_Console = Log::GetPrintConsole().get();
 		m_Width = m_Console->windowWidth * 8;
 		m_Height = m_Console->windowHeight * 8;
-
+		
 		// Initialize console buffer texture
-		static C3D_Tex tex;
-		static const Tex3DS_SubTexture subtex = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-		image = (C2D_Image){ &tex, &subtex };
-		C3D_TexInitVRAM(image.tex, 256, 256, GPU_RGBA5551);
-		C3D_TexSetFilter(image.tex, GPU_NEAREST, GPU_NEAREST);
-		C3D_TexSetWrap(image.tex, GPU_REPEAT, GPU_REPEAT);
+		m_Subtex = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
+		m_SubtexVerticalShift = ((m_Console->cursorY + 1) * 8.0f) / 240.0f;
+		m_Image = (C2D_Image){ &m_Tex, &m_Subtex};
+		C3D_TexInitVRAM(m_Image.tex, 256, 256, GPU_RGBA5551);
+		C3D_TexSetFilter(m_Image.tex, GPU_NEAREST, GPU_NEAREST);
+		C3D_TexSetWrap(m_Image.tex, GPU_REPEAT, GPU_REPEAT);
 	}
 
 	void LogLayer::OnDetach()
 	{
 	}
 
+	void LogLayer::OnImGuiRender() {
+		ImGui::Begin("Log");
+		ImGui::Text("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
+
+		ImGui::End();
+	}
+
 	void LogLayer::OnUpdate(Timestep ts) {
-		//printf("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
+		ET_PROFILE_FUNCTION();
+
 		if (Input::GetButtonDown(ET_KEY_SELECT)) {
 			m_ShowLogs = !m_ShowLogs;
 		}
@@ -48,37 +61,46 @@ namespace Entry {
 		if (Input::GetButtonDown(ET_KEY_A)) {
 			ET_CORE_TRACE("A Button Pressed.");
 		}
+		if (Input::GetButtonDown(ET_KEY_B)) {
+			ET_CORE_TRACE("B Button Pressed.");
+		}
 
 		if (!m_ShowLogs) return;
 
-		// Only update once per second.
-		static float redrawTimer = 1.0f;
-		static int clearCounter = 0;
-		redrawTimer += ts;
-		
-		if (m_LastX != m_Console->cursorX || 
-			m_LastY != m_Console->cursorY || 
-			redrawTimer >= 1.0f) 
-		{
-			redrawTimer = 0.0f;
+		m_ConsoleUpdated = m_PrevCursorPosX != m_Console->cursorX || m_PrevCursorPosY != m_Console->cursorY;
+
+		if (m_ConsoleUpdated) {
+			m_PrevCursorPosX = m_Console->cursorX;
+			m_PrevCursorPosY = m_Console->cursorY;
+			m_ConsoleUpdated = false;
+
+			// Shift the subtexture up by 1 text line
+			m_SubtexVerticalShift += UV_LINE_HEIGHT;
 			
-			if (clearCounter >= 5) {
-				std::fill_n(m_Console->frameBuffer, m_Height * m_Width, 0x0);
-				clearCounter = 0;
+			// Loop cursor around to start.
+			if (m_PrevCursorPosY + 1 >= m_Console->windowHeight)
+			{
+				m_PrevCursorPosX = 0;
+				m_PrevCursorPosY = 0;
 				m_Console->cursorX = 0;
 				m_Console->cursorY = 0;
-				CopyFramebufferToTexture();
-			}else if (m_LastX == m_Console->cursorX && m_LastY == m_Console->cursorY) {
-				clearCounter++;
 			}
-			else {
-				m_LastX = m_Console->cursorX;
-				m_LastY = m_Console->cursorY;
-				clearCounter = 0;
-				CopyFramebufferToTexture();
+
+			// Loop subtexture around once line is printed on Y = 0.
+			if (m_Console->cursorY == 1) 
+			{
+				m_SubtexVerticalShift = (3.0f *8.0f) / 240.0f;
 			}
+
+			ClearNextLine();
+			CopyFramebufferToTexture();
 		}
-		C2D_DrawImageAt(image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+
+		m_Subtex.bottom = -m_SubtexVerticalShift;
+		m_Subtex.top = 1.0f - m_SubtexVerticalShift;
+		m_Image.subtex = const_cast<Tex3DS_SubTexture*>(&m_Subtex);
+
+		C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 	}
 
 	void LogLayer::OnEvent(Event& event)
@@ -87,20 +109,26 @@ namespace Entry {
 	}
 	void LogLayer::CopyFramebufferToTexture()
 	{
+		ET_PROFILE_FUNCTION();
+
 		u32 endY = (m_Console->cursorY + 1) * 8;
 		endY = m_Console->cursorY == 0 ? m_Height : endY;
 
-		// TODO: Minimize how often this copy is done
+		 //TODO: update to only copy line instead whole texture 
 		// Copy from console framebuffer to texture
 		for (u32 y = 0; y < endY; ++y)
 		{
 			for (u32 x = 0; x < m_Width; ++x)
 			{
 				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-				u16& pixel = ((u16*)image.tex->data)[dest];
+				u16& pixel = ((u16*)m_Image.tex->data)[dest];
 				pixel = m_Console->frameBuffer[(x * m_Width) + (m_Width - 1 - y)];
 				pixel |= pixel == 0 ? 0 : 1;
 			}
 		}
+	}
+
+	void LogLayer::ClearNextLine() {
+		printf("\x1b[2K");
 	}
 }
