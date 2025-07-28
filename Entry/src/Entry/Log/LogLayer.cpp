@@ -86,7 +86,7 @@ namespace Entry {
 				m_Console->cursorY = 0;
 			}
 
-			// Loop subtexture around once line is printed on Y = 0.
+			// Loop subtexture around once first line is printed to.
 			if (m_Console->cursorY == 1) 
 			{
 				m_SubtexVerticalShift = (3.0f *8.0f) / 240.0f;
