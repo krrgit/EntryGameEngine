@@ -20,7 +20,8 @@
 #define B565_MASK 0x001F
 
 #define UV_LINE_HEIGHT 0.03125f // Height of one text line in UV tex coords
-#define UV_LINE_1_POS 0.105f //(0.005f + ((3.0f *8.0f) / 240.0f))
+#define UV_FIRST_LINE_POS 0.095f //(0.005f + ((3.0f *8.0f) / 240.0f))
+#define UV_LAST_LINE_POS 0.97f //(0.005f + ((3.0f *8.0f) / 240.0f))
  
 
 namespace Entry {
@@ -34,7 +35,7 @@ namespace Entry {
 		
 		// Initialize console buffer texture
 		m_Subtex = { 256, 256, 0.0f, 1.0f, 1.0f, 0.0f };
-		m_SubtexVerticalShift = ((m_Console->cursorY + 1) * 8.0f) / 240.0f;
+		m_SubtexVerticalShift = (((m_Console->cursorY + 1) * 8.0f) / 240.0f) - 0.012f;
 		m_Image = (C2D_Image){ &m_Tex, &m_Subtex};
 		C3D_TexInitVRAM(m_Image.tex, 256, 256, GPU_RGBA5551);
 		C3D_TexSetFilter(m_Image.tex, GPU_NEAREST, GPU_NEAREST);
@@ -50,7 +51,8 @@ namespace Entry {
 	void LogLayer::OnImGuiRender() {
 		ImGui::Begin("Log");
 		ImGui::Text("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
-
+		ImGui::Text("X: %d | Y: %d\n", m_Console->cursorX, m_Console->cursorY);
+		//ImGui::Text("m_SubtexVerticalShift: %.3f\n", m_SubtexVerticalShift);
 		ImGui::End();
 	}
 
@@ -62,10 +64,10 @@ namespace Entry {
 		}
 
 		if (Input::GetButtonDown(ET_KEY_A)) {
-			ET_CORE_TRACE("A Button Pressed.");
+			ET_CORE_TRACE("A Pressed.");
 		}
 		if (Input::GetButtonDown(ET_KEY_B)) {
-			ET_CORE_TRACE("B Button Pressed.");
+			ET_CORE_TRACE("B Pressed.");
 		}
 
 		if (!m_ShowLogs) return;
@@ -73,28 +75,37 @@ namespace Entry {
 		m_ConsoleUpdated = m_PrevCursorPosX != m_Console->cursorX || m_PrevCursorPosY != m_Console->cursorY;
 
 		if (m_ConsoleUpdated) {
+			int currentCursorX = m_Console->cursorX;
+			int currentCursorY = m_Console->cursorY;
 
-			// Shift the subtexture up by 1 text line
-			m_SubtexVerticalShift += UV_LINE_HEIGHT;
-			
-			// Loop cursor around to start.
-			if (m_Console->cursorY + 1 >= m_Console->windowHeight)
+			// Loop subtexture around once first line is printed to.
+			if (currentCursorY == 1)
 			{
+				m_SubtexVerticalShift = UV_FIRST_LINE_POS;
+			} else if (currentCursorY == 0) 
+			{
+				// Align subtexture with last line.
+				m_SubtexVerticalShift = UV_LAST_LINE_POS;
+			}
+			else 
+			{
+				// Shift the subtexture up by 1 text line
+				m_SubtexVerticalShift += UV_LINE_HEIGHT;
+			}
+
+			// Loop cursor around to start once it reaches the end.
+			if (currentCursorY + 1 >= m_Console->windowHeight)
+			{
+
 				m_Console->cursorX = 0;
 				m_Console->cursorY = 0;
 			}
 
-			// Loop subtexture around once first line is printed to.
-			if (m_Console->cursorY == 1) 
-			{
-				m_SubtexVerticalShift = UV_LINE_1_POS;
-			}
-
 			ClearNextLine();
-			CopyFramebufferToTexture(m_PrevCursorPosY, m_Console->cursorY);
+			CopyFramebufferToTexture(m_PrevCursorPosY, currentCursorY);
 
-			m_PrevCursorPosX = m_Console->cursorX;
-			m_PrevCursorPosY = m_Console->cursorY;
+			m_PrevCursorPosX = currentCursorX;
+			m_PrevCursorPosY = currentCursorY;
 			m_ConsoleUpdated = false;
 		}
 
@@ -102,7 +113,7 @@ namespace Entry {
 		m_Subtex.top = 1.0f - m_SubtexVerticalShift;
 		m_Image.subtex = const_cast<Tex3DS_SubTexture*>(&m_Subtex);
 
-			C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+		C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 0.5f, 1.0f);
 	}
 
 	void LogLayer::OnEvent(Event& event)
