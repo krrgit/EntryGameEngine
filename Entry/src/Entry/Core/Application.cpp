@@ -82,9 +82,16 @@ namespace Entry
 
     void Application::Run()
     {
-        
+        ET_PROFILE_FUNCTION();
+
         while (aptMainLoop() && m_Running) {
-            C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+            ET_PROFILE_SCOPE("Run Loop");
+
+            {
+                ET_PROFILE_SCOPE("C3D_FrameBegin");
+
+                C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+            }
 
             osTickCounterUpdate(&m_FrameTime);
             Timestep timestep = osTickCounterRead(&m_FrameTime) * 0.001f;
@@ -104,10 +111,18 @@ namespace Entry
             m_CurrentWindow->OnUpdate(timestep);
 
             m_ImGuiLayer->End();
+            
+            {
+                ET_PROFILE_SCOPE("ScanHIDEvents");
 
-            m_CurrentWindow->ScanHIDEvents();
+                m_CurrentWindow->ScanHIDEvents();
+            }
+            
+            {
+                ET_PROFILE_SCOPE("C3D_FrameEnd");
 
-            C3D_FrameEnd(0);
+                C3D_FrameEnd(0);
+            }
         }
     }
 }

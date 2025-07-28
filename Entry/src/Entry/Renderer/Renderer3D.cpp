@@ -160,6 +160,8 @@ namespace Entry {
 
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
+        ET_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", color);
         s_Data->WhiteTexture->Bind();
 
@@ -172,6 +174,8 @@ namespace Entry {
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
+        ET_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", color);
         s_Data->WhiteTexture->Bind();
         
@@ -185,6 +189,8 @@ namespace Entry {
 
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
     {
+        ET_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
         texture->Bind(); 
 
@@ -198,6 +204,8 @@ namespace Entry {
     
     void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
     {
+        ET_PROFILE_FUNCTION();
+
         s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
         texture->Bind();
 

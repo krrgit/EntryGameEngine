@@ -19,7 +19,8 @@
 #define G565_MASK 0x07E0
 #define B565_MASK 0x001F
 
-#define UV_LINE_HEIGHT 0.0313f // Height of one text line in UV tex coords
+#define UV_LINE_HEIGHT 0.03125f // Height of one text line in UV tex coords
+#define UV_LINE_1_POS 0.105f //(0.005f + ((3.0f *8.0f) / 240.0f))
  
 
 namespace Entry {
@@ -38,6 +39,8 @@ namespace Entry {
 		C3D_TexInitVRAM(m_Image.tex, 256, 256, GPU_RGBA5551);
 		C3D_TexSetFilter(m_Image.tex, GPU_NEAREST, GPU_NEAREST);
 		C3D_TexSetWrap(m_Image.tex, GPU_REPEAT, GPU_REPEAT);
+
+		CopyFramebufferToTexture(0, m_Console->cursorY);
 	}
 
 	void LogLayer::OnDetach()
@@ -70,18 +73,13 @@ namespace Entry {
 		m_ConsoleUpdated = m_PrevCursorPosX != m_Console->cursorX || m_PrevCursorPosY != m_Console->cursorY;
 
 		if (m_ConsoleUpdated) {
-			m_PrevCursorPosX = m_Console->cursorX;
-			m_PrevCursorPosY = m_Console->cursorY;
-			m_ConsoleUpdated = false;
 
 			// Shift the subtexture up by 1 text line
 			m_SubtexVerticalShift += UV_LINE_HEIGHT;
 			
 			// Loop cursor around to start.
-			if (m_PrevCursorPosY + 1 >= m_Console->windowHeight)
+			if (m_Console->cursorY + 1 >= m_Console->windowHeight)
 			{
-				m_PrevCursorPosX = 0;
-				m_PrevCursorPosY = 0;
 				m_Console->cursorX = 0;
 				m_Console->cursorY = 0;
 			}
@@ -89,46 +87,85 @@ namespace Entry {
 			// Loop subtexture around once first line is printed to.
 			if (m_Console->cursorY == 1) 
 			{
-				m_SubtexVerticalShift = (3.0f *8.0f) / 240.0f;
+				m_SubtexVerticalShift = UV_LINE_1_POS;
 			}
 
 			ClearNextLine();
-			CopyFramebufferToTexture();
+			CopyFramebufferToTexture(m_PrevCursorPosY, m_Console->cursorY);
+
+			m_PrevCursorPosX = m_Console->cursorX;
+			m_PrevCursorPosY = m_Console->cursorY;
+			m_ConsoleUpdated = false;
 		}
 
 		m_Subtex.bottom = -m_SubtexVerticalShift;
 		m_Subtex.top = 1.0f - m_SubtexVerticalShift;
 		m_Image.subtex = const_cast<Tex3DS_SubTexture*>(&m_Subtex);
 
-		C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
+			C2D_DrawImageAt(m_Image, 0.0f, 0.0f, 0.0f, NULL, 1.0f, 1.0f);
 	}
 
 	void LogLayer::OnEvent(Event& event)
 	{
 
 	}
-	void LogLayer::CopyFramebufferToTexture()
+	
+	void LogLayer::CopyFramebufferToTexture(int prevY, int currY)
 	{
 		ET_PROFILE_FUNCTION();
 
-		u32 endY = (m_Console->cursorY + 1) * 8;
-		endY = m_Console->cursorY == 0 ? m_Height : endY;
+		// Determine vertical pixel range (line height is 8 pixels)
+		int startY = std::min(prevY, currY) * 8;
+		int endY = (std::max(prevY, currY) + 1) * 8;
 
-		 //TODO: update to only copy line instead whole texture 
-		// Copy from console framebuffer to texture
-		for (u32 y = 0; y < endY; ++y)
+		// Clamp to screen height to avoid overflow
+		startY = startY < m_Height ? startY : m_Height;
+		endY = endY < m_Height ? endY : m_Height;
+
+		u16* texData = (u16*)m_Image.tex->data;
+		u16* fb = m_Console->frameBuffer;
+		const u32 blocksX = 256 >> 3;
+		const u32 width = m_Width;
+
+		for (int y = startY; y < endY; ++y)
 		{
-			for (u32 x = 0; x < m_Width; ++x)
+			const u32 yShift3 = y >> 3;
+			const u32 y0 = y & 1;
+			const u32 y1 = (y & 2) >> 1;
+			const u32 y2 = (y & 4) >> 2;
+
+			for (u32 x = 0; x < width; ++x)
 			{
-				uint32_t dest = ((((y >> 3) * (256 >> 3) + (x >> 3)) << 6) + ((x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3)));
-				u16& pixel = ((u16*)m_Image.tex->data)[dest];
-				pixel = m_Console->frameBuffer[(x * m_Width) + (m_Width - 1 - y)];
-				pixel |= pixel == 0 ? 0 : 1;
+				const u32 xShift3 = x >> 3;
+				const u32 x0 = x & 1;
+				const u32 x1 = (x & 2) >> 1;
+				const u32 x2 = (x & 4) >> 2;
+
+				const u32 mortonIndex =
+					((x0)) |
+					((y0) << 1) |
+					((x1) << 2) |
+					((y1) << 3) |
+					((x2) << 4) |
+					((y2) << 5);
+
+				const u32 blockIndex = (yShift3 * blocksX + xShift3) << 6;
+				const u32 dest = blockIndex + mortonIndex;
+
+				const u32 srcY = width - 1 - y;
+				const u32 srcIndex = x * width + srcY;
+
+				u16 color = fb[srcIndex];
+				if (color) color |= 1;
+				texData[dest] = color;
 			}
 		}
 	}
 
+
 	void LogLayer::ClearNextLine() {
+		ET_PROFILE_FUNCTION();
+
 		printf("\x1b[2K");
 	}
 }

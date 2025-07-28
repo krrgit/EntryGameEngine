@@ -18,7 +18,7 @@ namespace Entry {
 		virtual void OnEvent(Event& event) override;
 
 	private:
-		void CopyFramebufferToTexture();
+		void CopyFramebufferToTexture(int prevY, int currY);
 		void ClearNextLine();
 	private:
 		PrintConsole* m_Console;

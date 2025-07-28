@@ -86,15 +86,25 @@ namespace Entry
 
 	void Citro3DWindow::OnUpdate(Timestep ts)
 	{
-		for (Layer* layer : m_LayerStack)
-			layer->OnUpdate(ts);
+		ET_PROFILE_FUNCTION();
+		{
+			ET_PROFILE_SCOPE("Layer OnUpdates");
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate(ts);
+		}
 
-		for (Layer* layer : m_LayerStack)
-			layer->OnImGuiRender();
+		{
+			ET_PROFILE_SCOPE("Layer OnImGuiRenders");
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
 
-		C2D_Flush();
+		}
 
+		{
+			ET_PROFILE_SCOPE("C2D_Flush");
 
+			C2D_Flush();
+		}
 	}
 
 	void Citro3DWindow::ScanHIDEvents()
@@ -107,6 +117,8 @@ namespace Entry
 
 	void Citro3DWindow::FrameDrawOn()
 	{
+		ET_PROFILE_FUNCTION();
+
 		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
 		C3D_FrameDrawOn(m_RenderTarget);
 		C2D_SceneTarget(m_RenderTarget);
