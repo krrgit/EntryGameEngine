@@ -16,25 +16,39 @@ namespace Entry
 
     Application::Application()
     {
+        ET_PROFILE_FUNCTION();
+
         Renderer::Init();
-        Log::Init();
+
+        #ifdef LOG_CONSOLE_ENABLED 
+            Log::Init();
+        #endif
 
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        WindowProps topProps("Top", 400, 240, GFX_TOP);
-        m_WindowTop = Scope<Window>(Window::Create(topProps));
-        m_CurrentWindow = m_WindowTop.get();
-        RenderCommand::SetClearColor(0x68B0D8FF);
+        {
+            ET_PROFILE_SCOPE("Create Top Window");
+            WindowProps topProps("Top", 400, 240, GFX_TOP);
+            m_WindowTop = Scope<Window>(Window::Create(topProps));
+            m_CurrentWindow = m_WindowTop.get();
+            RenderCommand::SetClearColor(0x68B0D8FF);
+        }
+        {
 
-        WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
-        m_WindowBottom = Scope<Window>(Window::Create(props));
-        m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
-        m_CurrentWindow = m_WindowBottom.get();
-        RenderCommand::SetClearColor(0x252525FF);
+            ET_PROFILE_SCOPE("Create Bottom Window");
+            WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
+            m_WindowBottom = Scope<Window>(Window::Create(props));
+            m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
+            m_CurrentWindow = m_WindowBottom.get();
+            RenderCommand::SetClearColor(0x252525FF);
+        }
 
-        m_ImGuiLayer = new Entry::ImGuiLayer();
-        PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
+        {
+            ET_PROFILE_SCOPE("Create ImGui Layer");
+            m_ImGuiLayer = new Entry::ImGuiLayer();
+            PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
+        }
 
         osTickCounterStart(&m_FrameTime);
     }

@@ -27,6 +27,8 @@ namespace Entry {
 
 	void Renderer3D::Init()
 	{
+        ET_PROFILE_FUNCTION();
+
         s_Data = new Renderer3DStorage();
 
         // QUAD

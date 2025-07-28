@@ -11,6 +11,8 @@ namespace Entry {
 
 	void Renderer::Init() 
 	{
+		ET_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer3D::Init();
 	}

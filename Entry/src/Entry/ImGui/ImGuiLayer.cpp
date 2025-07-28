@@ -40,7 +40,11 @@ namespace Entry {
 
 	void ImGuiLayer::OnAttach()
 	{
-		ImGui::CreateContext();
+		ET_PROFILE_FUNCTION();
+		{
+			ET_PROFILE_SCOPE("ImGui::CreateContext");
+			ImGui::CreateContext();
+		}
 		ImGui::StyleColorsDark();
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
@@ -49,7 +53,10 @@ namespace Entry {
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
-		ImGui_ImplC3D_Init();
+		{
+			ET_PROFILE_SCOPE("ImGui_ImplC3D_Init");
+			ImGui_ImplC3D_Init();
+		}
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -71,6 +78,8 @@ namespace Entry {
 
 	void ImGuiLayer::Begin(Timestep ts)
 	{
+		ET_PROFILE_SCOPE("Create Bottom Window");
+
 		ImGuiIO& io = ImGui::GetIO();
 		io.DeltaTime = ts;
 

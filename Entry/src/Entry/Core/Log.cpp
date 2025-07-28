@@ -11,6 +11,8 @@ namespace Entry
 
     void Log::Init()
     {
+        ET_PROFILE_FUNCTION();
+
         // Initialization of Log is separate from LogLayer.
         // This allows logs to be stored before the screen is displayed.
         s_PrintConsole = static_cast<std::shared_ptr<PrintConsole>>(consoleGetDefault());
@@ -20,7 +22,7 @@ namespace Entry
         // The screen its rendered on is set in LogLayer().
         gfxScreen_t screen = GFX_BOTTOM;
         GSPGPU_FramebufferFormat fbFormat = gfxGetScreenFormat(screen);
-        bool doubleBuffering = false;
+        bool doubleBuffering = true;
 
         // Initialize console.
         int width = 240;
