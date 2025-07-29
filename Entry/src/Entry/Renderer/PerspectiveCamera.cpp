@@ -15,6 +15,8 @@ namespace Entry {
 
 	void PerspectiveCamera::SetProjection(float _left, float _right, float _bottom, float _top)
 	{	
+		ET_PROFILE_FUNCTION();
+
 		m_ViewMatrix = glm::lookAt(
 			glm::vec3(0, 0, -1), // Camera position in World Space
 			glm::vec3(0, 0, 1), // look direction
@@ -65,6 +67,8 @@ namespace Entry {
 
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
+		ET_PROFILE_FUNCTION();
+
 		glm::mat4 transform =	glm::translate(glm::mat4(1.0f), m_Position) *
 								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), glm::vec3(0,0,1)) *
 								glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), glm::vec3(0,1,0)) *

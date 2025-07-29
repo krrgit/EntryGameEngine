@@ -61,6 +61,8 @@ namespace Entry {
 
 	void ImGuiLayer::OnDetach()
 	{
+		ET_PROFILE_FUNCTION();
+
 		ImGui_ImplC3D_Shutdown();
 		ImGui::DestroyContext();
 	}
@@ -95,6 +97,8 @@ namespace Entry {
 
 	void ImGuiLayer::End()
 	{
+		ET_PROFILE_FUNCTION();
+
 		ImGui::Render();
 		ImGui_ImplC3D_RenderDrawData();
 

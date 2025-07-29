@@ -60,22 +60,41 @@ namespace Entry
 
     void Application::PushLayer(Layer* layer, int window)
     {
-        if (window == ET_WINDOW_TOP)
+        ET_PROFILE_FUNCTION();
+
+        if (window == ET_WINDOW_TOP) 
+        {
             m_WindowTop->PushLayer(layer);
-        else if (window == ET_WINDOW_BOTTOM)
+            layer->OnAttach();
+        }
+        else if (window == ET_WINDOW_BOTTOM) 
+        {
             m_WindowBottom->PushLayer(layer);
+            layer->OnAttach();
+        }
+
     }
 
     void Application::PushOverlay(Layer* layer, int window)
     {
-        if (window == ET_WINDOW_TOP)
+        ET_PROFILE_FUNCTION();
+
+        if (window == ET_WINDOW_TOP) 
+        {
             m_WindowTop->PushOverlay(layer);
-        else if (window == ET_WINDOW_BOTTOM)
+            layer->OnAttach();
+        }
+        else if (window == ET_WINDOW_BOTTOM) 
+        {
             m_WindowBottom->PushOverlay(layer);
+            layer->OnAttach();
+        }
     }
 
     void Application::OnEvent(Event& e)
     {
+        ET_PROFILE_FUNCTION();
+
         m_WindowTop->OnEvent(e);
         m_WindowBottom->OnEvent(e);
     }
@@ -98,17 +117,24 @@ namespace Entry
             osTickCounterStart(&m_FrameTime);
 
             m_ImGuiLayer->Begin(timestep);
+            {
+                ET_PROFILE_SCOPE("Render Top Window");
 
-            m_CurrentWindow = m_WindowTop.get();
-            m_CurrentWindow->FrameDrawOn();
+                m_CurrentWindow = m_WindowTop.get();
+                m_CurrentWindow->FrameDrawOn();
 
-            m_CurrentWindow->OnUpdate(timestep);
+                m_CurrentWindow->OnUpdate(timestep);
+            }
 
             // Temporary
-            m_CurrentWindow = m_WindowBottom.get();
-            m_CurrentWindow->FrameDrawOn();
+            {
+                ET_PROFILE_SCOPE("Render Bottom Window");
 
-            m_CurrentWindow->OnUpdate(timestep);
+                m_CurrentWindow = m_WindowBottom.get();
+                m_CurrentWindow->FrameDrawOn();
+
+                m_CurrentWindow->OnUpdate(timestep);
+            }
 
             m_ImGuiLayer->End();
             

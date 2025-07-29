@@ -19,6 +19,8 @@ namespace Entry {
 
 	void Renderer::BeginScene(PerspectiveCamera& camera)
 	{
+		ET_PROFILE_FUNCTION();
+
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 

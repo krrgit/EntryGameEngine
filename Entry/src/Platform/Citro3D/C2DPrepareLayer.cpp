@@ -11,6 +11,8 @@ namespace Entry {
 	}
 	void C2DPrepareLayer::OnUpdate(Timestep ts)
 	{
+		ET_PROFILE_FUNCTION();
+
 		C2D_Prepare();
 	}
 	void C2DPrepareLayer::OnEvent(Event& event)

@@ -126,11 +126,14 @@ namespace Entry {
         s_Data->TextureShader->SetInt("u_Texture", 0);
 
         // WHITE TEXTURE
-        // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
-        s_Data->WhiteTexture = Texture2D::Create(8, 8); 
-        uint32_t whiteTextureData[8 * 8];
-        std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
-        s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+        {
+            ET_PROFILE_SCOPE("Create 8x8 White Texture");
+            // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
+            s_Data->WhiteTexture = Texture2D::Create(8, 8); 
+            uint32_t whiteTextureData[8 * 8];
+            std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
+            s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+        }
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -145,17 +148,23 @@ namespace Entry {
 
 	void Renderer3D::Shutdown()
 	{
+        ET_PROFILE_FUNCTION();
+
         delete s_Data;
 	}
 
 	void Renderer3D::BeginScene(const PerspectiveCamera& camera)
 	{
+        ET_PROFILE_FUNCTION();
+
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
     }
 
 	void Renderer3D::EndScene()
 	{
+        ET_PROFILE_FUNCTION();
+
 	}
 
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)

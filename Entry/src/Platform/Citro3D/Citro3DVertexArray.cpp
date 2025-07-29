@@ -27,22 +27,28 @@ namespace Entry
         return GPU_BYTE;
     }
 
-
-
     Citro3DVertexArray::Citro3DVertexArray() {
+        ET_PROFILE_FUNCTION();
+
         AttrInfo_Init(&m_AttrInfo);
     }
 
     void Citro3DVertexArray::Bind() {
+        ET_PROFILE_FUNCTION();
+
         C3D_SetAttrInfo(&m_AttrInfo);
         m_VertexBuffers.front()->Bind();
     }
 
     void Citro3DVertexArray::Unbind() const {
+        ET_PROFILE_FUNCTION();
+
         C3D_SetAttrInfo(0);
     }
 
     const void Citro3DVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+        ET_PROFILE_FUNCTION();
+
         ET_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
 
         //C3D_SetAttrInfo(&m_attrInfo);
@@ -61,6 +67,7 @@ namespace Entry
     }
 
     const void Citro3DVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+        ET_PROFILE_FUNCTION();
 
         m_IndexBuffer = indexBuffer;
     }

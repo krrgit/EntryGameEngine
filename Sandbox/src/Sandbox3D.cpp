@@ -15,11 +15,14 @@ Sandbox3D::Sandbox3D()
 
 void Sandbox3D::OnAttach()
 {
+	ET_PROFILE_FUNCTION();
+
 	m_CheckerboardTexture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
 }
 
 void Sandbox3D::OnDetach()
 {
+	ET_PROFILE_FUNCTION();
 
 }
 
@@ -51,6 +54,8 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 
 void Sandbox3D::OnImGuiRender() 
 {
+	ET_PROFILE_FUNCTION();
+
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	//ImGui::Text("Rotation: %.2f\n", m_Rotation);

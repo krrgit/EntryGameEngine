@@ -26,16 +26,22 @@ namespace Entry
 
 	Citro3DWindow::Citro3DWindow(const WindowProps& props)
 	{
+		ET_PROFILE_FUNCTION();
+
 		Init(props);
 	}
 
 	Citro3DWindow::~Citro3DWindow()
 	{
+		ET_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
 	void Citro3DWindow::Init(const WindowProps& props)
 	{
+		// DO NOT PROFILE THIS FUNCTION. IT CAUSES ISSUES FOR SOME REASON.
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -51,6 +57,8 @@ namespace Entry
 
 	void Citro3DWindow::Shutdown()
 	{
+		ET_PROFILE_FUNCTION();
+
 		C3D_Fini();
 		gfxExit();
 	}
@@ -58,7 +66,6 @@ namespace Entry
 	void Citro3DWindow::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Citro3DWindow::PushOverlay(Layer* layer)
@@ -70,7 +77,6 @@ namespace Entry
 		}
 
 		m_LayerStack.PushOverlay(layer);
-		layer->OnAttach();
 	}
 
 	void Citro3DWindow::OnEvent(Event& e) {
@@ -88,18 +94,15 @@ namespace Entry
 	{
 		ET_PROFILE_FUNCTION();
 		{
-			ET_PROFILE_SCOPE("Layer OnUpdates");
+			ET_PROFILE_SCOPE("LayerStack OnUpdate");
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate(ts);
 		}
-
 		{
-			ET_PROFILE_SCOPE("Layer OnImGuiRenders");
+			ET_PROFILE_SCOPE("LayerStack OnImGuiRender");
 			for (Layer* layer : m_LayerStack)
 				layer->OnImGuiRender();
-
 		}
-
 		{
 			ET_PROFILE_SCOPE("C2D_Flush");
 
@@ -139,6 +142,8 @@ namespace Entry
 
 	void Citro3DWindow::SetVSync(bool enabled)
 	{
+		ET_PROFILE_FUNCTION();
+
 	}
 
 	bool Citro3DWindow::IsVSync() const

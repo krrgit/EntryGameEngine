@@ -9,6 +9,8 @@ namespace Entry {
 	}
 
 	void PerspectiveCameraController::OnUpdate(Timestep ts) {
+        ET_PROFILE_FUNCTION();
+
         glm::vec2 cp = Input::GetJoystickPos();
 
         glm::vec3 forward = m_Camera.forward;
@@ -32,6 +34,8 @@ namespace Entry {
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e) {
+        ET_PROFILE_FUNCTION();
+
         //EventDispatcher dispatcher(e);
 	}
 }
