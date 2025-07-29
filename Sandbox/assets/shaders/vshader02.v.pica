@@ -2,6 +2,7 @@
 
 ; Uniforms
 .fvec u_ViewProjection[4], u_Transform[4], u_Color[4]
+.fvec u_TilingFactor
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
@@ -34,11 +35,12 @@
 	dp4 outpos.z, u_ViewProjection[2], r1
 	dp4 outpos.w, u_ViewProjection[3], r1
 
-	; outtex = intex
-	mov outtc0, intex
+	; outtex = intex * u_TilingFactor
+	mul outtc0.xy, u_TilingFactor.xx, intex
 
 	; outcolor = intex coord
-	; mov outclr.xy, intex
+	; mov outclr.xyz, outtc0
+	; mov outclr.xy, outtc0
 	; mov outclr.z, zeros
 	; mov outclr.w, ones
 

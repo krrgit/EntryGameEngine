@@ -66,6 +66,13 @@ namespace Entry {
         UploadUniformInt(name, value);
     }
 
+    void Citro3DShader::SetFloat(const std::string& name, float value)
+    {
+        ET_PROFILE_FUNCTION();
+
+        UploadUniformFloat(name, value);
+    }
+
     void Citro3DShader::SetFloat3(const std::string& name, const glm::vec3& value)
     {
         ET_PROFILE_FUNCTION();

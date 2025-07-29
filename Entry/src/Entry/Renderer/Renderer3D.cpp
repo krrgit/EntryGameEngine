@@ -61,23 +61,23 @@ namespace Entry {
 
         // TODO: FIX TEX COORDS (maybe?)
         float cubeVertices[5* 4 * 6] = {
-            // Back face
+            // Front face
            -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
             0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
             0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
            -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
 
-           // Front face
-           -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-           -0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+           // Back face
+           -0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+           -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
             // Top face
-            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
 
            // Bottom face
            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
@@ -85,13 +85,13 @@ namespace Entry {
             0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
            -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
 
-           // Left face
-            0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-            0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+           // Right face
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
 
-            // Right face
+            // Left face
             -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
             -0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
             -0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
@@ -172,6 +172,7 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
         s_Data->WhiteTexture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
@@ -186,6 +187,7 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
         s_Data->WhiteTexture->Bind();
         
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
@@ -196,11 +198,12 @@ namespace Entry {
 	}
 
 
-    void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
+    void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        s_Data->TextureShader->SetFloat4("u_Color", tintColor);
+        s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
         texture->Bind(); 
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
@@ -211,11 +214,12 @@ namespace Entry {
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }
     
-    void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture)
+    void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        s_Data->TextureShader->SetFloat4("u_Color", tintColor);
+        s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
         texture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
