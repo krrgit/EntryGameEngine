@@ -15,6 +15,7 @@ namespace Entry {
 
 			static void BeginScene(const PerspectiveCamera& camera);
 			static void EndScene();
+			static void Flush();
 
 			// Primitives
 			static void DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
