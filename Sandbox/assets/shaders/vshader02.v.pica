@@ -2,22 +2,26 @@
 
 ; Uniforms
 .fvec u_ViewProjection[4]
-.fvec u_TilingFactor
+.fvec u_Textures, u_TilingFactor
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
 .alias  zeros myconst.xxxx ; Vector full of zeros
 .alias  ones  myconst.yyyy ; Vector full of ones
+.constf indices(0.0, 1.0, 2.0, 3.0)
 
 ; Outputs
 .out outpos position
 .out outclr color
-; .out outtc0 texcoord0
+.out outtc0 texcoord0
+.out outtc1 texcoord1
+.out outtc2 texcoord2
 
 ; Inputs (defined as aliases for convenience)
 .alias inpos v0
 .alias inclr v1
-.alias intex v2
+.alias intex v2 ; tex coord
+.alias intind v3 ; tex index
 
 .proc main
 	; Force the w component of inpos to be 1.0
@@ -38,7 +42,11 @@
 	dp4 outpos.w, u_ViewProjection[3], r1
 
 	; outtex = intex * u_TilingFactor
-	; mul outtc0.xy, u_TilingFactor.xx, intex
+	; mul outtc0.xy, u_TilingFactor.xx, intexcoord
+
+	mov outtc0, zeros
+	mov outtc1, intex
+	mov outtc2, zeros
 
 	; outcolor = intex coord
 	; mov outclr.xyz, outtc0

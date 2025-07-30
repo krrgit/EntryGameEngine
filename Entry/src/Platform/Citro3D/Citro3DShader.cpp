@@ -59,11 +59,18 @@ namespace Entry {
         C3D_BindProgram(0);
     }
 
-    void Citro3DShader::SetInt(const std::string& name, int value) 
+    void Citro3DShader::SetInt(const std::string& name, int value)
     {
         ET_PROFILE_FUNCTION();
 
         UploadUniformInt(name, value);
+    }
+
+    void Citro3DShader::SetIntArray(const std::string& name, int* values, uint16_t count)
+    {
+        ET_PROFILE_FUNCTION();
+
+        UploadUniformIntArray(name, values, count);
     }
 
     void Citro3DShader::SetFloat(const std::string& name, float value)
@@ -98,6 +105,18 @@ namespace Entry {
     {
         s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
         C3D_IVUnifSet(GPU_VERTEX_SHADER, location, value, 0, 0, 0);
+    }
+
+    void Citro3DShader::UploadUniformIntArray(const std::string& name, int* values, uint16_t count)
+    {
+        s8 location = shaderInstanceGetUniformLocation(program.vertexShader, name.c_str());
+        
+        uint16_t output[4] = {0,0,0,0};
+        for (uint16_t i=0; i < count; ++i) {
+            output[i] = values[i];
+        }
+
+        C3D_IVUnifSet(GPU_VERTEX_SHADER, location, output[0], output[1], output[2], output[3]);
     }
 
     void Citro3DShader::UploadUniformFloat(std::string name, const float value)
