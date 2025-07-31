@@ -38,22 +38,10 @@ namespace Entry {
 
         Ref <Shader> TextureShader;
         Ref <Texture2D> WhiteTexture;
-        uint32_t BatchSlotIndex = 1; // 0 = white texture
 
         std::array<RenderBatch, MaxTextureSlots> RenderBatches;
 
         Ref <VertexArray> QuadVertexArray;
-        Ref <VertexArray> CubeVertexArray;
-
-        Ref <VertexBuffer> QuadVertexBuffer;
-        uint32_t QuadIndexCount = 0;
-        QuadVertex* QuadVertexBufferBase = nullptr;
-        QuadVertex* QuadVertexBufferPtr = nullptr;
-
-        Ref <VertexBuffer> QuadVertexBuffer2;
-        uint32_t QuadIndexCount2 = 0;
-        QuadVertex* QuadVertexBufferBase2 = nullptr;
-        QuadVertex* QuadVertexBufferPtr2 = nullptr;
 
         std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
         uint32_t TextureSlotIndex = 1; // 0 = white texture
@@ -141,12 +129,6 @@ namespace Entry {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        s_Data.QuadIndexCount2 = 0;
-        s_Data.QuadVertexBufferPtr2 = s_Data.QuadVertexBufferBase2;
-
         for (uint32_t i = 0; i < s_Data.RenderBatches.size(); ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
             s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
@@ -201,16 +183,6 @@ namespace Entry {
         batch->VertexBufferPtr++;
         
         batch->IndexCount += 6;
-
-        //s_Data.TextureShader->SetFloat4("u_Color", color);
-        //s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        //s_Data.WhiteTexture->Bind();
-
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data.TextureShader->SetMat4("u_Transform", transform);
-
-        //s_Data.QuadVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
 	}
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -357,16 +329,6 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-
-        //s_Data.TextureShader->SetFloat4("u_Color", color);
-        //s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        //s_Data.WhiteTexture->Bind();
-        //
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data.TextureShader->SetMat4("u_Transform", transform);
-
-        //s_Data.CubeVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data.CubeVertexArray);
 	}
 
 
