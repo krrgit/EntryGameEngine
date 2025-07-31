@@ -21,7 +21,6 @@
 .alias inpos v0
 .alias inclr v1
 .alias intex v2 ; tex coord
-.alias intind v3 ; tex index
 
 .proc main
 	; Force the w component of inpos to be 1.0
@@ -43,10 +42,9 @@
 
 	; outtex = intex * u_TilingFactor
 	; mul outtc0.xy, u_TilingFactor.xx, intexcoord
-
-	mov outtc0, zeros
-	mov outtc1, intex
-	mov outtc2, zeros
+	mov outtc0.xy, intex
+	mov outtc1.xy, intex
+	mov outtc2.xy, intex
 
 	; outcolor = intex coord
 	; mov outclr.xyz, outtc0

@@ -18,29 +18,47 @@ namespace Entry {
         glm::vec3 Position;
         glm::vec4 Color; 
         glm::vec2 TexCoord;
-        float TexIndex;
+    };
+
+    struct RenderBatch {
+        Ref <VertexBuffer> QuadVertexBuffer;
+
+        uint32_t IndexCount = 0;
+        QuadVertex* VertexBufferBase = nullptr;
+        QuadVertex* VertexBufferPtr = nullptr;
     };
 
     struct Renderer3DData 
     {
-        const uint32_t MaxQuads = 2500;
+
+        const uint32_t MaxQuads = 100;
         const uint32_t MaxVertices = MaxQuads * 4;
         const uint16_t MaxIndices = MaxQuads * 6;
         static const uint32_t MaxTextureSlots = 3; // TODO: RenderCaps (3 per C3D_Context)
 
-        Ref <VertexArray> QuadVertexArray;
-        Ref <VertexBuffer> QuadVertexBuffer;
-        Ref <VertexArray> CubeVertexArray;
         Ref <Shader> TextureShader;
         Ref <Texture2D> WhiteTexture;
+        uint32_t BatchSlotIndex = 1; // 0 = white texture
 
+        std::array<RenderBatch, MaxTextureSlots> RenderBatches;
+
+        Ref <VertexArray> QuadVertexArray;
+        Ref <VertexArray> CubeVertexArray;
+
+        Ref <VertexBuffer> QuadVertexBuffer;
         uint32_t QuadIndexCount = 0;
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
 
+        Ref <VertexBuffer> QuadVertexBuffer2;
+        uint32_t QuadIndexCount2 = 0;
+        QuadVertex* QuadVertexBufferBase2 = nullptr;
+        QuadVertex* QuadVertexBufferPtr2 = nullptr;
+
         std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
         uint32_t TextureSlotIndex = 1; // 0 = white texture
     };
+
 
     static Renderer3DData s_Data;
 
@@ -48,19 +66,18 @@ namespace Entry {
 	{
         ET_PROFILE_FUNCTION();
 
-        // QUAD
         s_Data.QuadVertexArray = VertexArray::Create();
-
-        s_Data.QuadVertexBuffer.reset(VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex)));
-
-        s_Data.QuadVertexBuffer->SetLayout({
-            { ShaderDataType::Float3, "a_Position" },
-            { ShaderDataType::Float4, "a_Color" },
-            { ShaderDataType::Float2, "a_TexCoord" },
-            { ShaderDataType::Float, "a_TexIndex" }
-        });
-        s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-        s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+        for (uint32_t i = 0; i < s_Data.RenderBatches.size();++i) {
+            RenderBatch* batch = &s_Data.RenderBatches[i];
+            batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
+            batch->QuadVertexBuffer->SetLayout({
+                { ShaderDataType::Float3, "a_Position" },
+                { ShaderDataType::Float4, "a_Color" },
+                { ShaderDataType::Float2, "a_TexCoord" }
+                });
+            s_Data.QuadVertexArray->AddVertexBuffer(batch->QuadVertexBuffer);
+            batch->VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+        }
 
         uint16_t quadIndices[s_Data.MaxIndices];
 
@@ -82,14 +99,9 @@ namespace Entry {
         squareIB.reset(IndexBuffer::Create(quadIndices, s_Data.MaxIndices));
         s_Data.QuadVertexArray->SetIndexBuffer(squareIB); 
 
-        int samplers[s_Data.MaxTextureSlots];
-        for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
-            samplers[i] = i;
-
         // SHADERS
         s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetIntArray("u_Textures", samplers,s_Data.MaxTextureSlots);
 
         // CREATE WHITE TEXTURE
         {
@@ -99,6 +111,7 @@ namespace Entry {
             uint32_t whiteTextureData[8 * 8];
             std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
             s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+            s_Data.WhiteTexture->Bind(0);
         }
 
         // Set all textures slots to 0
@@ -109,11 +122,8 @@ namespace Entry {
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
         C3D_TexEnv* env = C3D_GetTexEnv(0);
         C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+        C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
 
-        env = C3D_GetTexEnv(1);
-        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
 	void Renderer3D::Shutdown()
@@ -134,6 +144,14 @@ namespace Entry {
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
+        s_Data.QuadIndexCount2 = 0;
+        s_Data.QuadVertexBufferPtr2 = s_Data.QuadVertexBufferBase2;
+
+        for (uint32_t i = 0; i < s_Data.RenderBatches.size(); ++i) {
+            s_Data.RenderBatches[i].IndexCount = 0;
+            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
+        }
+
         s_Data.TextureSlotIndex = 1;
     }
 
@@ -141,62 +159,58 @@ namespace Entry {
 	{
         ET_PROFILE_FUNCTION();
 
-        uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
         Flush();
 	}
 
     void Renderer3D::Flush() 
     {
-        // Bind Textures
+        //C3D_TexEnv* env = C3D_GetTexEnv(0);
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
+            uint32_t dataSize = (uint8_t*)s_Data.RenderBatches[i].VertexBufferPtr - (uint8_t*)s_Data.RenderBatches[i].VertexBufferBase;
+            s_Data.RenderBatches[i].QuadVertexBuffer->SetData(s_Data.RenderBatches[i].VertexBufferBase, dataSize);
             s_Data.TextureSlots[i]->Bind(i);
+            RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.RenderBatches[i].IndexCount);
         }
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
     }
 
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
 	{
         ET_PROFILE_FUNCTION();
 
-        const float texIndex = 0.0; // White Texture
+        const int textureIndex = 0; // White Texture
+        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
 
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-        s_Data.QuadVertexBufferPtr++;
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
 
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-        s_Data.QuadVertexBufferPtr++;
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
 
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadIndexCount += 6;
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+       
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+        
+        batch->IndexCount += 6;
 
         //s_Data.TextureShader->SetFloat4("u_Color", color);
-        /*s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        s_Data.WhiteTexture->Bind();
+        //s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
+        //s_Data.WhiteTexture->Bind();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data.TextureShader->SetMat4("u_Transform", transform);
+        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        //s_Data.TextureShader->SetMat4("u_Transform", transform);
 
-        s_Data.QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);*/
+        //s_Data.QuadVertexArray->Bind();
+        //RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
 	}
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -222,49 +236,48 @@ namespace Entry {
         const glm::vec4 color(1.0f);
 
         //Search for texture in slots
-        float textureIndex = 0.0f;
+        int textureIndex = 0;
         for (uint32_t i = 1; i < s_Data.TextureSlotIndex; ++i) {
             if (*s_Data.TextureSlots[i].get() == *texture.get()) {
-                textureIndex = (float)i;
+                textureIndex = i;
                 break;
             }
         }
 
         // Add texture if not found
-        if (textureIndex == 0.0f) {
+        if (textureIndex == 0) {
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
+            texture->Bind(textureIndex);
         }
 
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr++;
+        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
 
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = position + glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 });
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadIndexCount += 6;
-
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+        
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+        
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+        
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+        
+        batch->IndexCount += 6;
+        
 #if OLD_PATH
-        s_Data.TextureShader->SetFloat4("u_Color", tintColor);
+         s_Data.QuadTextureShader->SetFloat4("u_Color", tintColor);
         s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
         texture->Bind(); 
 

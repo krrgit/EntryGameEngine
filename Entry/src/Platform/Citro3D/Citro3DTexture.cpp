@@ -66,9 +66,26 @@ namespace Entry {
 	{
 		ET_PROFILE_FUNCTION();
 
-		C3D_TexEnv* env = C3D_GetTexEnv(0);
-		C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
+		// TODO: Move setting TexEnv outside Bind (maybe in Material class?)
+		GPU_TEVSRC texSource;
+		switch (slot) {
+		case 0:
+			texSource = GPU_TEXTURE0;
+			break;
+		case 1:
+			texSource = GPU_TEXTURE1;
+			break;
+		case 2:
+			texSource = GPU_TEXTURE2;
+			break;
+		default:
+			texSource = GPU_PRIMARY_COLOR;
+			break;
+		}
+		
+		//C3D_TexEnv* env = C3D_GetTexEnv(0);
+		//C3D_TexEnvSrc(env, C3D_Both, texSource, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+		//C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
 
 		C3D_TexBind(slot, &m_Texture);
 	}
