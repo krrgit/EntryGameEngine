@@ -46,9 +46,9 @@ namespace Entry
 
 	void Citro3DVertexBuffer::SetData(const void* data, uint32_t size)
 	{
-		C3D_SetBufInfo(&m_bufInfo);
-
 		memcpy(m_DataPointer, data, size);
+
+		C3D_SetBufInfo(&m_bufInfo);
 	}
 
 	void Citro3DVertexBuffer::SetLayout(const BufferLayout layout) 

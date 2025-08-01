@@ -47,17 +47,18 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 		//Render
 		glm::vec4 redColor = { 1.0f, 0.2f, 0.3f, 1.0f };
 		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
-		Entry::Renderer3D::DrawQuad({ 0.0f, -0.5f, 0.0f }, glm::quat(glm::vec3(glm::radians(90.0f),0,0)), {10.0f, 10.0f, 1.0f}, m_CheckerboardTexture);
+		Entry::Renderer3D::DrawQuad({ 0.0f, -0.5f, 0.0f }, glm::quat(glm::vec3(glm::radians(90.0f),0,0)), {8.0f, 8.0f, 1.0f}, m_CheckerboardTexture);
 		//Entry::Renderer3D::DrawCube({-2.0f, 1.0f, -2.0f},  glm::quat(glm::vec3(m_Rotation, m_Rotation, 0)), glm::vec3(1.0f), m_CheckerboardTexture, 0.5f, glm::vec4(1.0f, 0.9f, 0.9f, 1.0f));
-		Entry::Renderer3D::DrawQuad({ 2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(1.0f), m_SquareColor);
-		Entry::Renderer3D::DrawQuad({ -2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(1.0f), redColor);
-		Entry::Renderer3D::DrawQuad({ 0.0f, 2.0f, 0.0f }, glm::quat(glm::vec3(0, 0, m_Rotation)), glm::vec3(1.0f), m_CheckerboardTexture);
-		Entry::Renderer3D::DrawCube({ 0.0f, 0.0f, 0.0f },  glm::quat(glm::vec3(0)), glm::vec3(1.0f), m_SquareColor);
+		//Entry::Renderer3D::DrawQuad({ 2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(1.0f), m_SquareColor);
+		//Entry::Renderer3D::DrawQuad({ -2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(1.0f), redColor);
+		//Entry::Renderer3D::DrawQuad({ 0.0f, 2.0f, 0.0f }, glm::quat(glm::vec3(0, 0, m_Rotation)), glm::vec3(1.0f), m_CheckerboardTexture);
+		//Entry::Renderer3D::DrawCube({ 0.0f, 0.0f, 0.0f },  glm::quat(glm::vec3(0)), glm::vec3(1.0f), m_SquareColor);
 
 
-		for (float y = 0; y < 3; y++) {
-			for (float x = 0; x < 3; x++) {
-				Entry::Renderer3D::DrawCube({ x - 4.5f, 0.25f, y - 4.5f }, glm::quat(glm::vec3(m_Rotation+x, m_Rotation+y, 0)), glm::vec3(.45f), m_CheckerboardTexture, 0.5f, glm::vec4(1.0f, 0.9f, 0.9f, 1.0f));
+		for (float y = 0; y < 5; y++) {
+			for (float x = 0; x < 5; x++) {
+				//Entry::Renderer3D::DrawCube({ x - 3.5f, -0.2f, y - 3.5f }, glm::quat(glm::vec3(/*m_Rotation+x, m_Rotation+y,*/ 0)), glm::vec3(.45f), m_CheckerboardTexture, 0.5f, glm::vec4(1.0f, 0.9f, 0.9f, 1.0f));
+				Entry::Renderer3D::DrawCube({ x - 2.5f, -0.2f, y - 2.5f }, glm::quat(glm::vec3(/*m_Rotation+x, m_Rotation+y,*/ 0)), glm::vec3(.45f), m_SquareColor);
 			}
 		}
 
@@ -86,11 +87,11 @@ void Sandbox3D::OnImGuiRender()
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
 	auto stats = Entry::Renderer3D::GetStats();
-	ImGui::Text("Rendere3D Stats:");
-	ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-	ImGui::Text("Quad Count: %d", stats.QuadCount);
-	ImGui::Text("Veritices: %d", stats.GetTotalVertexCount());
-	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+	ImGui::Text("Renderer3D Stats:");
+	ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
+	ImGui::Text("Quad Count: %ld", stats.QuadCount);
+	ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
+	ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
 	ImGui::End();
 }
