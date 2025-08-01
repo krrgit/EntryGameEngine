@@ -30,10 +30,9 @@ namespace Entry {
 
     struct Renderer3DData 
     {
-
-        const uint32_t MaxQuads = 100;
-        const uint32_t MaxVertices = MaxQuads * 4;
-        const uint16_t MaxIndices = MaxQuads * 6;
+        static const uint32_t MaxQuads = 100; // Per Batch atm
+        static const uint32_t MaxVertices = MaxQuads * 4; // Per Batch atm
+        static const uint16_t MaxIndices = MaxQuads * 6; // Per Batch atm
         static const uint32_t MaxTextureSlots = 3; // TODO: RenderCaps (3 per C3D_Context)
 
         Ref <Shader> TextureShader;
@@ -42,9 +41,12 @@ namespace Entry {
         std::array<RenderBatch, MaxTextureSlots> RenderBatches;
 
         Ref <VertexArray> QuadVertexArray;
+        uint32_t QuadIndexCount;
 
         std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
         uint32_t TextureSlotIndex = 1; // 0 = white texture
+        
+        Renderer3D::Statistics Stats;
     };
 
 
@@ -129,11 +131,13 @@ namespace Entry {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
+
         for (uint32_t i = 0; i < s_Data.RenderBatches.size(); ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
             s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
         }
 
+        s_Data.QuadIndexCount = 0;
         s_Data.TextureSlotIndex = 1;
     }
 
@@ -146,21 +150,44 @@ namespace Entry {
 
     void Renderer3D::Flush() 
     {
-        //C3D_TexEnv* env = C3D_GetTexEnv(0);
+        // TODO: maybe set TexEnv here?
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
-            uint32_t dataSize = (uint8_t*)s_Data.RenderBatches[i].VertexBufferPtr - (uint8_t*)s_Data.RenderBatches[i].VertexBufferBase;
-            s_Data.RenderBatches[i].QuadVertexBuffer->SetData(s_Data.RenderBatches[i].VertexBufferBase, dataSize);
-            s_Data.TextureSlots[i]->Bind(i);
+            {
+                ET_PROFILE_SCOPE("VertexBuffer::SendData");
+                uint32_t dataSize = (uint8_t*)s_Data.RenderBatches[i].VertexBufferPtr - (uint8_t*)s_Data.RenderBatches[i].VertexBufferBase;
+                s_Data.RenderBatches[i].QuadVertexBuffer->SetData(s_Data.RenderBatches[i].VertexBufferBase, dataSize);
+            }
+                s_Data.TextureSlots[i]->Bind(i);
             RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.RenderBatches[i].IndexCount);
+
+            s_Data.Stats.DrawCalls++;
         }
     }
 
-	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
-	{
+    void Renderer3D::FlushAndReset() {
+        EndScene();
+
+        for (uint32_t i = 0; i < s_Data.RenderBatches.size(); ++i) {
+            s_Data.RenderBatches[i].IndexCount = 0;
+            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
+        }
+
+        s_Data.QuadIndexCount = 0;
+        s_Data.TextureSlotIndex = 1;
+    }
+
+    void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
+    {
         ET_PROFILE_FUNCTION();
+
 
         const int textureIndex = 0; // White Texture
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+
+        if (batch->IndexCount >= Renderer3DData::MaxIndices) 
+        {
+            FlushAndReset();
+        }
 
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
         batch->VertexBufferPtr->Color = color;
@@ -183,6 +210,9 @@ namespace Entry {
         batch->VertexBufferPtr++;
         
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
 	}
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -191,6 +221,11 @@ namespace Entry {
 
         const int textureIndex = 0; // White Texture
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+
+        if (batch->IndexCount >= Renderer3DData::MaxIndices)
+        {
+            FlushAndReset();
+        }
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
@@ -214,6 +249,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Back Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -237,6 +273,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Top Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
@@ -260,6 +297,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Bottom Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -283,6 +321,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Right Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -306,6 +345,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Left Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -329,8 +369,10 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-	}
+        s_Data.QuadIndexCount += 6;
 
+        s_Data.Stats.QuadCount += 6;
+	}
 
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
@@ -349,13 +391,27 @@ namespace Entry {
 
         // Add texture if not found
         if (textureIndex == 0) {
-            textureIndex = (float)s_Data.TextureSlotIndex;
+            textureIndex = s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
             texture->Bind(textureIndex);
         }
 
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+
+        if (batch->IndexCount >= Renderer3DData::MaxIndices)
+        {
+            FlushAndReset();
+
+            // Re-Add texture to a texture slot
+            textureIndex = s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+            texture->Bind(textureIndex);
+
+            batch = &s_Data.RenderBatches[textureIndex];
+        }
+
 
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
         batch->VertexBufferPtr->Color = color;
@@ -378,6 +434,10 @@ namespace Entry {
         batch->VertexBufferPtr++;
         
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
+
         
 #if OLD_PATH
          s_Data.QuadTextureShader->SetFloat4("u_Color", tintColor);
@@ -416,6 +476,19 @@ namespace Entry {
 
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
 
+        if (batch->IndexCount >= Renderer3DData::MaxIndices)
+        {
+            FlushAndReset();
+
+            // Re-Add texture to a texture slot
+            textureIndex = s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+            texture->Bind(textureIndex);
+
+            batch = &s_Data.RenderBatches[textureIndex];
+        }
+
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
         batch->VertexBufferPtr->Color = tintColor;
@@ -438,6 +511,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Back Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -461,6 +535,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Top Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
@@ -484,6 +559,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Bottom Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -507,6 +583,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Right Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -530,6 +607,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
 
         // Left Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -553,6 +631,9 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
+        s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount += 6;
 
         //s_Data.TextureShader->SetFloat4("u_Color", tintColor);
         //s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
@@ -563,5 +644,13 @@ namespace Entry {
 
         //s_Data.CubeVertexArray->Bind();
         //RenderCommand::DrawIndexed(s_Data.CubeVertexArray);
+    }
+    void Renderer3D::ResetStats()
+    {
+        memset(&s_Data.Stats, 0, sizeof(Statistics));
+    }
+    Renderer3D::Statistics Renderer3D::GetStats()
+    {
+        return s_Data.Stats;
     }
 }

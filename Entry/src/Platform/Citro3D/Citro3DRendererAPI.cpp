@@ -27,6 +27,8 @@ void Citro3DRendererAPI::Clear()
 
 void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
 {
+	ET_PROFILE_FUNCTION();
+
 	uint16_t count = indexCount > 0 ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 	C3D_DrawElements(
 		GPU_TRIANGLES, 
