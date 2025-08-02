@@ -21,6 +21,7 @@ namespace Entry {
     };
 
     struct RenderBatch {
+        Ref <VertexArray> QuadVertexArray;
         Ref <VertexBuffer> QuadVertexBuffer;
 
         uint32_t IndexCount = 0;
@@ -30,10 +31,10 @@ namespace Entry {
 
     struct Renderer3DData 
     {
-        static const uint32_t MaxQuads = 50; // Per Batch atm
+        static const uint32_t MaxQuads = 2048; // Per Batch atm
         static const uint32_t MaxVertices = MaxQuads * 4; // Per Batch atm
         static const uint16_t MaxIndices = MaxQuads * 6; // Per Batch atm
-        static const uint32_t MaxTextureSlots = 3; // TODO: RenderCaps (3 per C3D_Context)
+        static const uint32_t MaxTextureSlots = 8; // TODO: RenderCaps (3 per C3D_Context)
 
         Ref <Shader> TextureShader;
         Ref <Texture2D> WhiteTexture;
@@ -57,7 +58,7 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         s_Data.QuadVertexArray = VertexArray::Create();
-        for (uint32_t i = 0; i < s_Data.RenderBatches.size();++i) {
+        for (uint32_t i = 0; i < Renderer3DData::MaxTextureSlots;++i) {
             RenderBatch* batch = &s_Data.RenderBatches[i];
             batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
             batch->QuadVertexBuffer->SetLayout({
@@ -133,7 +134,7 @@ namespace Entry {
         
         s_Data.WhiteTexture->Bind(0);
 
-        for (uint32_t i = 0; i < s_Data.RenderBatches.size(); ++i) {
+        for (uint32_t i = 0; i < Renderer3DData::MaxTextureSlots; ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
             s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
         }
@@ -159,7 +160,7 @@ namespace Entry {
             if (dataSize == 0) continue;
             s_Data.RenderBatches[i].QuadVertexBuffer->SetData(s_Data.RenderBatches[i].VertexBufferBase, dataSize);
 
-            s_Data.TextureSlots[i]->Bind(i);
+            s_Data.TextureSlots[i]->Bind(0);
             RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.RenderBatches[i].IndexCount);
 
             s_Data.Stats.DrawCalls++;
@@ -185,11 +186,13 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         const int textureIndex = 0; // White Texture
+        const int quadIndexCount = 6;
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
 
-        if (batch->IndexCount + 6 >= Renderer3DData::MaxIndices) 
+        if (batch->IndexCount + quadIndexCount >= Renderer3DData::MaxIndices)
         {
-            FlushAndReset();
+            //FlushAndReset();
+            return;
         }
 
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
@@ -223,14 +226,14 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         const int textureIndex = 0; // White Texture
-        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+        const uint32_t cubeIndexCount = 36;
 
-        if (batch->IndexCount + 36 >= Renderer3DData::MaxIndices)
-        {
-            // Issues occur here
-            FlushAndReset();
-            
+        // Don't draw if full
+        if (s_Data.RenderBatches[textureIndex].IndexCount + cubeIndexCount >= Renderer3DData::MaxIndices) {
+            return;
         }
+
+        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
@@ -385,7 +388,7 @@ namespace Entry {
 
         const glm::vec4 color(1.0f);
 
-        const uint32_t indexCount = 6;
+        const uint32_t quadIndexCount = 6;
 
         //Search for texture in slots
         int textureIndex = 0;
@@ -407,14 +410,10 @@ namespace Entry {
             s_Data.TextureSlotIndex++;
             texture->Bind(textureIndex);
         }
-        else if (s_Data.RenderBatches[textureIndex].IndexCount + indexCount >= Renderer3DData::MaxIndices) {
+        else if (s_Data.RenderBatches[textureIndex].IndexCount + quadIndexCount >= Renderer3DData::MaxIndices) {
 
-            FlushAndReset();
-
-            textureIndex = s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-            s_Data.TextureSlotIndex++;
-            texture->Bind(textureIndex);
+            //FlushAndReset();
+            return;
         }
 
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
@@ -463,8 +462,7 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        const uint32_t indexCount = 36;
-
+        const uint32_t cubeIndexCount = 36;
 
         //Search for texture in slots
         int textureIndex = 0;
@@ -486,15 +484,8 @@ namespace Entry {
             s_Data.TextureSlotIndex++;
             texture->Bind(textureIndex);
         }
-        else if (s_Data.RenderBatches[textureIndex].IndexCount + indexCount >= Renderer3DData::MaxIndices) {
+        else if (s_Data.RenderBatches[textureIndex].IndexCount + cubeIndexCount >= Renderer3DData::MaxIndices) {
             return;
-
-            FlushAndReset();
-
-            textureIndex = s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[textureIndex] = texture;
-            s_Data.TextureSlotIndex++;
-            texture->Bind(textureIndex);
         }
 
         RenderBatch* batch = &s_Data.RenderBatches[textureIndex];

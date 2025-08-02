@@ -54,28 +54,17 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 		//Entry::Renderer3D::DrawQuad({ 0.0f, 2.0f, 0.0f }, glm::quat(glm::vec3(0, 0, m_Rotation)), glm::vec3(1.0f), m_CheckerboardTexture);
 		//Entry::Renderer3D::DrawCube({ 0.0f, 0.0f, 0.0f },  glm::quat(glm::vec3(0)), glm::vec3(1.0f), m_SquareColor);
 
-
-		for (float y = 0; y < 5; y++) {
-			for (float x = 0; x < 5; x++) {
-				//Entry::Renderer3D::DrawCube({ x - 3.5f, -0.2f, y - 3.5f }, glm::quat(glm::vec3(/*m_Rotation+x, m_Rotation+y,*/ 0)), glm::vec3(.45f), m_CheckerboardTexture, 0.5f, glm::vec4(1.0f, 0.9f, 0.9f, 1.0f));
-				Entry::Renderer3D::DrawCube({ x - 2.5f, -0.2f, y - 2.5f }, glm::quat(glm::vec3(/*m_Rotation+x, m_Rotation+y,*/ 0)), glm::vec3(.45f), m_SquareColor);
+		float side = 20.0f;
+		for (float y = 0; y < side; y++) {
+			for (float x = 0; x < side; x++) {
+				Entry::Renderer3D::DrawCube({ x - (side / 2.0f), sin(m_Rotation + x + y) * 0.2f, y - (side /2.0f)}, glm::quat(glm::vec3(m_Rotation + x, m_Rotation + y, 0)), glm::vec3(.45f), m_CheckerboardTexture, 0.5f, glm::vec4((x + 4.0f) / (4.0f + side), 0.4f, (y + 4.0f) / (4.0f + side), 1.0f));
+				glm::vec4 color = glm::vec4((x + 4.0f) / 12.0f, 0.4f, (y + 4.0f) / 12.0f, 1.0f);
+				Entry::Renderer3D::DrawCube({ x - (side / 2.0f), 1.0f + sin(m_Rotation + x + y) * 0.2f, y - (side / 2.0f) }, glm::quat(glm::vec3(m_Rotation + x, m_Rotation + y, 0)), glm::vec3(.45f), color);
+				//Entry::Renderer3D::DrawCube({ x - 2.5f, -0.2f, y - 2.5f }, glm::quat(glm::vec3(/*m_Rotation+x, m_Rotation+y,*/ 0)), glm::vec3(.45f), m_SquareColor);
 			}
 		}
-
+		
 		Entry::Renderer3D::EndScene();
-
-		//Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
-		//for (float y = -5.0f; y < -3.0f; y += 0.5f) 
-		//{
-		//	for (float x = -5.0f; x < -3.0f; x += 0.5f) {
-		//		glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f,  (y + 5.0f) / 10.0f, 0.5f };
-		//		Entry::Renderer3D::DrawCube({ x, 0.25f, y - 5.0f}, glm::quat(glm::vec3(glm::radians(90.0f), 0, 0)), glm::vec3(0.45f), color);
-		//	}
-		//}
-
-		//Entry::Renderer3D::EndScene();
-
-
 	}
 }
 
