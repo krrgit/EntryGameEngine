@@ -7,6 +7,15 @@
 #include <time.h>
 #include <memory>
 
+#define DEBUG
+
+#ifdef DEBUG
+    #define ET_LOG_CONSOLE
+#endif // DEBUG
+
+
+
+
 namespace Entry
 {
 
@@ -20,9 +29,18 @@ namespace Entry
 
         Renderer::Init();
 
-        #ifdef LOG_CONSOLE_ENABLED 
+        #ifdef ET_LOG_CONSOLE
             Log::Init();
         #endif
+
+        //// romfs
+        //Result rc = romfsInit();
+        //if (rc)
+        //    printf("romfsInit: %08lX\n", rc);
+        //else
+        //{
+        //    printf("romfs Init Successful!\n");
+        //}
 
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;

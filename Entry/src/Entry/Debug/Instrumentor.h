@@ -155,7 +155,7 @@ namespace Entry {
     #define ET_PROFILE_FUNCTION() ET_PROFILE_SCOPE(__PRETTY_FUNCTION__)
 #else
     #define ET_PROFILE_BEGIN_SESSION(name, filepath)
-    #define ET_PROFILE_END_SESSION
+    #define ET_PROFILE_END_SESSION()
     #define ET_PROFILE_SCOPE(name)
     #define ET_PROFILE_FUNCTION()
 #endif

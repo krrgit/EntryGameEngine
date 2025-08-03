@@ -228,4 +228,21 @@ namespace Entry {
         s_Data->CubeVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
     }
+
+    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
+    {
+        ET_PROFILE_FUNCTION();
+
+        s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+        s_Data->WhiteTexture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        s_Data->TextureShader->SetMat4("u_Transform", transform);
+
+        //mesh->Bind();
+        mesh->GetVertexArray()->Bind();
+        RenderCommand::DrawIndexed(mesh->GetVertexArray());
+    }
+
 }

@@ -20,6 +20,7 @@
 #include "Entry/Renderer/RenderCommand.h"
 
 #include "Entry/Renderer/Buffer.h"
+#include "Entry/Renderer/Mesh.h"
 #include "Entry/Renderer/Shader.h"
 #include "Entry/Renderer/Texture.h"
 #include "Entry/Renderer/VertexArray.h"
