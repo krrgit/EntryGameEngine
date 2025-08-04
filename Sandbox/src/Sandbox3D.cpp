@@ -51,7 +51,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 		//Entry::Renderer3D::DrawQuad({ 2.0f, 1.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(1.0f), m_SquareColor);
 		//Entry::Renderer3D::DrawCube({ 0.0f, 0.0f, 0.0f }, glm::quat(glm::vec3(0)), glm::vec3(1.0f), m_SquareColor);
 
-		Entry::Renderer3D::DrawMesh(m_Teapot, { 0.0f, 0.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(3.0f), m_SquareColor);
+		Entry::Renderer3D::DrawMesh(m_Teapot, { 0.0f, 0.0f, 0.0f }, glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(0.5f), m_SquareColor);
 		//Entry::Renderer3D::DrawMesh(m_Teapot, { 0.0f, 0.0f, 0.0f },  glm::quat(glm::vec3(0, m_Rotation, 0)), glm::vec3(.3f), m_CheckerboardTexture);
 
 		Entry::Renderer3D::EndScene();

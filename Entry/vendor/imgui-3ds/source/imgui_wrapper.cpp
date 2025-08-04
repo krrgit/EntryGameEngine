@@ -1,4 +1,2 @@
-#include "imgui_sw.cpp"
-#include "imgui.cpp"
-#include "imgui_demo.cpp"
-#include "imgui_draw.cpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_sw.h"

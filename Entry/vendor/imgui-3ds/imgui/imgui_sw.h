@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstdint>
+#include <citro2d.h>
 
 namespace imgui_sw {
 
@@ -21,6 +22,15 @@ struct SwOptions
 	bool optimize_rectangles = true; // No reason to turn this off.
 	// TODO: add some options for balancing accuracy and speed?
 };
+
+struct ImGui_ImplC3D_Data {
+	C3D_RenderTarget*			m_RenderTarget;
+	uint16_t					m_Width, m_Height;
+	imgui_sw::SwOptions			sw_options;
+
+	ImGui_ImplC3D_Data() {} //memset((void*)this, 0, sizeof(*this));
+};
+
 
 /// Optional: tweak ImGui style to make it render faster.
 void make_style_fast();

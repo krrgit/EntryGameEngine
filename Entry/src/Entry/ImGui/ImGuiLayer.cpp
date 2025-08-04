@@ -1,7 +1,7 @@
 #include "etpch.h"
 #include "ImGuiLayer.h"
 
-#include "imgui.h"
+#include <imgui.h>
 #include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
 
 #include "Entry/Core/KeyCodes.h"
@@ -9,22 +9,22 @@
 
 namespace Entry {
 
-	static ImGuiNavInput_ MapKeyCodeToImGuiNavInput(uint32_t keycode) {
+	static ImGuiKey MapKeyCodeToImGuiNavInput(uint32_t keycode) {
 		switch (keycode) {
-		case ET_KEY_A:			return ImGuiNavInput_Activate;
-		case ET_KEY_B:			return ImGuiNavInput_Cancel;
-		case ET_KEY_Y:			return ImGuiNavInput_Menu;
-		case ET_KEY_X:			return ImGuiNavInput_Input;
-		case ET_KEY_DLEFT:		return ImGuiNavInput_DpadLeft;
-		case ET_KEY_DRIGHT:		return ImGuiNavInput_DpadRight;
-		case ET_KEY_DUP:		return ImGuiNavInput_DpadUp;
-		case ET_KEY_DDOWN:		return ImGuiNavInput_DpadDown;
-		case ET_KEY_L:			return ImGuiNavInput_FocusPrev;
-		case ET_KEY_R:			return ImGuiNavInput_FocusNext;
+		case ET_KEY_A:			return ImGuiKey_GamepadFaceRight;
+		case ET_KEY_B:			return ImGuiKey_GamepadFaceDown;
+		case ET_KEY_Y:			return ImGuiKey_GamepadFaceLeft;
+		case ET_KEY_X:			return ImGuiKey_GamepadFaceUp;
+		case ET_KEY_DLEFT:		return ImGuiKey_GamepadDpadLeft;
+		case ET_KEY_DRIGHT:		return ImGuiKey_GamepadDpadRight;
+		case ET_KEY_DUP:		return ImGuiKey_GamepadDpadUp;
+		case ET_KEY_DDOWN:		return ImGuiKey_GamepadDpadDown;
+		case ET_KEY_L:			return ImGuiKey_GamepadL1;
+		case ET_KEY_R:			return ImGuiKey_GamepadR1;
 		default:
 			break;
 		}
-		return ImGuiNavInput_FocusNext;
+		return ImGuiKey_None;
 
 	}
 
@@ -91,8 +91,8 @@ namespace Entry {
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		// static bool show = false;
-		// ImGui::ShowDemoWindow(&show);
+		 static bool show = false;
+		 ImGui::ShowDemoWindow(&show);
 	}
 
 	void ImGuiLayer::End()
@@ -121,7 +121,8 @@ namespace Entry {
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.NavInputs[MapKeyCodeToImGuiNavInput(e.GetKeyCode())] = 1.0f;
+		io.AddKeyEvent(MapKeyCodeToImGuiNavInput(e.GetKeyCode()), true);
+		//io.NavInputs[MapKeyCodeToImGuiNavInput(e.GetKeyCode())] = 1.0f;
 		return false;
 	}
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
