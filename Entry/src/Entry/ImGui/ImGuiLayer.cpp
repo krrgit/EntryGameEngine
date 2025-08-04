@@ -48,6 +48,7 @@ namespace Entry {
 		ImGui::StyleColorsDark();
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.MouseDrawCursor = true;
 
 		Application& app = Application::Get();

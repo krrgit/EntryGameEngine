@@ -53,12 +53,12 @@ namespace imgui_sw {
 			return { f * va.w0, f * va.w1, f * va.w2 };
 		}
 
-		void operator+=(Barycentric& a, const Barycentric& b)
-		{
-			a.w0 += b.w0;
-			a.w1 += b.w1;
-			a.w2 += b.w2;
-		}
+		//void operator+=(Barycentric& a, const Barycentric& b)
+		//{
+		//	a.w0 += b.w0;
+		//	a.w1 += b.w1;
+		//	a.w2 += b.w2;
+		//}
 
 		Barycentric operator+(const Barycentric& a, const Barycentric& b)
 		{
@@ -78,25 +78,25 @@ namespace imgui_sw {
 			return IM_COL32(r, g, b, 0xFF);
 		}
 
-		ImVec4 color_convert_u32_to_float4(ImU32 in)
-		{
-			const float s = 1.0f / 255.0f;
-			return ImVec4(
-				((in >> IM_COL32_R_SHIFT) & 0xFF) * s,
-				((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
-				((in >> IM_COL32_B_SHIFT) & 0xFF) * s,
-				((in >> IM_COL32_A_SHIFT) & 0xFF) * s);
-		}
+		//ImVec4 color_convert_u32_to_float4(ImU32 in)
+		//{
+		//	const float s = 1.0f / 255.0f;
+		//	return ImVec4(
+		//		((in >> IM_COL32_R_SHIFT) & 0xFF) * s,
+		//		((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
+		//		((in >> IM_COL32_B_SHIFT) & 0xFF) * s,
+		//		((in >> IM_COL32_A_SHIFT) & 0xFF) * s);
+		//}
 
-		ImU32 color_convert_float4_to_u32(const ImVec4& in)
-		{
-			ImU32 out;
-			out = uint32_t(in.x * 255.0f + 0.5f) << IM_COL32_R_SHIFT;
-			out |= uint32_t(in.y * 255.0f + 0.5f) << IM_COL32_G_SHIFT;
-			out |= uint32_t(in.z * 255.0f + 0.5f) << IM_COL32_B_SHIFT;
-			out |= uint32_t(in.w * 255.0f + 0.5f) << IM_COL32_A_SHIFT;
-			return out;
-		}
+		//ImU32 color_convert_float4_to_u32(const ImVec4& in)
+		//{
+		//	ImU32 out;
+		//	out = uint32_t(in.x * 255.0f + 0.5f) << IM_COL32_R_SHIFT;
+		//	out |= uint32_t(in.y * 255.0f + 0.5f) << IM_COL32_G_SHIFT;
+		//	out |= uint32_t(in.z * 255.0f + 0.5f) << IM_COL32_B_SHIFT;
+		//	out |= uint32_t(in.w * 255.0f + 0.5f) << IM_COL32_A_SHIFT;
+		//	return out;
+		//}
 
 		// ----------------------------------------------------------------------------
 
@@ -223,20 +223,10 @@ namespace imgui_sw {
 
 			const auto topleft = ImVec2(min_x_i + 0.5f * target.scale.x,
 				min_y_i + 0.5f * target.scale.y);
-			const auto dx = ImVec2(1, 0);
-			const auto dy = ImVec2(0, 1);
 
 			const auto w0_topleft = barycentric(p1, p2, topleft);
 			const auto w1_topleft = barycentric(p2, p0, topleft);
 			const auto w2_topleft = barycentric(p0, p1, topleft);
-
-			const auto w0_dx = barycentric(p1, p2, topleft + dx) - w0_topleft;
-			const auto w1_dx = barycentric(p2, p0, topleft + dx) - w1_topleft;
-			const auto w2_dx = barycentric(p0, p1, topleft + dx) - w2_topleft;
-
-			const auto w0_dy = barycentric(p1, p2, topleft + dy) - w0_topleft;
-			const auto w1_dy = barycentric(p2, p0, topleft + dy) - w1_topleft;
-			const auto w2_dy = barycentric(p0, p1, topleft + dy) - w2_topleft;
 
 			const Barycentric bary_0{ 1, 0, 0 };
 			const Barycentric bary_1{ 0, 1, 0 };
