@@ -11,6 +11,8 @@
 //Shader
 // #include "vshader01_shbin.h" // Flat Color Shader
 #include "vshader02_shbin.h" // Texture Shader
+#include "phongshader_shbin.h" // Phong Shader
+#include "normalcolorshader_shbin.h" // Noamal Color Shader
 
 namespace Entry {
 
@@ -19,6 +21,8 @@ namespace Entry {
         Ref <VertexArray> QuadVertexArray;
         Ref <VertexArray> CubeVertexArray;
         Ref <Shader> TextureShader;
+        Ref <Shader> PhongShader;
+        Ref <Shader> NormalColorShader;
         Ref <Texture2D> WhiteTexture;
     };
 
@@ -124,6 +128,10 @@ namespace Entry {
         s_Data->TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetInt("u_Texture", 0);
+
+        s_Data->PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
+        s_Data->NormalColorShader.reset(Shader::Create(normalcolorshader_shbin, normalcolorshader_shbin_size));
+
 
         // WHITE TEXTURE
         {
@@ -233,12 +241,30 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data->TextureShader->SetFloat4("u_Color", color);
-        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
+        s_Data->NormalColorShader->SetFloat4("u_Color", color);
+        s_Data->NormalColorShader->SetFloat("u_TilingFactor", 1.0f);
+        s_Data->NormalColorShader->Bind();
         s_Data->WhiteTexture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data->TextureShader->SetMat4("u_Transform", transform);
+        s_Data->NormalColorShader->SetMat4("u_Transform", transform);
+
+        //mesh->Bind();
+        mesh->GetVertexArray()->Bind();
+        RenderCommand::DrawIndexed(mesh->GetVertexArray());
+    }
+
+    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+    {
+        ET_PROFILE_FUNCTION();
+
+        s_Data->PhongShader->SetFloat4("u_Color", tintColor);
+        s_Data->PhongShader->SetFloat("u_TilingFactor", tilingFactor);
+        s_Data->PhongShader->Bind();
+        texture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        s_Data->PhongShader->SetMat4("u_Transform", transform);
 
         //mesh->Bind();
         mesh->GetVertexArray()->Bind();
