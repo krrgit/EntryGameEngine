@@ -66,7 +66,7 @@ void Sandbox3D::OnImGuiRender()
 
 
     static bool dockspaceOpen = true;
-    static bool opt_fullscreen = true;
+    static bool opt_fullscreen = false;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
@@ -141,11 +141,12 @@ void Sandbox3D::OnImGuiRender()
     
     uint32_t textureID = m_CheckerboardTexture->GetRendererID();
     C3D_Tex* tex = reinterpret_cast<C3D_Tex*> (textureID);
-    ImGui::Text("Texture");
-    ImGui::Text("width: %d", tex->width);
-    ImGui::Text("height: %d", tex->height);
+    ImGui::Image((void*)textureID, ImVec2{ 128.0f, 128.0f });
 
-    ImGui::Image((void*)textureID, ImVec2{128.0f, 128.0f});
+    textureID = m_EntryLogoTexture->GetRendererID();
+    tex = reinterpret_cast<C3D_Tex*> (textureID);
+    ImGui::Image((void*)textureID, ImVec2{ 128.0f, 128.0f });
+
     ImGui::End();
 
     ImGui::End();

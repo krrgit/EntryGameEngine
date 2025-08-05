@@ -182,7 +182,7 @@ namespace imgui_sw {
 			const ImDrawVert& v1,
 			const ImDrawVert& v2,
 			Stats* stats,
-			bool is_font_texture)
+			bool is_alpha_only)
 		{
 			const ImVec2 p0 = ImVec2(target.scale.x * v0.pos.x, target.scale.y * v0.pos.y);
 			const ImVec2 p1 = ImVec2(target.scale.x * v1.pos.x, target.scale.y * v1.pos.y);
@@ -226,50 +226,37 @@ namespace imgui_sw {
 			max_x_i = std::min(max_x_i, target.width - 1);
 			max_y_i = std::min(max_y_i, target.height - 1);
 
+			// Compute how many pixels were cut-off
 			float clip_x = min_x_i - bounds_x;
 			float clip_y = min_y_i - bounds_y;
 			float clip_z = bounds_z - max_x_i;
 			float clip_w = bounds_w - max_y_i;
 
-			// ------------------------------------------------------------------------
-			// Set up interpolation of barycentric coordinates:
-
-			const auto topleft = ImVec2(min_x_i + 0.5f * target.scale.x,
-				min_y_i + 0.5f * target.scale.y);
-
-			const auto w0_topleft = barycentric(p1, p2, topleft);
-			const auto w1_topleft = barycentric(p2, p0, topleft);
-			const auto w2_topleft = barycentric(p0, p1, topleft);
-
-			const Barycentric bary_0{ 1, 0, 0 };
-			const Barycentric bary_1{ 0, 1, 0 };
-			const Barycentric bary_2{ 0, 0, 1 };
-
-			const auto inv_area = 1 / rect_area;
-			const Barycentric bary = inv_area * (w0_topleft * bary_0 + w1_topleft * bary_1 + w2_topleft * bary_2);
-
 			//------------------------------------------------------
+			// Calculate UV Coordinates
 			// (0,0) in imgui is topleft
 			// (0,1) in c2d is topleft
-			const ImVec2 uv = v0.uv * bary.w0 + v1.uv * bary.w1 + v2.uv * bary.w2;
-			uint16_t pixelWidth = max_x_f - min_x_f;
+			
+			// Get UV bounding box
+			float uv_x = min3(v0.uv.x, v1.uv.x, v2.uv.x);
+			float uv_y = min3(v0.uv.y, v1.uv.y, v2.uv.y);
+			float uv_z = max3(v0.uv.x, v1.uv.x, v2.uv.x);
+			float uv_w = max3(v0.uv.y, v1.uv.y, v2.uv.y);
+
+			// Get UV divmension in UV coords
+			float uv_x_width = uv_z - uv_x;
+			float uv_x_height = uv_w - uv_y;
+
+			// Get clipped bounds dimensions
+			uint16_t pixelWidth = (max_x_f - min_x_f);
 			uint16_t pixelHeight = max_y_f - min_y_f;
 
-			// Default values for textures
-			float C2D_uv_left = clip_x / bounds_width;
-			float C2D_uv_top = 1.0f - (clip_y / bounds_height);
-			float C2D_uv_bot = clip_w / bounds_height;
-			float C2D_uv_right = 1.0f - (clip_z / bounds_width);
+			float C2D_uv_left = uv_x + (uv_x_width * clip_x/bounds_width);
+			float C2D_uv_top = 1.0f - (uv_y + (uv_x_height *clip_y/bounds_height));
+			float C2D_uv_right = uv_z - (uv_x_width * clip_z / bounds_width);
+			float C2D_uv_bot = 1.0f - (uv_w - (uv_x_height * clip_w / bounds_height));
 
-			if (is_font_texture)
-			{
-				C2D_uv_left = uv.x - (0.5f / texture->width);
-				C2D_uv_top = 1.0f - uv.y + (0.5f / texture->height);
-				C2D_uv_right = C2D_uv_left + ((pixelWidth + 0.5f) / texture->width);
-				C2D_uv_bot = C2D_uv_top - ((pixelHeight + 0.5f) / texture->height);	
-			}
-
-			//Tex3DS_SubTexture subt3x = { pixelWidth, pixelHeight, C2D_uv_left, C2D_uv_top, C2D_uv_right, C2D_uv_bot };
+			// Initialize image
 			Tex3DS_SubTexture subt3x = { pixelWidth, pixelHeight, C2D_uv_left, C2D_uv_top, C2D_uv_right, C2D_uv_bot };
 			C2D_Image image = (C2D_Image){ texture, &subt3x };
 
@@ -280,7 +267,7 @@ namespace imgui_sw {
 				{v0.col, 1.0f}
 			} };
 
-			C2D_DrawImageAt(image, min_x_i, min_y_i, 0.0f, is_font_texture ? &tint : nullptr, 1.0f, 1.0f);
+			C2D_DrawImageAt(image, min_x_i, min_y_i, 0.0f, is_alpha_only ? &tint : nullptr, 1.0f, 1.0f);
 			// (For Debugging)
 			// C2D_DrawRectangle(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i,  v0.col, v0.col, v0.col, v0.col);
 			s_imageCount++;
@@ -381,7 +368,7 @@ namespace imgui_sw {
 			Stats* stats)
 		{
 			auto texture = reinterpret_cast<C3D_Tex*>(pcmd.GetTexID());
-			bool is_font_texture = texture->fmt == GPU_A8;
+			bool is_alpha_only = texture->fmt == GPU_A8;
 			assert(texture);
 
 			// ImGui uses the first pixel for "white".
@@ -451,7 +438,7 @@ namespace imgui_sw {
 							continue;
 						}
 						else if (has_texture && has_uniform_color) {
-							paint_uniform_texture(target, texture, pcmd.ClipRect, v0, v1, v2, stats, is_font_texture);
+							paint_uniform_texture(target, texture, pcmd.ClipRect, v0, v1, v2, stats,  is_alpha_only);
 							stats->textured_rectangle_pixels += num_pixels;
 							i += 6;
 							continue;
