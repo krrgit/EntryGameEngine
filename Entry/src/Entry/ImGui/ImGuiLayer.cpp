@@ -123,7 +123,6 @@ namespace Entry {
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddKeyEvent(MapKeyCodeToImGuiNavInput(e.GetKeyCode()), true);
-		//io.NavInputs[MapKeyCodeToImGuiNavInput(e.GetKeyCode())] = 1.0f;
 		return false;
 	}
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)

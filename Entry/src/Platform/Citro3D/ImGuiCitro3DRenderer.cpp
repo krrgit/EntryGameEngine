@@ -41,8 +41,6 @@ bool ImGui_ImplC3D_Init()
 	bd->m_RenderTarget = citroWindow->GetRenderTarget();
 	bd->m_Width = citroWindow->GetWidth();
 	bd->m_Height = citroWindow->GetHeight();
-
-	//memset(io.NavInputs, 0, sizeof(io.NavInputs));
 	
 	imgui_sw::bind_imgui_painting();
 	imgui_sw::make_style_fast();
