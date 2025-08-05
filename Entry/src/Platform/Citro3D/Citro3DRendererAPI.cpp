@@ -13,6 +13,12 @@ namespace Entry {
 		gfxInitDefault();
 		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 		C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
+
+		// Configure the first fragment shading substage to just pass through the vertex color
+		// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
+		C3D_TexEnv* env = C3D_GetTexEnv(0);
+		C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
 	void Citro3DRendererAPI::SetClearColor(const uint32_t color)

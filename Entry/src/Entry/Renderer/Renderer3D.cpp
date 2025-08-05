@@ -123,7 +123,6 @@ namespace Entry {
         cubeIB.reset(IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint16_t)));
         s_Data->CubeVertexArray->SetIndexBuffer(cubeIB);
 
-        
         // SHADERS
         s_Data->TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data->TextureShader->Bind();
@@ -136,22 +135,11 @@ namespace Entry {
         // WHITE TEXTURE
         {
             ET_PROFILE_SCOPE("Create 8x8 White Texture");
-            // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
             s_Data->WhiteTexture = Texture2D::Create(8, 8); 
             uint32_t whiteTextureData[8 * 8];
             std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
             s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
         }
-
-        // Configure the first fragment shading substage to just pass through the vertex color
-        // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
-        C3D_TexEnv* env = C3D_GetTexEnv(0);
-        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
-
-        env = C3D_GetTexEnv(1);
-        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
 	void Renderer3D::Shutdown()

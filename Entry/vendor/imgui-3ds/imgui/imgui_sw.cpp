@@ -243,7 +243,7 @@ namespace imgui_sw {
 			float uv_z = max3(v0.uv.x, v1.uv.x, v2.uv.x);
 			float uv_w = max3(v0.uv.y, v1.uv.y, v2.uv.y);
 
-			// Get UV divmension in UV coords
+			// Get UV dimension in UV coords
 			float uv_x_width = uv_z - uv_x;
 			float uv_x_height = uv_w - uv_y;
 
@@ -252,7 +252,7 @@ namespace imgui_sw {
 			uint16_t pixelHeight = max_y_f - min_y_f;
 
 			float C2D_uv_left = uv_x + (uv_x_width * clip_x/bounds_width);
-			float C2D_uv_top = 1.0f - (uv_y + (uv_x_height *clip_y/bounds_height));
+			float C2D_uv_top = 1.0f - (uv_y + (uv_x_height * clip_y/bounds_height));
 			float C2D_uv_right = uv_z - (uv_x_width * clip_z / bounds_width);
 			float C2D_uv_bot = 1.0f - (uv_w - (uv_x_height * clip_w / bounds_height));
 

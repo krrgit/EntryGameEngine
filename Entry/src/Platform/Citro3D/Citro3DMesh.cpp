@@ -59,6 +59,7 @@ namespace Entry {
 	
 	Citro3DMesh::Citro3DMesh(const std::string& path)
 	{
+		m_Name = path;
 		// TODO: Update to full support OBJ files
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;

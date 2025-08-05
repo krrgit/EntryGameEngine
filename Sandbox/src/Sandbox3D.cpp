@@ -66,7 +66,7 @@ void Sandbox3D::OnImGuiRender()
 
 
     static bool dockspaceOpen = true;
-    static bool opt_fullscreen = false;
+    static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
@@ -136,8 +136,6 @@ void Sandbox3D::OnImGuiRender()
 
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-    //ImGui::Text("Rotation: %.2f\n", m_Rotation);
-
     
     uint32_t textureID = m_CheckerboardTexture->GetRendererID();
     C3D_Tex* tex = reinterpret_cast<C3D_Tex*> (textureID);

@@ -27,6 +27,9 @@ namespace Entry {
 	{
 		ET_PROFILE_FUNCTION();
 
+		ET_CORE_ASSERT(width < MIN_TEX_DIMENSION || height < MIN_TEX_DIMENSION, "Texture size too small. Minimum Size: 8x8");
+
+
 		m_DataFormat = GPU_RGBA8;
 
 		C3D_TexInitVRAM(&m_Texture, m_Width, m_Height, m_DataFormat);

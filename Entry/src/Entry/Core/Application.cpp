@@ -23,6 +23,7 @@ namespace Entry
 
     Application* Application::s_Instance = nullptr;
 
+
     Application::Application()
     {
         ET_PROFILE_FUNCTION();
@@ -76,6 +77,11 @@ namespace Entry
     {
     }
 
+    /// <summary>
+    /// PushLayer(Layer* layer, int window) adds a layer to the layer stack.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="window"></param>
     void Application::PushLayer(Layer* layer, int window)
     {
         ET_PROFILE_FUNCTION();
@@ -93,6 +99,11 @@ namespace Entry
 
     }
 
+    /// <summary>
+    /// Pushes an overlay, which gets rendered over layers (i.e. GUI)
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="window"></param>
     void Application::PushOverlay(Layer* layer, int window)
     {
         ET_PROFILE_FUNCTION();
@@ -122,6 +133,9 @@ namespace Entry
         m_WindowBottom->OnEvent(e);
     }
 
+    /// <summary>
+    /// The main game loop.
+    /// </summary>
     void Application::Run()
     {
         ET_PROFILE_FUNCTION();

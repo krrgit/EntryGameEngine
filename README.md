@@ -5,6 +5,26 @@ A 3D game engine for the 3DS. The goal of this project is to simplify 3DS game d
 ## 3DS GPU Wiki (For reference)
 https://www.3dbrew.org/wiki/Category:GPU
 
+# How to Build
+
+Entry Game Engine uses Make at the moment. Run "make" in the terminal to build.
+
+# Getting Started
+
+The engine works in two parts: the engine (/Entry), and the game (/Sandox). Sandbox is where all your game assets should go. 
+SandboxApp.cpp is where your game code starts. 
+1. Create a custom layer which inherits from the Layer class. 
+1. Add your code to its members (OnAttach, OnUpdate, OnDetach, OnImGuiRender, OnEvent.)
+1. Push your layer onto the stack in SandboxApp.cpp in the constructor, and pass which screen you want to render it on (ET_WINDOW_TOP or ET_WINDOW_BOTTOM). i.e:
+```
+Sandbox()
+{
+	PushLayer(new Sandbox3D(), ET_WINDOW_TOP);
+}
+```
+4. Build and run.
+1. Voila!
+
 ## Status Demo 
 // TODO
 - Update ImGui implementation to docking branch.
