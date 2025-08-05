@@ -33,7 +33,7 @@ namespace Entry {
 
     struct Renderer3DData 
     {
-        static const uint32_t MaxPolygons = 2048; // Per Batch atm
+        static const uint32_t MaxPolygons = 2048; // Per Batch atm 5298
         static const uint32_t MaxVertices = MaxPolygons * 2; // Per Batch atm
         static const uint16_t MaxIndices = MaxPolygons * 3; // Per Batch atm
         static const uint32_t MaxBatches = 8; // TODO: RenderCaps (3 per C3D_Context)
@@ -42,8 +42,7 @@ namespace Entry {
         Ref <Texture2D> WhiteTexture;
 
         std::array<RenderBatch, MaxBatches> RenderBatches;
-        std::array<Ref<Texture2D>, MaxBatches> TextureSlots;
-        uint32_t TextureSlotIndex = 1; // 0 = white texture
+        uint32_t BatchSlotIndex = 1; // 0 = white texture
         
         uint32_t IndexCount;
         Renderer3D::Statistics Stats;
@@ -105,7 +104,7 @@ namespace Entry {
         }
 
         // Set all textures slots to 0
-        s_Data.TextureSlots[0] = s_Data.WhiteTexture;
+        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
 
         // Configure the first fragment shading substage to just pass through the vertex color
         // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
@@ -135,7 +134,7 @@ namespace Entry {
         }
 
         s_Data.IndexCount = 0;
-        s_Data.TextureSlotIndex = 1;
+        s_Data.BatchSlotIndex = 1;
     }
 
 	void Renderer3D::EndScene()
@@ -150,14 +149,14 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         // TODO: maybe set TexEnv here?
-        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
+        for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
             RenderBatch* batch = &s_Data.RenderBatches[i];
             uint32_t dataSize = (uint8_t*)batch->VertexBufferPtr - (uint8_t*)batch->VertexBufferBase;
             if (dataSize == 0) continue;
             batch->QuadVertexBuffer->SetData(batch->VertexBufferBase, dataSize);
 
             batch->QuadVertexArray->Bind();
-            s_Data.TextureSlots[i]->Bind(0);
+            batch->BatchTexture->Bind(0);
             RenderCommand::DrawIndexed(batch->QuadVertexArray, batch->IndexCount);
 
             s_Data.Stats.DrawCalls++;
@@ -171,13 +170,13 @@ namespace Entry {
 
         //EndScene();
 
-        //for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++) {
+        //for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
         //    s_Data.RenderBatches[i].IndexCount = 0;
         //    s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
         //}
 
         //s_Data.IndexCount = 0;
-        //s_Data.TextureSlotIndex = 1;
+        //s_Data.BatchSlotIndex = 1;
     }
 
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -395,8 +394,8 @@ namespace Entry {
 
         //Search for texture in slots
         int textureIndex = 0;
-        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; ++i) {
-            if (*s_Data.TextureSlots[i].get() == *texture.get()) {
+        for (uint32_t i = 1; i < s_Data.BatchSlotIndex; ++i) {
+            if (*s_Data.RenderBatches[i].BatchTexture.get() == *texture.get()) {
                 textureIndex = i;
                 break;
             }
@@ -404,13 +403,13 @@ namespace Entry {
 
         // Add texture if not found
         if (textureIndex == 0) {
-            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxBatches) {
+            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
                 //FlushAndReset();
                 return;
             }
-            textureIndex = s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-            s_Data.TextureSlotIndex++;
+            textureIndex = s_Data.BatchSlotIndex;
+            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = texture;
+            s_Data.BatchSlotIndex++;
             texture->Bind(textureIndex);
         }
         else if (s_Data.RenderBatches[textureIndex].IndexCount + quadIndexCount >= Renderer3DData::MaxIndices) {
@@ -471,8 +470,8 @@ namespace Entry {
 
         //Search for texture in slots
         int textureIndex = 0;
-        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; ++i) {
-            if (*s_Data.TextureSlots[i].get() == *texture.get()) {
+        for (uint32_t i = 1; i < s_Data.BatchSlotIndex; ++i) {
+            if (*s_Data.RenderBatches[i].BatchTexture.get() == *texture.get()) {
                 textureIndex = i;
                 break;
             }
@@ -480,13 +479,13 @@ namespace Entry {
 
         // Add texture if not found
         if (textureIndex == 0) {
-            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxBatches) {
+            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
                 //FlushAndReset();
                 return;
             }
-            textureIndex = s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-            s_Data.TextureSlotIndex++;
+            textureIndex = s_Data.BatchSlotIndex;
+            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = texture;
+            s_Data.BatchSlotIndex++;
             texture->Bind(textureIndex);
         }
         else if (s_Data.RenderBatches[textureIndex].IndexCount + cubeIndexCount >= Renderer3DData::MaxIndices) {
