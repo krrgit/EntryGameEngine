@@ -27,23 +27,25 @@ namespace Entry {
         uint32_t IndexCount = 0;
         QuadVertex* VertexBufferBase = nullptr;
         QuadVertex* VertexBufferPtr = nullptr;
+
+        Ref<Texture2D> BatchTexture;
     };
 
     struct Renderer3DData 
     {
-        static const uint32_t MaxQuads = 2048; // Per Batch atm
-        static const uint32_t MaxVertices = MaxQuads * 4; // Per Batch atm
-        static const uint16_t MaxIndices = MaxQuads * 6; // Per Batch atm
-        static const uint32_t MaxTextureSlots = 8; // TODO: RenderCaps (3 per C3D_Context)
+        static const uint32_t MaxPolygons = 2048; // Per Batch atm
+        static const uint32_t MaxVertices = MaxPolygons * 2; // Per Batch atm
+        static const uint16_t MaxIndices = MaxPolygons * 3; // Per Batch atm
+        static const uint32_t MaxBatches = 8; // TODO: RenderCaps (3 per C3D_Context)
 
         Ref <Shader> TextureShader;
         Ref <Texture2D> WhiteTexture;
 
-        std::array<RenderBatch, MaxTextureSlots> RenderBatches;
-        std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
+        std::array<RenderBatch, MaxBatches> RenderBatches;
+        std::array<Ref<Texture2D>, MaxBatches> TextureSlots;
         uint32_t TextureSlotIndex = 1; // 0 = white texture
         
-        uint32_t QuadIndexCount;
+        uint32_t IndexCount;
         Renderer3D::Statistics Stats;
     };
 
@@ -73,7 +75,7 @@ namespace Entry {
         std::shared_ptr<IndexBuffer> squareIB;
         squareIB.reset(IndexBuffer::Create(quadIndices, s_Data.MaxIndices));
 
-        for (uint32_t i = 0; i < Renderer3DData::MaxTextureSlots;++i) {
+        for (uint32_t i = 0; i < Renderer3DData::MaxBatches;++i) {
             RenderBatch* batch = &s_Data.RenderBatches[i];
             batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
             batch->QuadVertexBuffer->SetLayout({
@@ -127,12 +129,12 @@ namespace Entry {
 
         //s_Data.WhiteTexture->Bind(0);
 
-        for (uint32_t i = 0; i < Renderer3DData::MaxTextureSlots; ++i) {
+        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
             s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
         }
 
-        s_Data.QuadIndexCount = 0;
+        s_Data.IndexCount = 0;
         s_Data.TextureSlotIndex = 1;
     }
 
@@ -174,7 +176,7 @@ namespace Entry {
         //    s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
         //}
 
-        //s_Data.QuadIndexCount = 0;
+        //s_Data.IndexCount = 0;
         //s_Data.TextureSlotIndex = 1;
     }
 
@@ -213,9 +215,11 @@ namespace Entry {
         batch->VertexBufferPtr++;
         
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
-        s_Data.Stats.QuadCount++;
+        s_Data.Stats.PolygonCount += 2;
+        s_Data.Stats.VertexCount += 4;
+        s_Data.Stats.IndexCount += 6;
 	}
 
 	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -254,7 +258,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Back Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -278,7 +282,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Top Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
@@ -302,7 +306,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Bottom Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -326,7 +330,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Right Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -350,7 +354,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Left Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -374,9 +378,11 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
-        s_Data.Stats.QuadCount += 6;
+        s_Data.Stats.PolygonCount += 12;
+        s_Data.Stats.VertexCount += 24;
+        s_Data.Stats.IndexCount += 36;
 	}
 
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
@@ -398,7 +404,7 @@ namespace Entry {
 
         // Add texture if not found
         if (textureIndex == 0) {
-            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxTextureSlots) {
+            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxBatches) {
                 //FlushAndReset();
                 return;
             }
@@ -436,9 +442,11 @@ namespace Entry {
         batch->VertexBufferPtr++;
         
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
-        s_Data.Stats.QuadCount++;
+        s_Data.Stats.PolygonCount += 2;
+        s_Data.Stats.VertexCount += 4;
+        s_Data.Stats.IndexCount += 6;
 
         
 #if OLD_PATH
@@ -472,7 +480,7 @@ namespace Entry {
 
         // Add texture if not found
         if (textureIndex == 0) {
-            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxTextureSlots) {
+            if (s_Data.TextureSlotIndex >= Renderer3DData::MaxBatches) {
                 //FlushAndReset();
                 return;
             }
@@ -509,7 +517,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Back Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -533,7 +541,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Top Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
@@ -557,7 +565,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Bottom Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -581,7 +589,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Right Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -605,7 +613,7 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
         // Left Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
@@ -629,9 +637,12 @@ namespace Entry {
         batch->VertexBufferPtr++;
 
         batch->IndexCount += 6;
-        s_Data.QuadIndexCount += 6;
+        s_Data.IndexCount += 6;
 
-        s_Data.Stats.QuadCount += 6;
+        s_Data.Stats.PolygonCount += 12;
+        s_Data.Stats.VertexCount += 24;
+        s_Data.Stats.IndexCount += 36;
+
 
         //s_Data.TextureShader->SetFloat4("u_Color", tintColor);
         //s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);

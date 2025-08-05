@@ -78,7 +78,7 @@ void Sandbox3D::OnImGuiRender()
 	auto stats = Entry::Renderer3D::GetStats();
 	ImGui::Text("Renderer3D Stats:");
 	ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
-	ImGui::Text("Quad Count: %ld", stats.QuadCount);
+	ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
 	ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
 	ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
