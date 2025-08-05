@@ -109,6 +109,11 @@ namespace Entry
         }
     }
 
+    void Application::Close()
+    {
+        m_Running = false;
+    }
+
     void Application::OnEvent(Event& e)
     {
         ET_PROFILE_FUNCTION();

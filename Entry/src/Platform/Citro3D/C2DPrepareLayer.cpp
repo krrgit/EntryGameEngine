@@ -14,6 +14,7 @@ namespace Entry {
 		ET_PROFILE_FUNCTION();
 
 		C2D_Prepare();
+		//C2D_SetTintMode(C2D_TintMult);
 	}
 	void C2DPrepareLayer::OnEvent(Event& event)
 	{

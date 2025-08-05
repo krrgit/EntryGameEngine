@@ -181,7 +181,8 @@ namespace imgui_sw {
 			const ImDrawVert& v0,
 			const ImDrawVert& v1,
 			const ImDrawVert& v2,
-			Stats* stats)
+			Stats* stats,
+			bool is_font_texture)
 		{
 			const ImVec2 p0 = ImVec2(target.scale.x * v0.pos.x, target.scale.y * v0.pos.y);
 			const ImVec2 p1 = ImVec2(target.scale.x * v1.pos.x, target.scale.y * v1.pos.y);
@@ -195,6 +196,13 @@ namespace imgui_sw {
 			float min_y_f = min3(p0.y, p1.y, p2.y);
 			float max_x_f = max3(p0.x, p1.x, p2.x);
 			float max_y_f = max3(p0.y, p1.y, p2.y);
+
+			float bounds_x = min_x_f;
+			float bounds_y = min_y_f;
+			float bounds_z = max_x_f;
+			float bounds_w = max_y_f;
+			float bounds_height = max_y_f - min_y_f;
+			float bounds_width = max_x_f - min_x_f;
 
 			// Clamp to clip_rect:
 			min_x_f = std::max(min_x_f, target.scale.x * clip_rect.x);
@@ -218,6 +226,11 @@ namespace imgui_sw {
 			max_x_i = std::min(max_x_i, target.width - 1);
 			max_y_i = std::min(max_y_i, target.height - 1);
 
+			float clip_x = min_x_i - bounds_x;
+			float clip_y = min_y_i - bounds_y;
+			float clip_z = bounds_z - max_x_i;
+			float clip_w = bounds_w - max_y_i;
+
 			// ------------------------------------------------------------------------
 			// Set up interpolation of barycentric coordinates:
 
@@ -239,24 +252,35 @@ namespace imgui_sw {
 			// (0,0) in imgui is topleft
 			// (0,1) in c2d is topleft
 			const ImVec2 uv = v0.uv * bary.w0 + v1.uv * bary.w1 + v2.uv * bary.w2;
-			uint16_t pixelWidth = max_x_i - min_x_i;
-			uint16_t pixelHeight = max_y_i - min_y_i;
+			uint16_t pixelWidth = max_x_f - min_x_f;
+			uint16_t pixelHeight = max_y_f - min_y_f;
 
-			float C2D_uv_left = uv.x - (0.5f / texture->width);
-			float C2D_uv_top = 1.0f - uv.y + (0.5f / texture->height);
-			float C2D_uv_right = C2D_uv_left + ((pixelWidth + 0.5f) / texture->width);
-			float C2D_uv_bot = C2D_uv_top - ((pixelHeight + 0.5f) / texture->height);
+			// Default values for textures
+			float C2D_uv_left = clip_x / bounds_width;
+			float C2D_uv_top = 1.0f - (clip_y / bounds_height);
+			float C2D_uv_bot = clip_w / bounds_height;
+			float C2D_uv_right = 1.0f - (clip_z / bounds_width);
 
+			if (is_font_texture)
+			{
+				C2D_uv_left = uv.x - (0.5f / texture->width);
+				C2D_uv_top = 1.0f - uv.y + (0.5f / texture->height);
+				C2D_uv_right = C2D_uv_left + ((pixelWidth + 0.5f) / texture->width);
+				C2D_uv_bot = C2D_uv_top - ((pixelHeight + 0.5f) / texture->height);	
+			}
+
+			//Tex3DS_SubTexture subt3x = { pixelWidth, pixelHeight, C2D_uv_left, C2D_uv_top, C2D_uv_right, C2D_uv_bot };
 			Tex3DS_SubTexture subt3x = { pixelWidth, pixelHeight, C2D_uv_left, C2D_uv_top, C2D_uv_right, C2D_uv_bot };
 			C2D_Image image = (C2D_Image){ texture, &subt3x };
 
-			const C2D_ImageTint tint = { {
+			C2D_ImageTint tint = { {
 				{v0.col, 1.0f},
 				{v0.col, 1.0f},
 				{v0.col, 1.0f},
 				{v0.col, 1.0f}
 			} };
-			C2D_DrawImageAt(image, min_x_i, min_y_i, 0.0f, &tint, 1.0f, 1.0f);
+
+			C2D_DrawImageAt(image, min_x_i, min_y_i, 0.0f, is_font_texture ? &tint : nullptr, 1.0f, 1.0f);
 			// (For Debugging)
 			// C2D_DrawRectangle(min_x_i, min_y_i, 0.0f, max_x_i - min_x_i, max_y_i - min_y_i,  v0.col, v0.col, v0.col, v0.col);
 			s_imageCount++;
@@ -357,6 +381,7 @@ namespace imgui_sw {
 			Stats* stats)
 		{
 			auto texture = reinterpret_cast<C3D_Tex*>(pcmd.GetTexID());
+			bool is_font_texture = texture->fmt == GPU_A8;
 			assert(texture);
 
 			// ImGui uses the first pixel for "white".
@@ -426,7 +451,7 @@ namespace imgui_sw {
 							continue;
 						}
 						else if (has_texture && has_uniform_color) {
-							paint_uniform_texture(target, texture, pcmd.ClipRect, v0, v1, v2, stats);
+							paint_uniform_texture(target, texture, pcmd.ClipRect, v0, v1, v2, stats, is_font_texture);
 							stats->textured_rectangle_pixels += num_pixels;
 							i += 6;
 							continue;

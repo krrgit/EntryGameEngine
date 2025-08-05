@@ -13,6 +13,8 @@ namespace Entry {
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 
+		virtual uint32_t GetRendererID() const override { return reinterpret_cast<uint32_t>(& m_Texture); }
+
 		virtual void SetData(void* data, uint32_t size) override;
 
 

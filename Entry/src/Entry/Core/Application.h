@@ -27,6 +27,8 @@ namespace Entry {
 
         inline static Application& Get() { return *s_Instance; }
         inline Window& GetWindow() { return *m_CurrentWindow; }
+
+        void Close();
     private:
         Window* m_CurrentWindow;
         Scope<Window> m_WindowTop;
