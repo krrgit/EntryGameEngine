@@ -5,6 +5,8 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
+#include "Config.h"
+
 namespace Entry
 {
     class Log
@@ -23,7 +25,6 @@ namespace Entry
     };
 }
 
-#define LOG_CONSOLE_ENABLED
 
 #ifdef LOG_CONSOLE_ENABLED
 // Core Log Macros

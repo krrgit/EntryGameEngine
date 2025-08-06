@@ -22,6 +22,8 @@
 #include <mutex>
 #include <thread>
 
+#include "Config.h"
+
 namespace Entry {
 
 
@@ -147,8 +149,7 @@ namespace Entry {
 #define CONCAT_IMPL(x, y) x##y
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 
-#define ET_PROFILE 1
-#if ET_PROFILE
+#ifdef ET_PROFILE
     #define ET_PROFILE_BEGIN_SESSION(name, filepath)  ::Entry::Instrumentor::Get().BeginSession(name, filepath)
     #define ET_PROFILE_END_SESSION() ::Entry::Instrumentor::Get().EndSession()
     #define ET_PROFILE_SCOPE(name) ::Entry::InstrumentationTimer CONCAT(timer, __LINE__)(name);

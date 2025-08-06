@@ -31,14 +31,18 @@ void Citro3DRendererAPI::Clear()
 	//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
 }
 
-void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
 {
+	ET_PROFILE_FUNCTION();
+
+	uint16_t count = indexCount > 0 ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 	C3D_DrawElements(
-		GPU_TRIANGLES, 
-		vertexArray->GetIndexBuffer()->GetCount(), 
-		C3D_UNSIGNED_SHORT, 
+		GPU_TRIANGLES,
+		count,
+		C3D_UNSIGNED_SHORT,
 		vertexArray->GetIndexBuffer()->GetDataPointer()
 	);
 }
+
 
 }

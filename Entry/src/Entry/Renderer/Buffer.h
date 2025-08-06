@@ -143,7 +143,7 @@ namespace Entry
     public:
         virtual ~VertexBuffer() {}
 
-
+        virtual void SetData(const void* data, uint32_t size) = 0;
         virtual void Bind() = 0;
         virtual void Unbind() const = 0;
 
@@ -151,6 +151,7 @@ namespace Entry
         virtual void SetLayout(const BufferLayout layout) = 0;
 
         static VertexBuffer* Create(float* vertices, uint32_t size);
+        static VertexBuffer* Create(uint32_t size);
     };
 
     class IndexBuffer {

@@ -1,5 +1,6 @@
 #include <Entry.h>
 #include <Entry/Core/EntryPoint.h>
+#include <Entry/Core/Config.h>
 
 #include <Platform/Citro3D/Citro3DShader.h>
 
@@ -205,7 +206,9 @@ public:
     {
 		//PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
 		PushLayer(new Sandbox3D(), ET_WINDOW_TOP);
+#ifdef ET_LOG_ENABLED
 		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
+#endif
     }
 
     ~Sandbox()

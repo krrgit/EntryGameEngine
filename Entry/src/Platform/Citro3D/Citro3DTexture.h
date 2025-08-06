@@ -17,8 +17,12 @@ namespace Entry {
 
 		virtual void SetData(void* data, uint32_t size) override;
 
-
 		virtual void Bind(uint32_t slot = 0) override;
+
+		virtual bool operator==(const Texture& other) const override
+		{
+			return m_RendererID == ((Citro3DTexture2D&)other).m_RendererID;
+		}
 	private:
 		uint32_t m_Width, m_Height;
 		int m_RendererID;

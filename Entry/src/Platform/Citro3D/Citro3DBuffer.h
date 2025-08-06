@@ -8,9 +8,11 @@ namespace Entry
     class Citro3DVertexBuffer : public VertexBuffer
     {
     public:
+        Citro3DVertexBuffer(uint32_t size);
         Citro3DVertexBuffer(float* vertices, uint32_t size);
         virtual ~Citro3DVertexBuffer();
 
+        virtual void SetData(const void* data, uint32_t size) override;
         virtual void Bind() override;
         virtual void Unbind() const override;
 

@@ -7,14 +7,11 @@
 #include <time.h>
 #include <memory>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
-    #define ET_LOG_CONSOLE
+    #define ET_LOG_ENABLED
 #endif // DEBUG
-
-
-
 
 namespace Entry
 {
@@ -30,7 +27,7 @@ namespace Entry
 
         Renderer::Init();
 
-        #ifdef ET_LOG_CONSOLE
+        #ifdef ET_LOG_ENABLED
             Log::Init();
         #endif
 
