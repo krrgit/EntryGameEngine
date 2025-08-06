@@ -25,33 +25,41 @@ Sandbox()
 4. Build and run.
 1. Voila!
 
-## Status Demo 
-// TODO
-- Update ImGui implementation to docking branch.
-- 3D Model loading and rendering.
+# Features and Status
+## PC Editor
+[x] Port ImGui to work in-engine.
+[ ] Render screen(s) to ImGui.
+[ ] Create Layout + Windows.
+[ ] Implement OpenGL API.
+[ ] Build Standalone Windows program.
+[ ] Feature to compile game from editor.
 
-## Current Status
-### Entrypoint
-This is what's called when the application starts.
-### Logging
-Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. ~~This part of the engine is not optimal (tanks fps in some cases)~~ (It now performs much better, ~0.5ms to redraw when log is updated), but allows users to render a scene and see the logs on the same screen. SELECT toggles the Logs display.
-### Event System
-Event driven inputs supported.
-### Application Layer
-Customizing which screen is 2D/3D, or only rendering one screen is a WIP. At the moment, both screens support 3D & 2D rendering.
-### Window Layer
-Each screen's render target is handled by the window. 
-### Layers
-These layers act as a way to customize what order to run parts of the game. Overlays are always rendered on top of 3D elements. 
-### ImGui
-This ImGui implementation has been better optimized for the 3DS. Everything is drawn using the C2D library. Does not support docking (yet.)
-### Input Polling
-For now, GetButtonDown() is implemented. IsKeyPressed() is mostly used atm. Need to Implement GetButton() and GetButtonUp().
-### Button Codes
-Same as Citro3D.
-### Renderer
-Position, Rotation, Scale supported.
-Textures supported.
+## Renderer
+[x] Simple3D Renderer (has Camera, renders cubes, quads.)
+[x] Implement basic .obj rendering support.
+[x] Simple Batch Rendering (atm batch by texture, create multiple batches for same texture if needed. Maybe batch by materal in the future?)
+[x] Instancing.
+[ ] Implement Materials.
+[ ] Load .mtl files into materials
+[ ] Implement Phong Lighting.
+[ ] Implement Effects. (built-in from the GPU)
+[ ] Implement Texture Generation.
+[ ] Implement Shadows (?)
+[ ] Implement Animations.
 
-### Renderer API Abstraction
+## Game Systems (The big ones)
+[ ] Entity Component System
+[ ] Scene Management System
+[ ] Physics Engine + Collision System/Components
+[ ] Scripting
+[ ] Audio
+[ ] Networking (?)
+
+## Quality of Life Things
+[ ] Use premake instead of make so it's easier to build across platforms.
+ 
+## Renderer API Abstraction
 There exists some abstraction between the renderer and the Citro3D library. If there are no plans to implement an editor application on PC, or support other APIs, this abstraction may be removed for potentially better performance.
+
+## Notes on Batch Rendering
+It seems all objects are rendered at once, regardless of when DrawElements is called. So, if the engine calls DrawElements and replaces the data in the buffers, the overwritten data doesn't get drawn. So, I landed on the current implementation.
