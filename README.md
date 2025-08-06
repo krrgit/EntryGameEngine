@@ -34,14 +34,14 @@ Sandbox()
 ### Entrypoint
 This is what's called when the application starts.
 ### Logging
-Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. ~~This part of the engine is not optimal (tanks fps in some cases)~~ (It now performs much better, ~0.5ms to redraw when log is updated), but allows users to render a scene and see the logs on the same screen. SELECT toggles the Logs display.
+Using spdlog for logging. Currently, logging is rendered by setting the default PrintConsole's framebuffer to a texture that is drawn to the screen via Citro2D. ~~This part of the engine is not optimal (tanks fps in some cases)~~ (It now performs much better, ~0.5ms to redraw when log is updated (update: but still buggy when printing too fast)), but allows users to render a scene and see the logs on the same screen. SELECT toggles the Logs display.
 ### Event System
 Event driven inputs supported.
 ### Application Layer
 Customizing which screen is 2D/3D, or only rendering one screen is a WIP. At the moment, both screens support 3D & 2D rendering.
 ### Window Layer
 Each screen's render target is handled by the window. 
-### Layers
+### Layers & Overlays
 These layers act as a way to customize what order to run parts of the game. Overlays are always rendered on top of 3D elements. 
 ### ImGui
 This ImGui implementation has been better optimized for the 3DS. Everything is drawn using the C2D library. Does not support docking (yet.)
@@ -55,3 +55,21 @@ Textures supported.
 
 ### Renderer API Abstraction
 There exists some abstraction between the renderer and the Citro3D library. If there are no plans to implement an editor application on PC, or support other APIs, this abstraction may be removed for potentially better performance.
+
+## My notes on citro3d works (probably wrong)
+### 3 Texture Units (not 4)
+citro3d allows 3 texture unit in a C3D_Context. But, according to the specs of the PICA200, there are 4. I don't know how to access the last one.
+### TexEnv
+There are 6 TexEnvs. They work like a pipeline, to create various effects.
+The output of one TexEnv is fed to the next TexEnv.
+These are setup with C3D_TexEnvSrc and C3D_TexEnvFunc.
+To render without effects, only TexEnv 0 is needed.
+### Batch Rendering (WIP)
+Anytime C3D_DrawElements (this is what draws objects on screen, given a vertex buffer linked in BufInfo), the texture(s) it uses is determined by the TexEnv 0. 
+The textures cannot be selected by the vertex shader. 
+So, (to me) it seems impossible to batch multiple objects with different textures.
+You can update the TexEnv to switch texture sources.
+However, the vertex shader must accompany this by setting the appropriate ".out outtc0 texcoord0", ".out outtc1 texcoord1", or ".out outtc2 texcoord2". 
+At the moment, I set them all to the same values (gains > loss in performance probably?).
+At the moment,vertices are batched by texture into separate vertex buffers. Then, each buffer does 1 a draw call.
+It's only useful for objects with the same texture (i.e. buildings, trees, foliage, etc.)

@@ -130,7 +130,7 @@ namespace Entry
 		C3D_TexEnv* env = C3D_GetTexEnv(0);
 		C3D_TexEnvInit(env);
 		C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD); //TODO: Set GPU_MODULATE FOR 3D, GPU_ADD for 2D
 
 		// Clear out the other texenvs
 		C3D_TexEnvInit(C3D_GetTexEnv(1));
