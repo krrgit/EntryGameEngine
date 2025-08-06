@@ -833,7 +833,6 @@ namespace Entry {
             s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = textureRef;
 
             s_Data.BatchSlotIndex++;
-            s_Data.Stats.BatchCount = s_Data.BatchSlotIndex - 1;
         }
 
         return batchIndex;

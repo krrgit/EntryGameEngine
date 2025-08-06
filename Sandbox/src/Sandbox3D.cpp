@@ -161,8 +161,9 @@ void Sandbox3D::OnImGuiRender()
 
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");
+    ImGui::Text("FPS: %.1f fps\nCPU: %.2f ms\nGPU: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime()); // Temp
     ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
-    ImGui::Text("Batches: %ld", stats.GetTotalBatchCount());
+
     ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
