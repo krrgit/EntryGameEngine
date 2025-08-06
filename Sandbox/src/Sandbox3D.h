@@ -17,6 +17,7 @@ class Sandbox3D : public Entry::Layer
 
     private:
     Entry::PerspectiveCameraController m_CameraController;
+    bool m_ShowImGui = true;
 
     // Temp
     Entry::Ref<Entry::VertexArray> m_SquareVA;
@@ -30,5 +31,6 @@ class Sandbox3D : public Entry::Layer
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
     float m_Rotation = 0.0f;
+
 
 };

@@ -1,5 +1,6 @@
 #include "Sandbox3D.h"
 #include "imgui.h"
+#include "Entry/Core/Input.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
@@ -42,6 +43,10 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 
     Entry::Renderer3D::ResetStats();
 
+    if (Entry::Input::GetButtonDown(ET_KEY_START)) {
+        m_ShowImGui = !m_ShowImGui;
+    }
+
 	{
 		ET_PROFILE_SCOPE("Renderer Draw");
 
@@ -80,6 +85,7 @@ void Sandbox3D::OnImGuiRender()
 {
 	ET_PROFILE_FUNCTION();
 
+    if (!m_ShowImGui) { return; }
 
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
