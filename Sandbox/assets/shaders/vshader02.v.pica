@@ -1,26 +1,22 @@
 ; Texture + Color Shader
 
 ; Uniforms
-.fvec u_ViewProjection[4]
-.fvec u_Textures, u_TilingFactor
+.fvec u_ViewProjection[4], u_Transform[4], u_Color[4]
+.fvec u_TilingFactor
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
 .alias  zeros myconst.xxxx ; Vector full of zeros
 .alias  ones  myconst.yyyy ; Vector full of ones
-.constf indices(0.0, 1.0, 2.0, 3.0)
 
 ; Outputs
 .out outpos position
-.out outclr color
 .out outtc0 texcoord0
-.out outtc1 texcoord1
-.out outtc2 texcoord2
+.out outclr color
 
 ; Inputs (defined as aliases for convenience)
 .alias inpos v0
-.alias inclr v1
-.alias intex v2 ; tex coord
+.alias intex v1
 
 .proc main
 	; Force the w component of inpos to be 1.0
@@ -28,11 +24,10 @@
 	mov r0.w,   ones
 
 	; r1 = Transform * inpos
-	; dp4 r1.x, u_Transform[0], r0
-	; dp4 r1.y, u_Transform[1], r0
-	; dp4 r1.z, u_Transform[2], r0
-	; dp4 r1.w, u_Transform[3], r0
-	mov r1, r0
+	dp4 r1.x, u_Transform[0], r0
+	dp4 r1.y, u_Transform[1], r0
+	dp4 r1.z, u_Transform[2], r0
+	dp4 r1.w, u_Transform[3], r0
 
 	; outpos = ViewProjection * r1
 	dp4 outpos.x, u_ViewProjection[0], r1
@@ -41,10 +36,7 @@
 	dp4 outpos.w, u_ViewProjection[3], r1
 
 	; outtex = intex * u_TilingFactor
-	; mul outtc0.xy, u_TilingFactor.xx, intexcoord
 	mul outtc0.xy, u_TilingFactor.xx, intex
-	; mul outtc1.xy, u_TilingFactor.xx, intex
-	; mul outtc2.xy, u_TilingFactor.xx, intex
 
 	; outcolor = intex coord
 	; mov outclr.xyz, outtc0
@@ -53,7 +45,7 @@
 	; mov outclr.w, ones
 
 	; outcolor = white
-	mov outclr, inclr
+	mov outclr, u_Color
 
 
 	; We're finished

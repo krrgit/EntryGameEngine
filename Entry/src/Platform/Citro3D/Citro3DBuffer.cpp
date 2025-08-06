@@ -7,15 +7,6 @@ namespace Entry
 	////////////////////////////////////////////////////////////////////////
 	// VertexBuffer ////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
-	
-	Citro3DVertexBuffer::Citro3DVertexBuffer(uint32_t size) {
-		ET_PROFILE_FUNCTION();
-
-		m_DataPointer = linearAlloc(size);
-		//memcpy(m_DataPointer, nullptr, size);
-
-		BufInfo_Init(&m_bufInfo);
-	}
 
 	Citro3DVertexBuffer::Citro3DVertexBuffer(float* vertices, uint32_t size) {
 		ET_PROFILE_FUNCTION();
@@ -42,13 +33,6 @@ namespace Entry
 		ET_PROFILE_FUNCTION();
 
 		C3D_SetBufInfo(0);
-	}
-
-	void Citro3DVertexBuffer::SetData(const void* data, uint32_t size)
-	{
-		memcpy(m_DataPointer, data, size);
-
-		C3D_SetBufInfo(&m_bufInfo);
 	}
 
 	void Citro3DVertexBuffer::SetLayout(const BufferLayout layout) 

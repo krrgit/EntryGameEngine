@@ -16,7 +16,7 @@ namespace Entry {
 		virtual void SetClearColor(const uint32_t color) = 0;
 		virtual void Clear() = 0;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount = 0) = 0;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
 		inline static API GetAPI() { return s_API; }
 	private:

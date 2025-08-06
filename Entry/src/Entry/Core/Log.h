@@ -23,7 +23,7 @@ namespace Entry
     };
 }
 
-//#define LOG_CONSOLE_ENABLED
+#define LOG_CONSOLE_ENABLED
 
 #ifdef LOG_CONSOLE_ENABLED
 // Core Log Macros
