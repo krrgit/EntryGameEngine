@@ -33,10 +33,17 @@ namespace Entry {
 
     struct Renderer3DData 
     {
-        static const uint32_t MaxPolygons = 2048; // Per Batch atm 5298
-        static const uint32_t MaxVertices = MaxPolygons * 2; // Per Batch atm
-        static const uint16_t MaxIndices = MaxPolygons * 3; // Per Batch atm
-        static const uint32_t MaxBatches = 8; // TODO: RenderCaps (3 per C3D_Context)
+        // Total Limitations (CPU/Code bottleneck @ 60 fps)
+        // Max Polygons: ~20736
+        // Max Vertcies: ~41472
+        // Max Indices: ~62208
+
+        // Per Batch Limitations
+        static const uint32_t MaxPolygons = 5298; // Max: 5298 (seems like CPU bottleneck)
+        static const uint32_t MaxVertices = MaxPolygons * 2;
+        static const uint16_t MaxIndices = MaxPolygons * 3; 
+        static const uint32_t MaxBatches = 16; // Randomly  selected tbh
+        bool AllowMultipleBatchesPerTexture = true;
 
         Ref <Shader> TextureShader;
         Ref <Texture2D> WhiteTexture;
@@ -163,35 +170,14 @@ namespace Entry {
         }
     }
 
-    void Renderer3D::FlushAndReset() {
-        ET_PROFILE_FUNCTION();
-
-        // TODO: create another batch for same texture
-
-        //EndScene();
-
-        //for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
-        //    s_Data.RenderBatches[i].IndexCount = 0;
-        //    s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
-        //}
-
-        //s_Data.IndexCount = 0;
-        //s_Data.BatchSlotIndex = 1;
-    }
-
     void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
     {
         ET_PROFILE_FUNCTION();
 
-        const int textureIndex = 0; // White Texture
         const int quadIndexCount = 6;
-        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
-
-        if (batch->IndexCount + quadIndexCount >= Renderer3DData::MaxIndices)
-        {
-            //FlushAndReset();
-            return;
-        }
+        int batchIndex = GetBatch(s_Data.WhiteTexture, quadIndexCount);
+        if (batchIndex < 0) { return; }
+        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
         batch->VertexBufferPtr->Color = color;
@@ -225,15 +211,10 @@ namespace Entry {
 	{
         ET_PROFILE_FUNCTION();
 
-        const int textureIndex = 0; // White Texture
         const uint32_t cubeIndexCount = 36;
-
-        // Don't draw if full
-        if (s_Data.RenderBatches[textureIndex].IndexCount + cubeIndexCount >= Renderer3DData::MaxIndices) {
-            return;
-        }
-
-        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+        int batchIndex = GetBatch(s_Data.WhiteTexture, cubeIndexCount);
+        if (batchIndex < 0) { return; }
+        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
@@ -391,34 +372,9 @@ namespace Entry {
         const glm::vec4 color(1.0f);
 
         const uint32_t quadIndexCount = 6;
-
-        //Search for texture in slots
-        int textureIndex = 0;
-        for (uint32_t i = 1; i < s_Data.BatchSlotIndex; ++i) {
-            if (*s_Data.RenderBatches[i].BatchTexture.get() == *texture.get()) {
-                textureIndex = i;
-                break;
-            }
-        }
-
-        // Add texture if not found
-        if (textureIndex == 0) {
-            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
-                //FlushAndReset();
-                return;
-            }
-            textureIndex = s_Data.BatchSlotIndex;
-            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = texture;
-            s_Data.BatchSlotIndex++;
-            texture->Bind(textureIndex);
-        }
-        else if (s_Data.RenderBatches[textureIndex].IndexCount + quadIndexCount >= Renderer3DData::MaxIndices) {
-
-            //FlushAndReset();
-            return;
-        }
-
-        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+        int batchIndex = GetBatch(texture, quadIndexCount);
+        if (batchIndex < 0) { return; }
+        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
         batch->VertexBufferPtr->Color = color;
@@ -467,32 +423,11 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         const uint32_t cubeIndexCount = 36;
+        int batchIndex = GetBatch(texture, cubeIndexCount);
+        if (batchIndex < 0) { return; }
+        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
-        //Search for texture in slots
-        int textureIndex = 0;
-        for (uint32_t i = 1; i < s_Data.BatchSlotIndex; ++i) {
-            if (*s_Data.RenderBatches[i].BatchTexture.get() == *texture.get()) {
-                textureIndex = i;
-                break;
-            }
-        }
-
-        // Add texture if not found
-        if (textureIndex == 0) {
-            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
-                //FlushAndReset();
-                return;
-            }
-            textureIndex = s_Data.BatchSlotIndex;
-            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = texture;
-            s_Data.BatchSlotIndex++;
-            texture->Bind(textureIndex);
-        }
-        else if (s_Data.RenderBatches[textureIndex].IndexCount + cubeIndexCount >= Renderer3DData::MaxIndices) {
-            return;
-        }
-
-        RenderBatch* batch = &s_Data.RenderBatches[textureIndex];
+        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
@@ -653,6 +588,205 @@ namespace Entry {
         //s_Data.CubeVertexArray->Bind();
         //RenderCommand::DrawIndexed(s_Data.CubeVertexArray);
     }
+
+    void Renderer3D::DrawCube(const glm::vec3& position, glm::vec4& color)
+    {
+        ET_PROFILE_FUNCTION();
+
+        const uint32_t cubeIndexCount = 36;
+        int batchIndex = GetBatch(s_Data.WhiteTexture, cubeIndexCount);
+        if (batchIndex < 0) { return; }
+        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
+
+        // Front Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        // Back Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        // Top Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        // Bottom Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        // Right Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        // Left Face
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) );
+        batch->VertexBufferPtr->Color = color;
+        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        batch->VertexBufferPtr++;
+
+        batch->IndexCount += 6;
+        s_Data.IndexCount += 6;
+
+        s_Data.Stats.PolygonCount += 12;
+        s_Data.Stats.VertexCount += 24;
+        s_Data.Stats.IndexCount += 36;
+    }
+
+    int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {
+        //Search for batch assigned to texture in slots
+        int batchIndex = 0;
+        bool foundButFull = false;
+        for (uint32_t i = 1; i < s_Data.BatchSlotIndex; ++i) {
+            if (*s_Data.RenderBatches[i].BatchTexture.get() == *textureRef.get()) {
+                if (s_Data.RenderBatches[i].IndexCount + indexCount < Renderer3DData::MaxIndices) {
+                batchIndex = i;
+                break;
+                }
+                else {
+                    foundButFull = true;
+                }
+            }
+        }
+
+        // Add batch if:
+        // 2. Not found but there are open batch slots.
+        // 1. Found but no space (AllowMultpleBatchesPerTexture needs to be enabled)
+        // Otherwise don't draw.
+        if (batchIndex == 0) {
+
+            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
+                return -1;
+            }
+
+            if (foundButFull && !s_Data.AllowMultipleBatchesPerTexture) {
+                return -1;
+            }
+
+            batchIndex = s_Data.BatchSlotIndex;
+            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = textureRef;
+            
+            s_Data.BatchSlotIndex++;
+            s_Data.Stats.BatchCount = s_Data.BatchSlotIndex-1;
+        }
+
+        return batchIndex;
+    }
+
     void Renderer3D::ResetStats()
     {
         memset(&s_Data.Stats, 0, sizeof(Statistics));

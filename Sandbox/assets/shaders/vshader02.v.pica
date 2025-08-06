@@ -42,9 +42,9 @@
 
 	; outtex = intex * u_TilingFactor
 	; mul outtc0.xy, u_TilingFactor.xx, intexcoord
-	mov outtc0.xy, intex
-	mov outtc1.xy, intex
-	mov outtc2.xy, intex
+	mul outtc0.xy, u_TilingFactor.xx, intex
+	; mul outtc1.xy, u_TilingFactor.xx, intex
+	; mul outtc2.xy, u_TilingFactor.xx, intex
 
 	; outcolor = intex coord
 	; mov outclr.xyz, outtc0
