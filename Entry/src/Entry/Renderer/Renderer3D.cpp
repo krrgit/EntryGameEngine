@@ -42,7 +42,7 @@ namespace Entry {
         static const uint32_t MaxPolygons = 5298; // Max: 5298 (seems like CPU bottleneck)
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3; 
-        static const uint32_t MaxBatches = 16; // Randomly  selected tbh
+        static const uint32_t MaxBatches = 16; // Randomly selected tbh
         bool AllowMultipleBatchesPerTexture = true;
 
         Ref <Shader> TextureShader;
