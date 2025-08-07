@@ -45,14 +45,21 @@ namespace Entry
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
-		m_Data.Screen = props.Screen;
-		m_Data.Stereo3D = false;
+		m_Data.Screen = (gfxScreen_t)props.Screen;
+		m_Data.Stereo3D = props.Stereo3D && (m_Data.Screen == GFX_TOP);
 
 		ET_CORE_INFO("Create screen {0} ({1},{2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width (screen draws left to right)
 		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
 		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+
+		// 2nd render target for 3D
+		if (m_Data.Stereo3D)
+		{
+			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+			C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
+		}
 	}
 
 	void Citro3DWindow::Shutdown()
@@ -93,11 +100,10 @@ namespace Entry
 	void Citro3DWindow::OnUpdate(Timestep ts)
 	{
 		ET_PROFILE_FUNCTION();
-		{
-			ET_PROFILE_SCOPE("LayerStack OnUpdate");
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(ts);
-		}
+
+		FrameDrawOn(GFX_LEFT);
+		LayerStackOnUpdate(ts);
+
 		{
 			ET_PROFILE_SCOPE("LayerStack OnImGuiRender");
 			for (Layer* layer : m_LayerStack)
@@ -105,8 +111,21 @@ namespace Entry
 		}
 		{
 			ET_PROFILE_SCOPE("C2D_Flush");
-
 			C2D_Flush();
+		}
+
+		if (!m_Data.Stereo3D) return;
+		
+		FrameDrawOn(GFX_RIGHT);
+		LayerStackOnUpdate(ts);
+	}
+
+	void Citro3DWindow::LayerStackOnUpdate(Timestep ts)
+	{
+		{
+			ET_PROFILE_SCOPE("LayerStack OnUpdate");
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate(ts);
 		}
 	}
 
@@ -118,26 +137,49 @@ namespace Entry
 		TriggerEvents();
 	}
 
-	void Citro3DWindow::FrameDrawOn()
+	void Citro3DWindow::FrameDrawOn(gfx3dSide_t side)
 	{
 		ET_PROFILE_FUNCTION();
 
-		C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
-		C3D_FrameDrawOn(m_RenderTarget);
-		C2D_SceneTarget(m_RenderTarget);
+		if (side == GFX_LEFT)
+		{	
+			// Begin Frame when drawing top left screen
+			if (m_Data.Screen == GFX_TOP) 
+			{
+			
+				C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 
-		// Pass through vertex color
-		C3D_TexEnv* env = C3D_GetTexEnv(0);
-		C3D_TexEnvInit(env);
-		C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+				// Reset TexEnvs
+				// Pass through vertex color
+				C3D_TexEnv* env = C3D_GetTexEnv(0);
+				C3D_TexEnvInit(env);
+				C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+				C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 
-		// Clear out the other texenvs
-		C3D_TexEnvInit(C3D_GetTexEnv(1));
-		C3D_TexEnvInit(C3D_GetTexEnv(2));
-		C3D_TexEnvInit(C3D_GetTexEnv(3));
-		C3D_TexEnvInit(C3D_GetTexEnv(4));
-		C3D_TexEnvInit(C3D_GetTexEnv(5));
+				// Clear out the other texenvs
+				C3D_TexEnvInit(C3D_GetTexEnv(1));
+				C3D_TexEnvInit(C3D_GetTexEnv(2));
+				C3D_TexEnvInit(C3D_GetTexEnv(3));
+				C3D_TexEnvInit(C3D_GetTexEnv(4));
+				C3D_TexEnvInit(C3D_GetTexEnv(5));
+			}
+
+			C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
+			C3D_FrameDrawOn(m_RenderTarget);
+			C2D_SceneTarget(m_RenderTarget);
+		}
+		else if (side == GFX_RIGHT)
+		{	
+			// Draw On Right Screen (Top only)
+			C3D_RenderTargetClear(m_RenderTargetR, C3D_CLEAR_ALL, m_ClearColor, 0);
+			C3D_FrameDrawOn(m_RenderTargetR);
+			C2D_SceneTarget(m_RenderTargetR);
+		}
+	}
+
+	void Citro3DWindow::FrameEnd()
+	{
+		C3D_FrameEnd(0);
 	}
 
 	void Citro3DWindow::SetVSync(bool enabled)

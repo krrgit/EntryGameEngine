@@ -11,14 +11,16 @@ namespace Entry {
 		std::string Title;
 		unsigned int Width;
 		unsigned int Height;
-		gfxScreen_t Screen;
+		uint16_t Screen; // 0 = TOP; 1 = BOTTOM
+		bool Stereo3D;
 
 
 		WindowProps(const std::string& title = "Entry Engine",
 			unsigned int width = 400,
 			unsigned int height = 240,
-			gfxScreen_t screen = GFX_TOP)
-			: Title(title), Width(width), Height(height), Screen(screen)
+			uint16_t screen = 0,
+			bool stereo3D = false)
+			: Title(title), Width(width), Height(height), Screen(screen), Stereo3D(stereo3D)
 		{
 		}
 	};
@@ -33,7 +35,9 @@ namespace Entry {
 
 		virtual void OnUpdate(Timestep ts) = 0;
 		virtual void ScanHIDEvents() = 0;
-		virtual void FrameDrawOn() = 0;
+		//virtual void FrameDrawOn() = 0;
+		virtual void FrameEnd() = 0;
+
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;

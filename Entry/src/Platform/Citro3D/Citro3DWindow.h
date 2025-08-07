@@ -13,7 +13,7 @@ namespace Entry
 
 		void OnUpdate(Timestep ts) override;
 		void ScanHIDEvents() override;
-		void FrameDrawOn() override;
+		void FrameEnd() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -39,6 +39,9 @@ namespace Entry
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
 		void TriggerEvents();
+
+		void FrameDrawOn(gfx3dSide_t side = GFX_LEFT);
+		void LayerStackOnUpdate(Timestep ts);
 	private:
 		C3D_RenderTarget* m_RenderTarget;
 		C3D_RenderTarget* m_RenderTargetR;

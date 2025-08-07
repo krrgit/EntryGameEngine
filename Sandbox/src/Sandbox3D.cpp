@@ -62,7 +62,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 		//Render
 		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
 
-        float side = 12.0f;
+        float side = 10.0f;
         float scale = 3.0f;
 
         for (float z = 0; z < side; z++) {

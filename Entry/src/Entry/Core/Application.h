@@ -30,7 +30,9 @@ namespace Entry {
 
         void Close();
     private:
+        uint16_t m_WindowCount = 2;
         Window* m_CurrentWindow;
+        std::vector<Scope<Window>> m_Windows;
         Scope<Window> m_WindowTop;
         Scope<Window> m_WindowBottom;
         ImGuiLayer* m_ImGuiLayer;
