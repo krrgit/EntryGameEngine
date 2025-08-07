@@ -7,11 +7,7 @@
 #include <time.h>
 #include <memory>
 
-//#define DEBUG
-
-#ifdef DEBUG
-    #define ET_LOG_ENABLED
-#endif // DEBUG
+#include "Config.h"
 
 namespace Entry
 {
