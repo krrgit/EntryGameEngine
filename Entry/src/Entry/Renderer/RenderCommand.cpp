@@ -9,7 +9,7 @@ namespace Entry {
 	RendererAPI* RenderCommand::s_RendererAPI = new Citro3DRendererAPI;
 #endif // ET_PLATFORM_3DS
 
-// Define in premake5.lua
+// Defined in premake5.lua
 #ifdef ET_PLATFORM_WINDOWS
 	//RendererAPI* RenderCommand::s_RendererAPI = new OpenGLRendererAPI;
 #endif // ET_PLATFORM_WINDOWS
