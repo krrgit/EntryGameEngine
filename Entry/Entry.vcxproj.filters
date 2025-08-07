@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Entry">
+      <UniqueIdentifier>{37E91D0D-A3FD-45BE-6C7F-E91DD85242EF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\Core">
+      <UniqueIdentifier>{EF67FCCC-DB1F-3E1A-4427-177630FED80A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\Debug">
+      <UniqueIdentifier>{EDC0956C-5976-0E62-E26A-08394E1F0566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\Events">
+      <UniqueIdentifier>{3B31D802-2794-67A7-D019-A05DBC5B332A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\ImGui">
+      <UniqueIdentifier>{A12BF46C-0DE1-6C62-96D5-6639028A6366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\Log">
+      <UniqueIdentifier>{88C4E8CF-F42E-9D46-3D6D-4EECA9167B9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry\Renderer">
+      <UniqueIdentifier>{BD7AA410-A948-9816-92DC-083D7E49747B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Citro3D">
+      <UniqueIdentifier>{B173BF17-9D6C-DE69-C69E-C3EEB2F6BD75}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Entry.h" />
+    <ClInclude Include="src\Entry\Core\Application.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Config.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Core.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\EntryPoint.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Input.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\KeyCodes.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Layer.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\LayerStack.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Log.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Timestep.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Core\Window.h">
+      <Filter>Entry\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Debug\Instrumentor.h">
+      <Filter>Entry\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\ApplicationEvent.h">
+      <Filter>Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\CirclePadEvent.h">
+      <Filter>Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\Event.h">
+      <Filter>Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\KeyEvent.h">
+      <Filter>Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\ScreenEvent.h">
+      <Filter>Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\ImGui\ImGuiLayer.h">
+      <Filter>Entry\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Log\LogLayer.h">
+      <Filter>Entry\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Buffer.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Framebuffer.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Mesh.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\PerspectiveCamera.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\PerspectiveCameraController.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\RenderCommand.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Renderer.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Renderer3D.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\RendererAPI.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Shader.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Texture.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\VertexArray.h">
+      <Filter>Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\C2DPrepareLayer.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DBuffer.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DFramebuffer.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DInput.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DMesh.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DRendererAPI.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DShader.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DTexture.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DVertexArray.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\Citro3DWindow.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Citro3D\fast_obj.h">
+      <Filter>Platform\Citro3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\etpch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Entry\Core\Application.cpp">
+      <Filter>Entry\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Core\Layer.cpp">
+      <Filter>Entry\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Core\LayerStack.cpp">
+      <Filter>Entry\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Core\Log.cpp">
+      <Filter>Entry\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\ImGui\ImGuiLayer.cpp">
+      <Filter>Entry\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Log\LogLayer.cpp">
+      <Filter>Entry\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Buffer.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Mesh.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\PerspectiveCamera.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\PerspectiveCameraController.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\RenderCommand.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Renderer.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Renderer3D.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\RendererAPI.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Shader.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Texture.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\VertexArray.cpp">
+      <Filter>Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\C2DPrepareLayer.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DBuffer.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DFramebuffer.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DInput.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DMesh.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DRendererAPI.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DShader.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DTexture.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DVertexArray.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\Citro3DWindow.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.cpp">
+      <Filter>Platform\Citro3D</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

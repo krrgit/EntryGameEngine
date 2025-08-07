@@ -7,7 +7,8 @@ https://www.3dbrew.org/wiki/Category:GPU
 
 # Build Instructions for .3dsx
 
-Entry Game Engine uses Make, for now. Run "make" in the terminal to build.
+Install devkitPro (https://github.com/devkitPro/installer).
+Run "make" in terminal within the same directory as the Makefile to build.
 
 # Getting Started
 

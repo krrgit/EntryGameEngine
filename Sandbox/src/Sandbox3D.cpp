@@ -159,8 +159,8 @@ void Sandbox3D::OnImGuiRender()
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
-    void* textureID = m_Framebuffer->GetColorAttachmentRendererID();
-    ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f});
+    //void* textureID = m_Framebuffer->GetColorAttachmentRendererID();
+    //ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f});
 
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");
@@ -171,8 +171,8 @@ void Sandbox3D::OnImGuiRender()
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
     
-    //void* textureID = m_CheckerboardTexture->GetRendererID();
-    //ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f });
+    void* textureID = (void*) m_CheckerboardTexture->GetRendererID();
+    ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f });
 
 
     ImGui::End();
