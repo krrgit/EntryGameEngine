@@ -54,6 +54,8 @@ namespace Entry
             RenderCommand::SetClearColor(clearColor);
         }
 
+        m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
         //{
         //    ET_PROFILE_SCOPE("Create Top Window");
         //    WindowProps topProps("Top", 400, 240, GFX_TOP);
@@ -66,7 +68,6 @@ namespace Entry
         //    ET_PROFILE_SCOPE("Create Bottom Window");
         //    WindowProps props("Bottom", 320, 240, GFX_BOTTOM);
         //    m_WindowBottom = Scope<Window>(Window::Create(props));
-        //    m_WindowBottom->SetEventCallback(BIND_EVENT_FN(OnEvent));
         //    m_CurrentWindow = m_WindowBottom.get();
         //    RenderCommand::SetClearColor(0x252525FF);
         //}
@@ -209,6 +210,7 @@ namespace Entry
                 ET_PROFILE_SCOPE("ScanHIDEvents");
 
                 //m_Windows[1]->ScanHIDEvents();
+                m_CurrentWindow->ScanHIDEvents();
             }
             
             {
