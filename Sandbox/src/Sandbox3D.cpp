@@ -47,6 +47,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 	}
 
     Entry::Renderer3D::ResetStats();
+    //m_Framebuffer->Bind();
 
     if (Entry::Input::GetButtonDown(ET_KEY_START)) {
         m_ShowImGui = !m_ShowImGui;
