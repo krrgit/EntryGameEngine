@@ -7,6 +7,8 @@
 
 #include "Config.h"
 
+#include <3ds.h>
+
 namespace Entry
 {
     class Log

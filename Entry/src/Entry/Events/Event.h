@@ -2,6 +2,9 @@
 #include "etpch.h"
 #include "Entry/Core/Core.h"
 
+/// Creates a bitmask from a bit number.
+#define BIT(n) (1U<<(n))
+
 namespace Entry {
 
 	// Events in Entry are currently blocking, meaning when an event occurs it
@@ -42,7 +45,6 @@ namespace Entry {
 		"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
 	};
 
-#define KEY_TOUCH 20
 #define ALL_KEYS_COUNT 32
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\

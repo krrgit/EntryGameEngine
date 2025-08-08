@@ -5,6 +5,11 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
 
+#include <3ds.h>
+#include <citro3d.h>
+#include <citro2d.h>
+
+
 namespace Entry {
 	class LogLayer : public Layer {
 	public:

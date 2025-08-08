@@ -8,6 +8,7 @@
 #include <sys/iosupport.h>
 #include <3ds/gfx.h>
 #include <3ds/svc.h>
+#include <3ds.h>
 
 #include "imgui.h"
 
