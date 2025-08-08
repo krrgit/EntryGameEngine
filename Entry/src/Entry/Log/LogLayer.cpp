@@ -49,11 +49,6 @@ namespace Entry {
 	}
 
 	void LogLayer::OnImGuiRender() {
-		ImGui::Begin("Log");
-		ImGui::Text("fps %.1f fps\ncpu: %.2f ms\ngpu: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime());
-		ImGui::Text("X: %d | Y: %d\n", m_Console->cursorX, m_Console->cursorY);
-		//ImGui::Text("m_SubtexVerticalShift: %.3f\n", m_SubtexVerticalShift);
-		ImGui::End();
 	}
 
 	void LogLayer::OnUpdate(Timestep ts, uint16_t screenSide) {

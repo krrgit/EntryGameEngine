@@ -134,7 +134,7 @@ namespace Entry
 
                 m_CurrentWindow = m_Windows[i].get();
                 m_CurrentWindow->OnUpdate(timestep);
-                m_CurrentWindow->ScanHIDEvents();
+                //m_CurrentWindow->ScanHIDEvents();
             }
             m_ImGuiLayer->End();
             

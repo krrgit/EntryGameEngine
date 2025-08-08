@@ -26,7 +26,7 @@ namespace Entry
 }
 
 
-#ifdef LOG_CONSOLE_ENABLED
+#ifdef ET_LOG_ENABLED
 // Core Log Macros
 #define ET_CORE_TRACE(...)  ::Entry::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define ET_CORE_INFO(...)   ::Entry::Log::GetCoreLogger()->info(__VA_ARGS__)

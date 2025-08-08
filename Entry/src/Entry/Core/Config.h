@@ -1,4 +1,5 @@
 // #define DEBUG
+#define ET_LOG_ENABLED
 
 #ifdef DEBUG
 	#define ET_LOG_ENABLED

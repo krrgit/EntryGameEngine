@@ -207,7 +207,7 @@ public:
 		//PushLayer(new ExampleLayer(), ET_WINDOW_TOP);
 		PushLayer(new Sandbox3D(), ET_WINDOW_TOP);
 #ifdef ET_LOG_ENABLED
-		PushOverlay(new Entry::LogLayer(), ET_WINDOW_BOTTOM);
+		PushOverlay(new Entry::LogLayer(), ET_WINDOW_TOP);
 #endif
     }
 

@@ -63,7 +63,7 @@ namespace Entry
 		WindowData m_Data;
 		
 		uint32_t anyKeyPressed, anyKeyHeld, anyKeyReleased;
-		float m_Slider3DState, m_Slider3DStatePrev;
+		float m_Slider3DState, m_Slider3DStatePrev = 0.0f;
 		bool readTouchPos;
 		touchPosition touchPos;
 		circlePosition circlePadPos;
