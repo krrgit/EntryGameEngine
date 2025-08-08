@@ -1,4 +1,4 @@
-
+#ifdef ET_PLATFORM_3DS
 #include "Entry/Log/LogLayer.h"
 #include "Entry/Core/Input.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -6,12 +6,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/iosupport.h>
-#include <3ds/gfx.h>
-#include <3ds/svc.h>
-#include <3ds.h>
 
 #include "imgui.h"
 
+#include <3ds/gfx.h>
+#include <3ds/svc.h>
 
 #define R565_SHIFT 11
 #define G565_SHIFT 5
@@ -176,3 +175,5 @@ namespace Entry {
 		printf("\x1b[2K");
 	}
 }
+
+#endif

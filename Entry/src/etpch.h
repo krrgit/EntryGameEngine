@@ -12,6 +12,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Log.h"
+#include "Entry/Core/Log.h"
 
 #include "Entry/Debug/Instrumentor.h"

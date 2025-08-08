@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef ET_PLATFORM_3DS
+
 #include "Entry/Core/Layer.h"
 #include "Entry/Core/Core.h"
 #include "spdlog/spdlog.h"
@@ -39,3 +41,5 @@ namespace Entry {
 		bool m_ConsoleUpdated;
 	};		  
 }
+
+#endif

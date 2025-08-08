@@ -1,12 +1,16 @@
 #pragma once
-#include <3ds.h>
-#include<citro3d.h>
 #include<glm/glm.hpp>
+
+#ifdef ET_PLATFORM_3DS
+	#include <3ds.h>
+	#include<citro3d.h>
+#endif
 
 namespace Entry {
 	class PerspectiveCamera {
 	public:
 
+#ifdef ET_PLATFORM_3DS
 		inline void glm_mat4_to_C3D_mtx(C3D_Mtx* out, glm::mat4& in)
 		{
 			Mtx_Zeros(out);
@@ -20,6 +24,7 @@ namespace Entry {
 				out->r[i].w = m[i][3];
 			}
 		}
+#endif
 
 		PerspectiveCamera(float left, float right, float bottom, float top);
 		void SetProjection(float left, float right, float bottom, float top);
@@ -43,6 +48,7 @@ namespace Entry {
 		void RecalculateViewMatrix();
 		void RecalculateProjectionViewMatrix();
 
+#ifdef ET_PLATOFRM_3DS
 		void PrintPosition() {
 			consoleClear();
 			printf("R: %.1f %.1f %.1f\n",
@@ -80,6 +86,7 @@ namespace Entry {
 				test_mtx.r[3].c[0], test_mtx.r[3].c[1], test_mtx.r[3].c[2], test_mtx.r[3].c[3]
 			);
 		}
+#endif // ET_PLATOFRM_3DS
 
 	public:
 		glm::vec3 forward;

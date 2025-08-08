@@ -22,7 +22,7 @@
 #include <mutex>
 #include <thread>
 
-#include "Config.h"
+#include "Entry/Core/Config.h"
 
 namespace Entry {
 

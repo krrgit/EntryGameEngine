@@ -7,11 +7,15 @@ namespace Entry
 {
     std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
     std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
-    std::shared_ptr<PrintConsole> Log::s_PrintConsole;
 
+#ifdef ET_PLATFORM_3DS
+    std::shared_ptr<PrintConsole> Log::s_PrintConsole;
+#endif
     void Log::Init()
     {
         ET_PROFILE_FUNCTION();
+
+#ifdef ET_PLATFORM_3DS
 
         // Initialization of Log is separate from LogLayer.
         // This allows logs to be stored before the screen is displayed.
@@ -35,8 +39,9 @@ namespace Entry
         gfxSetScreenFormat(screen, fbFormat);
         gfxSetDoubleBuffering(screen, doubleBuffering);
         gfxSwapBuffersGpu();
-        gspWaitForVBlank();
-        
+        gspWaitForVBlank();  
+#endif
+
         spdlog::set_pattern("%^%M:%S|%n:%v%$");
 
         s_CoreLogger = spdlog::stdout_color_mt("ET");

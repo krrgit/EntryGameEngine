@@ -1,4 +1,4 @@
-workspace "Entry"
+workspace "EntryGameEngine"
 	architecture "x64"
 
 	configurations {
@@ -16,18 +16,22 @@ project "Entry"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
+	
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	includedirs
 	{
-		"Entry/vendor/spdlog/spdlog/include",
-		"Entry/vendor/spdlog/imgui-3ds/imgui",	
-		"Entry/vendor/spdlog/glm/glm"	
+		"%{prj.name}/src",
+		"%{prj.name}/vendor/spdlog/include",
+		"%{prj.name}/vendor/imgui-3ds/imgui",	
+		"%{prj.name}/vendor/glm",
+		"%{prj.name}/vendor/fast_obj",
 	}
 
 	filter "system:windows"
