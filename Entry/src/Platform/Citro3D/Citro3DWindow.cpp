@@ -5,6 +5,7 @@
 #include "Entry/Events/ScreenEvent.h"
 #include "Entry/Events/KeyEvent.h"
 #include "Entry/Events/CirclePadEvent.h"
+#include "Entry/Events/Slider3DEvent.h"
 
 #include "Platform/Citro3D/C2DPrepareLayer.h"
 
@@ -114,18 +115,19 @@ namespace Entry
 			C2D_Flush();
 		}
 
-		if (!m_Data.Stereo3D) return;
+		// Don't draw right side
+		if (!m_Data.Stereo3D || m_Slider3DState <= 0.0f) return;
 		
 		FrameDrawOn(GFX_RIGHT);
-		LayerStackOnUpdate(ts);
+		LayerStackOnUpdate(ts, (uint16_t) GFX_RIGHT);
 	}
 
-	void Citro3DWindow::LayerStackOnUpdate(Timestep ts)
+	void Citro3DWindow::LayerStackOnUpdate(Timestep ts, uint16_t screenSide)
 	{
 		{
 			ET_PROFILE_SCOPE("LayerStack OnUpdate");
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(ts);
+				layer->OnUpdate(ts, screenSide);
 		}
 	}
 
@@ -197,6 +199,7 @@ namespace Entry
 		anyKeyPressed = hidKeysDown();
 		anyKeyHeld = hidKeysHeld();
 		anyKeyReleased = hidKeysUp();
+		m_Slider3DState = osGet3DSliderState();
 
 		//Check if some of the keys are down, held or up
 		uint8_t i;
@@ -249,6 +252,13 @@ namespace Entry
 		if (sqrt(circlePadPos.dx * circlePadPos.dx + circlePadPos.dy * circlePadPos.dy) >= deadzone) {
 			CirclePadEvent event(circlePadPos.dx, circlePadPos.dy);
 			m_Data.EventCallback(event);
+		}
+
+		if (m_Slider3DState != m_Slider3DStatePrev) {
+			Slider3DEvent event(m_Slider3DState);
+			m_Data.EventCallback(event);
+
+			m_Slider3DStatePrev = m_Slider3DState;
 		}
 	}
 }

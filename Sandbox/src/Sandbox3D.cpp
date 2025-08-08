@@ -37,7 +37,7 @@ void Sandbox3D::OnDetach()
 
 }
 
-void Sandbox3D::OnUpdate(Entry::Timestep ts)
+void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
 {
 	ET_PROFILE_FUNCTION();
 	// Update
@@ -60,7 +60,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts)
 		m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
 		//Render
-		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera());
+		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
         float side = 10.0f;
         float scale = 3.0f;

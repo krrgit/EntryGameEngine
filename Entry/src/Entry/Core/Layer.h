@@ -24,7 +24,7 @@ namespace Entry {
 		/// Called when ImGui is rendering.
 		/// </summary>
 		virtual void OnImGuiRender() {}
-		virtual void OnUpdate(Timestep ts) {}
+		virtual void OnUpdate(Timestep ts, uint16_t screenSide = 0) {}
 		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }

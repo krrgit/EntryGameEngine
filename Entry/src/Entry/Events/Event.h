@@ -15,7 +15,7 @@ namespace Entry {
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased, CStickPressed, CStickReleased,
-		CirclePadMoved, ScreenTouched,
+		CirclePadMoved, ScreenTouched, Slider3DMoved
 	};
 
 	enum EventCategory
@@ -26,7 +26,8 @@ namespace Entry {
 		EventCategoryKeyboard = BIT(2),
 		EventCategoryCirclePad = BIT(3),
 		EventCategoryScreen = BIT(4),
-		EventCategoryMouseButton = BIT(5)
+		EventCategorySlider3D = BIT(5),
+		EventCategoryMouseButton = BIT(6),
 	};
 
 	// for debugging purposes

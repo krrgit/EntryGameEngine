@@ -9,7 +9,7 @@ namespace Entry {
 	void C2DPrepareLayer::OnDetach()
 	{
 	}
-	void C2DPrepareLayer::OnUpdate(Timestep ts)
+	void C2DPrepareLayer::OnUpdate(Timestep ts, uint16_t screenSide)
 	{
 		ET_PROFILE_FUNCTION();
 

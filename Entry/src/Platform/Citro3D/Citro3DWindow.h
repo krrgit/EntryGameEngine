@@ -41,7 +41,7 @@ namespace Entry
 		void TriggerEvents();
 
 		void FrameDrawOn(gfx3dSide_t side = GFX_LEFT);
-		void LayerStackOnUpdate(Timestep ts);
+		void LayerStackOnUpdate(Timestep ts, uint16_t screenSide = 0);
 	private:
 		C3D_RenderTarget* m_RenderTarget;
 		C3D_RenderTarget* m_RenderTargetR;
@@ -63,6 +63,7 @@ namespace Entry
 		WindowData m_Data;
 		
 		uint32_t anyKeyPressed, anyKeyHeld, anyKeyReleased;
+		float m_Slider3DState, m_Slider3DStatePrev;
 		bool readTouchPos;
 		touchPosition touchPos;
 		circlePosition circlePadPos;

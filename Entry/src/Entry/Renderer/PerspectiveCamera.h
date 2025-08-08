@@ -33,12 +33,15 @@ namespace Entry {
 		const glm::vec4 GetRotation() const { return m_Rotation; }
 		void SetRotation(const glm::vec4& rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
+		void Set3DValue(float slider3DState) { m_Slider3DState = slider3DState; RecalculateProjectionViewMatrix(); }
+
 		 
 		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
 		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+		const glm::mat4& GetViewProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewProjectionMatrix : m_ViewProjectionMatrixR ; }
 	private:
 		void RecalculateViewMatrix();
+		void RecalculateProjectionViewMatrix();
 
 		void PrintPosition() {
 			consoleClear();
@@ -87,7 +90,14 @@ namespace Entry {
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 		glm::mat4 m_ViewProjectionMatrix = glm::mat4(1.0f);
 
+		glm::mat4 m_ProjectionMatrixR = glm::mat4(1.0f);
+		glm::mat4 m_ViewMatrixR = glm::mat4(1.0f);
+		glm::mat4 m_ViewProjectionMatrixR = glm::mat4(1.0f);
+
 		glm::vec3 m_Position = {0.0f, 0.0f, -1.0f};
 		glm::vec4 m_Rotation = glm::vec4(0.0f);
+
+		bool m_Is3DCamera;
+		float m_Slider3DState = 0.0f;
 	};
 }

@@ -122,7 +122,7 @@ public:
         C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
-	void OnUpdate(Entry::Timestep ts) override
+	void OnUpdate(Entry::Timestep ts, uint16_t screenSide)
 	{
         //// Update
         //m_CameraController.OnUpdate(ts);

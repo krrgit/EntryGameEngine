@@ -15,8 +15,9 @@ namespace Entry {
 		inline static bool IsScreenTouched() { return s_Instance->IsScreenTouchedImpl(); }
 		inline static int GetTouchX() { return s_Instance->GetTouchXImpl(); }
 		inline static int GetTouchY() { return s_Instance->GetTouchYImpl(); }
-		inline static touchPosition GetTouchPos() { return s_Instance->GetTouchPosImpl(); }
+		inline static glm::uvec2 GetTouchPos() { return s_Instance->GetTouchPosImpl(); }
 		inline static glm::vec2 GetJoystickPos() { return s_Instance->GetJoystickPosImpl(); }
+		inline static float GetSlider3D() { return s_Instance->GetSlider3DImpl(); }
 
 	protected:
 		virtual bool GetButtonDownImpl(uint32_t keycode) = 0;
@@ -25,8 +26,9 @@ namespace Entry {
 		virtual bool IsScreenTouchedImpl() = 0;
 		virtual int GetTouchXImpl() = 0;
 		virtual int GetTouchYImpl() = 0;
-		virtual touchPosition GetTouchPosImpl() = 0;
+		virtual glm::uvec2 GetTouchPosImpl() = 0;
 		virtual glm::vec2 GetJoystickPosImpl() = 0;
+		virtual float GetSlider3DImpl() = 0;
 	private:
 		static Input* s_Instance;
 

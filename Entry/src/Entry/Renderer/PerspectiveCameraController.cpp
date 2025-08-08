@@ -12,6 +12,7 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         glm::vec2 cp = Input::GetJoystickPos();
+        m_Slider3DState = Input::GetSlider3D();
 
         glm::vec3 forward = m_Camera.forward;
         glm::vec3 right = m_Camera.right;
@@ -28,7 +29,11 @@ namespace Entry {
             m_CamRot = glm::vec4(m_CamRot.x + (cStickY * m_CameraRotationSpeed * ts), m_CamRot.y + (cStickX * m_CameraRotationSpeed * ts), m_CamRot.z, m_CamRot.w);
         }
 
-
+        if (m_Slider3DState != m_Slider3DStatePrev)
+        {
+            m_Camera.Set3DValue(m_Slider3DState);
+            m_Slider3DStatePrev = m_Slider3DState;
+        }
         m_Camera.SetPosition(m_CamPos);
         m_Camera.SetRotation(m_CamRot);
 	}

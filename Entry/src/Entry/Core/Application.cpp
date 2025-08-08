@@ -43,7 +43,7 @@ namespace Entry
         std::string windowNames[] = { "Top", "Bottom" };
         uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};
         int clearColor = 0x68B0D8FF;
-        bool enableStereo3D = false;
+        bool enableStereo3D = true;
 
         for (int i = 0; i < m_WindowCount; ++i)
         {

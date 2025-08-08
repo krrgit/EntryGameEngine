@@ -125,12 +125,12 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 	}
 
-    void Renderer3D::BeginScene(const PerspectiveCamera& camera)
+    void Renderer3D::BeginScene(const PerspectiveCamera& camera, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
 
         s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
 
         //s_Data.WhiteTexture->Bind(0);
 

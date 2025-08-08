@@ -11,7 +11,7 @@ class Sandbox3D : public Entry::Layer
         virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
-    	void OnUpdate(Entry::Timestep ts) override;
+    	void OnUpdate(Entry::Timestep ts, uint16_t screenSide = 0) override;
         virtual void OnImGuiRender() override ;
         void OnEvent(Entry::Event& event) override;
 

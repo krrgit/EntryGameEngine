@@ -56,7 +56,7 @@ namespace Entry {
 		ImGui::End();
 	}
 
-	void LogLayer::OnUpdate(Timestep ts) {
+	void LogLayer::OnUpdate(Timestep ts, uint16_t screenSide) {
 		ET_PROFILE_FUNCTION();
 
 		if (Input::GetButtonDown(ET_KEY_SELECT)) {

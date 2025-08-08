@@ -14,7 +14,7 @@ namespace Entry {
 			static void Init();
 			static void Shutdown();
 
-			static void BeginScene(const PerspectiveCamera& camera);
+			static void BeginScene(const PerspectiveCamera& camera, uint16_t screenSide = 0);
 			static void EndScene();
 			static void Flush();
 

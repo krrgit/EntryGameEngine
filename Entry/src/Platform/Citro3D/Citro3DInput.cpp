@@ -35,17 +35,23 @@ namespace Entry {
 		hidTouchRead(&m_TouchPosition);
 		return m_TouchPosition.py;
 	}
-	touchPosition Citro3DInput::GetTouchPosImpl()
+	glm::uvec2 Citro3DInput::GetTouchPosImpl()
 	{
 		hidTouchRead(&m_TouchPosition);
-		return m_TouchPosition;
+		return glm::uvec2 { m_TouchPosition.px, m_TouchPosition.py};
 	}
 
 	glm::vec2 Citro3DInput::GetJoystickPosImpl() {
-		circlePosition circlePos;
-		hidCircleRead(&circlePos);
-		m_JoystickPos.x = circlePos.dx / STICK_MAX_VALUE;
-		m_JoystickPos.y = circlePos.dy / STICK_MAX_VALUE;
+		hidCircleRead(&m_CirclePosition);
+		m_JoystickPos.x = m_CirclePosition.dx / STICK_MAX_VALUE;
+		m_JoystickPos.y = m_CirclePosition.dy / STICK_MAX_VALUE;
 		return m_JoystickPos;
+	}
+
+	float Citro3DInput::GetSlider3DImpl()
+	{
+		m_Slider3DState = osGet3DSliderState();
+
+		return m_Slider3DState;
 	}
 }

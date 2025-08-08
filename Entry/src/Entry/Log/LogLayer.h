@@ -14,7 +14,7 @@ namespace Entry {
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
-		virtual void OnUpdate(Timestep ts) override;
+		virtual void OnUpdate(Timestep ts, uint16_t screenSide = 0) override;
 		virtual void OnEvent(Event& event) override;
 
 	private:

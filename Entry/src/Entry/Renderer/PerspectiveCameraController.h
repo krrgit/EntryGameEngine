@@ -28,6 +28,7 @@ namespace Entry {
 		PerspectiveCamera m_Camera;
 
 		bool m_Rotation;
+		float m_Slider3DState, m_Slider3DStatePrev;
 
 		glm::vec3 m_CamPos = { 0.0f, 1.0f, 1.0f };
 		glm::vec4 m_CamRot = { 0.0f, 0.0f, 0.0f, 0.0f };
