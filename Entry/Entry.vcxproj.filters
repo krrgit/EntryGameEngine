@@ -25,11 +25,17 @@
     <Filter Include="src\Entry\Renderer">
       <UniqueIdentifier>{F49A886E-E07E-49C4-49DF-431735E23346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entry\Utils">
+      <UniqueIdentifier>{6EEBAB85-DA76-194A-E387-9C3E4F92754A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Citro3D">
       <UniqueIdentifier>{A87D2C7F-940C-B648-3D2B-CA432999C6EE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Windows">
+      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -153,41 +159,8 @@
     <ClInclude Include="src\Entry\Renderer\VertexArray.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\C2DPrepareLayer.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DBuffer.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DFramebuffer.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DInput.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DMesh.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DRendererAPI.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DShader.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DTexture.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DVertexArray.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\Citro3DWindow.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.h">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Citro3D\fast_obj.h">
-      <Filter>src\Platform\Citro3D</Filter>
+    <ClInclude Include="src\Entry\Utils\PlatformUtils.h">
+      <Filter>src\Entry\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\etpch.h">
       <Filter>src</Filter>
@@ -1440,6 +1413,39 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imconfig.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_internal.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_single_file.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_rectpack.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_textedit.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_truetype.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_rect_pack.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_textedit.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_truetype.h">
+      <Filter>vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1496,41 +1502,31 @@
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\C2DPrepareLayer.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DBuffer.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DFramebuffer.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DInput.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DMesh.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DRendererAPI.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DShader.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DTexture.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DVertexArray.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\Citro3DWindow.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.cpp">
-      <Filter>src\Platform\Citro3D</Filter>
-    </ClCompile>
     <ClCompile Include="src\etpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui.cpp">
+      <Filter>vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_demo.cpp">
+      <Filter>vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_draw.cpp">
+      <Filter>vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_tables.cpp">
+      <Filter>vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_widgets.cpp">
+      <Filter>vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Entry.rc" />
   </ItemGroup>
 </Project>

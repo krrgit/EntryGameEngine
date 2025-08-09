@@ -1,11 +1,12 @@
 #include "etpch.h"
 #include "Application.h"
 
+#include <time.h>
+
 #include "Input.h"
 #include "Entry/Renderer/Renderer.h"
 #include "Entry/Core/Timestep.h"
-#include <time.h>
-#include <memory>
+#include "Entry/Utils/PlatformUtils.h"
 
 #include "Config.h"
 
@@ -15,7 +16,6 @@ namespace Entry
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
     Application* Application::s_Instance = nullptr;
-
 
     Application::Application()
     {
@@ -27,19 +27,12 @@ namespace Entry
             Log::Init();
         #endif
 
-        //// romfs
-        //Result rc = romfsInit();
-        //if (rc)
-        //    printf("romfsInit: %08lX\n", rc);
-        //else
-        //{
-        //    printf("romfs Init Successful!\n");
-        //}
-
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
         m_Windows.resize(m_WindowCount);
+
+        // App Settings (temporary)
         std::string windowNames[] = { "Top", "Bottom" };
         uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};
         int clearColor = 0x68B0D8FF;
@@ -63,7 +56,7 @@ namespace Entry
             PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
         }
 
-        osTickCounterStart(&m_FrameTime);
+        //osTickCounterStart(&m_FrameTime);
     }
 
 
@@ -120,12 +113,18 @@ namespace Entry
     {
         ET_PROFILE_FUNCTION();
 
-        while (aptMainLoop() && m_Running) {
+#ifdef ET_PLATFORM_3DS
+        while (aptMainLoop() && m_Running)
+#endif // ET_PLATFORM_3DS
+#ifdef ET_PLATFORM_WINDOWS
+        while (m_Running)
+#endif
+        {
             ET_PROFILE_SCOPE("Run Loop");
 
-            osTickCounterUpdate(&m_FrameTime);
-            Timestep timestep = osTickCounterRead(&m_FrameTime) * 0.001f;
-            osTickCounterStart(&m_FrameTime);
+            float time = Time::GetTime();
+            Timestep timestep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
 
             m_ImGuiLayer->Begin(timestep);
             for (uint32_t i = 0; i < m_WindowCount; ++i)
@@ -134,7 +133,6 @@ namespace Entry
 
                 m_CurrentWindow = m_Windows[i].get();
                 m_CurrentWindow->OnUpdate(timestep);
-                //m_CurrentWindow->ScanHIDEvents();
             }
             m_ImGuiLayer->End();
             

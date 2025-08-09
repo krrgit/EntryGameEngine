@@ -33,12 +33,10 @@ namespace Entry {
         uint16_t m_WindowCount = 2;
         Window* m_CurrentWindow;
         std::vector<Scope<Window>> m_Windows;
-        Scope<Window> m_WindowTop;
-        Scope<Window> m_WindowBottom;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;
-        TickCounter m_FrameTime;
+        Timestep m_LastFrameTime = 0.0f;
     private:
         static Application* s_Instance;
     };

@@ -75,15 +75,16 @@ namespace Entry {
 			// 3DS screens are sideways. See mtx_persptilt.c for more details.
 			// Mtx_PerspStereoTilt()
 			float fov = 80.0f;
+			float invaspect = 400.0f / 240.0f;
 
 			// Left Side
 			float iod = -m_Slider3DState; // 3D effect value
 			float screen = 2.0f; // No clue what this is
 			float fovx = glm::radians(fov);
 			float fovx_tan = tanf(fovx / 2.0f);
-			float invaspect = 400.0f / 240.0f;
-			float near = 0.01f;
-			float far = 1000.0f;
+			float fovx_tan_invaspect = fovx_tan * invaspect;
+			float nearPlane = 0.01f;
+			float farPlane = 1000.0f;
 			bool isLeftHanded = false;
 			float shift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
 
@@ -93,9 +94,10 @@ namespace Entry {
 			m_ProjectionMatrix[0][1] = 1.0f / fovx_tan;
 			m_ProjectionMatrix[1][0] = -1.0f / (fovx_tan * invaspect);
 			m_ProjectionMatrix[1][3] = iod / 2.0f;
-			m_ProjectionMatrix[2][3] = far * near / (near - far);
+			m_ProjectionMatrix[2][3] = farPlane * nearPlane / (nearPlane - farPlane);
 			m_ProjectionMatrix[3][2] = isLeftHanded ? 1.0f : -1.0f;
-			m_ProjectionMatrix[2][2] = -m_ProjectionMatrix[2][3] * near / (near - far);
+			m_ProjectionMatrix[1][2] = -m_ProjectionMatrix[3][2] * shift / fovx_tan_invaspect;
+			m_ProjectionMatrix[2][2] = -m_ProjectionMatrix[3][2] * nearPlane / (nearPlane - farPlane);
 
 			m_ProjectionMatrix = glm::transpose(m_ProjectionMatrix);
 			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
@@ -110,9 +112,10 @@ namespace Entry {
 				m_ProjectionMatrixR[0][1] = 1.0f / fovx_tan;
 				m_ProjectionMatrixR[1][0] = -1.0f / (fovx_tan * invaspect);
 				m_ProjectionMatrixR[1][3] = iod / 2.0f;
-				m_ProjectionMatrixR[2][3] = far * near / (near - far);
+				m_ProjectionMatrixR[2][3] = farPlane * nearPlane / (nearPlane - farPlane);
 				m_ProjectionMatrixR[3][2] = isLeftHanded ? 1.0f : -1.0f;
-				m_ProjectionMatrixR[2][2] = -m_ProjectionMatrixR[2][3] * near / (near - far);
+				m_ProjectionMatrixR[1][2] = -m_ProjectionMatrixR[3][2] * shift / fovx_tan_invaspect;
+				m_ProjectionMatrixR[2][2] = -m_ProjectionMatrixR[3][2] * nearPlane / (nearPlane - farPlane);
 
 				m_ProjectionMatrixR = glm::transpose(m_ProjectionMatrixR);
 				m_ViewProjectionMatrixR = m_ProjectionMatrixR * m_ViewMatrixR;

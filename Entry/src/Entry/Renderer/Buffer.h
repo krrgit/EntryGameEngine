@@ -32,10 +32,10 @@ namespace Entry
 
     struct BufferElement
     {
-        ShaderDataType Type;
+        ShaderDataType Type = ShaderDataType::Float;
         std::string Name;
-        uint32_t Size;
-        uint32_t Offset; // may not be needed
+        uint32_t Size = 0;
+        uint32_t Offset = 0; // may not be needed
         //bool Normalized; // may not be needed
 
         BufferElement() {}
@@ -135,7 +135,7 @@ namespace Entry
         std::vector<BufferElement> m_Elements;
         uint32_t m_Stride = 0;
         uint32_t m_attribCount = 0;
-        uint64_t m_permutation = 0;
+        uint32_t m_permutation = 0;
     };
 
 

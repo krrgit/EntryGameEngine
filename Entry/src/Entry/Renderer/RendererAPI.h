@@ -8,7 +8,7 @@ namespace Entry {
 	public:
 		enum class API
 		{
-			None = 0, Citro3D = 1
+			None = 0, Citro3D = 1, OpenGL = 2
 		};
 
 	public:

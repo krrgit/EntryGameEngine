@@ -70,6 +70,8 @@ namespace Entry {
 		m_ConsoleUpdated = m_PrevCursorPosX != m_Console->cursorX || m_PrevCursorPosY != m_Console->cursorY;
 
 		if (m_ConsoleUpdated) {
+			ClearNextLine();
+
 			int currentCursorX = m_Console->cursorX;
 			int currentCursorY = m_Console->cursorY;
 
@@ -96,7 +98,6 @@ namespace Entry {
 				m_Console->cursorY = 0;
 			}
 
-			ClearNextLine();
 			CopyFramebufferToTexture(m_PrevCursorPosY, currentCursorY);
 
 			m_PrevCursorPosX = currentCursorX;

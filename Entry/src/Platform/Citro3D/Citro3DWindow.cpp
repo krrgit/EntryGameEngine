@@ -20,6 +20,7 @@
 
 namespace Entry 
 {
+
 	Window* Window::Create(const WindowProps& props)
 	{
 		return new Citro3DWindow(props);

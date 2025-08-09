@@ -11,7 +11,9 @@ namespace Entry {
 
 		switch (Renderer::GetAPI()) {
 		case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+#ifdef ET_PLATFORM_3DS
 		case RendererAPI::API::Citro3D:  return Ref<Citro3DMesh>(new Citro3DMesh(path));
+#endif
 		}
 
 		return nullptr;

@@ -2,10 +2,13 @@
 #include "ImGuiLayer.h"
 
 #include <imgui.h>
-#include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
 
 #include "Entry/Core/KeyCodes.h"
 #include "Entry/Core/Application.h"
+
+#ifdef ET_PLATFORM_3DS
+	#include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
+#endif
 
 namespace Entry {
 
@@ -56,15 +59,18 @@ namespace Entry {
 
 		{
 			ET_PROFILE_SCOPE("ImGui_ImplC3D_Init");
+#ifdef ET_PLATFORM_3DS
 			ImGui_ImplC3D_Init();
+#endif
 		}
 	}
 
 	void ImGuiLayer::OnDetach()
 	{
 		ET_PROFILE_FUNCTION();
-
+#ifdef ET_PLATFORM_3DS
 		ImGui_ImplC3D_Shutdown();
+#endif
 		ImGui::DestroyContext();
 	}
 
@@ -101,7 +107,9 @@ namespace Entry {
 		ET_PROFILE_FUNCTION();
 
 		ImGui::Render();
+#ifdef ET_PLATFORM_3DS
 		ImGui_ImplC3D_RenderDrawData();
+#endif
 
 		// I/O
 		ImGuiIO& io = ImGui::GetIO();

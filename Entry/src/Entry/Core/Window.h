@@ -4,6 +4,8 @@
 
 #include "Entry/Core/Core.h"
 #include "Entry/Events/Event.h"
+#include "Entry/Core/Layer.h"
+#include "Entry/Core/Timestep.h"
 
 namespace Entry {
 	struct WindowProps
@@ -35,7 +37,6 @@ namespace Entry {
 
 		virtual void OnUpdate(Timestep ts) = 0;
 		virtual void ScanHIDEvents() = 0;
-		//virtual void FrameDrawOn() = 0;
 		virtual void FrameEnd() = 0;
 
 

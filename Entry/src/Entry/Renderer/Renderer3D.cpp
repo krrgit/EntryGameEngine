@@ -8,11 +8,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#ifdef ET_PLATFORM_3DS
 //Shader
 // #include "vshader01_shbin.h" // Flat Color Shader
 #include "vshader02_shbin.h" // Texture Shader
 #include "phongshader_shbin.h" // Phong Shader
 #include "normalcolorshader_shbin.h" // Normal Color Shader
+#endif // ET_PLATFORM_3DS
 
 namespace Entry {
 
@@ -98,11 +100,13 @@ namespace Entry {
             batch->QuadVertexArray->SetIndexBuffer(squareIB);
         }
 
+#ifdef ET_PLATFORM_3DS
         // SHADERS
         s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data.TextureShader->Bind();
         s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
         s_Data.NormalColorShader.reset(Shader::Create(normalcolorshader_shbin, normalcolorshader_shbin_size));
+#endif // ET_PLATFORM_3DS
 
 
         // CREATE WHITE TEXTURE

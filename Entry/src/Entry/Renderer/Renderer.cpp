@@ -1,9 +1,11 @@
-
 #include "etpch.h"
 #include "Renderer.h"
 #include "Renderer3D.h"
 
+#ifdef ET_PLATFORM_3DS
 #include "Platform/Citro3D/Citro3DShader.h"
+#endif // ET_PLATFORM_3DS
+
 
 namespace Entry {
 

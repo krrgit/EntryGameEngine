@@ -8,7 +8,7 @@ namespace Entry {
 		: m_Specification(spec)
 	{
 		// TODO ?
-		// Can't figure out what's how to render framebuffer to texture (run into issues)
+		// Can't figure out how to render framebuffer to texture (run into issues in engine, works in standalone project)
 	}
 
 	Citro3DFramebuffer::~Citro3DFramebuffer()

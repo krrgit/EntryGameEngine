@@ -33,9 +33,23 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	$(shell find Entry/src -type d) $(shell find Sandbox -type d) Entry/vendor/imgui-3ds/imgui Entry/vendor/fast_obj
+SOURCES		:=	$(shell find Entry/src -type d \
+		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
+	) \
+	$(shell find Sandbox -type d) \
+	Entry/vendor/imgui-3ds/imgui \
+	Entry/vendor/fast_obj
+
 DATA		:=	data
-INCLUDES	:=	$(shell find Entry/src -type d) $(shell find Sandbox -type d) Entry/vendor/spdlog/include Entry/vendor/imgui-3ds/imgui Entry/vendor/glm Entry/vendor/fast_obj
+INCLUDES	:=  $(shell find Entry/src -type d \
+		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
+	) \
+	$(shell find Sandbox -type d) \
+	Entry/vendor/spdlog/include \
+	Entry/vendor/imgui-3ds/imgui \
+	Entry/vendor/glm \
+	Entry/vendor/fast_obj
+
 GRAPHICS	:=	$(shell find Sandbox/assets -type d)
 GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs

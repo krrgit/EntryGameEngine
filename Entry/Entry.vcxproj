@@ -144,6 +144,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Entry.h" />
     <ClInclude Include="src\Entry\Core\Application.h" />
     <ClInclude Include="src\Entry\Core\Config.h" />
@@ -177,19 +178,10 @@
     <ClInclude Include="src\Entry\Renderer\Shader.h" />
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Platform\Citro3D\C2DPrepareLayer.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DBuffer.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DFramebuffer.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DInput.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DMesh.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DRendererAPI.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DShader.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DTexture.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DVertexArray.h" />
-    <ClInclude Include="src\Platform\Citro3D\Citro3DWindow.h" />
-    <ClInclude Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.h" />
-    <ClInclude Include="src\Platform\Citro3D\fast_obj.h" />
+    <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
     <ClInclude Include="src\etpch.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -606,6 +598,16 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imconfig.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_internal.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_single_file.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_textedit.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_truetype.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_rect_pack.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_textedit.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp" />
@@ -626,18 +628,18 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\C2DPrepareLayer.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DBuffer.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DFramebuffer.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DInput.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DMesh.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DRendererAPI.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DShader.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DTexture.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DVertexArray.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\Citro3DWindow.cpp" />
-    <ClCompile Include="src\Platform\Citro3D\ImGuiCitro3DRenderer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\etpch.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_demo.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_draw.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_tables.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Entry.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

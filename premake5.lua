@@ -9,6 +9,15 @@ workspace "EntryGameEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+-- IncludeDir["GLFW"] = "Entry/vendor/GLFW/include"
+-- IncludeDir["Glad"] = "Entry/vendor/Glad/include"
+IncludeDir["ImGui"] = "Entry/vendor/imgui"
+IncludeDir["fast_obj"] = "Entry/vendor/fast_obj"
+-- IncludeDir["glm"] = "Entry/vendor/glm"
+-- IncludeDir["stb_image"] = "Entry/vendor/stb_image"
+
 project "Entry"
 	location "Entry"
 	kind "SharedLib"
@@ -16,6 +25,9 @@ project "Entry"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	pchheader "etpch.h"
+	pchsource "Entry/src/etpch.cpp"
 	
 	files 
 	{
@@ -29,9 +41,11 @@ project "Entry"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/imgui-3ds/imgui",	
-		"%{prj.name}/vendor/glm",
-		"%{prj.name}/vendor/fast_obj",
+		-- "%{IncludeDir.GLFW}",
+		-- "%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}",
+		-- "%{IncludeDir.glm}",
+		"%{IncludeDir.fast_obj}",
 	}
 
 	filter "system:windows"
@@ -49,6 +63,9 @@ project "Entry"
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
 		}
+
+	filter { "system:windows", "files:Citro3D**.*"}
+  		flags { "ExcludeFromBuild"}
 
 	filter "configurations:Debug"
 		defines "ET_DEBUG"
