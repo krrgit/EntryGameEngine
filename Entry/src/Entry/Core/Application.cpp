@@ -36,6 +36,7 @@ namespace Entry
         int clearColor = 0x68B0D8FF;
         bool enableStereo3D = true;
 
+        // Create Windows
         for (int i = 0; i < m_WindowCount; ++i)
         {
             ET_PROFILE_SCOPE("Create Window");
@@ -53,8 +54,6 @@ namespace Entry
             m_ImGuiLayer = new Entry::ImGuiLayer();
             PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
         }
-
-        //osTickCounterStart(&m_FrameTime);
     }
 
 

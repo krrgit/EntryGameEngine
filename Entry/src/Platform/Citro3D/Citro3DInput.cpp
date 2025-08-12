@@ -38,7 +38,7 @@ namespace Entry {
 	glm::uvec2 Citro3DInput::GetTouchPosImpl()
 	{
 		hidTouchRead(&m_TouchPosition);
-		return glm::uvec2 { m_TouchPosition.px, m_TouchPosition.py};
+		return glm::uvec2 (m_TouchPosition.px, m_TouchPosition.py);
 	}
 
 	glm::vec2 Citro3DInput::GetJoystickPosImpl() {

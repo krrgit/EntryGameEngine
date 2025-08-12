@@ -208,7 +208,7 @@ namespace Entry
 		for (i = 0; i < ALL_KEYS_COUNT; i++)
 		{
 			keyCode = BIT(i);
-			if (i == KEY_TOUCH) 
+			if (keyCode == KEY_TOUCH) 
 			{
 				if (anyKeyPressed & keyCode)
 				{
