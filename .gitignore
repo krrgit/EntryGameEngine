@@ -69,3 +69,4 @@ vendor/c3d/
 lib_src/
 backups/
 bin-int/
+/Entry/vendor/GLFW
