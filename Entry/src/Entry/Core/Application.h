@@ -32,7 +32,7 @@ namespace Entry {
     private:
         uint16_t m_WindowCount = 2;
         Window* m_CurrentWindow;
-        std::vector<Scope<Window>> m_Windows;
+        std::array<Scope<Window>, 2> m_Windows;
         ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
         LayerStack m_LayerStack;

@@ -11,16 +11,24 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
--- IncludeDir["GLFW"] = "Entry/vendor/GLFW/include"
--- IncludeDir["Glad"] = "Entry/vendor/Glad/include"
-IncludeDir["ImGui"] = "Entry/vendor/imgui"
+IncludeDir["GLFW"] = "Entry/vendor/GLFW/include"
+IncludeDir["Glad"] = "Entry/vendor/Glad/include"
+IncludeDir["ImGui"] = "Entry/vendor/imgui-3ds/imgui"
 IncludeDir["fast_obj"] = "Entry/vendor/fast_obj"
--- IncludeDir["glm"] = "Entry/vendor/glm"
--- IncludeDir["stb_image"] = "Entry/vendor/stb_image"
+IncludeDir["glm"] = "Entry/vendor/glm"
+IncludeDir["stb_image"] = "Entry/vendor/stb_image"
+IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
+
+group "Dependencies"
+	include "Entry/vendor/GLFW"
+	-- include "Entry/vendor/Glad"
+	include "Entry/vendor/imgui-3ds"
+
+group ""
 
 project "Entry"
 	location "Entry"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -31,21 +39,37 @@ project "Entry"
 	
 	files 
 	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/*.h",
+		"%{prj.name}/src/*.cpp",
+		"%{prj.name}/src/Entry/**.h",
+		"%{prj.name}/src/Entry/**.cpp",
+		"%{prj.name}/src/Platform/OpenGL/**.h",
+		"%{prj.name}/src/Platform/OpenGL/**.cpp",
+		"%{prj.name}/src/Platform/Windows/**.h",
+		"%{prj.name}/src/Platform/Windows/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/spdlog/include/**.h"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-		-- "%{IncludeDir.GLFW}",
-		-- "%{IncludeDir.Glad}",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		-- "%{IncludeDir.glm}",
+		"%{IncludeDir.glm}",
 		"%{IncludeDir.fast_obj}",
+	}
+
+	links 
+	{
+		"GLFW",
+		-- "Glad",
+		"ImGui",
+		"opengl32.lib",
+		"dwmapi.lib"
 	}
 
 	filter "system:windows"
@@ -64,8 +88,17 @@ project "Entry"
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
 		}
 
-	filter { "system:windows", "files:Citro3D**.*"}
-  		flags { "ExcludeFromBuild"}
+	filter "files:../imgui_sw.cpp"
+		flags { "ExcludeFromBuild" }
+
+	filter "files:../imgui/imgui_sw.h"
+		flags { "ExcludeFromBuild" }
+
+	filter "files:../Log/LogLayer.cpp"
+		flags { "ExcludeFromBuild" }
+
+	filter "files:../Log/LogLayer.h"
+		flags { "ExcludeFromBuild" }
 
 	filter "configurations:Debug"
 		defines "ET_DEBUG"
@@ -86,6 +119,8 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -98,10 +133,11 @@ project "Sandbox"
 
 	includedirs
 	{
-		"Entry/vendor/spdlog/spdlog/include",
-		"Entry/vendor/spdlog/imgui-3ds/imgui",	
-		"Entry/vendor/spdlog/glm/glm",
-		"Entry/src"
+		"Entry/vendor/spdlog/include",
+		"Entry/src",
+		"Entry/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
 	}
 
 	links
@@ -110,8 +146,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++11"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines 

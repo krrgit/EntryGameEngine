@@ -31,6 +31,7 @@ namespace Entry {
 		EventCategoryScreen = BIT(4),
 		EventCategorySlider3D = BIT(5),
 		EventCategoryMouseButton = BIT(6),
+		EventCategoryMouse = BIT(7)
 	};
 
 	// for debugging purposes

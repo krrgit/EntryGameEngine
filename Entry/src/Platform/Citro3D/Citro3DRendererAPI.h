@@ -12,7 +12,6 @@ namespace Entry {
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount = 0) override;
 	private:
-		uint32_t m_ClearColor;
 		C3D_RenderTarget* m_RenderTarget;
 	};
 }

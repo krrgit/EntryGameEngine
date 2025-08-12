@@ -30,8 +30,6 @@ namespace Entry
         ET_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        m_Windows.resize(m_WindowCount);
-
         // App Settings (temporary)
         std::string windowNames[] = { "Top", "Bottom" };
         uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};

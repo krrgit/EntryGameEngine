@@ -2,6 +2,9 @@
 #include "OpenGLRendererAPI.h"
 
 #include"Entry/Core/Application.h"
+#include "Platform/Windows/WindowsWindow.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Entry {
 	void OpenGLRendererAPI::Init()
@@ -11,7 +14,7 @@ namespace Entry {
 
 	void OpenGLRendererAPI::SetClearColor(const uint32_t color)
 	{
-
+		static_cast<WindowsWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
 	}
 	
 	void OpenGLRendererAPI::Clear()

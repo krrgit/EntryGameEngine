@@ -65,63 +65,63 @@ namespace Entry {
 
 	void Renderer3D::Init()
 	{
-        ET_PROFILE_FUNCTION();
-
-        uint16_t quadIndices[s_Data.MaxIndices];
-
-        uint16_t offset = 0;
-        for (uint16_t i = 0; i < s_Data.MaxIndices; i += 6)
-        {
-            quadIndices[i + 0] = offset + 0;
-            quadIndices[i + 1] = offset + 1;
-            quadIndices[i + 2] = offset + 2;
-
-            quadIndices[i + 3] = offset + 2;
-            quadIndices[i + 4] = offset + 3;
-            quadIndices[i + 5] = offset + 0;
-
-            offset += 4;
-        }
-
-        std::shared_ptr<IndexBuffer> squareIB;
-        squareIB.reset(IndexBuffer::Create(quadIndices, s_Data.MaxIndices));
-
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
-            RenderBatch* batch = &s_Data.RenderBatches[i];
-            batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
-            batch->QuadVertexBuffer->SetLayout({
-                { ShaderDataType::Float3, "a_Position" },
-                { ShaderDataType::Float4, "a_Color" },
-                { ShaderDataType::Float2, "a_TexCoord" }
-                });
-            batch->QuadVertexArray = VertexArray::Create();
-            batch->QuadVertexArray->AddVertexBuffer(batch->QuadVertexBuffer);
-            batch->VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-            batch->QuadVertexArray->SetIndexBuffer(squareIB);
-        }
-
-#ifdef ET_PLATFORM_3DS
-        // SHADERS
-        s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
-        s_Data.TextureShader->Bind();
-        s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
-        s_Data.NormalColorShader.reset(Shader::Create(normalcolorshader_shbin, normalcolorshader_shbin_size));
-#endif // ET_PLATFORM_3DS
-
-
-        // CREATE WHITE TEXTURE
-        {
-            ET_PROFILE_SCOPE("Create 8x8 White Texture");
-            // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
-            s_Data.WhiteTexture = Texture2D::Create(8, 8);
-            uint32_t whiteTextureData[8 * 8];
-            std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
-            s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-            s_Data.WhiteTexture->Bind(0);
-        }
-
-        // Set first texture slot to 0
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
+//        ET_PROFILE_FUNCTION();
+//
+//        uint16_t quadIndices[s_Data.MaxIndices];
+//
+//        uint16_t offset = 0;
+//        for (uint16_t i = 0; i < s_Data.MaxIndices; i += 6)
+//        {
+//            quadIndices[i + 0] = offset + 0;
+//            quadIndices[i + 1] = offset + 1;
+//            quadIndices[i + 2] = offset + 2;
+//
+//            quadIndices[i + 3] = offset + 2;
+//            quadIndices[i + 4] = offset + 3;
+//            quadIndices[i + 5] = offset + 0;
+//
+//            offset += 4;
+//        }
+//
+//        std::shared_ptr<IndexBuffer> squareIB;
+//        squareIB.reset(IndexBuffer::Create(quadIndices, s_Data.MaxIndices));
+//
+//        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
+//            RenderBatch* batch = &s_Data.RenderBatches[i];
+//            batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
+//            batch->QuadVertexBuffer->SetLayout({
+//                { ShaderDataType::Float3, "a_Position" },
+//                { ShaderDataType::Float4, "a_Color" },
+//                { ShaderDataType::Float2, "a_TexCoord" }
+//                });
+//            batch->QuadVertexArray = VertexArray::Create();
+//            batch->QuadVertexArray->AddVertexBuffer(batch->QuadVertexBuffer);
+//            batch->VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+//            batch->QuadVertexArray->SetIndexBuffer(squareIB);
+//        }
+//
+//#ifdef ET_PLATFORM_3DS
+//        // SHADERS
+//        s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
+//        s_Data.TextureShader->Bind();
+//        s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
+//        s_Data.NormalColorShader.reset(Shader::Create(normalcolorshader_shbin, normalcolorshader_shbin_size));
+//#endif // ET_PLATFORM_3DS
+//
+//
+//        // CREATE WHITE TEXTURE
+//        {
+//            ET_PROFILE_SCOPE("Create 8x8 White Texture");
+//            // Minimum texture size is 8 x 8 for C3D. Anything smaller doesn't show up.
+//            s_Data.WhiteTexture = Texture2D::Create(8, 8);
+//            uint32_t whiteTextureData[8 * 8];
+//            std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
+//            s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+//            s_Data.WhiteTexture->Bind(0);
+//        }
+//
+//        // Set first texture slot to 0
+//        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
 	}
 
 	void Renderer3D::Shutdown()
@@ -131,22 +131,22 @@ namespace Entry {
 
     void Renderer3D::BeginScene(const PerspectiveCamera& camera, uint16_t screenSide)
     {
-        ET_PROFILE_FUNCTION();
+        //ET_PROFILE_FUNCTION();
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
+        //s_Data.TextureShader->Bind();
+        //s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
 
-        //s_Data.WhiteTexture->Bind(0);
+        ////s_Data.WhiteTexture->Bind(0);
 
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
-            s_Data.RenderBatches[i].IndexCount = 0;
-            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
-            s_Data.RenderBatches[i].BatchTexture = nullptr;
-        }
+        //for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
+        //    s_Data.RenderBatches[i].IndexCount = 0;
+        //    s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
+        //    s_Data.RenderBatches[i].BatchTexture = nullptr;
+        //}
 
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
-        s_Data.IndexCount = 0;
-        s_Data.BatchSlotIndex = 1;
+        //s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
+        //s_Data.IndexCount = 0;
+        //s_Data.BatchSlotIndex = 1;
     }
 
     void Renderer3D::EndScene()
@@ -158,21 +158,21 @@ namespace Entry {
 
     void Renderer3D::Flush()
     {
-        ET_PROFILE_FUNCTION();
+        //ET_PROFILE_FUNCTION();
 
-        // TODO: maybe set TexEnv here?
-        for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
-            RenderBatch* batch = &s_Data.RenderBatches[i];
-            uint32_t dataSize = (uint8_t*)batch->VertexBufferPtr - (uint8_t*)batch->VertexBufferBase;
-            if (dataSize == 0) continue;
-            batch->QuadVertexBuffer->SetData(batch->VertexBufferBase, dataSize);
+        //// TODO: maybe set TexEnv here?
+        //for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
+        //    RenderBatch* batch = &s_Data.RenderBatches[i];
+        //    uint32_t dataSize = (uint8_t*)batch->VertexBufferPtr - (uint8_t*)batch->VertexBufferBase;
+        //    if (dataSize == 0) continue;
+        //    batch->QuadVertexBuffer->SetData(batch->VertexBufferBase, dataSize);
 
-            batch->QuadVertexArray->Bind();
-            batch->BatchTexture->Bind(0);
-            RenderCommand::DrawIndexed(batch->QuadVertexArray, batch->IndexCount);
+        //    batch->QuadVertexArray->Bind();
+        //    batch->BatchTexture->Bind(0);
+        //    RenderCommand::DrawIndexed(batch->QuadVertexArray, batch->IndexCount);
 
-            s_Data.Stats.DrawCalls++;
-        }
+        //    s_Data.Stats.DrawCalls++;
+        //}
     }
 
 	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)

@@ -2,6 +2,7 @@
 #include "etpch.h"
 #include "Core.h"
 
+// Define in client to use
 extern Entry::Application* Entry::CreateApplication();
 
 int main(int argc, char** argv) 

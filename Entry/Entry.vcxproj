@@ -23,19 +23,19 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -54,32 +54,30 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Debug-windows-x86_64\Entry\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Debug-windows-x86_64\Entry\</IntDir>
     <TargetName>Entry</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Release-windows-x86_64\Entry\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Release-windows-x86_64\Entry\</IntDir>
     <TargetName>Entry</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\Dist-windows-x86_64\Entry\</OutDir>
     <IntDir>$(ProjectDir)..\bin-int\Dist-windows-x86_64\Entry\</IntDir>
     <TargetName>Entry</TargetName>
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -88,18 +86,21 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>..\bin\Debug-windows-x86_64\Entry\Entry.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Entry\Entry.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Entry\Entry.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Entry\Entry.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Entry\Entry.lib\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Entry\Entry.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Entry\Entry.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -113,18 +114,21 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ImportLibrary>..\bin\Release-windows-x86_64\Entry\Entry.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Entry\Entry.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Entry\Entry.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Entry\Entry.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Entry\Entry.lib\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Entry\Entry.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Entry\Entry.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -137,14 +141,15 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ImportLibrary>..\bin\Dist-windows-x86_64\Entry\Entry.lib</ImportLibrary>
     </Link>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Entry\Entry.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Entry\Entry.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Entry\Entry.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Entry\Entry.lib\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Entry\Entry.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Entry\Entry.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Entry.h" />
     <ClInclude Include="src\Entry\Core\Application.h" />
     <ClInclude Include="src\Entry\Core\Config.h" />
@@ -165,7 +170,6 @@
     <ClInclude Include="src\Entry\Events\ScreenEvent.h" />
     <ClInclude Include="src\Entry\Events\Slider3DEvent.h" />
     <ClInclude Include="src\Entry\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Entry\Log\LogLayer.h" />
     <ClInclude Include="src\Entry\Renderer\Buffer.h" />
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Entry\Renderer\Mesh.h" />
@@ -179,9 +183,10 @@
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
-    <ClInclude Include="src\etpch.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\etpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -598,16 +603,112 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imconfig.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imgui.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_internal.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imgui_single_file.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_rectpack.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_textedit.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\imstb_truetype.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\stb_rect_pack.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\stb_textedit.h" />
-    <ClInclude Include="vendor\imgui-3ds\imgui\stb_truetype.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\async.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\async_logger-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\async_logger.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\cfg\argv.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\cfg\env.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\cfg\helpers-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\cfg\helpers.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\common-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\common.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\backtracer-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\backtracer.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\circular_q.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\console_globals.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\file_helper-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\file_helper.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\fmt_helper.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\log_msg-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\log_msg.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\log_msg_buffer-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\log_msg_buffer.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\mpmc_blocking_q.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\null_mutex.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\os-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\os.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\periodic_worker-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\periodic_worker.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\registry-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\registry.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\synchronous_factory.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\tcp_client-windows.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\tcp_client.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\thread_pool-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\thread_pool.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\udp_client-windows.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\udp_client.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\details\windows_include.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bin_to_hex.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\args.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\chrono.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\color.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\compile.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\core.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\format-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\format.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\locale.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\os.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\ostream.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\printf.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\ranges.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\std.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\bundled\xchar.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\chrono.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\compile.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\fmt.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\ostr.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\ranges.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\std.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fmt\xchar.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\formatter.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\fwd.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\logger-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\logger.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\pattern_formatter-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\pattern_formatter.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\android_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\ansicolor_sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\ansicolor_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\base_sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\base_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\basic_file_sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\basic_file_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\callback_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\daily_file_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\dist_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\dup_filter_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\hourly_file_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\kafka_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\mongo_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\msvc_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\null_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\ostream_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\qt_sinks.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\ringbuffer_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\rotating_file_sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\rotating_file_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\stdout_color_sinks-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\stdout_color_sinks.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\stdout_sinks-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\stdout_sinks.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\syslog_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\systemd_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\tcp_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\udp_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\win_eventlog_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\wincolor_sink-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\sinks\wincolor_sink.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\spdlog-inl.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\spdlog.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\stopwatch.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\tweakme.h" />
+    <ClInclude Include="vendor\spdlog\include\spdlog\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp" />
@@ -615,7 +716,6 @@
     <ClCompile Include="src\Entry\Core\LayerStack.cpp" />
     <ClCompile Include="src\Entry\Core\Log.cpp" />
     <ClCompile Include="src\Entry\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Entry\Log\LogLayer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Mesh.cpp" />
@@ -631,15 +731,20 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
-    <ClCompile Include="src\etpch.cpp" />
-    <ClCompile Include="vendor\imgui-3ds\imgui\imgui.cpp" />
-    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_demo.cpp" />
-    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_draw.cpp" />
-    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_tables.cpp" />
-    <ClCompile Include="vendor\imgui-3ds\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\etpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui-3ds\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Entry.rc" />
+    <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
+      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\imgui-3ds\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

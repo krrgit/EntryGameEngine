@@ -2,7 +2,7 @@
 #include <Entry/Core/EntryPoint.h>
 #include <Entry/Core/Config.h>
 
-#include <Platform/Citro3D/Citro3DShader.h>
+//#include <Platform/Citro3D/Citro3DShader.h>
 
 #include "imgui.h"
 
@@ -10,14 +10,14 @@
 
 #include "Sandbox3D.h"
 
-// Compiled Shader Headers
-#include "vshader00_shbin.h"
-#include "vshader01_shbin.h"
-#include "vshader02_shbin.h"
-
-// Texture Headers
-#include "Checkerboard_t3x.h"
-#include "EntryLogo_t3x.h"
+//// Compiled Shader Headers
+//#include "vshader00_shbin.h"
+//#include "vshader01_shbin.h"
+//#include "vshader02_shbin.h"
+//
+//// Texture Headers
+//#include "Checkerboard_t3x.h"
+//#include "EntryLogo_t3x.h"
 
 
 class ExampleLayer : public Entry::Layer
@@ -26,100 +26,100 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_CameraController(1.0f)
 	{
-        m_Shader.reset(Entry::Shader::Create(vshader00_shbin, vshader00_shbin_size));
+        //m_Shader.reset(Entry::Shader::Create(vshader00_shbin, vshader00_shbin_size));
 
-        m_VertexArray = Entry::VertexArray::Create();
+        //m_VertexArray = Entry::VertexArray::Create();
 
-        float vertices[] = {
-            0.0f,  0.5f,  0.2f, 0.8f, 0.8f, 0.2f, 1.0f,
-            -0.5f, -0.5f, 0.2f, 0.8f, 0.2f, 0.8f, 1.0f,
-            0.5f,  -0.5f, 0.2f, 0.2f, 0.2f, 0.8f, 1.0f,
-        };
+        //float vertices[] = {
+        //    0.0f,  0.5f,  0.2f, 0.8f, 0.8f, 0.2f, 1.0f,
+        //    -0.5f, -0.5f, 0.2f, 0.8f, 0.2f, 0.8f, 1.0f,
+        //    0.5f,  -0.5f, 0.2f, 0.2f, 0.2f, 0.8f, 1.0f,
+        //};
 
-        m_VertexBuffer.reset(Entry::VertexBuffer::Create(vertices, sizeof(vertices)));
+        //m_VertexBuffer.reset(Entry::VertexBuffer::Create(vertices, sizeof(vertices)));
 
-        m_VertexBuffer->SetLayout({
-            {Entry::ShaderDataType::Float3, "a_Position"},
-            {Entry::ShaderDataType::Float4, "a_Color"}
-            });
+        //m_VertexBuffer->SetLayout({
+        //    {Entry::ShaderDataType::Float3, "a_Position"},
+        //    {Entry::ShaderDataType::Float4, "a_Color"}
+        //    });
 
-        m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+        //m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-        uint16_t indices[] = { 0, 1, 2 };
-        m_IndexBuffer.reset(Entry::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
+        //uint16_t indices[] = { 0, 1, 2 };
+        //m_IndexBuffer.reset(Entry::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint16_t)));
 
-        m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-
-
-        m_SquareVA = Entry::VertexArray::Create();
-
-        float squareVertices[5 * 4] =
-        {
-           -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-           -0.5f,  0.5f,  0.0f, 0.0f, 1.0f
-        };
-
-        std::shared_ptr<Entry::VertexBuffer> squareVB;
-        squareVB.reset(Entry::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-
-        squareVB->SetLayout({
-            { Entry::ShaderDataType::Float3, "a_Position" },
-            { Entry::ShaderDataType::Float2, "a_TexCoord" }
-            });
-        m_SquareVA->AddVertexBuffer(squareVB);
-
-        m_FlatColor.reset(Entry::Shader::Create(vshader01_shbin, vshader01_shbin_size));
-
-        u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-        std::shared_ptr<Entry::IndexBuffer> squareIB;
-        squareIB.reset(Entry::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
-        m_SquareVA->SetIndexBuffer(squareIB);
+        //m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 
 
-        m_FloorVA = Entry::VertexArray::Create();
+        //m_SquareVA = Entry::VertexArray::Create();
 
-        float floorVertices[4 * 3] =
-        {
-           5.0f, -0.75f,  5.0f,
-          -5.0f, -0.75f,  5.0f,
-          -5.0f, -0.75f, -5.0f,
-           5.0f, -0.75f, -5.0f,
-        };
+        //float squareVertices[5 * 4] =
+        //{
+        //   -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+        //    0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        //    0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+        //   -0.5f,  0.5f,  0.0f, 0.0f, 1.0f
+        //};
+
+        //std::shared_ptr<Entry::VertexBuffer> squareVB;
+        //squareVB.reset(Entry::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+
+        //squareVB->SetLayout({
+        //    { Entry::ShaderDataType::Float3, "a_Position" },
+        //    { Entry::ShaderDataType::Float2, "a_TexCoord" }
+        //    });
+        //m_SquareVA->AddVertexBuffer(squareVB);
+
+        //m_FlatColor.reset(Entry::Shader::Create(vshader01_shbin, vshader01_shbin_size));
+
+        //u16 squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+        //std::shared_ptr<Entry::IndexBuffer> squareIB;
+        //squareIB.reset(Entry::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint16_t)));
+        //m_SquareVA->SetIndexBuffer(squareIB);
 
 
-        std::shared_ptr<Entry::VertexBuffer> floorVB;
-        floorVB.reset(Entry::VertexBuffer::Create(floorVertices, sizeof(floorVertices)));
 
-        floorVB->SetLayout({
-            { Entry::ShaderDataType::Float3, "a_Position" }
-            });
-        m_FloorVA->AddVertexBuffer(floorVB);
+        //m_FloorVA = Entry::VertexArray::Create();
 
-        u16 floorIndices[6] = { 0, 1, 2, 2, 3, 0 };
-        std::shared_ptr<Entry::IndexBuffer> floorIB;
-        floorIB.reset(Entry::IndexBuffer::Create(floorIndices, sizeof(floorIndices) / sizeof(uint16_t)));
-        m_FloorVA->SetIndexBuffer(floorIB);
+        //float floorVertices[4 * 3] =
+        //{
+        //   5.0f, -0.75f,  5.0f,
+        //  -5.0f, -0.75f,  5.0f,
+        //  -5.0f, -0.75f, -5.0f,
+        //   5.0f, -0.75f, -5.0f,
+        //};
 
 
-        m_TextureShader.reset(Entry::Shader::Create(vshader02_shbin, vshader02_shbin_size));
-        m_Texture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
-        m_Texture->Bind();
+        //std::shared_ptr<Entry::VertexBuffer> floorVB;
+        //floorVB.reset(Entry::VertexBuffer::Create(floorVertices, sizeof(floorVertices)));
 
-        m_EntryLogo = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
+        //floorVB->SetLayout({
+        //    { Entry::ShaderDataType::Float3, "a_Position" }
+        //    });
+        //m_FloorVA->AddVertexBuffer(floorVB);
 
-        // Configure the first fragment shading substage to just pass through the vertex color
-        // See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
-        C3D_TexEnv* env = C3D_GetTexEnv(0);
-        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+        //u16 floorIndices[6] = { 0, 1, 2, 2, 3, 0 };
+        //std::shared_ptr<Entry::IndexBuffer> floorIB;
+        //floorIB.reset(Entry::IndexBuffer::Create(floorIndices, sizeof(floorIndices) / sizeof(uint16_t)));
+        //m_FloorVA->SetIndexBuffer(floorIB);
 
-        env = C3D_GetTexEnv(1);
-        C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-        C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+
+        //m_TextureShader.reset(Entry::Shader::Create(vshader02_shbin, vshader02_shbin_size));
+        //m_Texture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
+        //m_Texture->Bind();
+
+        //m_EntryLogo = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
+
+        //// Configure the first fragment shading substage to just pass through the vertex color
+        //// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
+        //C3D_TexEnv* env = C3D_GetTexEnv(0);
+        //C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+        //C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
+
+        //env = C3D_GetTexEnv(1);
+        //C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+        //C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
 	void OnUpdate(Entry::Timestep ts, uint16_t screenSide)

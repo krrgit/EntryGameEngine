@@ -1,3 +1,6 @@
 [submodule "Entry/vendor/glm"]
 	path = Entry/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Entry/vendor/imgui"]
+	path = Entry/vendor/imgui
+	url = https://github.com/krrgit/imgui
