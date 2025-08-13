@@ -165,6 +165,7 @@
     <ClInclude Include="src\Entry\Core\Window.h" />
     <ClInclude Include="src\Entry\Debug\Instrumentor.h" />
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Entry\Events\ButtonEvent.h" />
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h" />
     <ClInclude Include="src\Entry\Events\Event.h" />
     <ClInclude Include="src\Entry\Events\KeyEvent.h" />

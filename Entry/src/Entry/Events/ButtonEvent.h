@@ -1,5 +1,5 @@
 #pragma once
-
+#include "etpch.h"
 #include "Event.h"
 
 namespace Entry {
@@ -7,7 +7,7 @@ namespace Entry {
 	class ButtonEvent : public Event
 	{
 	public:
-		inline uint32_t GetButtonCode() const { return m_ButtonCode; }
+		inline uint32_t GetKeyCode() const { return m_ButtonCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryButton | EventCategoryInput)
 	protected:

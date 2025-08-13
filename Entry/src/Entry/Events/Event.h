@@ -19,8 +19,9 @@ namespace Entry {
 		AppTick, AppUpdate, AppRender,
 		ButtonPressed, ButtonReleased, CStickPressed, CStickReleased,
 		CirclePadMoved, ScreenTouched, Slider3DMoved,
+		// Windows Events
 		MouseMoved, MouseScrolled, MouseButtonPressed, MouseButtonReleased,
-		KeyPressed, KeyReleased
+		KeyPressed, KeyReleased, KeyTyped
 	};
 
 	enum EventCategory

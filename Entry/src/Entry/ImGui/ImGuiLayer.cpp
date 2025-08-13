@@ -83,7 +83,7 @@ namespace Entry {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<ScreenTouchedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenTouchedEvent));
-		dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<ButtonPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnButtonPressedEvent));
 		// Touch Doesn't work properly when ScreenReleasedEvent implemented
 		//dispatcher.Dispatch<ScreenReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenReleasedEvent));
 		//dispatcher.Dispatch<KeyReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
@@ -124,13 +124,13 @@ namespace Entry {
 	{
 		return false;
 	}
-	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+	bool ImGuiLayer::OnButtonPressedEvent(ButtonPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddKeyEvent(MapKeyCodeToImGuiNavInput(e.GetKeyCode()), true);
 		return false;
 	}
-	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
+	bool ImGuiLayer::OnButtonReleasedEvent(ButtonReleasedEvent& e)
 	{
 		return false;
 	}
@@ -143,6 +143,8 @@ namespace Entry {
 #endif
 
 #ifdef ET_PLATFORM_WINDOWS
+#include "Entry/Events/ApplicationEvent.h"
+
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 
@@ -207,13 +209,6 @@ namespace Entry
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnEvent(Event& e)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-		e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-	}
-
 	void ImGuiLayer::Begin(Timestep ts)
 	{
 		ET_PROFILE_FUNCTION();
@@ -244,19 +239,96 @@ namespace Entry
 		}
 	}
 
+	void ImGuiLayer::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<MouseButtonPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
+		dispatcher.Dispatch<MouseMovedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
+		dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
+		dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+		dispatcher.Dispatch<KeyTypedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+		dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
+	}
+
+	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[(int)e.GetMouseButton()] = true;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[(int)e.GetMouseButton()] = false;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2(e.GetX(), e.GetY());
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += e.GetXOffset();
+		io.MouseWheel += e.GetYOffset();
+
+		return false;
+	}
+
+
+	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		int keycode = e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN;
+		io.KeysData[keycode].Down = true;
+
+		io.KeyCtrl  = io.KeysData[GLFW_KEY_LEFT_CONTROL].Down || io.KeysData[GLFW_KEY_RIGHT_CONTROL].Down;
+		io.KeyShift = io.KeysData[GLFW_KEY_LEFT_SHIFT].Down || io.KeysData[GLFW_KEY_RIGHT_SHIFT].Down;
+		io.KeyAlt   = io.KeysData[GLFW_KEY_LEFT_ALT].Down || io.KeysData[GLFW_KEY_RIGHT_ALT].Down;
+		io.KeySuper = io.KeysData[GLFW_KEY_LEFT_SUPER].Down || io.KeysData[GLFW_KEY_RIGHT_SUPER].Down;
+ 		return false;
+	}
+
+	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysData[e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN].Down = false;
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		int keycode = e.GetKeyCode();
+		if (keycode > 0 && keycode < 0x10000)
+			io.AddInputCharacter((unsigned short)keycode);
+		
+		return false;
+	}
+
+	bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
+		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+		return false;
+	}
+
 	bool ImGuiLayer::OnScreenTouchedEvent(ScreenTouchedEvent& e)
 	{
 		return false;
 	}
 	bool ImGuiLayer::OnScreenReleasedEvent(ScreenReleasedEvent& e)
-	{
-		return false;
-	}
-	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
-	{
-		return false;
-	}
-	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
 	{
 		return false;
 	}
