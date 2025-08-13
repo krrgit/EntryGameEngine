@@ -2,8 +2,9 @@
 
 #include "Event.h"
 
+// Windows Keyboard Input
 namespace Entry {
-
+	
 	class KeyEvent : public Event
 	{
 	public:
@@ -27,10 +28,9 @@ namespace Entry {
 
 		std::string ToString() const override
 		{
-			std::string result = "KeyPressedEvent: ";
-			result += keysNames[m_KeyCode];
-			result += " (" + std::to_string(m_RepeatCount) + " repeats)";
-			return result;
+			std::stringstream ss;
+			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyPressed)
@@ -46,9 +46,9 @@ namespace Entry {
 
 		std::string ToString() const override
 		{
-			std::string result = "KeyReleasedEvent: ";
-			result += keysNames[m_KeyCode];
-			return result;
+			std::stringstream ss;
+			ss << "KeyReleasedEvent: " << m_KeyCode;
+			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyReleased)

@@ -1,7 +1,12 @@
 #pragma once
 
 #include "Entry/Core/Core.h"
-#include "KeyCodes.h"
+#include "Entry/Core/KeyCodes.h"
+
+#ifdef ET_PLATFORM_WINDOWS
+#include "Entry/Core/MouseCodes.h"
+#endif // ET_PLATFORM_WINDOWS
+
 #include <glm/glm.hpp>
 
 namespace Entry {

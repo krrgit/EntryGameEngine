@@ -17,8 +17,10 @@ namespace Entry {
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
-		KeyPressed, KeyReleased, CStickPressed, CStickReleased,
-		CirclePadMoved, ScreenTouched, Slider3DMoved
+		ButtonPressed, ButtonReleased, CStickPressed, CStickReleased,
+		CirclePadMoved, ScreenTouched, Slider3DMoved,
+		MouseMoved, MouseScrolled, MouseButtonPressed, MouseButtonReleased,
+		KeyPressed, KeyReleased
 	};
 
 	enum EventCategory
@@ -26,16 +28,17 @@ namespace Entry {
 		None = 0,
 		EventCategoryApplication = BIT(0),
 		EventCategoryInput = BIT(1),
-		EventCategoryKeyboard = BIT(2),
+		EventCategoryButton = BIT(2),
 		EventCategoryCirclePad = BIT(3),
 		EventCategoryScreen = BIT(4),
 		EventCategorySlider3D = BIT(5),
 		EventCategoryMouseButton = BIT(6),
-		EventCategoryMouse = BIT(7)
+		EventCategoryMouse = BIT(7),
+		EventCategoryKeyboard = BIT(8)
 	};
 
 	// for debugging purposes
-	const std::string keysNames[32] = {
+	const std::string buttonNames[32] = {
 		"KEY_A", "KEY_B", "KEY_SELECT", "KEY_START",
 		"KEY_DRIGHT", "KEY_DLEFT", "KEY_DUP", "KEY_DDOWN",
 		"KEY_R", "KEY_L", "KEY_X", "KEY_Y",
@@ -46,7 +49,7 @@ namespace Entry {
 		"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
 	};
 
-#define ALL_KEYS_COUNT 32
+#define ALL_BUTTONS_COUNT 32
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); }\

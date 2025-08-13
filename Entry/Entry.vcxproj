@@ -160,6 +160,7 @@
     <ClInclude Include="src\Entry\Core\Layer.h" />
     <ClInclude Include="src\Entry\Core\LayerStack.h" />
     <ClInclude Include="src\Entry\Core\Log.h" />
+    <ClInclude Include="src\Entry\Core\MouseCodes.h" />
     <ClInclude Include="src\Entry\Core\Timestep.h" />
     <ClInclude Include="src\Entry\Core\Window.h" />
     <ClInclude Include="src\Entry\Debug\Instrumentor.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h" />
     <ClInclude Include="src\Entry\Events\Event.h" />
     <ClInclude Include="src\Entry\Events\KeyEvent.h" />
+    <ClInclude Include="src\Entry\Events\MouseEvent.h" />
     <ClInclude Include="src\Entry\Events\ScreenEvent.h" />
     <ClInclude Include="src\Entry\Events\Slider3DEvent.h" />
     <ClInclude Include="src\Entry\ImGui\ImGuiLayer.h" />

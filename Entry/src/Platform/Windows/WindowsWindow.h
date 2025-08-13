@@ -38,8 +38,6 @@ namespace Entry
 
 		inline virtual void* GetNativeWindow() const { return m_Window; }
 
-		//C3D_RenderTarget* const GetRenderTarget() { return m_RenderTarget; }
-
 		void SetClearColor(uint32_t color);
 	private:
 		virtual void Init(const WindowProps& props);

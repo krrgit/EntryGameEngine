@@ -1755,6 +1755,8 @@
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\Entry\Events\MouseEvent.h" />
+    <ClInclude Include="src\Entry\Core\MouseCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">

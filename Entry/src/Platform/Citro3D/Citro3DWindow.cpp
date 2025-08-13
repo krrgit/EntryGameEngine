@@ -2,8 +2,8 @@
 #include "Citro3DWindow.h"
 
 #include "Entry/Events/ApplicationEvent.h"
+#include "Entry/Events/ButtonEvent.h"
 #include "Entry/Events/ScreenEvent.h"
-#include "Entry/Events/KeyEvent.h"
 #include "Entry/Events/CirclePadEvent.h"
 #include "Entry/Events/Slider3DEvent.h"
 
@@ -136,7 +136,6 @@ namespace Entry
 	{
 		if (!hasEventCallback) return;
 
-		hidScanInput();
 		TriggerEvents();
 	}
 
@@ -197,32 +196,34 @@ namespace Entry
 	}
 
 	void Citro3DWindow::TriggerEvents() {
-		anyKeyPressed = hidKeysDown();
-		anyKeyHeld = hidKeysHeld();
-		anyKeyReleased = hidKeysUp();
+		hidScanInput();
+
+		anyButtonPressed = hidKeysDown();
+		anyButtonHeld = hidKeysHeld();
+		anyButtonReleased = hidKeysUp();
 		m_Slider3DState = osGet3DSliderState();
 
 		//Check if some of the keys are down, held or up
 		uint8_t i;
 		uint32_t keyCode;
-		for (i = 0; i < ALL_KEYS_COUNT; i++)
+		for (i = 0; i < ALL_BUTTONS_COUNT; i++)
 		{
 			keyCode = BIT(i);
 			if (keyCode == KEY_TOUCH) 
 			{
-				if (anyKeyPressed & keyCode)
+				if (anyButtonPressed & keyCode)
 				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
 
-				} else if (anyKeyHeld & keyCode)
+				} else if (anyButtonHeld & keyCode)
 				{
 					hidTouchRead(&touchPos);
 					ScreenTouchedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
 
-				} else if (anyKeyReleased & keyCode)
+				} else if (anyButtonReleased & keyCode)
 				{
 					ScreenReleasedEvent event(touchPos.px, touchPos.py);
 					m_Data.EventCallback(event);
@@ -231,19 +232,19 @@ namespace Entry
 				continue;
 			}
 
-			if (anyKeyPressed & keyCode)
+			if (anyButtonPressed & keyCode)
 			{
-				KeyPressedEvent event(keyCode, 0);
+				ButtonPressedEvent event(keyCode, 0);
 				m_Data.EventCallback(event);
 			}
 
-			if (anyKeyHeld & keyCode) {
-				KeyPressedEvent event(keyCode, 1);
+			if (anyButtonHeld & keyCode) {
+				ButtonPressedEvent event(keyCode, 1);
 				m_Data.EventCallback(event);
 			}
 
-			if (anyKeyReleased & keyCode) {
-				KeyReleasedEvent event(keyCode);
+			if (anyButtonReleased & keyCode) {
+				ButtonReleasedEvent event(keyCode);
 				m_Data.EventCallback(event);
 			}
 		}

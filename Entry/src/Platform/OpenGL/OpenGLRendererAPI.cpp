@@ -19,6 +19,7 @@ namespace Entry {
 	
 	void OpenGLRendererAPI::Clear()
 	{
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)

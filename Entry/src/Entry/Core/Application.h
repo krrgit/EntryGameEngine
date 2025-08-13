@@ -29,6 +29,10 @@ namespace Entry {
         inline Window& GetWindow() { return *m_CurrentWindow; }
 
         void Close();
+#ifdef ET_PLATFORM_WINDOWS
+    private:
+        bool OnWindowClose(WindowCloseEvent& e);
+#endif // ET_PLATFORM_WINDOWS
     private:
         uint16_t m_WindowCount = 2;
         Window* m_CurrentWindow;

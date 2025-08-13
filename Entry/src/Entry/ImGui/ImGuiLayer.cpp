@@ -23,16 +23,16 @@ namespace Entry {
 
 	static ImGuiKey MapKeyCodeToImGuiNavInput(uint32_t keycode) {
 		switch (keycode) {
-		case ET_KEY_A:			return ImGuiKey_GamepadFaceRight;
-		case ET_KEY_B:			return ImGuiKey_GamepadFaceDown;
-		case ET_KEY_Y:			return ImGuiKey_GamepadFaceLeft;
-		case ET_KEY_X:			return ImGuiKey_GamepadFaceUp;
-		case ET_KEY_DLEFT:		return ImGuiKey_GamepadDpadLeft;
-		case ET_KEY_DRIGHT:		return ImGuiKey_GamepadDpadRight;
-		case ET_KEY_DUP:		return ImGuiKey_GamepadDpadUp;
-		case ET_KEY_DDOWN:		return ImGuiKey_GamepadDpadDown;
-		case ET_KEY_L:			return ImGuiKey_GamepadL1;
-		case ET_KEY_R:			return ImGuiKey_GamepadR1;
+		case ET_BTN_A:			return ImGuiKey_GamepadFaceRight;
+		case ET_BTN_B:			return ImGuiKey_GamepadFaceDown;
+		case ET_BTN_Y:			return ImGuiKey_GamepadFaceLeft;
+		case ET_BTN_X:			return ImGuiKey_GamepadFaceUp;
+		case ET_BTN_DLEFT:		return ImGuiKey_GamepadDpadLeft;
+		case ET_BTN_DRIGHT:		return ImGuiKey_GamepadDpadRight;
+		case ET_BTN_DUP:		return ImGuiKey_GamepadDpadUp;
+		case ET_BTN_DDOWN:		return ImGuiKey_GamepadDpadDown;
+		case ET_BTN_L:			return ImGuiKey_GamepadL1;
+		case ET_BTN_R:			return ImGuiKey_GamepadR1;
 		default:
 			break;
 		}
