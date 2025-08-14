@@ -2,6 +2,7 @@
 
 #include "Entry/Core/Window.h"
 #include "Entry/Core/LayerStack.h"
+#include "Platform/Windows/GraphicsContext.h"
 
 #include "glm/glm.hpp"
 
@@ -38,7 +39,7 @@ namespace Entry
 
 		inline virtual void* GetNativeWindow() const { return m_Window; }
 
-		void SetClearColor(uint32_t color);
+		//void SetClearColor(uint32_t color);
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
@@ -48,6 +49,7 @@ namespace Entry
 
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 		LayerStack m_LayerStack;
 		bool hasEventCallback;
 

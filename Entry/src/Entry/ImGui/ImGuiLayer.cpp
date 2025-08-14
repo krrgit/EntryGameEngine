@@ -150,6 +150,8 @@ namespace Entry {
 
 // TEMPORARY
 #include <GLFW/glfw3.h>
+#include <Glad/glad.h>
+
 
 namespace Entry
 {

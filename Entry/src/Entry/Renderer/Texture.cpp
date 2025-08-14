@@ -14,6 +14,7 @@ namespace Entry {
 #ifdef ET_PLATFORM_3DS
 		case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(width, height));
 #endif
+		default: return nullptr;
 		}
 
 		return nullptr;
@@ -26,6 +27,7 @@ namespace Entry {
 #ifdef ET_PLATFORM_3DS
 		case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(data, size));
 #endif
+		default: return nullptr;
 		}
 
 		return nullptr;

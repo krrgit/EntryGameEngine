@@ -12,10 +12,11 @@ namespace Entry
     VertexBuffer* VertexBuffer::Create(uint32_t size)
     {
         switch (Renderer::GetAPI()) {
-        case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+            case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 #ifdef ET_PLATFORM_3DS
-        case RendererAPI::API::Citro3D:  return new Citro3DVertexBuffer(size);
+            case RendererAPI::API::Citro3D:  return new Citro3DVertexBuffer(size);
 #endif // ET_PLATFORM_3DS
+            default: return nullptr;
         }
 
         return nullptr;
@@ -29,6 +30,8 @@ namespace Entry
 #ifdef ET_PLATFORM_3DS
         case RendererAPI::API::Citro3D:  return new Citro3DVertexBuffer(vertices, size);
 #endif
+        default: return nullptr;
+
         }
 
         return nullptr;
@@ -37,10 +40,11 @@ namespace Entry
     IndexBuffer* IndexBuffer::Create(uint16_t* indices, uint16_t count)
     {
         switch (Renderer::GetAPI()) {
-        case RendererAPI::API::None:     return nullptr;
+            case RendererAPI::API::None:     return nullptr;
 #ifdef ET_PLATFORM_3DS
-        case RendererAPI::API::Citro3D:  return new Citro3DIndexBuffer(indices, count);
+            case RendererAPI::API::Citro3D:  return new Citro3DIndexBuffer(indices, count);
 #endif
+            default: return nullptr;
         }
 
         return nullptr;

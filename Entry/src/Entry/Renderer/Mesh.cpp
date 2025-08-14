@@ -14,6 +14,7 @@ namespace Entry {
 #ifdef ET_PLATFORM_3DS
 		case RendererAPI::API::Citro3D:  return Ref<Citro3DMesh>(new Citro3DMesh(path));
 #endif
+			default: return nullptr;	
 		}
 
 		return nullptr;

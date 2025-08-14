@@ -1,3 +1,4 @@
+#include "etpch.h"
 #ifdef ET_PLATFORM_3DS
 #include "Entry/Log/LogLayer.h"
 #include "Entry/Core/Input.h"

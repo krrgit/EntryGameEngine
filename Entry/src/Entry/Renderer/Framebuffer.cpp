@@ -12,10 +12,11 @@ namespace Entry {
 	Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 	{
 		switch (Renderer::GetAPI()) {
-		case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 #ifdef ET_PLATFORM_3DS
-		case RendererAPI::API::Citro3D:  return Ref<Citro3DFramebuffer>(new Citro3DFramebuffer(spec));
+			case RendererAPI::API::Citro3D:  return Ref<Citro3DFramebuffer>(new Citro3DFramebuffer(spec));
 #endif
+			default: return nullptr;
 		}
 
 		return nullptr;

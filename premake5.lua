@@ -21,7 +21,7 @@ IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
-	-- include "Entry/vendor/Glad"
+	include "Entry/vendor/Glad"
 	include "Entry/vendor/imgui-3ds"
 
 group ""
@@ -52,6 +52,12 @@ project "Entry"
 		"%{prj.name}/vendor/spdlog/include/**.h"
 	}
 
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
+	}
+
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -66,7 +72,7 @@ project "Entry"
 	links 
 	{
 		"GLFW",
-		-- "Glad",
+		"Glad",
 		"ImGui",
 		"opengl32.lib",
 		"dwmapi.lib"

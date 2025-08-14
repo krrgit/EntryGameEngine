@@ -18,6 +18,7 @@ namespace Entry {
 #ifdef ET_PLATFORM_3DS
             case RendererAPI::API::Citro3D:  return new Citro3DShader((uint32_t*)shbinData, shBinSize);
 #endif
+            default: return nullptr;
         }
 
         return nullptr;

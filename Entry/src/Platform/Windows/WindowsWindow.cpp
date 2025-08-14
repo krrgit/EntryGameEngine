@@ -9,6 +9,8 @@
 //#include "Entry/Events/CirclePadEvent.h"
 //#include "Entry/Events/Slider3DEvent.h"
 
+#include "Platform/OpenGL/OpenGLContext.h"
+
 namespace Entry
 {
 	static uint8_t s_GLFWWindowCount = 0;
@@ -43,6 +45,7 @@ namespace Entry
 		m_Data.Screen = s_GLFWWindowCount;
 
 		ET_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+		
 
 		if (s_GLFWWindowCount == 0)
 		{
@@ -54,7 +57,10 @@ namespace Entry
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWWindowCount;
-		glfwMakeContextCurrent(m_Window);
+
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 		
@@ -166,10 +172,7 @@ namespace Entry
 	void WindowsWindow::FrameDrawOn()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
-		glfwMakeContextCurrent(m_Window);
-
-		glClear(GL_COLOR_BUFFER_BIT);
+		m_Context->SwapBuffers(); 
 	}
 
 	void WindowsWindow::LayerStackOnUpdate(Timestep ts, uint16_t screenSide)
@@ -222,18 +225,8 @@ namespace Entry
 	{
 	}
 
-	void WindowsWindow::SetClearColor(uint32_t color)
-	{
-		float r = ((color & 0xff000000) >> 24) / 255.0f;
-		float g = ((color & 0x00ff0000) >> 16) / 255.0f;
-		float b = ((color & 0x0000ff00) >> 8) / 255.0f;
-		float a = ((color & 0x000000ff) >> 0) / 255.0f;
-		
-		m_ClearColor.r = r;
-		m_ClearColor.g = g;
-		m_ClearColor.b = b;
-		m_ClearColor.a = a;
+	//void WindowsWindow::SetClearColor(uint32_t color)
+	//{
 
-		glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
-	}
+	//}
 }

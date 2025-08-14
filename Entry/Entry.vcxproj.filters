@@ -114,6 +114,9 @@
     <ClInclude Include="src\Entry\Core\Log.h">
       <Filter>src\Entry\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entry\Core\MouseCodes.h">
+      <Filter>src\Entry\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Entry\Core\Timestep.h">
       <Filter>src\Entry\Core</Filter>
     </ClInclude>
@@ -126,6 +129,9 @@
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h">
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entry\Events\ButtonEvent.h">
+      <Filter>src\Entry\Events</Filter>
+    </ClInclude>
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h">
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
@@ -133,6 +139,9 @@
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Events\KeyEvent.h">
+      <Filter>src\Entry\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Events\MouseEvent.h">
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Events\ScreenEvent.h">
@@ -143,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="src\Entry\ImGui\ImGuiLayer.h">
       <Filter>src\Entry\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Log\LogLayer.h">
+      <Filter>src\Entry\Log</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Renderer\Buffer.h">
       <Filter>src\Entry\Renderer</Filter>
@@ -183,11 +195,17 @@
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h">
       <Filter>src\Entry\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\GraphicsContext.h">
+      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1755,9 +1773,6 @@
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="src\Entry\Events\MouseEvent.h" />
-    <ClInclude Include="src\Entry\Core\MouseCodes.h" />
-    <ClInclude Include="src\Entry\Events\ButtonEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1774,6 +1789,9 @@
     </ClCompile>
     <ClCompile Include="src\Entry\ImGui\ImGuiLayer.cpp">
       <Filter>src\Entry\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Log\LogLayer.cpp">
+      <Filter>src\Entry\Log</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\Buffer.cpp">
       <Filter>src\Entry\Renderer</Filter>
@@ -1810,6 +1828,9 @@
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp">
       <Filter>src\Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp">
       <Filter>src\Platform\OpenGL</Filter>

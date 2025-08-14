@@ -19,6 +19,7 @@ namespace Entry {
 #ifdef ET_PLATFORM_3DS
 		case RendererAPI::API::Citro3D:  return Ref<Citro3DVertexArray>(new Citro3DVertexArray());
 #endif
+		default: return nullptr;
 		}
 
 		return nullptr;

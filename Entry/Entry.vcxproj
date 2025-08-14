@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -99,7 +99,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -127,7 +127,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -173,6 +173,7 @@
     <ClInclude Include="src\Entry\Events\ScreenEvent.h" />
     <ClInclude Include="src\Entry\Events\Slider3DEvent.h" />
     <ClInclude Include="src\Entry\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Entry\Log\LogLayer.h" />
     <ClInclude Include="src\Entry\Renderer\Buffer.h" />
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Entry\Renderer\Mesh.h" />
@@ -186,8 +187,10 @@
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Platform\Windows\GraphicsContext.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\etpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -719,6 +722,7 @@
     <ClCompile Include="src\Entry\Core\LayerStack.cpp" />
     <ClCompile Include="src\Entry\Core\Log.cpp" />
     <ClCompile Include="src\Entry\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Entry\Log\LogLayer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Mesh.cpp" />
@@ -731,6 +735,7 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
@@ -744,6 +749,9 @@
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Glad\Glad.vcxproj">
+      <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
     <ProjectReference Include="vendor\imgui-3ds\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
