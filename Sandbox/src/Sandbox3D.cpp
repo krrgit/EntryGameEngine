@@ -56,33 +56,16 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
 	//{
 	//	ET_PROFILE_SCOPE("Renderer Draw");
 
-	//	m_Rotation += ts.GetSeconds();
-	//	m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
+		m_Rotation += ts.GetSeconds();
+		m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 	 
-	//Render
-	Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
+		//Render
+		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
-	static glm::vec4 quadColor = glm::vec4(0.8f, 0.2f, 0.3f, 1.0f);
-	Entry::Renderer3D::DrawQuad(glm::vec3(0.0f, 1.0f, 0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), quadColor);
+		static glm::vec4 quadColor = glm::vec4(0.8f, 0.2f, 0.3f, 1.0f);
+		Entry::Renderer3D::DrawCube(glm::vec3(0.0f, 1.0f, 0.0f), glm::quat(glm::vec3(m_Rotation, m_Rotation, 0)), glm::vec3(1.0f), quadColor);
 
-	Entry::Renderer3D::EndScene();
-
-
-
-
-	//ET_PROFILE_FUNCTION();
-	//// Update
-	//{
-	//	ET_PROFILE_SCOPE("CameraController::OnUpdate");
-	//	m_CameraController.OnUpdate(ts);
-	//}
-
- //   Entry::Renderer3D::ResetStats();
- //   //m_Framebuffer->Bind();
-
- //   if (Entry::Input::GetButtonDown(ET_BTN_START)) {
- //       m_ShowImGui = !m_ShowImGui;
- //   }
+		Entry::Renderer3D::EndScene();
 
 	//{
 	//	ET_PROFILE_SCOPE("Renderer Draw");

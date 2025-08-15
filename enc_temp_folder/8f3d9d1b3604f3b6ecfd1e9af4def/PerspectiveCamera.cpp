@@ -115,43 +115,44 @@ namespace Entry {
 			default:
 				{
 					// For other platforms/editor (PC)
-					float fov = 80.0f;
-					float aspect = 400.0f/ 240.0f;
+				float fov = 80.0f;
+				float aspect = 400.0f/ 240.0f;
 
-					// Left Side
-					float iod = -m_Slider3DState; // 3D effect value
-					float screen = 2.0f; // No clue what this is
-					float fovx = glm::radians(fov);
-					float fovx_tan = tanf(fovx / 2.0f);
-					float nearPlane = 0.01f;
-					float farPlane = 1000.0f;
-					bool isLeftHanded = false;
-					float shift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
+				// Left Side
+				float iod = -m_Slider3DState; // 3D effect value
+				float screen = 2.0f; // No clue what this is
+				float fovx = glm::radians(fov);
+				float fovx_tan = tanf(fovx / 2.0f);
+				float nearPlane = 0.01f;
+				float farPlane = 1000.0f;
+				bool isLeftHanded = false;
+				float shift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
 
-					float fovY = glm::radians(80.0f);
-					float tanHalfFovY = tanf(fovY / 2.0f);
-					float tanHalfFovX = tanHalfFovY * aspect;
+				float fovY = glm::radians(80.0f);
+				float tanHalfFovY = tanf(fovY / 2.0f);
+				float tanHalfFovX = tanHalfFovY * aspect;
 
-					// Stereo shift (sign flips per eye)
-					float eyeShift = -iod / (2.0f * screen);
+				// Stereo shift (sign flips per eye)
+				float eyeShift = -iod / (2.0f * screen);
 
-					m_ProjectionMatrix = glm::mat3(0);
+				// Start with zero matrix
+				m_ProjectionMatrix = glm::mat3(0);
 
-					// Column 0 (X axis scaling)
-					m_ProjectionMatrix[0][0] = 1.0f / tanHalfFovX;
+				// Column 0 (X axis scaling)
+				m_ProjectionMatrix[0][0] = 1.0f / tanHalfFovX;
 
-					// Column 1 (Y axis scaling — 3DS screen tilt handled here)
-					m_ProjectionMatrix [1][1] = 1.0f / tanHalfFovY;
-					m_ProjectionMatrix [1][2] = -((isLeftHanded ? 1.0f : -1.0f) * eyeShift) / tanHalfFovX; // tilt offset
+				// Column 1 (Y axis scaling — 3DS screen tilt handled here)
+				m_ProjectionMatrix [1][1] = 1.0f / tanHalfFovY;
+				m_ProjectionMatrix [1][2] = -((isLeftHanded ? 1.0f : -1.0f) * eyeShift) / tanHalfFovX; // tilt offset
 
-					// Column 2 (Z)
-					m_ProjectionMatrix[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
-					m_ProjectionMatrix[2][3] = -1.0f;
+				// Column 2 (Z)
+				m_ProjectionMatrix[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+				m_ProjectionMatrix[2][3] = -1.0f;
 
-					// Column 3 (Translation / depth)
-					m_ProjectionMatrix[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+				// Column 3 (Translation / depth)
+				m_ProjectionMatrix[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
 
-					m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+				m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 				}
 				break;
 		}
