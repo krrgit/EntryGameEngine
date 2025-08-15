@@ -47,9 +47,13 @@ project "Entry"
 		"%{prj.name}/src/Platform/OpenGL/**.cpp",
 		"%{prj.name}/src/Platform/Windows/**.h",
 		"%{prj.name}/src/Platform/Windows/**.cpp",
+		"%{prj.name}/vendor/spdlog/include/**.h",
+		"%{prj.name}/vendor/imgui-3ds/imgui/backends/**.h",
+		"%{prj.name}/vendor/imgui-3ds/imgui/backends/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
-		"%{prj.name}/vendor/spdlog/include/**.h"
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 	}
 
 	defines
@@ -67,6 +71,7 @@ project "Entry"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.fast_obj}",
+		"%{IncludeDir.stb_image}",
 	}
 
 	links 

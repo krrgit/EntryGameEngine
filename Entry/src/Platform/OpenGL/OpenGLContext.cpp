@@ -22,7 +22,5 @@ namespace Entry {
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
 		glfwSwapBuffers(m_WindowHandle);
-		glClear(GL_COLOR_BUFFER_BIT);
-
 	}
 }

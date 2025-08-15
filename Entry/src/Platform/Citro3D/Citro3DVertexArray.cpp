@@ -46,7 +46,7 @@ namespace Entry
         C3D_SetAttrInfo(0);
     }
 
-    const void Citro3DVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+    void Citro3DVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
         ET_PROFILE_FUNCTION();
 
         ET_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
@@ -66,7 +66,7 @@ namespace Entry
         m_VertexBuffers.push_back(vertexBuffer);
     }
 
-    const void Citro3DVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+    void Citro3DVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
         ET_PROFILE_FUNCTION();
 
         m_IndexBuffer = indexBuffer;

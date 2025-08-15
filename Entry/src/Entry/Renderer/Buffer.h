@@ -36,7 +36,7 @@ namespace Entry
         std::string Name;
         uint32_t Size = 0;
         uint32_t Offset = 0; // may not be needed
-        //bool Normalized; // may not be needed
+        bool Normalized;
 
         BufferElement() {}
 
@@ -108,13 +108,13 @@ namespace Entry
         void CalculateOffsetsAndStride()
         {
             //ET_CORE_INFO("BufferLayout:{0} elements", m_Elements.size());
-            //uint32_t offset = 0;
+            uint32_t offset = 0;
             m_Stride = 0;
             m_attribCount = 0;
             for (auto& element : m_Elements)
             {
-                //element.Offset = offset;
-                //offset += element.Size; // Causes crash??
+                element.Offset = offset;
+                offset += element.Size;
                 m_Stride += element.Size;
                 m_attribCount++;
             }

@@ -2,7 +2,7 @@
 
 ; Uniforms
 .fvec u_ViewProjection[4]
-.fvec u_Textures, u_TilingFactor
+.fvec u_TilingFactor
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)

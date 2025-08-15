@@ -172,7 +172,7 @@ namespace Entry
 	void WindowsWindow::FrameDrawOn()
 	{
 		glfwPollEvents();
-		m_Context->SwapBuffers(); 
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::LayerStackOnUpdate(Timestep ts, uint16_t screenSide)

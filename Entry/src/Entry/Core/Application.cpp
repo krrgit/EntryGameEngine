@@ -21,7 +21,9 @@ namespace Entry
     {
         ET_PROFILE_FUNCTION();
 
-        Renderer::Init();
+#ifdef ET_PLATFORM_3DS
+        Renderer::Init(); // Initialize graphics before windows for 3DS
+#endif // ET_PLATFORM_3DS
 
         #ifdef ET_LOG_ENABLED
             Log::Init();
@@ -44,10 +46,15 @@ namespace Entry
             m_Windows[i] = Scope<Window>(Window::Create(currentProps));
             m_CurrentWindow = m_Windows[i].get();
             RenderCommand::SetClearColor(clearColor);
+
+#ifdef ET_PLATFORM_WINDOWS
+            if (i==0) Renderer::Init(); // Initialize graphics after windows for Windows
+#endif // ET_PLATFORM_WINDOWS
         }
 
         // Bind events to last screen (bottom screen atm)
         m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
 
         {
             ET_PROFILE_SCOPE("Create ImGui Layer");

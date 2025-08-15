@@ -11,6 +11,11 @@ namespace Entry {
 	void OpenGLRendererAPI::Init()
 	{
 		ET_PROFILE_FUNCTION();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void OpenGLRendererAPI::SetClearColor(const uint32_t color)
@@ -26,12 +31,15 @@ namespace Entry {
 	
 	void OpenGLRendererAPI::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
 	{
-		ET_PROFILE_FUNCTION();
+		//ET_PROFILE_FUNCTION();
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, nullptr);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 

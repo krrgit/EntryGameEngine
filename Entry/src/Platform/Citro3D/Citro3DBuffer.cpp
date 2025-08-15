@@ -50,7 +50,7 @@ namespace Entry
 		C3D_SetBufInfo(&m_bufInfo);
 	}
 
-	void Citro3DVertexBuffer::SetLayout(const BufferLayout layout) 
+	void Citro3DVertexBuffer::SetLayout(const BufferLayout layout)
 	{
 		ET_PROFILE_FUNCTION();
 
