@@ -55,7 +55,6 @@ namespace Entry
         // Bind events to last screen (bottom screen atm)
         m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-
         {
             ET_PROFILE_SCOPE("Create ImGui Layer");
             m_ImGuiLayer = new Entry::ImGuiLayer();
@@ -103,7 +102,7 @@ namespace Entry
     {
         ET_PROFILE_FUNCTION();
 
-        ET_CORE_TRACE("{0}", e);
+        //ET_CORE_TRACE("{0}", e);
 
         for (uint32_t i = 0; i < m_Windows.size(); ++i)
         {

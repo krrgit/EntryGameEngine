@@ -141,9 +141,6 @@
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h">
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry\Events\ButtonEvent.h">
-      <Filter>src\Entry\Events</Filter>
-    </ClInclude>
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h">
       <Filter>src\Entry\Events</Filter>
     </ClInclude>
@@ -211,9 +208,6 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1806,6 +1800,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1868,7 +1863,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp">
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">

@@ -55,14 +55,14 @@ namespace Entry {
 	void LogLayer::OnUpdate(Timestep ts, uint16_t screenSide) {
 		ET_PROFILE_FUNCTION();
 
-		if (Input::GetButtonDown(ET_BTN_SELECT)) {
+		if (Input::GetButtonDown(ET_PAD_SELECT)) {
 			m_ShowLogs = !m_ShowLogs;
 		}
 
-		if (Input::GetButtonDown(ET_BTN_A)) {
+		if (Input::GetButtonDown(ET_PAD_A)) {
 			ET_CORE_TRACE("A Pressed.");
 		}
-		if (Input::GetButtonDown(ET_BTN_B)) {
+		if (Input::GetButtonDown(ET_PAD_B)) {
 			ET_CORE_TRACE("B Pressed.");
 		}
 

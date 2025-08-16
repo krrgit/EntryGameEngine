@@ -19,12 +19,12 @@ namespace Entry {
         //forward.y = 0; // uncomment to only move laterally
         //right.y = 0; // uncomment to only move laterally
         m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts) + (right * (cp.x * m_CameraTranslationSpeed * ts));
-        int LandR = (Input::GetButton(ET_BTN_R) ? 1 : 0) - (Input::GetButton(ET_BTN_L) ? 1 : 0);
+        int LandR = (Input::GetButton(ET_PAD_R) ? 1 : 0) - (Input::GetButton(ET_PAD_L) ? 1 : 0);
         m_CamPos.y += LandR * m_CameraVertSpeed * ts;
 
         if (m_Rotation) {
-            int cStickX = (Input::GetButton(ET_BTN_CSTICK_LEFT) ? 1 : 0) - (Input::GetButton(ET_BTN_CSTICK_RIGHT) ? 1 : 0);
-            int cStickY = (Input::GetButton(ET_BTN_CSTICK_UP) ? 1 : 0) - (Input::GetButton(ET_BTN_CSTICK_DOWN) ? 1 : 0);
+            int cStickX = (Input::GetButton(ET_PAD_CSTICK_LEFT) ? 1 : 0) - (Input::GetButton(ET_PAD_CSTICK_RIGHT) ? 1 : 0);
+            int cStickY = (Input::GetButton(ET_PAD_CSTICK_UP) ? 1 : 0) - (Input::GetButton(ET_PAD_CSTICK_DOWN) ? 1 : 0);
 
             m_CamRot = glm::vec4(m_CamRot.x + (cStickY * m_CameraRotationSpeed * ts), m_CamRot.y + (cStickX * m_CameraRotationSpeed * ts), m_CamRot.z, m_CamRot.w);
         }

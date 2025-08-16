@@ -234,17 +234,17 @@ namespace Entry
 
 			if (anyButtonPressed & keyCode)
 			{
-				ButtonPressedEvent event(keyCode, 0);
+				ButtonPressedEvent event((KeyCode)keyCode, 0);
 				m_Data.EventCallback(event);
 			}
 
 			if (anyButtonHeld & keyCode) {
-				ButtonPressedEvent event(keyCode, 1);
+				ButtonPressedEvent event((KeyCode)keyCode, 1);
 				m_Data.EventCallback(event);
 			}
 
 			if (anyButtonReleased & keyCode) {
-				ButtonReleasedEvent event(keyCode);
+				ButtonReleasedEvent event((KeyCode)keyCode);
 				m_Data.EventCallback(event);
 			}
 		}

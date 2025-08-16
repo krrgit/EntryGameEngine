@@ -49,50 +49,44 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     Entry::Renderer3D::ResetStats();
     //m_Framebuffer->Bind();
 
-    if (Entry::Input::GetButtonDown(ET_BTN_START)) {
+    if (Entry::Input::GetButtonDown(ET_PAD_START)) {
         m_ShowImGui = !m_ShowImGui;
     }
+	 
+	//Render
+	//Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
-	//{
-	//	ET_PROFILE_SCOPE("Renderer Draw");
+	//static glm::vec4 quadColor = glm::vec4(0.8f, 0.2f, 0.3f, 1.0f);
+	//Entry::Renderer3D::DrawCube(glm::vec3(0.0f, 1.0f, 0.0f), glm::quat(glm::vec3(m_Rotation, m_Rotation, 0)), glm::vec3(1.0f), quadColor);
+
+	//Entry::Renderer3D::EndScene();
+
+	{
+		ET_PROFILE_SCOPE("Renderer Draw");
 
 		m_Rotation += ts.GetSeconds();
 		m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
-	 
+
 		//Render
 		Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
-		static glm::vec4 quadColor = glm::vec4(0.8f, 0.2f, 0.3f, 1.0f);
-		Entry::Renderer3D::DrawCube(glm::vec3(0.0f, 1.0f, 0.0f), glm::quat(glm::vec3(m_Rotation, m_Rotation, 0)), glm::vec3(1.0f), quadColor);
+        float side = 10.0f;
+        float scale = 3.0f;
+
+        for (float z = 0; z < side; z++) {
+            for (float y = 0; y < side; y++) {
+                for (float x = 0; x < side; x++) {
+                    glm::vec4 color = glm::vec4((x / side) * 0.5f + 0.5f, (z / side) * 0.5f + 0.5f, (y / side) * 0.5f + 0.5f, 1.0f);
+                    //Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * 2, (z + sin(m_Rotation + x + y + z) * 0.2f) * 2, (y - (side / 2.0f)) * 2 }, glm::quat(glm::vec3(m_Rotation + x + z, m_Rotation + y + z, 0)), glm::vec3(1.0f), m_CheckerboardTexture, 0.5f, color);
+                    //Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * 2, (z + sin(m_Rotation + x + y + z) * 0.2f) * 2, (y - (side / 2.0f)) * 2 }, glm::quat(glm::vec3(m_Rotation + x + z, m_Rotation + y + z, 0)), glm::vec3(1.0f), color);
+                    Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * scale, (z + sin(m_Rotation + x + y + z) * 0.2f) * scale, (y - (side / 2.0f)) * scale }, color);
+                }
+            }
+        }
+        //m_Framebuffer->Bind();
 
 		Entry::Renderer3D::EndScene();
-
-	//{
-	//	ET_PROFILE_SCOPE("Renderer Draw");
-
-	//	m_Rotation += ts.GetSeconds();
-	//	m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
-
-	//	//Render
-	//	Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-
- //       float side = 10.0f;
- //       float scale = 3.0f;
-
- //       for (float z = 0; z < side; z++) {
- //           for (float y = 0; y < side; y++) {
- //               for (float x = 0; x < side; x++) {
- //                   glm::vec4 color = glm::vec4((x / side) * 0.5f + 0.5f, (z / side) * 0.5f + 0.5f, (y / side) * 0.5f + 0.5f, 1.0f);
- //                   //Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * 2, (z + sin(m_Rotation + x + y + z) * 0.2f) * 2, (y - (side / 2.0f)) * 2 }, glm::quat(glm::vec3(m_Rotation + x + z, m_Rotation + y + z, 0)), glm::vec3(1.0f), m_CheckerboardTexture, 0.5f, color);
- //                   //Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * 2, (z + sin(m_Rotation + x + y + z) * 0.2f) * 2, (y - (side / 2.0f)) * 2 }, glm::quat(glm::vec3(m_Rotation + x + z, m_Rotation + y + z, 0)), glm::vec3(1.0f), color);
- //                   Entry::Renderer3D::DrawCube({ (x - (side / 2.0f)) * scale, (z + sin(m_Rotation + x + y + z) * 0.2f) * scale, (y - (side / 2.0f)) * scale }, color);
- //               }
- //           }
- //       }
- //       m_Framebuffer->Bind();
-
-	//	Entry::Renderer3D::EndScene();
-	//}
+	}
 }
 
 void Sandbox3D::OnImGuiRender() 

@@ -7,20 +7,20 @@ namespace Entry {
 	class ButtonEvent : public Event
 	{
 	public:
-		inline uint32_t GetKeyCode() const { return m_ButtonCode; }
+		inline KeyCode GetKeyCode() const { return m_ButtonCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryButton | EventCategoryInput)
 	protected:
-		ButtonEvent(uint32_t Buttoncode)
+		ButtonEvent(KeyCode Buttoncode)
 			: m_ButtonCode(Buttoncode) {}
 
-		uint32_t m_ButtonCode;
+		KeyCode m_ButtonCode;
 	};
 
 	class ButtonPressedEvent : public ButtonEvent
 	{
 	public:
-		ButtonPressedEvent(uint32_t Buttoncode, int repeatCount)
+		ButtonPressedEvent(KeyCode Buttoncode, int repeatCount)
 			: ButtonEvent(Buttoncode), m_RepeatCount(repeatCount) {}
 
 		inline int GetRepeatCount() const { return m_RepeatCount; }
@@ -28,7 +28,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::string result = "ButtonPressedEvent: ";
-			result += buttonNames[m_ButtonCode];
+			result += buttonNames[(int)m_ButtonCode];
 			result += " (" + std::to_string(m_RepeatCount) + " repeats)";
 			return result;
 		}
@@ -41,13 +41,13 @@ namespace Entry {
 	class ButtonReleasedEvent : public ButtonEvent
 	{
 	public:
-		ButtonReleasedEvent(uint32_t Buttoncode)
+		ButtonReleasedEvent(KeyCode Buttoncode)
 			: ButtonEvent(Buttoncode) {}
 
 		std::string ToString() const override
 		{
 			std::string result = "ButtonReleasedEvent: ";
-			result += buttonNames[m_ButtonCode];
+			result += buttonNames[(int)m_ButtonCode];
 			return result;
 		}
 

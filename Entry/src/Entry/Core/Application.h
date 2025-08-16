@@ -26,7 +26,7 @@ namespace Entry {
         void PushOverlay(Layer* layer, int window);
 
         inline static Application& Get() { return *s_Instance; }
-        inline Window& GetWindow() { return *m_CurrentWindow; }
+        inline Window& GetWindow() { return *m_Windows[1]; }
 
         void Close();
 #ifdef ET_PLATFORM_WINDOWS

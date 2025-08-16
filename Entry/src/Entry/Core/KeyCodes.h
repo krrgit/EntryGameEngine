@@ -4,43 +4,36 @@
  #define BIT(n) (1U<<(n))
 #endif
 
-// from Citro3D
-#define ET_BTN_A			BIT(0)      ///< A
-#define ET_BTN_B			BIT(1)      ///< B
-#define ET_BTN_SELECT		BIT(2)      ///< Select
-#define ET_BTN_START		BIT(3)      ///< Start
-#define ET_BTN_DRIGHT		BIT(4)      ///< D-Pad Right
-#define ET_BTN_DLEFT		BIT(5)      ///< D-Pad Left
-#define ET_BTN_DUP			BIT(6)      ///< D-Pad Up
-#define ET_BTN_DDOWN		BIT(7)      ///< D-Pad Down
-#define ET_BTN_R			BIT(8)      ///< R
-#define ET_BTN_L			BIT(9)      ///< L
-#define ET_BTN_X			BIT(10)     ///< X
-#define ET_BTN_Y			BIT(11)     ///< Y
-#define ET_BTN_ZL			BIT(14)     ///< ZL (New 3DS only)
-#define ET_BTN_ZR			BIT(15)     ///< ZR (New 3DS only)
-#define ET_BTN_TOUCH		BIT(20)     ///< Touch (Not actually provided by HID)
-#define ET_BTN_CSTICK_RIGHT BIT(24)		///< C-Stick Right (New 3DS only)
-#define ET_BTN_CSTICK_LEFT  BIT(25)		///< C-Stick Left (New 3DS only)
-#define ET_BTN_CSTICK_UP	BIT(26)		///< C-Stick Up (New 3DS only)
-#define ET_BTN_CSTICK_DOWN  BIT(27)		///< C-Stick Down (New 3DS only)
-#define ET_BTN_CPAD_RIGHT	BIT(28)		///< Circle Pad Right
-#define ET_BTN_CPAD_LEFT	BIT(29)		///< Circle Pad Left
-#define ET_BTN_CPAD_UP		BIT(30)		///< Circle Pad Up
-#define ET_BTN_CPAD_DOWN	BIT(31)		///< Circle Pad Down
-
-// Generic catch-all directions
-#define ET_BTN_UP     ET_BTN_DUP    | ET_BTN_CPAD_UP    ///< D-Pad Up or Circle Pad Up
-#define ET_BTN_DOWN   ET_BTN_DDOWN  | ET_BTN_CPAD_DOWN  ///< D-Pad Down or Circle Pad Down
-#define ET_BTN_LEFT   ET_BTN_DLEFT  | ET_BTN_CPAD_LEFT  ///< D-Pad Left or Circle Pad Left
-#define ET_BTN_RIGHT  ET_BTN_DRIGHT | ET_BTN_CPAD_RIGHT ///< D-Pad Right or Circle Pad Right
+namespace Entry {
+	typedef enum class KeyCode : uint32_t {
+		// 3DS
+		// from citro3d.h
+		PAD_A			 = BIT(0),   // 1
+		PAD_B			 = BIT(1),   // 2
+		PAD_SELECT		 = BIT(2),   // 4
+		PAD_START		 = BIT(3),   // 8
+		PAD_DRIGHT		 = BIT(4),   // 16
+		PAD_DLEFT		 = BIT(5),   // 32
+		PAD_DUP			 = BIT(6),   // 64
+		PAD_DDOWN		 = BIT(7),   // 128
+		PAD_R			 = BIT(8),   // 256
+		PAD_L			 = BIT(9),   // 512
+		PAD_X			 = BIT(10),  // 1024
+		PAD_Y			 = BIT(11),  // 2048
+		PAD_ZL			 = BIT(14),  // 16384
+		PAD_ZR			 = BIT(15),	 // 32768
+		PAD_TOUCH		 = BIT(20),	 // 1048576
+		PAD_CSTICK_RIGHT = BIT(24),	 // 16777216
+		PAD_CSTICK_LEFT  = BIT(25),	 // 33554432
+		PAD_CSTICK_UP	 = BIT(26),	 // 67108864
+		PAD_CSTICK_DOWN  = BIT(27),	 // 134217728
+		PAD_CPAD_RIGHT	 = BIT(28),	 // 268435456
+		PAD_CPAD_LEFT	 = BIT(29),	 // 536870912
+		PAD_CPAD_UP		 = BIT(30),	 // 1073741824
+		PAD_CPAD_DOWN	 = BIT(31),	 // 2147483648
 
 #ifdef ET_PLATFORM_WINDOWS
-
-namespace Entry
-{
-	typedef enum class Win_KeyCode : uint16_t
-	{
+		// Windows
 		// From glfw3.h
 		Space = 32,
 		Apostrophe = 39, /* ' */
@@ -171,15 +164,77 @@ namespace Entry
 		RightControl = 345,
 		RightAlt = 346,
 		RightSuper = 347,
-		Menu = 348
+		Menu = 348,
+#endif
 	} Key;
-
-	inline std::ostream& operator<<(std::ostream& os, Win_KeyCode keyCode)
-	{
-		os << static_cast<int32_t>(keyCode);
-		return os;
-	}
 }
+
+#ifdef ET_PLATFORM_3DS
+// from Citro3D
+#define ET_PAD_A			Entry::Key::PAD_A				///< A
+#define ET_PAD_B			Entry::Key::PAD_B			    ///< B
+#define ET_PAD_SELECT		Entry::Key::PAD_SELECT		    ///< Select
+#define ET_PAD_START		Entry::Key::PAD_START		    ///< Start
+#define ET_PAD_DRIGHT		Entry::Key::PAD_DRIGHT		    ///< D-Pad Right
+#define ET_PAD_DLEFT		Entry::Key::PAD_DLEFT		    ///< D-Pad Left
+#define ET_PAD_DUP			Entry::Key::PAD_DUP			    ///< D-Pad Up
+#define ET_PAD_DDOWN		Entry::Key::PAD_DDOWN		    ///< D-Pad Down
+#define ET_PAD_R			Entry::Key::PAD_R			    ///< R
+#define ET_PAD_L			Entry::Key::PAD_L			    ///< L
+#define ET_PAD_X			Entry::Key::PAD_X			    ///< X
+#define ET_PAD_Y			Entry::Key::PAD_Y			    ///< Y
+#define ET_PAD_ZL			Entry::Key::PAD_ZL			    ///< ZL (New 3DS only)
+#define ET_PAD_ZR			Entry::Key::PAD_ZR			    ///< ZR (New 3DS only)
+#define ET_PAD_TOUCH		Entry::Key::PAD_TOUCH		    ///< Touch (Not actually provided by HID)
+#define ET_PAD_CSTICK_RIGHT Entry::Key::PAD_CSTICK_RIGHT 	///< C-Stick Right (New 3DS only)
+#define ET_PAD_CSTICK_LEFT  Entry::Key::PAD_CSTICK_LEFT  	///< C-Stick Left (New 3DS only)
+#define ET_PAD_CSTICK_UP	Entry::Key::PAD_CSTICK_UP		///< C-Stick Up (New 3DS only)
+#define ET_PAD_CSTICK_DOWN  Entry::Key::PAD_CSTICK_DOWN  	///< C-Stick Down (New 3DS only)
+#define ET_PAD_CPAD_RIGHT	Entry::Key::PAD_CPAD_RIGHT		///< Circle Pad Right
+#define ET_PAD_CPAD_LEFT	Entry::Key::PAD_CPAD_LEFT		///< Circle Pad Left
+#define ET_PAD_CPAD_UP		Entry::Key::PAD_CPAD_UP			///< Circle Pad Up
+#define ET_PAD_CPAD_DOWN	Entry::Key::PAD_CPAD_DOWN		///< Circle Pad Down
+
+// Generic catch-all directions
+#define ET_PAD_UP     ET_PAD_DUP    | ET_PAD_CPAD_UP    ///< D-Pad Up or Circle Pad Up
+#define ET_PAD_DOWN   ET_PAD_DDOWN  | ET_PAD_CPAD_DOWN  ///< D-Pad Down or Circle Pad Down
+#define ET_PAD_LEFT   ET_PAD_DLEFT  | ET_PAD_CPAD_LEFT  ///< D-Pad Left or Circle Pad Left
+#define ET_PAD_RIGHT  ET_PAD_DRIGHT | ET_PAD_CPAD_RIGHT ///< D-Pad Right or Circle Pad Right
+
+#endif
+
+#ifdef ET_PLATFORM_WINDOWS
+
+// 3DS to WINDOWS KEYS conversion
+#define ET_PAD_A			Entry::Key::Z			///< A
+#define ET_PAD_B			Entry::Key::X			///< B
+#define ET_PAD_SELECT		Entry::Key::N		    ///< Select
+#define ET_PAD_START		Entry::Key::M		    ///< Start
+#define ET_PAD_DRIGHT		Entry::Key::H		    ///< D-Pad Right
+#define ET_PAD_DLEFT		Entry::Key::F		    ///< D-Pad Left
+#define ET_PAD_DUP			Entry::Key::T			///< D-Pad Up
+#define ET_PAD_DDOWN		Entry::Key::G		    ///< D-Pad Down
+#define ET_PAD_R			Entry::Key::W			///< R
+#define ET_PAD_L			Entry::Key::Q			///< L
+#define ET_PAD_X			Entry::Key::A			///< X
+#define ET_PAD_Y			Entry::Key::S			///< Y
+#define ET_PAD_ZL			Entry::Key::E			///< ZL (New 3DS only)
+#define ET_PAD_ZR			Entry::Key::R			///< ZR (New 3DS only)
+#define ET_PAD_TOUCH		Entry::Key::PAD_TOUCH	///< Touch (Not actually provided by HID)
+#define ET_PAD_CSTICK_RIGHT Entry::Key::L 			///< C-Stick Right (New 3DS only)
+#define ET_PAD_CSTICK_LEFT  Entry::Key::J  			///< C-Stick Left (New 3DS only)
+#define ET_PAD_CSTICK_UP	Entry::Key::I			///< C-Stick Up (New 3DS only)
+#define ET_PAD_CSTICK_DOWN  Entry::Key::K  			///< C-Stick Down (New 3DS only)
+#define ET_PAD_CPAD_RIGHT	Entry::Key::Right		///< Circle Pad Right
+#define ET_PAD_CPAD_LEFT	Entry::Key::Left		///< Circle Pad Left
+#define ET_PAD_CPAD_UP		Entry::Key::Up			///< Circle Pad Up
+#define ET_PAD_CPAD_DOWN	Entry::Key::Down		///< Circle Pad Down
+
+// Generic catch-all directions
+//#define ET_PAD_UP     ET_PAD_DUP    | ET_PAD_CPAD_UP    ///< D-Pad Up or Circle Pad Up
+//#define ET_PAD_DOWN   ET_PAD_DDOWN  | ET_PAD_CPAD_DOWN  ///< D-Pad Down or Circle Pad Down
+//#define ET_PAD_LEFT   ET_PAD_DLEFT  | ET_PAD_CPAD_LEFT  ///< D-Pad Left or Circle Pad Left
+//#define ET_PAD_RIGHT  ET_PAD_DRIGHT | ET_PAD_CPAD_RIGHT ///< D-Pad Right or Circle Pad Right
 
 // From glfw3.h
 #define ET_KEY_SPACE           ::Entry::Key::Space
