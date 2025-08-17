@@ -8,6 +8,7 @@ namespace Entry {
 	public:
 		Citro3DTexture2D(uint32_t width, uint32_t height);
 		Citro3DTexture2D(const void* data, size_t size);
+		Citro3DTexture2D(const std::string& path);
 		virtual ~Citro3DTexture2D();
 
 		virtual uint32_t GetWidth() const override { return m_Width; }

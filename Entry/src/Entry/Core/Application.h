@@ -26,12 +26,15 @@ namespace Entry {
         void PushOverlay(Layer* layer, int window);
 
         inline static Application& Get() { return *s_Instance; }
-        inline Window& GetWindow() { return *m_Windows[1]; }
+        inline Window& GetWindow() { return *m_CurrentWindow; }
 
         void Close();
 #ifdef ET_PLATFORM_WINDOWS
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowResize(WindowResizeEvent& e);
+    private:
+        bool m_Minimized = false;
 #endif // ET_PLATFORM_WINDOWS
     private:
         uint16_t m_WindowCount = 2;

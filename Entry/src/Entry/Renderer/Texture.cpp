@@ -29,16 +29,30 @@ namespace Entry {
 	Ref<Texture2D> Texture2D::Create(const void* data, size_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 #ifdef ET_PLATFORM_3DS
-		case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(data, size));
+			case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(data, size));
 #endif
 #ifdef ET_PLATFORM_WINDOWS
-		case RendererAPI::API::OpenGL:  return Ref<OpenGLTexture2D>(new OpenGLTexture2D(data, size));
+			case RendererAPI::API::OpenGL:  return Ref<OpenGLTexture2D>(new OpenGLTexture2D(data, size));
+#endif
+			default: return nullptr;
+		}
+
+		return nullptr;
+	}
+	Ref<Texture2D> Texture2D::Create(const std::string& path)
+	{
+		switch (Renderer::GetAPI()) {
+		case RendererAPI::API::None:     ET_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+#ifdef ET_PLATFORM_3DS
+		case RendererAPI::API::Citro3D:  return Ref<Citro3DTexture2D>(new Citro3DTexture2D(path));
+#endif
+#ifdef ET_PLATFORM_WINDOWS
+		case RendererAPI::API::OpenGL:  return Ref<OpenGLTexture2D>(new OpenGLTexture2D(path));
 #endif
 		default: return nullptr;
 		}
-
 		return nullptr;
 	}
 }

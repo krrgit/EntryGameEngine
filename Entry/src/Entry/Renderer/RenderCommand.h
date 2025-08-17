@@ -9,6 +9,12 @@ namespace Entry {
 		inline static void Init() {
 			s_RendererAPI->Init();
 		}
+
+		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, void* window)
+		{
+			s_RendererAPI->SetViewport(x, y, width, height, window);
+		}
+
 		inline static void SetClearColor(const uint32_t color)
 		{
 			s_RendererAPI->SetClearColor(color);

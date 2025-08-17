@@ -50,10 +50,11 @@ namespace Entry
 #ifdef ET_PLATFORM_WINDOWS
             if (i==0) Renderer::Init(); // Initialize graphics after windows for Windows
 #endif // ET_PLATFORM_WINDOWS
+
+            // Bind events to each screen
+            m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
         }
 
-        // Bind events to last screen (bottom screen atm)
-        m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
         {
             ET_PROFILE_SCOPE("Create ImGui Layer");
@@ -113,6 +114,7 @@ namespace Entry
 #ifdef ET_PLATFORM_WINDOWS
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 #endif // ET_PLATFORM_WINDOWS
     }
 
@@ -164,6 +166,21 @@ namespace Entry
     {
         m_Running = false;
         return true;
+    }
+    bool Application::OnWindowResize(WindowResizeEvent& e)
+    {
+        ET_PROFILE_FUNCTION();
+
+        if (e.GetWidth() == 0 || e.GetHeight() == 0)
+        {
+            m_Minimized = true;
+            return false;
+        }
+
+        m_Minimized = false;
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight(), e.GetWindow() );
+
+        return false;
     }
 #endif // ET_PLATFORM_WINDOWS
 

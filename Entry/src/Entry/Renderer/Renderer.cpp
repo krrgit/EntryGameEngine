@@ -19,6 +19,16 @@ namespace Entry {
 		Renderer3D::Init();
 	}
 
+	void Renderer::Shutdown()
+	{
+
+	}
+
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height, void* window)
+	{
+		RenderCommand::SetViewport(0, 0, width, height, window);
+	}
+
 	void Renderer::BeginScene(PerspectiveCamera& camera)
 	{
 		ET_PROFILE_FUNCTION();

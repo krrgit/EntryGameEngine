@@ -50,6 +50,8 @@ namespace Entry {
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3;
         static const uint32_t MaxBatches = 16; // Randomly selected tbh
+        static const uint32_t MaxTextureSlots = 4; // Based on PICA200 Specs (3 slots, 1 for procedurally generated)
+
         bool AllowMultipleBatchesPerTexture = true;
 
         Ref <Shader> TextureShader;
@@ -104,7 +106,12 @@ namespace Entry {
                 { ShaderDataType::Float2, "a_TexCoord" }
                 });
             batch->QuadVertexArray->AddVertexBuffer(batch->QuadVertexBuffer);
+#ifdef ET_PLATFORM_3DS
+            batch->VertexBufferBase = (QuadVertex*)linearAlloc(sizeof(QuadVertex) * s_Data.MaxVertices);
+#endif // ET_PLATFORM_3DS
+#ifdef ET_PLATFORM_WINDOWS
             batch->VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+#endif
             batch->QuadVertexBuffer->Bind();
 
             batch->QuadVertexArray->SetIndexBuffer(squareIB);
@@ -123,9 +130,9 @@ namespace Entry {
         for (uint32_t i = 0; i < s_Data.MaxBatches; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader.reset(Shader::Create("assets/shaders/FlatColor.glsl"));
+        s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
         s_Data.TextureShader->Bind();
-        //s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
+        s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 #endif // ET_PLATFORM_WINDOWS
 
         // CREATE WHITE TEXTURE
@@ -136,11 +143,11 @@ namespace Entry {
             uint32_t whiteTextureData[8 * 8];
             std::fill_n(&whiteTextureData[0], 8 * 8, 0xffffffff);
             s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
-            s_Data.WhiteTexture->Bind(0);
+            //s_Data.WhiteTexture->Bind(0);
         }
 
         // Set first texture slot to 0
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
+        //s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
 	}
 
 	void Renderer3D::Shutdown()
@@ -160,7 +167,7 @@ namespace Entry {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
         
-        s_Data.WhiteTexture->Bind(0);
+        //s_Data.WhiteTexture->Bind(0);
 
         for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
@@ -168,9 +175,9 @@ namespace Entry {
             s_Data.RenderBatches[i].BatchTexture = nullptr;
         }
 
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
+        //s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
         s_Data.IndexCount = 0;
-        s_Data.BatchSlotIndex = 1;
+        s_Data.BatchSlotIndex = 0;
     }
 
     void Renderer3D::EndScene()
@@ -183,6 +190,7 @@ namespace Entry {
     void Renderer3D::Flush()
     {
         ET_PROFILE_FUNCTION();
+        s_Data.TextureShader->Bind();
 
         // TODO: maybe set TexEnv here?
         for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
@@ -426,6 +434,9 @@ namespace Entry {
         if (batchIndex < 0) { return; }
         RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
+        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor); // TODO: set per vertex?
+
+
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
         batch->VertexBufferPtr->Color = color;
         batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
@@ -474,7 +485,7 @@ namespace Entry {
         if (batchIndex < 0) { return; }
         RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
-        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
+        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor); // TODO: set per vertex?
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);

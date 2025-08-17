@@ -57,6 +57,7 @@ namespace Entry
 		{
 			std::string Title;
 			unsigned int Width, Height;
+			float AspectRatio;
 			uint32_t Screen;
 			bool has2D;
 			bool Stereo3D;

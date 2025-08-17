@@ -15,6 +15,8 @@ namespace Entry
 {
 	static uint8_t s_GLFWWindowCount = 0;
 
+	static Ref<GLFWwindow> s_FirstWindow = nullptr;
+
 	static void GLFWErrorCallback(int error, const char* description) 
 	{
 		ET_CORE_ERROR("GLFW Error ({0}: {1}", error, description);
@@ -42,6 +44,7 @@ namespace Entry
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
+		m_Data.AspectRatio = m_Data.Width / m_Data.Height;
 		m_Data.Screen = s_GLFWWindowCount;
 
 		ET_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
@@ -55,25 +58,32 @@ namespace Entry
 			ET_CORE_ASSERT(success, "Could not initialize GLFW!");
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		++s_GLFWWindowCount;
+		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, s_FirstWindow.get());
 
-		m_Context = new OpenGLContext(m_Window);
-		m_Context->Init();
+		if (s_GLFWWindowCount == 0) 
+		{
+			s_FirstWindow.reset(m_Window);
+			m_Context = new OpenGLContext(m_Window);
+			m_Context->Init();
+		}
 		
+		++s_GLFWWindowCount;
+		
+		if (m_Data.Screen == 0) glfwSetWindowAspectRatio(m_Window, props.Width, props.Height); // Keeps aspect ratio
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 		
-		if (m_Data.Screen == 1) {
+		if (true) {
 
 			// Set GLFW Callbacks
 			glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
 				WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
+				
 				data.Width = width;
 				data.Height = height;
 
-				WindowResizeEvent event(width, height);
+				WindowResizeEvent event(width, height, (void*)window);
 				data.EventCallback(event);
 			});
 
@@ -172,7 +182,9 @@ namespace Entry
 	void WindowsWindow::FrameDrawOn()
 	{
 		if (m_Data.Screen == 0) glfwPollEvents();
-		m_Context->SwapBuffers();
+
+		glfwMakeContextCurrent(m_Window);
+		glfwSwapBuffers(m_Window);
 	}
 
 	void WindowsWindow::LayerStackOnUpdate(Timestep ts, uint16_t screenSide)
@@ -192,9 +204,9 @@ namespace Entry
 	void WindowsWindow::ScanHIDEvents()
 	{
 	}
+
 	void WindowsWindow::FrameEnd()
 	{
-
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
