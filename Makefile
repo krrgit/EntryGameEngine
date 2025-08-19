@@ -52,7 +52,7 @@ INCLUDES	:=  $(shell find Entry/src -type d \
 
 GRAPHICS	:=	$(shell find Sandbox/assets -type d)
 GFXBUILD	:=	$(BUILD)
-#ROMFS		:=	romfs
+ROMFS		:=	romfs
 #GFXBUILD	:=	$(ROMFS)/gfx
 
 #---------------------------------------------------------------------------------

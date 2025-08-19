@@ -22,6 +22,35 @@ namespace Entry {
 		return true;
 	}
 
+	// Helper function for loading a texture from a t3x file
+	static bool loadTextureFromFile(C3D_Tex* tex, C3D_TexCube* cube, const char* path)
+	{
+		FILE* f = fopen(path, "rb");
+		if (!f)
+			return false;
+
+		Tex3DS_Texture t3x = Tex3DS_TextureImportStdio(f, tex, cube, false);
+		fclose(f);
+		if (!t3x)
+			return false;
+
+		// Delete the t3x object since we don't need it
+		Tex3DS_TextureFree(t3x);
+		return true;
+	}
+
+	// Helper function for replacing ".png" with ".t3x" in a path
+	void ReplacePngWithT3x(std::string& filename) {
+		const std::string from = ".png";
+		const std::string to = ".t3x";
+
+		size_t pos = filename.rfind(from);
+		if (pos != std::string::npos && pos == filename.size() - from.size()) {
+			filename.replace(pos, from.size(), to);
+		}
+	}
+
+
 	Citro3DTexture2D::Citro3DTexture2D(uint32_t width, uint32_t height) 
 		: m_Width(width > MIN_TEX_DIMENSION ? width: MIN_TEX_DIMENSION), m_Height(height > MIN_TEX_DIMENSION ? height: MIN_TEX_DIMENSION)
 	{
@@ -42,7 +71,14 @@ namespace Entry {
 
 	Citro3DTexture2D::Citro3DTexture2D(const std::string& path)
 	{
-		// TODO
+		// Note: to use, copy .t3x from /build to same filepath as texture file
+		std::string romfsPath = "romfs:/" + path;
+		ReplacePngWithT3x(romfsPath);
+
+		if (!loadTextureFromFile(&m_Texture, NULL, romfsPath.c_str()))
+			svcBreak(USERBREAK_PANIC);
+		C3D_TexSetFilter(&m_Texture, GPU_NEAREST, GPU_NEAREST);
+		C3D_TexSetWrap(&m_Texture, GPU_REPEAT, GPU_REPEAT);
 	}
 
 	Citro3DTexture2D::Citro3DTexture2D(const void* data, size_t size)

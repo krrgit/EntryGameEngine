@@ -3,6 +3,8 @@
 #include "PerspectiveCamera.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "Entry/Core/Timestep.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -33,11 +35,13 @@ namespace Entry {
 				uint32_t PolygonCount = 0;
 				uint32_t VertexCount = 0;
 				uint32_t IndexCount = 0;
+				float DeltaTime = 0;
 
 				uint32_t GetTotalVertexCount() const { return VertexCount; }
 				uint32_t GetTotalIndexCount() const { return IndexCount; }
 			};
 			static void ResetStats();
+			static void SetStatsTimestep(Timestep ts);
 			static Statistics GetStats();
 	private:
 		static int GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount);

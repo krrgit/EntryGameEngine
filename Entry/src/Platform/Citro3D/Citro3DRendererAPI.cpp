@@ -9,7 +9,6 @@ namespace Entry {
 	void Citro3DRendererAPI::Init()
 	{
 		ET_PROFILE_FUNCTION();
-
 		gfxInitDefault();
 		C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 		C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
@@ -21,28 +20,35 @@ namespace Entry {
 		C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 	}
 
+	Citro3DRendererAPI::~Citro3DRendererAPI()
+	{
+		romfsExit();
+		gfxExit();
+	}
+
+
 	void Citro3DRendererAPI::SetClearColor(const uint32_t color)
-{
-	static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
-}
+	{
+		static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
+	}
 
-void Citro3DRendererAPI::Clear()
-{
-	//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
-}
+	void Citro3DRendererAPI::Clear()
+	{
+		//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
+	}
 
-void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
-{
-	ET_PROFILE_FUNCTION();
+	void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
+	{
+		ET_PROFILE_FUNCTION();
 
-	uint16_t count = indexCount > 0 ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-	C3D_DrawElements(
-		GPU_TRIANGLES,
-		count,
-		C3D_UNSIGNED_SHORT,
-		vertexArray->GetIndexBuffer()->GetDataPointer()
-	);
-}
+		uint16_t count = indexCount > 0 ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		C3D_DrawElements(
+			GPU_TRIANGLES,
+			count,
+			C3D_UNSIGNED_SHORT,
+			vertexArray->GetIndexBuffer()->GetDataPointer()
+		);
+	}
 
 
 }

@@ -5,13 +5,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
-#ifdef ET_PLATFORM_3DS
-// Texture Headers
-#include "Checkerboard_t3x.h"
-//#include "EntryLogo_t3x.h"
-#endif // ET_PLATFORM_3DS
-
-
 Sandbox3D::Sandbox3D()
     : Layer("Sandbox3D"), m_CameraController(1.0f)
 {
@@ -22,19 +15,11 @@ void Sandbox3D::OnAttach()
 {
 	ET_PROFILE_FUNCTION();
 
-    std::string meshPath = "monkey.obj";
-#ifdef ET_PLATFORM_3DS
-    m_CheckerboardTexture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
-#endif // ET_PLATFORM_3DS
-#ifdef ET_PLATFORM_WINDOWS
     m_CheckerboardTexture = Entry::Texture2D::Create("assets/textures/Checkerboard.png");
-    meshPath = "assets/models/" + meshPath;
-#endif // ET_PLATFORM_WINDOWS
+    std::string meshPath = "assets/models/monkey.obj";
     m_Teapot = Entry::Mesh::Create(meshPath);
 
-
  //   m_EntryLogoTexture = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
-
 
  //   Entry::FramebufferSpecification frameBufSpec;
  //   frameBufSpec.Width = 400;
@@ -59,6 +44,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     }
 
     Entry::Renderer3D::ResetStats();
+    Entry::Renderer3D::SetStatsTimestep(ts);
 
     m_Rotation += ts.GetSeconds();
     m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
@@ -151,7 +137,13 @@ void Sandbox3D::OnImGuiRender()
     
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");
-    //ImGui::Text("FPS: %.1f fps\nCPU: %.2f ms\nGPU: %.2f ms\n", 1000.0f / C3D_GetProcessingTime(), C3D_GetProcessingTime(), C3D_GetDrawingTime()); // Temp
+#ifdef ET_PLATFORM_3DS
+    ImGui::Text("FPS: %.1f fps\nCPU: %.2f ms\nGPU: %.2f ms\n", 1000.0f / (C3D_GetProcessingTime() + C3D_GetDrawingTime()), C3D_GetProcessingTime(), C3D_GetDrawingTime()); // Temp
+#endif // ET_PLATFORM_3DS
+#ifdef ET_PLATFORM_WINDOWS
+    ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);
+#endif // ET_PLATFORM_WINDOWS
+
     ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
     
     ImGui::Text("Polygon Count: %ld", stats.PolygonCount);

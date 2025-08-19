@@ -59,12 +59,14 @@ namespace Entry {
 	
 	Citro3DMesh::Citro3DMesh(const std::string& path)
 	{
+		std::string romfsPath = "romfs:/" + path;
+		
 		m_Name = path;
 		// TODO: Update to full support OBJ files
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
 
-		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(path.c_str()));
+		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(romfsPath.c_str()));
 		FastOBJToBuffers(&vertices, &indices, obj_mesh);
 
 		m_VertexArray = VertexArray::Create();
@@ -84,7 +86,13 @@ namespace Entry {
 		indexBuffer.reset(IndexBuffer::Create(indices.data(), indices.size()));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		printf("Loaded \"%s\" successfully!\n", m_Name.c_str());
+		if (indices.size() == 0) {
+			printf("Failed to load \"%s\"\n", m_Name.c_str());
+		}
+		else {
+			printf("Loaded \"%s\" successfully! Indices: %d\n", m_Name.c_str(), indices.size());
+		}
+
 	}
 	Citro3DMesh::~Citro3DMesh()
 	{

@@ -44,6 +44,12 @@ namespace Entry
 	{
 		// DO NOT PROFILE THIS FUNCTION. IT CAUSES ISSUES FOR SOME REASON.
 
+		if (props.Screen == 0) {
+			Result rc = romfsInit();
+			if (rc) { ET_CORE_INFO("romfs Init Successful!\n"); }
+			else { printf("romfsInit: %08lX\n", rc); }
+		}
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;

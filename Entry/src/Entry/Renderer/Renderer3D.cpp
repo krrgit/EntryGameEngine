@@ -875,6 +875,10 @@ namespace Entry {
     {
         memset(&s_Data.Stats, 0, sizeof(Statistics));
     }
+    void Renderer3D::SetStatsTimestep(Timestep ts)
+    {
+        s_Data.Stats.DeltaTime = ts.GetMilliseconds();
+    }
     Renderer3D::Statistics Renderer3D::GetStats()
     {
         return s_Data.Stats;
