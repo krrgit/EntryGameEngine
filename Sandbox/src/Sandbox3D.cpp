@@ -21,11 +21,10 @@ void Sandbox3D::OnAttach()
 
  //   m_EntryLogoTexture = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
 
- //   Entry::FramebufferSpecification frameBufSpec;
- //   frameBufSpec.Width = 400;
- //   frameBufSpec.Height = 240;
-
- //   m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+    Entry::FramebufferSpecification frameBufSpec;
+    frameBufSpec.Width = 400;
+    frameBufSpec.Height = 240;
+    m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
 }
 
 void Sandbox3D::OnDetach()
@@ -43,6 +42,8 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
         m_CameraController.OnUpdate(ts);
     }
 
+    m_Framebuffer->Bind();
+
     Entry::Renderer3D::ResetStats();
     Entry::Renderer3D::SetStatsTimestep(ts);
 
@@ -55,6 +56,9 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
     Entry::Renderer3D::DrawMesh(m_Teapot, glm::vec3(0.0f, 2.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(1.0f), teapotColor);
     Entry::Renderer3D::EndScene();
+
+    m_Framebuffer->Unbind();
+
 }
 
 void Sandbox3D::OnImGuiRender() 
@@ -150,8 +154,11 @@ void Sandbox3D::OnImGuiRender()
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
     
-    void* textureID = (void*) m_CheckerboardTexture->GetRendererID();
-    ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f });
+    //void* textureID = (void*)m_CheckerboardTexture->GetRendererID();
+    //ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f });
+
+    void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
+    ImGui::Image(textureID, ImVec2{ 400.0f, 240.0f});
     
     
     ImGui::End();

@@ -150,6 +150,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Entry.h" />
     <ClInclude Include="src\Entry\Core\Application.h" />
     <ClInclude Include="src\Entry\Core\Config.h" />
@@ -723,6 +724,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Entry\Core\Application.cpp" />
     <ClCompile Include="src\Entry\Core\Layer.cpp" />
     <ClCompile Include="src\Entry\Core\LayerStack.cpp" />
