@@ -70,3 +70,4 @@ lib_src/
 backups/
 bin-int/
 /Entry/vendor/GLFW
+/enc_temp_folder
