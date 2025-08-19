@@ -16,7 +16,7 @@ namespace Entry
 	bool WindowsInput::GetButtonImpl(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-		auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
+		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 

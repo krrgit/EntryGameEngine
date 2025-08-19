@@ -20,7 +20,6 @@ namespace Entry {
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, void* window)
 	{
-		// Make the window's context current before touching GL state
 		GLFWwindow* glfwWin = static_cast<GLFWwindow*>(window);
 		glfwMakeContextCurrent(glfwWin);
 
@@ -48,6 +47,7 @@ namespace Entry {
 		//ET_PROFILE_FUNCTION();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, nullptr);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 

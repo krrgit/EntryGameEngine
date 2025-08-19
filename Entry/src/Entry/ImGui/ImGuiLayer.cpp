@@ -290,7 +290,7 @@ namespace Entry
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		int keycode = (int)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN;
+		int keycode = (uint32_t)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN;
 		io.KeysData[keycode].Down = true;
 
 		io.KeyCtrl  = io.KeysData[GLFW_KEY_LEFT_CONTROL].Down || io.KeysData[GLFW_KEY_RIGHT_CONTROL].Down;
@@ -303,7 +303,7 @@ namespace Entry
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.KeysData[(int)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN].Down = false;
+		io.KeysData[(uint32_t)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN].Down = false;
 		return false;
 	}
 

@@ -209,7 +209,7 @@ namespace Entry
 		for (i = 0; i < ALL_BUTTONS_COUNT; i++)
 		{
 			keyCode = BIT(i);
-			if (keyCode == KEY_TOUCH) 
+			if (keyCode == (uint32_t)ET_PAD_TOUCH) 
 			{
 				if (anyButtonPressed & keyCode)
 				{

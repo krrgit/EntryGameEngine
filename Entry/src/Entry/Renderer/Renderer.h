@@ -8,13 +8,6 @@
 
 namespace Entry
 {
-    //const C3D_Mtx Identity = {
-    //.r = {{0.0f, 0.0f, 0.0f, 1.0f},  // w,z,y,x
-    //      {0.0f, 0.0f, 1.0f, 0.0f},  
-    //      {0.0f, 1.0f, 0.0f, 0.0f},  
-    //      {1.0f, 0.0f, 0.0f, 0.0f}}  
-    //};
-
     class Renderer
     {
     public:

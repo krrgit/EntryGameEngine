@@ -28,7 +28,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::string result = "ButtonPressedEvent: ";
-			result += buttonNames[(int)m_ButtonCode];
+			result += buttonNames[(uint32_t)m_ButtonCode];
 			result += " (" + std::to_string(m_RepeatCount) + " repeats)";
 			return result;
 		}
@@ -47,7 +47,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::string result = "ButtonReleasedEvent: ";
-			result += buttonNames[(int)m_ButtonCode];
+			result += buttonNames[(uint32_t)m_ButtonCode];
 			return result;
 		}
 

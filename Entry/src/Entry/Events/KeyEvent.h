@@ -29,7 +29,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << (int)m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << (uint32_t)m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
 
@@ -47,7 +47,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << (int)m_KeyCode;
+			ss << "KeyReleasedEvent: " << (uint32_t)m_KeyCode;
 			return ss.str();
 		}
 
@@ -63,7 +63,7 @@ namespace Entry {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTypedEvent: " << (int)m_KeyCode;
+			ss << "KeyTypedEvent: " << (uint32_t)m_KeyCode;
 			return ss.str();
 		}
 

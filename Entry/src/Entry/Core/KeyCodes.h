@@ -1,36 +1,36 @@
 #pragma once
 
 #ifndef BIT
- #define BIT(n) (1U<<(n))
+#define BIT(n) (1U<<(n))
 #endif
 
 namespace Entry {
 	typedef enum class KeyCode : uint32_t {
 		// 3DS
 		// from citro3d.h
-		PAD_A			 = BIT(0),   // 1
-		PAD_B			 = BIT(1),   // 2
-		PAD_SELECT		 = BIT(2),   // 4
-		PAD_START		 = BIT(3),   // 8
-		PAD_DRIGHT		 = BIT(4),   // 16
-		PAD_DLEFT		 = BIT(5),   // 32
-		PAD_DUP			 = BIT(6),   // 64
-		PAD_DDOWN		 = BIT(7),   // 128
-		PAD_R			 = BIT(8),   // 256
-		PAD_L			 = BIT(9),   // 512
-		PAD_X			 = BIT(10),  // 1024
-		PAD_Y			 = BIT(11),  // 2048
-		PAD_ZL			 = BIT(14),  // 16384
-		PAD_ZR			 = BIT(15),	 // 32768
-		PAD_TOUCH		 = BIT(20),	 // 1048576
+		PAD_A = BIT(0),   // 1
+		PAD_B = BIT(1),   // 2
+		PAD_SELECT = BIT(2),   // 4
+		PAD_START = BIT(3),   // 8
+		PAD_DRIGHT = BIT(4),   // 16
+		PAD_DLEFT = BIT(5),   // 32
+		PAD_DUP = BIT(6),   // 64
+		PAD_DDOWN = BIT(7),   // 128
+		PAD_R = BIT(8),   // 256
+		PAD_L = BIT(9),   // 512
+		PAD_X = BIT(10),  // 1024
+		PAD_Y = BIT(11),  // 2048
+		PAD_ZL = BIT(14),  // 16384
+		PAD_ZR = BIT(15),	 // 32768
+		PAD_TOUCH = BIT(20),	 // 1048576
 		PAD_CSTICK_RIGHT = BIT(24),	 // 16777216
-		PAD_CSTICK_LEFT  = BIT(25),	 // 33554432
-		PAD_CSTICK_UP	 = BIT(26),	 // 67108864
-		PAD_CSTICK_DOWN  = BIT(27),	 // 134217728
-		PAD_CPAD_RIGHT	 = BIT(28),	 // 268435456
-		PAD_CPAD_LEFT	 = BIT(29),	 // 536870912
-		PAD_CPAD_UP		 = BIT(30),	 // 1073741824
-		PAD_CPAD_DOWN	 = BIT(31),	 // 2147483648
+		PAD_CSTICK_LEFT = BIT(25),	 // 33554432
+		PAD_CSTICK_UP = BIT(26),	 // 67108864
+		PAD_CSTICK_DOWN = BIT(27),	 // 134217728
+		PAD_CPAD_RIGHT = BIT(28),	 // 268435456
+		PAD_CPAD_LEFT = BIT(29),	 // 536870912
+		PAD_CPAD_UP = BIT(30),	 // 1073741824
+		PAD_CPAD_DOWN = BIT(31),	 // 2147483648
 
 #ifdef ET_PLATFORM_WINDOWS
 		// Windows
@@ -220,7 +220,7 @@ namespace Entry {
 #define ET_PAD_Y			Entry::Key::S			///< Y
 #define ET_PAD_ZL			Entry::Key::E			///< ZL (New 3DS only)
 #define ET_PAD_ZR			Entry::Key::R			///< ZR (New 3DS only)
-#define ET_PAD_TOUCH		Entry::Key::PAD_TOUCH	///< Touch (Not actually provided by HID)
+#define ET_PAD_TOUCH		Entry::Key::Space	///< Touch (Not actually provided by HID)
 #define ET_PAD_CSTICK_RIGHT Entry::Key::L 			///< C-Stick Right (New 3DS only)
 #define ET_PAD_CSTICK_LEFT  Entry::Key::J  			///< C-Stick Left (New 3DS only)
 #define ET_PAD_CSTICK_UP	Entry::Key::I			///< C-Stick Up (New 3DS only)

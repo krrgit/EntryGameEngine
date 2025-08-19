@@ -8,6 +8,7 @@ namespace Entry {
 	public:
 		virtual void Init() override;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, void* window) override;
+
 		virtual void SetClearColor(const uint32_t color) override;
 		virtual void Clear() override;
 

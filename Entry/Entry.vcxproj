@@ -165,6 +165,7 @@
     <ClInclude Include="src\Entry\Core\Window.h" />
     <ClInclude Include="src\Entry\Debug\Instrumentor.h" />
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Entry\Events\ButtonEvent.h" />
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h" />
     <ClInclude Include="src\Entry\Events\Event.h" />
     <ClInclude Include="src\Entry\Events\KeyEvent.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -739,13 +741,14 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\etpch.cpp">

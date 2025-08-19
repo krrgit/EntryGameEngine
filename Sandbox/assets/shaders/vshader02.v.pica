@@ -2,7 +2,6 @@
 
 ; Uniforms
 .fvec u_ViewProjection[4]
-.fvec u_TilingFactor
 
 ; Constants
 .constf myconst(0.0, 1.0, -1.0, 0.1)
@@ -14,8 +13,6 @@
 .out outpos position
 .out outclr color
 .out outtc0 texcoord0
-.out outtc1 texcoord1
-.out outtc2 texcoord2
 
 ; Inputs (defined as aliases for convenience)
 .alias inpos v0
@@ -42,9 +39,10 @@
 
 	; outtex = intex * u_TilingFactor
 	; mul outtc0.xy, u_TilingFactor.xx, intexcoord
-	mul outtc0.xy, u_TilingFactor.xx, intex
+	; mul outtc0.xy, u_TilingFactor.xx, intex
 	; mul outtc1.xy, u_TilingFactor.xx, intex
 	; mul outtc2.xy, u_TilingFactor.xx, intex
+	mov outtc0.xy, intex
 
 	; outcolor = intex coord
 	; mov outclr.xyz, outtc0
