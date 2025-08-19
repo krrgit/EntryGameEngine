@@ -40,6 +40,11 @@ namespace Entry {
 		std::fill_n((uint32_t*)m_Texture.data, m_Width * m_Height, 0xffffffff);
 	}
 
+	Citro3DTexture2D::Citro3DTexture2D(const std::string& path)
+	{
+		// TODO
+	}
+
 	Citro3DTexture2D::Citro3DTexture2D(const void* data, size_t size)
 	{
 		ET_PROFILE_FUNCTION();

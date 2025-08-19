@@ -17,6 +17,8 @@ namespace Entry {
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		ET_CORE_ASSERT(status, "Failed to initialize Glad!");
+		
+		glDisable(GL_CULL_FACE);
 	}
 	void OpenGLContext::SwapBuffers()
 	{

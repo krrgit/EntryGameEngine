@@ -187,6 +187,7 @@
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLInput.h" />
@@ -740,6 +741,7 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLInput.cpp" />

@@ -59,11 +59,9 @@
 degenerate:
 	mov outnq, r0
 
-	add r6, ones, innrm
-	mul outclr, half.xyz, r6
-	; mul outclr, myconst.www, outclr
+	mul outclr.xyz, half, innrm
+	; add outclr, ones, outclr
 	mov outclr.w, ones
-	
 	; mov outclr.xyz, innrm
 
 	; We're finished

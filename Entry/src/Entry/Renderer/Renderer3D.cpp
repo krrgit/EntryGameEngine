@@ -50,6 +50,7 @@ namespace Entry {
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3;
         static const uint32_t MaxBatches = 16; // Randomly selected tbh
+        static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
         bool AllowMultipleBatchesPerTexture = true;
 
         Ref <Shader> TextureShader;
@@ -123,9 +124,10 @@ namespace Entry {
         for (uint32_t i = 0; i < s_Data.MaxBatches; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader.reset(Shader::Create("assets/shaders/FlatColor.glsl"));
+        s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
         s_Data.TextureShader->Bind();
-        //s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
+        s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
+        s_Data.NormalColorShader.reset(Shader::Create("assets/shaders/NormalColor.glsl"));
 #endif // ET_PLATFORM_WINDOWS
 
         // CREATE WHITE TEXTURE
@@ -159,6 +161,8 @@ namespace Entry {
 
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
+        s_Data.NormalColorShader->Bind();
+        s_Data.NormalColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
         
         s_Data.WhiteTexture->Bind(0);
 
@@ -183,6 +187,8 @@ namespace Entry {
     void Renderer3D::Flush()
     {
         ET_PROFILE_FUNCTION();
+
+        s_Data.TextureShader->Bind();
 
         // TODO: maybe set TexEnv here?
         for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
@@ -797,15 +803,14 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.NormalColorShader->SetFloat4("u_Color", color);
-        s_Data.NormalColorShader->SetFloat("u_TilingFactor", 1.0f);
         s_Data.NormalColorShader->Bind();
-        s_Data.WhiteTexture->Bind();
+        s_Data.NormalColorShader->SetFloat4("u_Color", color);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data.NormalColorShader->SetMat4("u_Transform", transform);
 
         //mesh->Bind();
+        s_Data.WhiteTexture->Bind();
         mesh->GetVertexArray()->Bind();
         RenderCommand::DrawIndexed(mesh->GetVertexArray());
     }
