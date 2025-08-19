@@ -55,6 +55,11 @@ namespace Entry {
 		C3D_TexSetWrap(&m_Texture, GPU_REPEAT, GPU_REPEAT);
 	}
 
+	Citro3DTexture2D::Citro3DTexture2D(const std::string& path)
+	{
+		// TODO
+	}
+
 	Citro3DTexture2D::~Citro3DTexture2D()
 	{
 		ET_PROFILE_FUNCTION();
