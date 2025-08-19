@@ -22,14 +22,15 @@ void Sandbox3D::OnAttach()
 {
 	ET_PROFILE_FUNCTION();
 
+    std::string meshPath = "monkey.obj";
 #ifdef ET_PLATFORM_3DS
     m_CheckerboardTexture = Entry::Texture2D::Create(Checkerboard_t3x, Checkerboard_t3x_size);
-    m_Teapot = Entry::Mesh::Create("teapot.obj");
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
     m_CheckerboardTexture = Entry::Texture2D::Create("assets/textures/Checkerboard.png");
-    m_Teapot = Entry::Mesh::Create("assets/models/teapot.obj");
+    meshPath = "assets/models/" + meshPath;
 #endif // ET_PLATFORM_WINDOWS
+    m_Teapot = Entry::Mesh::Create(meshPath);
 
 
  //   m_EntryLogoTexture = Entry::Texture2D::Create(EntryLogo_t3x, EntryLogo_t3x_size);
@@ -66,7 +67,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
     glm::vec4 teapotColor(1.0f);
     Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
-    Entry::Renderer3D::DrawMesh(m_Teapot, glm::vec3(0.0f, 0.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(1.0f), teapotColor);
+    Entry::Renderer3D::DrawMesh(m_Teapot, glm::vec3(0.0f, 2.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(1.0f), teapotColor);
     Entry::Renderer3D::EndScene();
 }
 
