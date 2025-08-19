@@ -49,15 +49,12 @@ namespace Entry
 
 #ifdef ET_PLATFORM_WINDOWS
             if (i==0) Renderer::Init(); // Initialize graphics after windows for Windows
-            m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 #endif // ET_PLATFORM_WINDOWS
 
+            // Bind events to last screen (bottom screen atm)
+            m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
         }
 
-#ifdef ET_PLATFORM_3DS
-        // Bindevents to last screen (bottom screen atm)
-        m_CurrentWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
-#endif // ET_PLATFORM_3DS
 
         {
             ET_PROFILE_SCOPE("Create ImGui Layer");

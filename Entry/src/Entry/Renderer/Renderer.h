@@ -8,17 +8,13 @@
 
 namespace Entry
 {
-    //const C3D_Mtx Identity = {
-    //.r = {{0.0f, 0.0f, 0.0f, 1.0f},  // w,z,y,x
-    //      {0.0f, 0.0f, 1.0f, 0.0f},  
-    //      {0.0f, 1.0f, 0.0f, 0.0f},  
-    //      {1.0f, 0.0f, 0.0f, 0.0f}}  
-    //};
-
     class Renderer
     {
     public:
         static void Init();
+        static void Shutdown();
+
+        static void OnWindowResize(uint32_t width, uint32_t height, void* window);
 
         static void BeginScene(PerspectiveCamera& camera);
         static void EndScene();

@@ -70,7 +70,7 @@ namespace Entry
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 		
-		if (m_Data.Screen == 1) {
+		if (m_Data.Screen >= 0) {
 
 		// Set GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -79,7 +79,7 @@ namespace Entry
 				data.Width = width;
 				data.Height = height;
 
-				WindowResizeEvent event(width, height);
+				WindowResizeEvent event(width, height, (void*)window);
 				data.EventCallback(event);
 			});
 

@@ -32,6 +32,9 @@ namespace Entry {
 #ifdef ET_PLATFORM_WINDOWS
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowResize(WindowResizeEvent& e);
+    private:
+        bool m_Minimized = false;
 #endif // ET_PLATFORM_WINDOWS
     private:
         uint16_t m_WindowCount = 2;

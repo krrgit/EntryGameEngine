@@ -18,6 +18,14 @@ namespace Entry {
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, void* window)
+	{
+		GLFWwindow* glfwWin = static_cast<GLFWwindow*>(window);
+		glfwMakeContextCurrent(glfwWin);
+
+		glViewport(x, y, width, height);
+	}
+
 	void OpenGLRendererAPI::SetClearColor(const uint32_t color)
 	{
 		//static_cast<WindowsWindow*>(&Application::Get().GetWindow())->SetClearColor(color);

@@ -7,11 +7,12 @@ namespace Entry {
 	class  WindowResizeEvent : public Event
 	{
 	public:
-		WindowResizeEvent(unsigned int width, unsigned int height)
-			: m_Width(width), m_Height(height) {}
+		WindowResizeEvent(unsigned int width, unsigned int height, void* window)
+			: m_Width(width), m_Height(height), m_Window(window) {}
 
 		inline unsigned int GetWidth() const { return m_Width; }
 		inline unsigned int GetHeight() const { return m_Height; }
+		inline void* GetWindow() const { return m_Window; }
 
 		std::string ToString() const override
 		{
@@ -19,9 +20,10 @@ namespace Entry {
 		}
 
 		EVENT_CLASS_TYPE(WindowResize)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	private:
 		unsigned int m_Width, m_Height;
+		void* m_Window;
 	};
 
 	class  WindowCloseEvent : public Event
