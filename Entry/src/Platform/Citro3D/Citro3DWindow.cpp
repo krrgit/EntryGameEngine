@@ -209,7 +209,7 @@ namespace Entry
 		for (i = 0; i < ALL_BUTTONS_COUNT; i++)
 		{
 			keyCode = BIT(i);
-			if (keyCode == KEY_TOUCH) 
+			if (keyCode == (uint32_t)ET_PAD_TOUCH) 
 			{
 				if (anyButtonPressed & keyCode)
 				{
@@ -234,17 +234,17 @@ namespace Entry
 
 			if (anyButtonPressed & keyCode)
 			{
-				ButtonPressedEvent event(keyCode, 0);
+				ButtonPressedEvent event((KeyCode)keyCode, 0);
 				m_Data.EventCallback(event);
 			}
 
 			if (anyButtonHeld & keyCode) {
-				ButtonPressedEvent event(keyCode, 1);
+				ButtonPressedEvent event((KeyCode)keyCode, 1);
 				m_Data.EventCallback(event);
 			}
 
 			if (anyButtonReleased & keyCode) {
-				ButtonReleasedEvent event(keyCode);
+				ButtonReleasedEvent event((KeyCode)keyCode);
 				m_Data.EventCallback(event);
 			}
 		}

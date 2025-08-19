@@ -6,9 +6,9 @@
 namespace Entry {
 	class Citro3DInput : public Input {
 	protected:
-		virtual bool GetButtonDownImpl(uint32_t keycode) override;
-		virtual bool GetButtonImpl(uint32_t keycode) override;
-		virtual bool GetButtonUpImpl(uint32_t keycode) override;
+		virtual bool GetButtonDownImpl(KeyCode keycode) override;
+		virtual bool GetButtonImpl(KeyCode keycode) override;
+		virtual bool GetButtonUpImpl(KeyCode keycode) override;
 
 		virtual bool IsScreenTouchedImpl() override;
 		virtual int GetTouchXImpl() override;

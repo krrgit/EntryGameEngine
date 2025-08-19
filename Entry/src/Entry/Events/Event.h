@@ -1,6 +1,7 @@
 #pragma once
 #include "etpch.h"
 #include "Entry/Core/Core.h"
+#include "Entry/Core/KeyCodes.h"
 
 /// Creates a bitmask from a bit number.
 #define BIT(n) (1U<<(n))

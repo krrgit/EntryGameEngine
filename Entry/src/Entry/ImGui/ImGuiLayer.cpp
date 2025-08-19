@@ -21,18 +21,18 @@ namespace Entry
 
 namespace Entry {
 
-	static ImGuiKey MapKeyCodeToImGuiNavInput(uint32_t keycode) {
+	static ImGuiKey MapKeyCodeToImGuiNavInput(KeyCode keycode) {
 		switch (keycode) {
-		case ET_BTN_A:			return ImGuiKey_GamepadFaceRight;
-		case ET_BTN_B:			return ImGuiKey_GamepadFaceDown;
-		case ET_BTN_Y:			return ImGuiKey_GamepadFaceLeft;
-		case ET_BTN_X:			return ImGuiKey_GamepadFaceUp;
-		case ET_BTN_DLEFT:		return ImGuiKey_GamepadDpadLeft;
-		case ET_BTN_DRIGHT:		return ImGuiKey_GamepadDpadRight;
-		case ET_BTN_DUP:		return ImGuiKey_GamepadDpadUp;
-		case ET_BTN_DDOWN:		return ImGuiKey_GamepadDpadDown;
-		case ET_BTN_L:			return ImGuiKey_GamepadL1;
-		case ET_BTN_R:			return ImGuiKey_GamepadR1;
+		case ET_PAD_A:			return ImGuiKey_GamepadFaceRight;
+		case ET_PAD_B:			return ImGuiKey_GamepadFaceDown;
+		case ET_PAD_Y:			return ImGuiKey_GamepadFaceLeft;
+		case ET_PAD_X:			return ImGuiKey_GamepadFaceUp;
+		case ET_PAD_DLEFT:		return ImGuiKey_GamepadDpadLeft;
+		case ET_PAD_DRIGHT:		return ImGuiKey_GamepadDpadRight;
+		case ET_PAD_DUP:		return ImGuiKey_GamepadDpadUp;
+		case ET_PAD_DDOWN:		return ImGuiKey_GamepadDpadDown;
+		case ET_PAD_L:			return ImGuiKey_GamepadL1;
+		case ET_PAD_R:			return ImGuiKey_GamepadR1;
 		default:
 			break;
 		}
@@ -290,7 +290,7 @@ namespace Entry
 	bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		int keycode = e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN;
+		int keycode = (uint32_t)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN;
 		io.KeysData[keycode].Down = true;
 
 		io.KeyCtrl  = io.KeysData[GLFW_KEY_LEFT_CONTROL].Down || io.KeysData[GLFW_KEY_RIGHT_CONTROL].Down;
@@ -303,14 +303,14 @@ namespace Entry
 	bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.KeysData[e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN].Down = false;
+		io.KeysData[(uint32_t)e.GetKeyCode() - ImGuiKey_NamedKey_BEGIN].Down = false;
 		return false;
 	}
 
 	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		int keycode = e.GetKeyCode();
+		int keycode = (int)e.GetKeyCode();
 		if (keycode > 0 && keycode < 0x10000)
 			io.AddInputCharacter((unsigned short)keycode);
 		

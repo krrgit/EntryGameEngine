@@ -59,12 +59,10 @@
 degenerate:
 	mov outnq, r0
 
+	; color ((x + 1) / 2, (y + 1) / 2, (y + 1) / 2, 1.0)
 	add r6, ones, innrm
 	mul outclr, half.xyz, r6
-	; mul outclr, myconst.www, outclr
 	mov outclr.w, ones
-	
-	; mov outclr.xyz, innrm
 
 	; We're finished
 	end

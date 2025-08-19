@@ -7,23 +7,23 @@ namespace Entry {
 
 	Input* Input::s_Instance = new Citro3DInput();
 
-	bool Citro3DInput::GetButtonImpl(uint32_t keycode)
+	bool Citro3DInput::GetButtonImpl(KeyCode keycode)
 	{
-		return ((hidKeysDown() | hidKeysHeld()) & keycode) == keycode;
+		return ((hidKeysDown() | hidKeysHeld()) & (uint32_t)keycode) == (uint32_t)keycode;
 	}
 
-	bool Citro3DInput::GetButtonUpImpl(uint32_t keycode)
+	bool Citro3DInput::GetButtonUpImpl(KeyCode keycode)
 	{
-		return (hidKeysUp() & keycode) == keycode;
+		return (hidKeysUp() & (uint32_t)keycode) == (uint32_t)keycode;
 	}
 
-	bool Citro3DInput::GetButtonDownImpl(uint32_t keycode)
+	bool Citro3DInput::GetButtonDownImpl(KeyCode keycode)
 	{
-		return (hidKeysDown() & keycode) == keycode;
+		return (hidKeysDown() & (uint32_t)keycode) == (uint32_t)keycode;
 	}
 	bool Citro3DInput::IsScreenTouchedImpl()
 	{
-		return GetButtonImpl(KEY_TOUCH);
+		return GetButtonImpl(KeyCode::PAD_TOUCH);
 	}
 	int Citro3DInput::GetTouchXImpl()
 	{
