@@ -150,7 +150,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Entry.h" />
     <ClInclude Include="src\Entry\Core\Application.h" />
     <ClInclude Include="src\Entry\Core\Config.h" />
@@ -188,9 +187,10 @@
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
@@ -724,7 +724,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Entry\Core\Application.cpp" />
     <ClCompile Include="src\Entry\Core\Layer.cpp" />
     <ClCompile Include="src\Entry\Core\LayerStack.cpp" />
@@ -743,9 +742,10 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />

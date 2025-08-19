@@ -15,7 +15,7 @@ namespace Entry {
 
     class Application{
         public:
-            Application();
+        Application(const std::string& name = "Entry App");
         virtual ~Application();
 
         void Run();

@@ -17,7 +17,7 @@ namespace Entry
 
     Application* Application::s_Instance = nullptr;
 
-    Application::Application()
+    Application::Application(const std::string& name)
     {
         ET_PROFILE_FUNCTION();
 
@@ -33,7 +33,7 @@ namespace Entry
         s_Instance = this;
 
         // App Settings (temporary)
-        std::string windowNames[] = { "Top", "Bottom" };
+        std::string windowNames[] = { "Top Screen", "Bottom Screen" };
         uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};
         int clearColor = 0x68B0D8FF;
         bool enableStereo3D = true;
@@ -42,7 +42,8 @@ namespace Entry
         for (int i = 0; i < m_WindowCount; ++i)
         {
             ET_PROFILE_SCOPE("Create Window");
-            WindowProps currentProps(windowNames[i], windowResolutions[i][0], windowResolutions[i][1], i, enableStereo3D);
+            std::string windowName = name + " - " + windowNames[i];
+            WindowProps currentProps(windowName, windowResolutions[i][0], windowResolutions[i][1], i, enableStereo3D);
             m_Windows[i] = Scope<Window>(Window::Create(currentProps));
             m_CurrentWindow = m_Windows[i].get();
             RenderCommand::SetClearColor(clearColor);

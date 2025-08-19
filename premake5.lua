@@ -1,5 +1,6 @@
 workspace "EntryGameEngine"
 	architecture "x64"
+	startproject "Sandbox"
 
 	configurations {
 		"Debug",
@@ -128,6 +129,59 @@ project "Entry"
 
 project "Sandbox"
 	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+	
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files 
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"Entry/vendor/spdlog/include",
+		"Entry/src",
+		"Entry/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGui}",
+	}
+
+	links
+	{
+		"Entry"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines 
+		{
+			"ET_PLATFORM_WINDOWS",
+		}
+
+	filter "configurations:Debug"
+		defines "ET_DEBUG"
+		symbols "On"
+
+	filter "configurations:Release"
+		defines "ET_RELEASE"
+		optimize "On"
+
+	filter "configurations:Dist"
+		defines "ET_DIST"
+		optimize "On"
+
+	filter {"system:windows", "configurations:Release"}
+		buildoptions "/MT"
+
+project "Entryway"
+	location "Entryway"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"

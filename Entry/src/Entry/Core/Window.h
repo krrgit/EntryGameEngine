@@ -11,15 +11,15 @@ namespace Entry {
 	struct WindowProps
 	{
 		std::string Title;
-		unsigned int Width;
-		unsigned int Height;
+		uint32_t Width;
+		uint32_t Height;
 		uint16_t Screen; // 0 = TOP; 1 = BOTTOM
 		bool Stereo3D;
 
 
 		WindowProps(const std::string& title = "Entry Engine",
-			unsigned int width = 400,
-			unsigned int height = 240,
+			uint32_t width = 400,
+			uint32_t height = 240,
 			uint16_t screen = 0,
 			bool stereo3D = false)
 			: Title(title), Width(width), Height(height), Screen(screen), Stereo3D(stereo3D)
