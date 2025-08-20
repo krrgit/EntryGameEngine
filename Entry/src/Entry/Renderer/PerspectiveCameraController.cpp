@@ -4,8 +4,8 @@
 #include "Entry/Core/KeyCodes.h"
 
 namespace Entry {
-	PerspectiveCameraController::PerspectiveCameraController(float aspectRatio, bool rotation) 
-    : m_AspectRatio(aspectRatio), m_Camera(-aspectRatio * m_ZoomLevel, aspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation) {
+	PerspectiveCameraController::PerspectiveCameraController(float aspectRatio, float fov, bool rotation) 
+    : m_AspectRatio(aspectRatio), m_Camera(aspectRatio, fov), m_Rotation(rotation) {
 	}
 
 	void PerspectiveCameraController::OnUpdate(Timestep ts) {
@@ -41,6 +41,30 @@ namespace Entry {
 	void PerspectiveCameraController::OnEvent(Event& e) {
         ET_PROFILE_FUNCTION();
 
-        //EventDispatcher dispatcher(e);
+#ifdef ET_PLATFORM_WINDOWS
+        EventDispatcher dispatcher(e);
+        //dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+        dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
+#endif // ET_PLATFORM_WINDOWS
+       
 	}
+    void PerspectiveCameraController::OnResize(float width, float height)
+    {
+        ET_PROFILE_FUNCTION();
+
+        m_AspectRatio = width / height;
+        m_Camera.SetAspectRatio(width / height);
+    }
+
+#ifdef ET_PLATFORM_WINDOWS
+    
+    bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
+    {
+        ET_PROFILE_FUNCTION();
+
+        OnResize((float)e.GetWidth(), (float)e.GetHeight());
+
+        return false;
+    }
+#endif
 }

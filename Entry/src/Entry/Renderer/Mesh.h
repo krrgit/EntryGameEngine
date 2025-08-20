@@ -16,5 +16,9 @@ namespace Entry {
 		virtual Ref<VertexArray> GetVertexArray() const = 0;
 
 		virtual void Bind() = 0;
+
+		virtual uint16_t GetVertexCount() const = 0;
+		virtual uint16_t GetIndexCount() const = 0;
+	private:
 	};
 }

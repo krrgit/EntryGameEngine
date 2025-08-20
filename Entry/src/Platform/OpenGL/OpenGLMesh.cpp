@@ -84,6 +84,9 @@ namespace Entry {
 		indexBuffer.reset(IndexBuffer::Create(indices.data(), indices.size()));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
+		m_VertexCount = vertices.size() / 8;
+		m_IndexCount = indices.size();
+
 		printf("Loaded \"%s\" successfully!\n", m_Name.c_str());
 		printf("\"%s\" indices: %d\n", m_Name.c_str(), indices.size());
 	}

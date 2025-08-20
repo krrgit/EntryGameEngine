@@ -6,7 +6,7 @@
 #include <chrono>
 
 Sandbox3D::Sandbox3D()
-    : Layer("Sandbox3D"), m_CameraController(1.0f)
+    : Layer("Sandbox3D"), m_CameraController(400.0f/ 240.0f, 80.0f)
 {
 
 }

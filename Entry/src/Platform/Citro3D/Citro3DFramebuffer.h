@@ -16,6 +16,8 @@ namespace Entry {
 		virtual void Bind() override;
 		virtual void Unbind() override;
 
+		virtual void Resize(uint32_t width, uint32_t height) override {}
+
 		virtual void* GetColorAttachmentRendererID() const override { return m_ColorAttachment; }
 		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification;  };
 

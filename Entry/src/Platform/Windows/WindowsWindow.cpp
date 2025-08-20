@@ -66,7 +66,8 @@ namespace Entry
 			m_Context->Init();
 		}
 		
-		if (m_Data.Screen == 0) glfwSetWindowAspectRatio(m_Window, props.Width, props.Height); // Keeps aspect ratio
+		//if (m_Data.Screen == 0) glfwSetWindowAspectRatio(m_Window, props.Width, props.Height); // Keeps aspect ratio
+		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 		

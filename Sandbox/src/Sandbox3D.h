@@ -20,6 +20,7 @@ class Sandbox3D : public Entry::Layer
     bool m_ShowImGui = true;
 
     // Temp
+    Entry::Ref<Entry::Framebuffer> m_Framebuffer; // removing this stops checkerboard from working??? T-T
     Entry::Ref<Entry::Texture2D> m_CheckerboardTexture;
     Entry::Ref<Entry::Texture2D> m_EntryLogoTexture;
     Entry::Ref<Entry::Mesh> m_Teapot;

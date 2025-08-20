@@ -813,6 +813,10 @@ namespace Entry {
         s_Data.WhiteTexture->Bind();
         mesh->GetVertexArray()->Bind();
         RenderCommand::DrawIndexed(mesh->GetVertexArray());
+
+        s_Data.Stats.VertexCount += mesh->GetVertexCount();
+        s_Data.Stats.IndexCount += mesh->GetIndexCount();
+        s_Data.Stats.DrawCalls++;
     }
 
     void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
@@ -830,6 +834,10 @@ namespace Entry {
         //mesh->Bind();
         mesh->GetVertexArray()->Bind();
         RenderCommand::DrawIndexed(mesh->GetVertexArray());
+
+        s_Data.Stats.VertexCount += mesh->GetVertexCount();
+        s_Data.Stats.IndexCount += mesh->GetIndexCount();
+        s_Data.Stats.DrawCalls++;
     }
 
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {

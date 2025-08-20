@@ -7,21 +7,37 @@
 
 namespace Entry {
 
-	PerspectiveCamera::PerspectiveCamera(float _left, float _right, float _bottom, float _top)
+	PerspectiveCamera::PerspectiveCamera(float _aspectRatio, float _fov)
 	{
-		SetProjection(_left, _right, _bottom, _top);
-	}
-
-
-	void PerspectiveCamera::SetProjection(float _left, float _right, float _bottom, float _top)
-	{	
-		ET_PROFILE_FUNCTION();
-
 		m_ViewMatrix = glm::lookAt(
 			glm::vec3(0, 0, 0), // Camera position in World Space
 			glm::vec3(0, 0, 1), // look direction
 			glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
+		SetProjection(_aspectRatio, _fov);
+	}
+
+
+	void PerspectiveCamera::SetProjection(float _aspectRatio, float _fov)
+	{	
+		ET_PROFILE_FUNCTION();
+
+		m_AspectRatio = _aspectRatio;
+		m_FOV = _fov;
+
+		RecalculateProjectionViewMatrix();
+	}
+
+	void PerspectiveCamera::SetAspectRatio(float _aspectRatio)
+	{
+		m_AspectRatio = _aspectRatio;
+
+		RecalculateProjectionViewMatrix();
+	}
+
+	void PerspectiveCamera::SetFOV(float _fov)
+	{
+		m_FOV = _fov;
 
 		RecalculateProjectionViewMatrix();
 	}
@@ -65,8 +81,8 @@ namespace Entry {
 					// FOR 3DS PLATFORM
 					// 3DS screens are sideways. See mtx_persptilt.c for more details.
 					// Mtx_PerspStereoTilt()
-					float fov = 80.0f;
-					float invaspect = 400.0f / 240.0f;
+					float fov = m_FOV;
+					float invaspect = m_AspectRatio;
 
 					// Left Side
 					float iod = -m_Slider3DState; // 3D effect value
@@ -115,8 +131,8 @@ namespace Entry {
 			default:
 				{
 					// For other platforms/editor (PC)
-					float fov = 80.0f;
-					float aspect = 400.0f/ 240.0f;
+					float fov = m_FOV;
+					float aspect = m_AspectRatio;
 
 					// Left Side
 					float iod = -m_Slider3DState; // 3D effect value

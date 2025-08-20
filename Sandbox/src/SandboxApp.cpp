@@ -2,23 +2,11 @@
 #include <Entry/Core/EntryPoint.h>
 #include <Entry/Core/Config.h>
 
-//#include <Platform/Citro3D/Citro3DShader.h>
-
 #include "imgui.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Sandbox3D.h"
-
-//// Compiled Shader Headers
-//#include "vshader00_shbin.h"
-//#include "vshader01_shbin.h"
-//#include "vshader02_shbin.h"
-//
-//// Texture Headers
-//#include "Checkerboard_t3x.h"
-//#include "EntryLogo_t3x.h"
-
 
 class ExampleLayer : public Entry::Layer
 {

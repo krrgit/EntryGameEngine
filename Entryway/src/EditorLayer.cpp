@@ -8,7 +8,7 @@
 namespace Entry {
 
     EditorLayer::EditorLayer()
-        : Layer("EditorLayer"), m_CameraController(1.0f)
+        : Layer("EditorLayer"), m_CameraController(400.0f/ 240.0f, 80.0f)
     {
 
     }
@@ -153,16 +153,26 @@ namespace Entry {
         ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
-
-        //void* textureID = (void*)m_CheckerboardTexture->GetRendererID();
-        //ImGui::Image(textureID, ImVec2{ 128.0f, 128.0f });
-
-        void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
-        ImGui::Image(textureID, ImVec2{ 400.0f, 240.0f }, ImVec2{0, 1}, ImVec2{1,0});
-    
     
         ImGui::End();
     
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+        ImGui::Begin("Viewport");
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize)) 
+        {
+            m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+            m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
+        }
+
+        void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
+        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
+        ImGui::End();
+        ImGui::PopStyleVar();
+
         ImGui::End();
     }
 

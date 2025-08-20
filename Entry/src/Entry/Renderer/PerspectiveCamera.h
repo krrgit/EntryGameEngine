@@ -26,8 +26,10 @@ namespace Entry {
 		}
 #endif
 
-		PerspectiveCamera(float left, float right, float bottom, float top);
-		void SetProjection(float left, float right, float bottom, float top);
+		PerspectiveCamera(float _aspectRatio, float _fov = 80.0f);
+		void SetProjection(float _aspectRatio, float _fov);
+		void SetAspectRatio(float _aspectRatio);
+		void SetFOV(float _fov);
 
 		const glm::vec3 GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix();
@@ -92,6 +94,9 @@ namespace Entry {
 		glm::vec3 forward;
 		glm::vec3 right;
 		glm::vec3 up;
+
+		float m_AspectRatio = 400.0f / 240.0f;
+		float m_FOV = 80.0f;
 	private:
 		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
