@@ -1,8 +1,8 @@
 #include "etpch.h"
-#include "WindowsInput.h"
 
 #include "Entry/Core/Application.h"
 #include "Entry/Core//KeyCodes.h"
+#include "Entry/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 
@@ -10,52 +10,69 @@
 
 namespace Entry
 {
-
-	Input* Input::s_Instance = new WindowsInput();
-
-	bool WindowsInput::GetButtonImpl(KeyCode keycode)
+	bool Input::GetButton(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::GetButtonUpImpl(KeyCode keycode)
+	bool Input::GetButtonUp(KeyCode keycode)
 	{
 		return false;
 	}
 
-	bool WindowsInput::GetButtonDownImpl(KeyCode keycode)
+	bool Input::GetButtonDown(KeyCode keycode)
 	{
 		return false;
 	}
-	bool WindowsInput::IsScreenTouchedImpl()
+	bool Input::IsScreenTouched()
 	{
 		return false;
 	}
-	int WindowsInput::GetTouchXImpl()
+	int Input::GetTouchX()
 	{
 		return 0;
 	}
-	int WindowsInput::GetTouchYImpl()
+	int Input::GetTouchY()
 	{
 		return 0;
 	}
-	glm::uvec2 WindowsInput::GetTouchPosImpl()
+	glm::uvec2 Input::GetTouchPos()
 	{
 		return glm::uvec2(0.0f);
 	}
 
-	glm::vec2 WindowsInput::GetJoystickPosImpl()
+	glm::vec2 Input::GetJoystickPos()
 	{
-		m_JoystickPos.x = (GetButtonImpl(ET_PAD_CPAD_RIGHT) ? 1 : 0) - (GetButtonImpl(ET_PAD_CPAD_LEFT) ? 1 : 0);
-		m_JoystickPos.y = (GetButtonImpl(ET_PAD_CPAD_UP) ? 1 : 0) - (GetButtonImpl(ET_PAD_CPAD_DOWN) ? 1 : 0);
+		int x = (GetButton(ET_PAD_CPAD_RIGHT) ? 1 : 0) - (GetButton(ET_PAD_CPAD_LEFT) ? 1 : 0);
+		int y = (GetButton(ET_PAD_CPAD_UP) ? 1 : 0) - (GetButton(ET_PAD_CPAD_DOWN) ? 1 : 0);
 		
-		return m_JoystickPos;
+		return {x, y};
 	}
 
-	float WindowsInput::GetSlider3DImpl()
+	float Input::GetSlider3D()
 	{
-		return m_Slider3DState;
+		return 0.0f;
+	}
+
+	std::pair<float, float> Input::GetMousePosition() 
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		return  { (float)xpos, (float)ypos };
+	}
+
+	float Input::GetMouseX() 
+	{
+		std::pair<float,float> mousePos = GetMousePosition();
+		return mousePos.first;
+	}
+
+	float Input::GetMouseY() 
+	{
+		std::pair<float, float> mousePos = GetMousePosition();
+		return mousePos.second;
 	}
 }
