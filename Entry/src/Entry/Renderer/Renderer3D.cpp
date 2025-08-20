@@ -814,6 +814,7 @@ namespace Entry {
         mesh->GetVertexArray()->Bind();
         RenderCommand::DrawIndexed(mesh->GetVertexArray());
 
+        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
         s_Data.Stats.VertexCount += mesh->GetVertexCount();
         s_Data.Stats.IndexCount += mesh->GetIndexCount();
         s_Data.Stats.DrawCalls++;
@@ -835,6 +836,7 @@ namespace Entry {
         mesh->GetVertexArray()->Bind();
         RenderCommand::DrawIndexed(mesh->GetVertexArray());
 
+        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
         s_Data.Stats.VertexCount += mesh->GetVertexCount();
         s_Data.Stats.IndexCount += mesh->GetIndexCount();
         s_Data.Stats.DrawCalls++;

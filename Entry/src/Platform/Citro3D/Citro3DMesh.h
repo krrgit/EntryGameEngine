@@ -19,11 +19,13 @@ namespace Entry {
 
 		virtual uint16_t GetVertexCount() const { return m_VertexCount; }
 		virtual uint16_t GetIndexCount() const { return m_IndexCount; }
+		virtual uint16_t GetPolygonCount() const { return m_PolygonCount; }
+
 
 	private:
 		std::string m_Name;
 		Ref<VertexArray> m_VertexArray;
-		uint16_t m_VertexCount, m_IndexCount;
+		uint16_t m_PolygonCount, m_VertexCount, m_IndexCount;
 
 	};
 

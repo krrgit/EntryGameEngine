@@ -88,6 +88,7 @@ namespace Entry {
 
 		m_VertexCount = vertices.size() / 8;
 		m_IndexCount = indices.size();
+		m_PolygonCount = m_IndexCount / 3;
 
 		if (indices.size() == 0) {
 			printf("Failed to load \"%s\"\n", m_Name.c_str());

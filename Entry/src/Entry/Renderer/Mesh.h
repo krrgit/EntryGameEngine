@@ -19,6 +19,7 @@ namespace Entry {
 
 		virtual uint16_t GetVertexCount() const = 0;
 		virtual uint16_t GetIndexCount() const = 0;
+		virtual uint16_t GetPolygonCount() const = 0;
 	private:
 	};
 }
