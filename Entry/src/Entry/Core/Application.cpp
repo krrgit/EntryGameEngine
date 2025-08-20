@@ -63,7 +63,7 @@ namespace Entry
         {
             ET_PROFILE_SCOPE("Create ImGui Layer");
             m_ImGuiLayer = new Entry::ImGuiLayer();
-            PushOverlay(m_ImGuiLayer, ET_WINDOW_BOTTOM);
+            PushOverlay(m_ImGuiLayer, ET_WINDOW_TOP);
         }
     }
 
@@ -81,7 +81,8 @@ namespace Entry
     {
         ET_PROFILE_FUNCTION();
 
-        m_Windows[window]->PushLayer(layer);
+        m_CurrentWindow = m_Windows[window].get();
+        m_CurrentWindow->PushLayer(layer);
         layer->OnAttach();
     }
 
@@ -93,8 +94,9 @@ namespace Entry
     void Application::PushOverlay(Layer* layer, int window)
     {
         ET_PROFILE_FUNCTION();
+        m_CurrentWindow = m_Windows[window].get();
+        m_CurrentWindow->PushOverlay(layer);
 
-        m_Windows[window]->PushOverlay(layer);
         layer->OnAttach();
     }
 
@@ -107,7 +109,7 @@ namespace Entry
     {
         ET_PROFILE_FUNCTION();
 
-        //ET_CORE_TRACE("{0}", e);
+        ET_CORE_TRACE("{0}", e);
 
         for (uint32_t i = 0; i < m_Windows.size(); ++i)
         {
@@ -151,13 +153,13 @@ namespace Entry
                 m_CurrentWindow = m_Windows[i].get();
                 m_CurrentWindow->OnUpdate(timestep);
             }
+
             m_ImGuiLayer->End();
             
             {
                 ET_PROFILE_SCOPE("ScanHIDEvents");
                 m_CurrentWindow->ScanHIDEvents();
             }
-            
             {
                 ET_PROFILE_SCOPE("C3D_FrameEnd");
                 m_CurrentWindow->FrameEnd();

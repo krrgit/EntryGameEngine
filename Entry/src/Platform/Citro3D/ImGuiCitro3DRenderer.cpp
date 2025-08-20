@@ -69,5 +69,8 @@ bool ImGui_ImplC3D_NewFrame()
 void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
+	C3D_FrameDrawOn(bd->m_RenderTarget);
+	C2D_SceneTarget(bd->m_RenderTarget);
+
 	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
 }

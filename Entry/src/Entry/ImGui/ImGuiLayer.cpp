@@ -19,6 +19,7 @@ namespace Entry
 #ifdef ET_PLATFORM_3DS
 #include "Platform/Citro3D/ImGuiCitro3DRenderer.h"
 
+#define TOUCH_INPUT_SHIFT 40
 namespace Entry {
 
 	static ImGuiKey MapKeyCodeToImGuiNavInput(KeyCode keycode) {
@@ -65,6 +66,9 @@ namespace Entry {
 
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		
+		// Align touch input horizontally with top screen
+		m_TouchInputShift = (io.DisplaySize.x > 320) ? TOUCH_INPUT_SHIFT : 0;
 
 		{
 			ET_PROFILE_SCOPE("ImGui_ImplC3D_Init");
@@ -117,7 +121,7 @@ namespace Entry {
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDown[0] = true;
-		io.MousePos = ImVec2(e.GetX(), e.GetY());
+		io.MousePos = ImVec2(e.GetX() + m_TouchInputShift, e.GetY());
 		return false;
 	}
 	bool ImGuiLayer::OnScreenReleasedEvent(ScreenReleasedEvent& e)
@@ -195,10 +199,10 @@ namespace Entry
 		}
 
 		Application& app = Application::Get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		m_Window = &app.GetWindow();
 
 		// Setup Platform/Renderer bindings
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)m_Window->GetNativeWindow(), true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
@@ -225,16 +229,17 @@ namespace Entry
 		ET_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
-		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		//Application& app = Application::Get();
+		io.DisplaySize = ImVec2((float)m_Window->GetWidth(), (float)m_Window->GetHeight());
 
+		glfwMakeContextCurrent((GLFWwindow*)m_Window->GetNativeWindow());
 		// Rendering
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			GLFWwindow* backup_current_context = (GLFWwindow*)m_Window->GetNativeWindow();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);

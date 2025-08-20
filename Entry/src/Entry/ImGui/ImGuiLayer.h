@@ -9,6 +9,7 @@
 #include "Entry/Events/ApplicationEvent.h"
 #include "Entry/Events/MouseEvent.h"
 #include "Entry/Events/KeyEvent.h"
+#include "Entry/Core/Window.h"
 #endif // ET_PLATFORM_WINDOWS
 
 namespace Entry {
@@ -33,6 +34,7 @@ namespace Entry {
 		bool OnButtonReleasedEvent(ButtonReleasedEvent& e);
 		bool OnCirclePadMovedEvent(CirclePadEvent& e);
 
+		int m_TouchInputShift = 0;
 #ifdef ET_PLATFORM_WINDOWS
 	private:
 		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
@@ -44,6 +46,7 @@ namespace Entry {
 		bool OnKeyTypedEvent(KeyTypedEvent& e);
 		bool OnWindowResizeEvent(WindowResizeEvent& e);
 		
+		Window* m_Window;
 #endif // ET_PLATFORM_WINDOWS
 	};
 }
