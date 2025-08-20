@@ -93,7 +93,7 @@ namespace Entry {
 					float nearPlane = 0.01f;
 					float farPlane = 1000.0f;
 					bool isLeftHanded = false;
-					float shift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
+					float eyeShift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
 
 					m_ProjectionMatrix = glm::mat3(0);
 
@@ -102,7 +102,7 @@ namespace Entry {
 					m_ProjectionMatrix[1][3] = iod / 2.0f;
 					m_ProjectionMatrix[2][3] = farPlane * nearPlane / (nearPlane - farPlane);
 					m_ProjectionMatrix[3][2] = isLeftHanded ? 1.0f : -1.0f;
-					m_ProjectionMatrix[1][2] = -m_ProjectionMatrix[3][2] * shift / fovx_tan_invaspect;
+					m_ProjectionMatrix[1][2] = -m_ProjectionMatrix[3][2] * eyeShift / fovx_tan_invaspect;
 					m_ProjectionMatrix[2][2] = -m_ProjectionMatrix[3][2] * nearPlane / (nearPlane - farPlane);
 
 					m_ProjectionMatrix = glm::transpose(m_ProjectionMatrix);
@@ -120,7 +120,7 @@ namespace Entry {
 						m_ProjectionMatrixR[1][3] = iod / 2.0f;
 						m_ProjectionMatrixR[2][3] = farPlane * nearPlane / (nearPlane - farPlane);
 						m_ProjectionMatrixR[3][2] = isLeftHanded ? 1.0f : -1.0f;
-						m_ProjectionMatrixR[1][2] = -m_ProjectionMatrixR[3][2] * shift / fovx_tan_invaspect;
+						m_ProjectionMatrixR[1][2] = -m_ProjectionMatrixR[3][2] * eyeShift / fovx_tan_invaspect; // eyeShift might be negative?
 						m_ProjectionMatrixR[2][2] = -m_ProjectionMatrixR[3][2] * nearPlane / (nearPlane - farPlane);
 
 						m_ProjectionMatrixR = glm::transpose(m_ProjectionMatrixR);
@@ -137,19 +137,18 @@ namespace Entry {
 					// Left Side
 					float iod = -m_Slider3DState; // 3D effect value
 					float screen = 2.0f; // No clue what this is
-					float fovx = glm::radians(fov);
-					float fovx_tan = tanf(fovx / 2.0f);
+					//float fovx = glm::radians(fov);
+					//float fovx_tan = tanf(fovx / 2.0f);
 					float nearPlane = 0.01f;
 					float farPlane = 1000.0f;
 					bool isLeftHanded = false;
-					float shift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
-
-					float fovY = glm::radians(80.0f);
-					float tanHalfFovY = tanf(fovY / 2.0f);
-					float tanHalfFovX = tanHalfFovY * aspect;
 
 					// Stereo shift (sign flips per eye)
-					float eyeShift = -iod / (2.0f * screen);
+					float eyeShift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
+
+					float fovY = glm::radians(fov);
+					float tanHalfFovY = tanf(fovY / 2.0f);
+					float tanHalfFovX = tanHalfFovY * aspect;
 
 					m_ProjectionMatrix = glm::mat3(0);
 

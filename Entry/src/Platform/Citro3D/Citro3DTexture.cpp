@@ -101,8 +101,8 @@ namespace Entry {
 	{
 		ET_PROFILE_FUNCTION();
 
-		uint32_t bpp = m_DataFormat == GPU_RGBA8 ? 4 : 3; // bytes per pixel
-		ET_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
+		//uint32_t bpp = m_DataFormat == GPU_RGBA8 ? 4 : 3; // bytes per pixel
+		ET_CORE_ASSERT(size == m_Width * m_Height * (GPU_RGBA8 ? 4 : 3), "Data must be entire texture!");
 		C3D_TexUpload(&m_Texture, data);
 	}
 

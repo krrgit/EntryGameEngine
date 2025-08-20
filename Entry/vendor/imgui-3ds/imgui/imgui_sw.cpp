@@ -48,10 +48,10 @@ namespace imgui_sw {
 			float w0, w1, w2;
 		};
 
-		Barycentric operator*(const float f, const Barycentric& va)
-		{
-			return { f * va.w0, f * va.w1, f * va.w2 };
-		}
+		//Barycentric operator*(const float f, const Barycentric& va)
+		//{
+		//	return { f * va.w0, f * va.w1, f * va.w2 };
+		//}
 
 		//void operator+=(Barycentric& a, const Barycentric& b)
 		//{
@@ -60,10 +60,10 @@ namespace imgui_sw {
 		//	a.w2 += b.w2;
 		//}
 
-		Barycentric operator+(const Barycentric& a, const Barycentric& b)
-		{
-			return Barycentric{ a.w0 + b.w0, a.w1 + b.w1, a.w2 + b.w2 };
-		}
+		//Barycentric operator+(const Barycentric& a, const Barycentric& b)
+		//{
+		//	return Barycentric{ a.w0 + b.w0, a.w1 + b.w1, a.w2 + b.w2 };
+		//}
 
 		// ----------------------------------------------------------------------------
 		// Copies of functions in ImGui, inlined for speed:

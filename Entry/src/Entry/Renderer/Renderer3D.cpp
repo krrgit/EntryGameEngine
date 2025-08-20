@@ -883,7 +883,12 @@ namespace Entry {
 
     void Renderer3D::ResetStats()
     {
-        memset(&s_Data.Stats, 0, sizeof(Statistics));
+        //memset(&s_Data.Stats, 0, sizeof(Statistics));
+        s_Data.Stats.DeltaTime = 0;
+        s_Data.Stats.DrawCalls = 0;
+        s_Data.Stats.IndexCount = 0;
+        s_Data.Stats.PolygonCount = 0;
+        s_Data.Stats.VertexCount = 0;
     }
     void Renderer3D::SetStatsTimestep(Timestep ts)
     {
