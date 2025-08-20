@@ -27,6 +27,8 @@ namespace Entry {
 		void Begin(Timestep ts);
 		void End();
 
+		void BlockEvents(bool block) { m_BlockEvents = block; }
+
 	private:
 		bool OnScreenTouchedEvent(ScreenTouchedEvent& e);
 		bool OnScreenReleasedEvent(ScreenReleasedEvent& e);
@@ -35,6 +37,7 @@ namespace Entry {
 		bool OnCirclePadMovedEvent(CirclePadEvent& e);
 
 		int m_TouchInputShift = 0;
+		bool m_BlockEvents = true;
 #ifdef ET_PLATFORM_WINDOWS
 	private:
 		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);

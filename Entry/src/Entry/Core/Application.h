@@ -29,8 +29,12 @@ namespace Entry {
         inline Window& GetWindow() { return *m_CurrentWindow; }
 
         void Close();
+        
+        ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+
 #ifdef ET_PLATFORM_WINDOWS
     private:
+
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
     private:

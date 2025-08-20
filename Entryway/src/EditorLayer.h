@@ -18,18 +18,17 @@ namespace Entry {
 
         private:
         PerspectiveCameraController m_CameraController;
-        bool m_ShowImGui = true;
+        Ref<Framebuffer> m_Framebuffer;
+        glm::vec2 m_ViewportSize = { 0,0 };
+        
+        bool m_ViewportFocused = false, m_ViewportHovered = false;
 
         // Temp
-        Ref<Framebuffer> m_Framebuffer;
-
         Ref<Texture2D> m_CheckerboardTexture;
         Ref<Texture2D> m_EntryLogoTexture;
 
         Ref<Mesh> m_Teapot;
 
-        glm::vec2 m_ViewportSize = { 0,0 };
-    
         glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
         float m_Rotation = 0.0f;

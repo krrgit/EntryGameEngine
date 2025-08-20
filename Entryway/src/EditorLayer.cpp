@@ -37,7 +37,7 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
         // Update
-        {
+        if (m_ViewportFocused) {
             ET_PROFILE_SCOPE("CameraController::OnUpdate");
             m_CameraController.OnUpdate(ts);
         }
@@ -64,8 +64,6 @@ namespace Entry {
     void EditorLayer::OnImGuiRender()
     {
         ET_PROFILE_FUNCTION();
-
-        if (!m_ShowImGui) { return; }
 
         static bool dockspaceOpen = true;
         static bool opt_fullscreen = true;
@@ -159,6 +157,12 @@ namespace Entry {
         
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
         ImGui::Begin("Viewport");
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+
+        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || m_ViewportHovered);
+        
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize)) 
         {
