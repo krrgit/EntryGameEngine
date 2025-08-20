@@ -44,7 +44,7 @@ namespace Entry {
 		glm::vec2 m_RotMouseStartPos;	
 		glm::vec2 m_RotMouseCurrentPos;
 		glm::vec4 m_CamStartRot = { 0.0f, 0.0f, 0.0f, 0.0f };
-		float m_MouseSpeed = 0.175f;
+		float m_MouseSpeed = 0.1125f;
 
 		float m_Slider3DState, m_Slider3DStatePrev;
 

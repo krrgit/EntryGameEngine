@@ -145,6 +145,7 @@ namespace Entry
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
+
             m_ImGuiLayer->Begin(timestep);
             for (uint32_t i = 0; i < m_WindowCount; ++i)
             {
