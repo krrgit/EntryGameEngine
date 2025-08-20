@@ -232,6 +232,9 @@ namespace Entry
 
 	void WindowsWindow::OnEvent(Event& e)
 	{
+		ET_PROFILE_FUNCTION();
+		for (Layer* layer : m_LayerStack)
+			layer->OnEvent(e);
 	}
 
 	//void WindowsWindow::SetClearColor(uint32_t color)

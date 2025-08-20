@@ -182,6 +182,6 @@ namespace Entry {
 
     void EditorLayer::OnEvent(Entry::Event& event) 
     {
-	    //m_CameraController.OnEvent(event);
+	    m_CameraController.OnEvent(event);
     }
 }

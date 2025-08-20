@@ -214,21 +214,21 @@ namespace Entry {
 #define ET_PAD_DLEFT		Entry::Key::F		    ///< D-Pad Left
 #define ET_PAD_DUP			Entry::Key::T			///< D-Pad Up
 #define ET_PAD_DDOWN		Entry::Key::G		    ///< D-Pad Down
-#define ET_PAD_R			Entry::Key::W			///< R
+#define ET_PAD_R			Entry::Key::E			///< R
 #define ET_PAD_L			Entry::Key::Q			///< L
-#define ET_PAD_X			Entry::Key::A			///< X
-#define ET_PAD_Y			Entry::Key::S			///< Y
-#define ET_PAD_ZL			Entry::Key::E			///< ZL (New 3DS only)
-#define ET_PAD_ZR			Entry::Key::R			///< ZR (New 3DS only)
+#define ET_PAD_X			Entry::Key::C			///< X
+#define ET_PAD_Y			Entry::Key::V			///< Y
+#define ET_PAD_ZL			Entry::Key::R			///< ZL (New 3DS only)
+#define ET_PAD_ZR			Entry::Key::T			///< ZR (New 3DS only)
 #define ET_PAD_TOUCH		Entry::Key::Space	///< Touch (Not actually provided by HID)
 #define ET_PAD_CSTICK_RIGHT Entry::Key::L 			///< C-Stick Right (New 3DS only)
 #define ET_PAD_CSTICK_LEFT  Entry::Key::J  			///< C-Stick Left (New 3DS only)
 #define ET_PAD_CSTICK_UP	Entry::Key::I			///< C-Stick Up (New 3DS only)
 #define ET_PAD_CSTICK_DOWN  Entry::Key::K  			///< C-Stick Down (New 3DS only)
-#define ET_PAD_CPAD_RIGHT	Entry::Key::Right		///< Circle Pad Right
-#define ET_PAD_CPAD_LEFT	Entry::Key::Left		///< Circle Pad Left
-#define ET_PAD_CPAD_UP		Entry::Key::Up			///< Circle Pad Up
-#define ET_PAD_CPAD_DOWN	Entry::Key::Down		///< Circle Pad Down
+#define ET_PAD_CPAD_RIGHT	Entry::Key::D		///< Circle Pad Right
+#define ET_PAD_CPAD_LEFT	Entry::Key::A		///< Circle Pad Left
+#define ET_PAD_CPAD_UP		Entry::Key::W			///< Circle Pad Up
+#define ET_PAD_CPAD_DOWN	Entry::Key::S		///< Circle Pad Down
 
 // Generic catch-all directions
 //#define ET_PAD_UP     ET_PAD_DUP    | ET_PAD_CPAD_UP    ///< D-Pad Up or Circle Pad Up

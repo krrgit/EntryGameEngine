@@ -8,6 +8,10 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#ifdef ET_PLATFORM_WINDOWS
+#include "Entry/Events/MouseEvent.h"
+#endif // ET_PLATFORM_WINDOWS
+
 namespace Entry {
 	class PerspectiveCameraController
 	{
@@ -25,6 +29,9 @@ namespace Entry {
 #ifdef ET_PLATFORM_WINDOWS
 	private:
 		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
+		void RotateCamera();
+		void StopRotateCamera();
 #endif
 	private:
 		float m_AspectRatio;
@@ -32,6 +39,13 @@ namespace Entry {
 		PerspectiveCamera m_Camera;
 
 		bool m_Rotation;
+
+		bool m_MouseRotation = false;
+		glm::vec2 m_RotMouseStartPos;	
+		glm::vec2 m_RotMouseCurrentPos;
+		glm::vec4 m_CamStartRot = { 0.0f, 0.0f, 0.0f, 0.0f };
+		float m_MouseSpeed = 0.175f;
+
 		float m_Slider3DState, m_Slider3DStatePrev;
 
 		glm::vec3 m_CamPos = { 0.0f, 1.0f, 1.0f };
