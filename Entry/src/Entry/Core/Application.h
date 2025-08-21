@@ -12,10 +12,16 @@
 #define ET_WINDOW_BOTTOM 1
 
 namespace Entry {
+    struct AppProperties {
+        uint32_t ImGuiWindow = ET_WINDOW_BOTTOM;
+
+        std::vector<WindowProps> windowProps;
+    };
 
     class Application{
+
         public:
-        Application(const std::string& name = "Entry App");
+        Application(AppProperties* appProps = nullptr);
         virtual ~Application();
 
         void Run();
@@ -32,15 +38,17 @@ namespace Entry {
         
         ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
+    private:
+        void InitDefaultAppProperties();
 #ifdef ET_PLATFORM_WINDOWS
     private:
-
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
     private:
         bool m_Minimized = false;
 #endif // ET_PLATFORM_WINDOWS
     private:
+        AppProperties m_AppProps;
         uint16_t m_WindowCount = 2;
         Window* m_CurrentWindow;
         std::array<Scope<Window>, 2> m_Windows;

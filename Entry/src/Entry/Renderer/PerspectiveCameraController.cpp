@@ -58,6 +58,9 @@ namespace Entry {
             if (Input::IsMouseButtonPressed(MouseCode::Button0) && !m_MouseRotation) {
                 RotateCamera();
             }
+            else if (Input::IsMouseButtonReleased(MouseCode::Button0) && m_MouseRotation) {
+                StopRotateCamera();
+            }
 
             if (m_MouseRotation) {
                 m_RotMouseCurrentPos.x = Input::GetMouseX();
@@ -78,23 +81,7 @@ namespace Entry {
         m_Camera.SetPosition(m_CamPos);
         m_Camera.SetRotation(m_CamRot);
 	}
-#endif // ET_PLATFORM_WINDOWS
 
-	void PerspectiveCameraController::OnEvent(Event& e) {
-        ET_PROFILE_FUNCTION();
-
-#ifdef ET_PLATFORM_WINDOWS
-        EventDispatcher dispatcher(e);
-        //dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
-        dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
-        dispatcher.Dispatch<MouseButtonReleasedEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased));
-#endif // ET_PLATFORM_WINDOWS
-       
-	}
-
-
-#ifdef ET_PLATFORM_WINDOWS
-    
     bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
     {
         ET_PROFILE_FUNCTION();
@@ -133,7 +120,20 @@ namespace Entry {
 
         ET_CORE_WARN("Stop Rotate Camera");
     }
-#endif
+#endif // ET_PLATFORM_WINDOWS
+
+
+	void PerspectiveCameraController::OnEvent(Event& e) {
+        ET_PROFILE_FUNCTION();
+
+#ifdef ET_PLATFORM_WINDOWS
+        EventDispatcher dispatcher(e);
+        //dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+        dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
+        dispatcher.Dispatch<MouseButtonReleasedEvent>(ET_BIND_EVENT_FN(PerspectiveCameraController::OnMouseButtonReleased));
+#endif // ET_PLATFORM_WINDOWS
+       
+	}
 
     void PerspectiveCameraController::OnResize(float width, float height)
     {

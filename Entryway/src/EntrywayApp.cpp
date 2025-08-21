@@ -14,8 +14,8 @@ namespace Entry {
     class Entryway : public Application
     {
     public:
-        Entryway()
-            : Application("Entryway")
+        Entryway(AppProperties* appProps)
+            : Application(appProps)
         {
 		    PushLayer(new EditorLayer(), ET_WINDOW_TOP);
         }
@@ -27,6 +27,16 @@ namespace Entry {
 
     Application* CreateApplication() 
     {
-        return new Entryway();
+        WindowProps mainEditorWindow("Entryway", 1280, 720, 0, false, false);
+        WindowProps touchWindow(WindowProps::WINDOW_3DS_BOTTOM);
+        touchWindow.Title = "Entryway: Bottom Screen";
+
+        AppProperties appProps;
+        appProps.windowProps.push_back(mainEditorWindow);
+        appProps.windowProps.push_back(touchWindow);
+
+        appProps.ImGuiWindow = ET_WINDOW_TOP;
+
+        return new Entryway(&appProps);
     }
 }
