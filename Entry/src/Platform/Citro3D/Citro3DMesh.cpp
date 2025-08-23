@@ -10,6 +10,8 @@ namespace Entry {
 
 	static void FastOBJToBuffers(std::vector<float>* outVertices, std::vector<uint16_t>* outIndices, Ref<fastObjMesh> obj_mesh)
 	{
+		ET_PROFILE_FUNCTION();
+
 		outVertices->clear();
 		outIndices->clear();
 
@@ -56,9 +58,54 @@ namespace Entry {
 				indexOffset += faceVertices;
 		}
 	}
+
+	static void CreateSubMeshes(std::vector<SubMesh>& submeshes, std::vector<Material>& materials, std::vector<Ref<Texture2D>>& textures, Ref<fastObjMesh> obj_mesh)
+	{
+		ET_PROFILE_FUNCTION();
+
+		submeshes.clear();
+		materials.clear();
+		textures.clear();
+
+		// Get Materials
+		for (uint32_t i = 0; i < obj_mesh->material_count; ++i)
+		{
+			Material mat = { obj_mesh->materials[i].name, obj_mesh->materials[i].map_Kd - 1 };
+			materials.push_back(mat);
+		}
+
+		//// Get Textures
+		for (uint32_t i = 0; i < obj_mesh->texture_count; ++i)
+		{
+			if (obj_mesh->textures[i].path == nullptr) continue;
+			Ref<Texture2D> tex = Texture2D::Create(obj_mesh->textures[i].path);
+			textures.push_back(tex);
+		}
+
+		// Create submeshes from objects (-o)
+		for (uint32_t o = 0; o < obj_mesh->object_count; ++o)
+		{
+			auto currentObj = obj_mesh->objects[o];
+			uint32_t nextIndexOffset = o + 1 >= obj_mesh->object_count ? obj_mesh->index_count : obj_mesh->objects[o + 1].index_offset;
+			uint32_t indexCount = nextIndexOffset - currentObj.index_offset;
+
+			SubMesh submesh{
+				indexCount,
+				currentObj.index_offset,
+				obj_mesh->face_materials[currentObj.face_offset]
+			};
+			submeshes.push_back(submesh);
+		}
+
+		submeshes.resize(submeshes.size());
+		materials.resize(materials.size());
+		textures.resize(textures.size());
+	}
 	
 	Citro3DMesh::Citro3DMesh(const std::string& path)
 	{
+		ET_PROFILE_FUNCTION();
+
 		std::string romfsPath = "romfs:/" + path;
 		
 		m_Name = path;
@@ -67,7 +114,9 @@ namespace Entry {
 		std::vector<uint16_t> indices;
 
 		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(romfsPath.c_str()));
+
 		FastOBJToBuffers(&vertices, &indices, obj_mesh);
+		CreateSubMeshes(m_SubMeshes, m_Materials, m_Textures, obj_mesh);
 
 		m_VertexArray = VertexArray::Create();
 
@@ -78,7 +127,7 @@ namespace Entry {
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Float3, "a_Normal" }
-		});
+			});
 
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
@@ -90,13 +139,18 @@ namespace Entry {
 		m_IndexCount = indices.size();
 		m_PolygonCount = m_IndexCount / 3;
 
+		m_MaterialCount = m_Materials.size();
+		m_TextureCount = m_Textures.size();
+
 		if (indices.size() == 0) {
 			printf("Failed to load \"%s\"\n", m_Name.c_str());
 		}
 		else {
 			printf("Loaded \"%s\" successfully! Indices: %d\n", m_Name.c_str(), indices.size());
+			printf("SubMeshes: %d\n", m_SubMeshes.size());
+			printf("Materials: %d\n", m_MaterialCount);
+			printf("Textures: %d\n", m_TextureCount);
 		}
-
 	}
 	Citro3DMesh::~Citro3DMesh()
 	{
@@ -105,5 +159,11 @@ namespace Entry {
 	void Citro3DMesh::Bind()
 	{
 		m_VertexArray->Bind();
+	}
+	void Citro3DMesh::BindMaterial(uint16_t materialID)
+	{
+		ET_PROFILE_FUNCTION();
+		if (m_MaterialCount == 0) return;
+		m_Textures[m_Materials[materialID].TextureID]->Bind(0);
 	}
 }

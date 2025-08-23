@@ -42,11 +42,11 @@ namespace Entry {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
+	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount, uint16_t indexOffset)
 	{
 		//ET_PROFILE_FUNCTION();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
-		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, nullptr);
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (void*)(indexOffset * sizeof(uint16_t)));
 		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

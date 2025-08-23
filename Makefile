@@ -50,7 +50,7 @@ INCLUDES	:=  $(shell find Entry/src -type d \
 	Entry/vendor/glm \
 	Entry/vendor/fast_obj
 
-GRAPHICS	:=	$(shell find Sandbox/assets -type d)
+GRAPHICS	:=	Sandbox/assets/**
 GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
 #GFXBUILD	:=	$(ROMFS)/gfx

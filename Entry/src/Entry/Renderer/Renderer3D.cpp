@@ -14,6 +14,7 @@
 #include "vshader02_shbin.h" // Texture Shader
 #include "phongshader_shbin.h" // Phong Shader
 #include "normalcolorshader_shbin.h" // Normal Color Shader
+#include "UnlitTexture_shbin.h" // Unlit Texture Shader
 #endif // ET_PLATFORM_3DS
 
 //#include <GLFW/glfw3.h>
@@ -55,7 +56,7 @@ namespace Entry {
 
         Ref <Shader> TextureShader;
         Ref <Shader> PhongShader;
-        Ref <Shader> NormalColorShader;
+        Ref <Shader> UnlitTextureShader;
         Ref <Texture2D> WhiteTexture;
 
         std::array<RenderBatch, MaxBatches> RenderBatches;
@@ -117,7 +118,7 @@ namespace Entry {
         s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
         s_Data.TextureShader->Bind();
         s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
-        s_Data.NormalColorShader.reset(Shader::Create(normalcolorshader_shbin, normalcolorshader_shbin_size));
+        s_Data.UnlitTextureShader.reset(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size));
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
         int32_t samplers[s_Data.MaxBatches];
@@ -127,7 +128,7 @@ namespace Entry {
         s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
-        s_Data.NormalColorShader.reset(Shader::Create("assets/shaders/NormalColor.glsl"));
+        s_Data.UnlitTextureShader.reset(Shader::Create("assets/shaders/UnlitTexture.glsl"));
 #endif // ET_PLATFORM_WINDOWS
 
         // CREATE WHITE TEXTURE
@@ -161,8 +162,8 @@ namespace Entry {
 
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
-        s_Data.NormalColorShader->Bind();
-        s_Data.NormalColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
+        s_Data.UnlitTextureShader->Bind();
+        s_Data.UnlitTextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
         
         s_Data.WhiteTexture->Bind(0);
 
@@ -803,38 +804,24 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.NormalColorShader->Bind();
-        s_Data.NormalColorShader->SetFloat4("u_Color", color);
+        s_Data.UnlitTextureShader->Bind();
+        s_Data.UnlitTextureShader->SetFloat4("u_Color", color);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data.NormalColorShader->SetMat4("u_Transform", transform);
+        s_Data.UnlitTextureShader->SetMat4("u_Transform", transform);
 
         //mesh->Bind();
         s_Data.WhiteTexture->Bind();
         mesh->GetVertexArray()->Bind();
-        RenderCommand::DrawIndexed(mesh->GetVertexArray());
+        auto submeshes = mesh->GetSubMeshes();
 
-        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
-        s_Data.Stats.VertexCount += mesh->GetVertexCount();
-        s_Data.Stats.IndexCount += mesh->GetIndexCount();
-        s_Data.Stats.DrawCalls++;
-    }
+        for (uint16_t i = 0; i < submeshes.size(); ++i)
+        {
+            SubMesh& currentSubMesh = submeshes[i];
+            mesh->BindMaterial(currentSubMesh.MaterialID);
 
-    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
-    {
-        ET_PROFILE_FUNCTION();
-
-        s_Data.PhongShader->SetFloat4("u_Color", tintColor);
-        s_Data.PhongShader->SetFloat("u_TilingFactor", tilingFactor);
-        s_Data.PhongShader->Bind();
-        texture->Bind();
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data.PhongShader->SetMat4("u_Transform", transform);
-
-        //mesh->Bind();
-        mesh->GetVertexArray()->Bind();
-        RenderCommand::DrawIndexed(mesh->GetVertexArray());
+            RenderCommand::DrawIndexed(mesh->GetVertexArray(), currentSubMesh.indexCount, currentSubMesh.indexOffset);
+        }
 
         s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
         s_Data.Stats.VertexCount += mesh->GetVertexCount();

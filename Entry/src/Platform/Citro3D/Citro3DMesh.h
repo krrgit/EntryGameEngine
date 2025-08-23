@@ -5,7 +5,6 @@
 #include "Entry/Renderer/VertexArray.h"
 #include "Entry/Renderer/Buffer.h"
 
-
 namespace Entry {
 	class Citro3DMesh: public Mesh
 	{
@@ -14,17 +13,25 @@ namespace Entry {
 		virtual ~Citro3DMesh();
 
 		virtual Ref<VertexArray> GetVertexArray() const override { return m_VertexArray; }
+		virtual const std::vector<SubMesh>& GetSubMeshes() const override { return m_SubMeshes; }
 
 		virtual void Bind() override;
+		virtual void BindMaterial(uint16_t materialID) override;
 
+		virtual uint16_t GetMaterialCount() const { return m_MaterialCount; }
+		virtual uint16_t GetTextuerCount() const { return m_TextureCount; }
+
+		virtual uint16_t GetPolygonCount() const { return m_PolygonCount; }
 		virtual uint16_t GetVertexCount() const { return m_VertexCount; }
 		virtual uint16_t GetIndexCount() const { return m_IndexCount; }
-		virtual uint16_t GetPolygonCount() const { return m_PolygonCount; }
-
 
 	private:
 		std::string m_Name;
 		Ref<VertexArray> m_VertexArray;
+		std::vector<SubMesh> m_SubMeshes;
+		std::vector<Material> m_Materials;
+		std::vector<Ref<Texture2D>> m_Textures;
+		uint16_t m_MaterialCount, m_TextureCount;
 		uint16_t m_PolygonCount, m_VertexCount, m_IndexCount;
 
 	};

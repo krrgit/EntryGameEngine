@@ -13,7 +13,7 @@ namespace Entry {
 		virtual void SetClearColor(const uint32_t color) override;
 		virtual void Clear() override;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount = 0) override;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount = 0, uint16_t indexOffset = 0) override;
 	private:
 		C3D_RenderTarget* m_RenderTarget;
 	};

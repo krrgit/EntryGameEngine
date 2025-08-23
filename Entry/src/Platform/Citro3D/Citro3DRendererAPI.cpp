@@ -37,7 +37,7 @@ namespace Entry {
 		//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
 	}
 
-	void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount)
+	void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount, uint16_t indexOffset)
 	{
 		ET_PROFILE_FUNCTION();
 
@@ -46,7 +46,7 @@ namespace Entry {
 			GPU_TRIANGLES,
 			count,
 			C3D_UNSIGNED_SHORT,
-			vertexArray->GetIndexBuffer()->GetDataPointer()
+			(uint16_t*)vertexArray->GetIndexBuffer()->GetDataPointer() + indexOffset
 		);
 	}
 

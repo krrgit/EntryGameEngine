@@ -51,21 +51,62 @@ namespace Entry {
 
 				// Index is just the order of the vertices
 				outIndices->push_back(static_cast<uint16_t>((outVertices->size() / 8) - 1));
-
 			}
 				indexOffset += faceVertices;
 		}
 	}
-	
+
+	static void CreateSubMeshes(std::vector<SubMesh>& submeshes, std::vector<Material>& materials, std::vector<Ref<Texture2D>>& textures, Ref<fastObjMesh> obj_mesh)
+	{
+		submeshes.clear();
+		materials.clear();
+		textures.clear();
+
+		// Get Materials
+		for (uint32_t i = 0; i < obj_mesh->material_count; ++i)
+		{
+			Material mat = { obj_mesh->materials[i].name, obj_mesh->materials[i].map_Kd-1};
+			materials.push_back(mat);
+		}
+
+		// Get Textures
+		for (uint32_t i = 0; i < obj_mesh->texture_count; ++i)
+		{
+			if (obj_mesh->textures[i].path == nullptr) continue;
+			Ref<Texture2D> tex = Texture2D::Create(obj_mesh->textures[i].path);
+			textures.push_back(tex);
+		}
+
+		// Create submeshes from objects (-o)
+		for (uint32_t o = 0; o < obj_mesh->object_count; ++o) 
+		{
+			auto currentObj = obj_mesh->objects[o];
+			uint32_t nextIndexOffset = o + 1 >= obj_mesh->object_count ? obj_mesh->index_count : obj_mesh->objects[o + 1].index_offset;
+			uint32_t indexCount = nextIndexOffset - currentObj.index_offset;
+
+			SubMesh submesh {
+				indexCount,
+				currentObj.index_offset, 
+				obj_mesh->face_materials[currentObj.face_offset] 
+			};
+			submeshes.push_back(submesh);
+		}
+
+		submeshes.resize(submeshes.size());
+		materials.resize(materials.size());
+		textures.resize(textures.size());
+	}
+
 	OpenGLMesh::OpenGLMesh(const std::string& path)
 	{
 		m_Name = path;
-		// TODO: Update to full support OBJ files
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
 
 		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(path.c_str()));
+
 		FastOBJToBuffers(&vertices, &indices, obj_mesh);
+		CreateSubMeshes(m_SubMeshes, m_Materials, m_Textures, obj_mesh);
 
 		m_VertexArray = VertexArray::Create();
 
@@ -88,9 +129,13 @@ namespace Entry {
 		m_IndexCount = indices.size();
 		m_PolygonCount = m_IndexCount / 3;
 
+		m_MaterialCount = m_Materials.size();
+		m_TextureCount = m_Textures.size();
+
 		printf("Loaded \"%s\" successfully!\n", m_Name.c_str());
 		printf("\"%s\" indices: %d\n", m_Name.c_str(), indices.size());
 	}
+
 	OpenGLMesh::~OpenGLMesh()
 	{
 	}
@@ -98,5 +143,10 @@ namespace Entry {
 	void OpenGLMesh::Bind()
 	{
 		m_VertexArray->Bind();
+	}
+	void OpenGLMesh::BindMaterial(uint16_t materialID)
+	{
+		if (m_MaterialCount == 0) return;
+		m_Textures[m_Materials[materialID].TextureID]->Bind(0);
 	}
 }
