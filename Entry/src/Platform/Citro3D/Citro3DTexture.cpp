@@ -105,13 +105,13 @@ namespace Entry {
 	Citro3DTexture2D::Citro3DTexture2D(const std::string& path)
 	{
 		// Note: to use, copy .t3x from /build to same filepath as texture file
-		std::string romfsPath = path;
-		bool correctFormat = GFXTexturePath(romfsPath);
+		std::string gfxPath = path;
+		bool correctFormat = GFXTexturePath(gfxPath);
 
 		if (!correctFormat) return;
 
-		if (!loadTextureFromFile(&m_Texture, NULL, romfsPath.c_str())) {
-			ET_CORE_INFO("Could not load texture: \%s", romfsPath.c_str());
+		if (!loadTextureFromFile(&m_Texture, NULL, gfxPath.c_str())) {
+			ET_CORE_INFO("Could not load texture: \%s", gfxPath.c_str());
 			//svcBreak(USERBREAK_PANIC);
 		}
 		C3D_TexSetFilter(&m_Texture, GPU_NEAREST, GPU_NEAREST);
