@@ -27,7 +27,8 @@ namespace Entry {
         Ref<Texture2D> m_CheckerboardTexture;
         Ref<Texture2D> m_EntryLogoTexture;
 
-        Ref<Mesh> m_Teapot;
+        Ref<Mesh> m_Model;
+        Ref<Mesh> m_Plane;
 
         glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 

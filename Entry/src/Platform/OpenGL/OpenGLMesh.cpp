@@ -143,8 +143,17 @@ namespace Entry {
 		m_MaterialCount = m_Materials.size();
 		m_TextureCount = m_Textures.size();
 
-		printf("Loaded \"%s\" successfully!\n", m_Name.c_str());
-		printf("\"%s\" indices: %d\n", m_Name.c_str(), indices.size());
+		if (indices.size() == 0) {
+			printf("Failed to load \"%s\"\n", m_Name.c_str());
+		}
+		else {
+			printf("Loaded \"%s\" successfully\n", m_Name.c_str());
+			printf("Indices: %d\n", m_IndexCount);
+			printf("Vertices: %d\n", m_VertexCount);
+			printf("SubMeshes: %d\n", m_SubMeshes.size());
+			printf("Materials: %d\n", m_MaterialCount);
+			printf("Textures: %d\n", m_TextureCount);
+		}
 	}
 
 	OpenGLMesh::~OpenGLMesh()

@@ -36,7 +36,7 @@ namespace Entry
         //std::string windowNames[] = { "Top Screen", "Bottom Screen" };
         //uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};
         //bool enableStereo3D = true;
-        int clearColor = 0x68B0D8FF;
+        int clearColor = 0x101010FF; // 0x68B0D8FF;
 
         if (appProps == nullptr) InitDefaultAppProperties();
         else m_AppProps = *appProps;
@@ -45,8 +45,6 @@ namespace Entry
         for (int i = 0; i < m_WindowCount; ++i)
         {
             ET_PROFILE_SCOPE("Create Window");
-            //std::string windowName = name + " - " + windowNames[i];
-            //WindowProps currentProps(windowName, windowResolutions[i][0], windowResolutions[i][1], i, enableStereo3D);
             m_Windows[i] = Scope<Window>(Window::Create(m_AppProps.windowProps[i]));
             m_CurrentWindow = m_Windows[i].get();
             RenderCommand::SetClearColor(clearColor);

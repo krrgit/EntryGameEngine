@@ -35,6 +35,7 @@ namespace Entry {
         m_RendererID = s_NextRendererID++;
         shaderProgramInit(&program);
         shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
+        C3D_BindProgram(&program);
     }
 
     Citro3DShader::~Citro3DShader()

@@ -19,7 +19,8 @@ namespace Entry {
 
         m_CheckerboardTexture = Entry::Texture2D::Create("assets/textures/Checkerboard.png");
         std::string meshPath = "assets/models/shield.obj";
-        m_Teapot = Entry::Mesh::Create(meshPath);
+        m_Model = Entry::Mesh::Create(meshPath);
+        m_Plane = Entry::Mesh::Create("assets/models/plane.obj");
 
         Entry::FramebufferSpecification frameBufSpec;
         frameBufSpec.Width = 400;
@@ -53,8 +54,9 @@ namespace Entry {
         //Render
         Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
         glm::vec4 teapotColor(1.0f);
-        Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
-        Entry::Renderer3D::DrawMesh(m_Teapot, glm::vec3(0.0f, 2.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(0.01f), teapotColor);
+        //Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
+        Entry::Renderer3D::DrawMesh(m_Plane, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), teapotColor);
+        Entry::Renderer3D::DrawMesh(m_Model, glm::vec3(0.0f, 2.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(0.01f), teapotColor);
         Entry::Renderer3D::EndScene();
 
         m_Framebuffer->Unbind();

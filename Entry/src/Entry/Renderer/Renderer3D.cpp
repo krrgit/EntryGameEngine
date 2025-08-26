@@ -15,6 +15,7 @@
 #include "phongshader_shbin.h" // Phong Shader
 #include "normalcolorshader_shbin.h" // Normal Color Shader
 #include "UnlitTexture_shbin.h" // Unlit Texture Shader
+#include "LitTexture_shbin.h" // Unlit Texture Shader
 #endif // ET_PLATFORM_3DS
 
 //#include <GLFW/glfw3.h>
@@ -50,13 +51,14 @@ namespace Entry {
         static const uint32_t MaxPolygons = 5298; // Max: 5298 (seems like CPU bottleneck)
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3;
-        static const uint32_t MaxBatches = 16; // Randomly selected tbh
+        static const uint32_t MaxBatches = 6; // Randomly selected tbh
         static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
         bool AllowMultipleBatchesPerTexture = true;
 
         Ref <Shader> TextureShader;
         Ref <Shader> PhongShader;
         Ref <Shader> UnlitTextureShader;
+        Ref <Shader> LitTextureShader;
         Ref <Texture2D> WhiteTexture;
 
         std::array<RenderBatch, MaxBatches> RenderBatches;
@@ -66,6 +68,9 @@ namespace Entry {
         Renderer3D::Statistics Stats;
 
         uint32_t m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+
+        glm::mat4 m_ViewMatrix;
+        glm::mat4 m_ViewProjectionMatrix;
 
     };
 
@@ -119,6 +124,7 @@ namespace Entry {
         s_Data.TextureShader->Bind();
         s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
         s_Data.UnlitTextureShader.reset(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size));
+        s_Data.LitTextureShader.reset(Shader::Create(LitTexture_shbin, LitTexture_shbin_size));
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
         int32_t samplers[s_Data.MaxBatches];
@@ -129,6 +135,7 @@ namespace Entry {
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
         s_Data.UnlitTextureShader.reset(Shader::Create("assets/shaders/UnlitTexture.glsl"));
+        s_Data.LitTextureShader.reset(Shader::Create("assets/shaders/LitTexture.glsl"));
 #endif // ET_PLATFORM_WINDOWS
 
         // CREATE WHITE TEXTURE
@@ -160,11 +167,15 @@ namespace Entry {
 
         ET_PROFILE_FUNCTION();
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
-        s_Data.UnlitTextureShader->Bind();
-        s_Data.UnlitTextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
-        
+        //s_Data.TextureShader->Bind();
+        //s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
+        //s_Data.UnlitTextureShader->Bind();
+        //s_Data.UnlitTextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
+        s_Data.LitTextureShader->Bind();
+        s_Data.LitTextureShader->SetMat4("u_Projection", camera.GetProjectionMatrix(screenSide));
+        s_Data.m_ViewMatrix = camera.GetViewMatrix(screenSide);
+        s_Data.m_ViewProjectionMatrix = camera.GetViewProjectionMatrix(screenSide);
+
         s_Data.WhiteTexture->Bind(0);
 
         for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
@@ -190,6 +201,7 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.m_ViewProjectionMatrix);
 
         // TODO: maybe set TexEnv here?
         for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
@@ -804,24 +816,21 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.UnlitTextureShader->Bind();
-        s_Data.UnlitTextureShader->SetFloat4("u_Color", color);
+        s_Data.LitTextureShader->Bind();
+        s_Data.LitTextureShader->SetFloat4("u_Color", color);
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data.UnlitTextureShader->SetMat4("u_Transform", transform);
+        glm::mat4 modelView = s_Data.m_ViewMatrix * glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
+        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
 
         //mesh->Bind();
         s_Data.WhiteTexture->Bind();
         mesh->GetVertexArray()->Bind();
-        auto submeshes = mesh->GetSubMeshes();
+        //auto submeshes = mesh->GetSubMeshes();
 
-        for (uint16_t i = 0; i < submeshes.size(); ++i)
+        for (auto submesh : mesh->GetSubMeshes())
         {
-            SubMesh& currentSubMesh = submeshes[i];
-            mesh->GetMaterial(currentSubMesh.MaterialID)->Bind();
-            //mesh->BindMaterial(currentSubMesh.MaterialID);
-
-            RenderCommand::DrawIndexed(mesh->GetVertexArray(), currentSubMesh.indexCount, currentSubMesh.indexOffset);
+            mesh->GetMaterial(submesh.MaterialID)->Bind();
+            RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
         }
 
         s_Data.Stats.PolygonCount += mesh->GetPolygonCount();

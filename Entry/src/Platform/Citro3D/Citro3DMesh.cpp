@@ -10,8 +10,6 @@ namespace Entry {
 
 	static void FastOBJToBuffers(std::vector<float>* outVertices, std::vector<uint16_t>* outIndices, Ref<fastObjMesh> obj_mesh)
 	{
-		ET_PROFILE_FUNCTION();
-
 		outVertices->clear();
 		outIndices->clear();
 
@@ -53,16 +51,13 @@ namespace Entry {
 
 				// Index is just the order of the vertices
 				outIndices->push_back(static_cast<uint16_t>((outVertices->size() / 8) - 1));
-
 			}
-				indexOffset += faceVertices;
+			indexOffset += faceVertices;
 		}
 	}
 
 	static void CreateSubMeshes(std::vector<SubMesh>& submeshes, std::vector<Ref<Material>>& materials, std::vector<Ref<Texture2D>>& textures, Ref<fastObjMesh> obj_mesh)
 	{
-		ET_PROFILE_FUNCTION();
-
 		submeshes.clear();
 		materials.clear();
 		textures.clear();
@@ -120,7 +115,6 @@ namespace Entry {
 		std::string romfsPath = "romfs:/" + path;
 		
 		m_Name = path;
-		// TODO: Update to full support OBJ files
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
 
@@ -157,7 +151,9 @@ namespace Entry {
 			printf("Failed to load \"%s\"\n", m_Name.c_str());
 		}
 		else {
-			printf("Loaded \"%s\" successfully! Indices: %d\n", m_Name.c_str(), indices.size());
+			printf("Loaded \"%s\" successfully\n", m_Name.c_str());
+			printf("Indices: %d\n", m_IndexCount);
+			printf("Vertices: %d\n", m_VertexCount);
 			printf("SubMeshes: %d\n", m_SubMeshes.size());
 			printf("Materials: %d\n", m_MaterialCount);
 			printf("Textures: %d\n", m_TextureCount);

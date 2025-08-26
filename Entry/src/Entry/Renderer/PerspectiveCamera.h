@@ -43,8 +43,8 @@ namespace Entry {
 		void Set3DValue(float slider3DState) { m_Slider3DState = slider3DState; RecalculateProjectionViewMatrix(); }
 
 		 
-		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
+		const glm::mat4& GetProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ProjectionMatrix : m_ProjectionMatrixR; }
+		const glm::mat4& GetViewMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewMatrix : m_ViewMatrixR; }
 		const glm::mat4& GetViewProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewProjectionMatrix : m_ViewProjectionMatrixR ; }
 	private:
 		void RecalculateViewMatrix();
