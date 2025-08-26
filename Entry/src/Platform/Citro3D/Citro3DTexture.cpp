@@ -60,28 +60,6 @@ namespace Entry {
 		return false;
 	}
 
-	bool RootTexturePath(std::string& filename) {
-		const std::string prefix = "romfs:/gfx/";
-		const std::string from = ".png";
-		const std::string to = ".t3x";
-
-		// Extract the filename (strip the path)
-		size_t lastSlashPos = filename.find_last_of("/\\");
-		if (lastSlashPos != std::string::npos)
-			filename = filename.substr(lastSlashPos + 1);
-
-		// Replace .png with .t3x if present
-		size_t pos = filename.rfind(from);
-		if (pos != std::string::npos && pos == filename.size() - from.size()) {
-			filename.replace(pos, from.size(), to);
-
-			filename = prefix + filename;
-			return true;
-		}
-
-		ET_CORE_ERROR("%s: Only .png texture files are supported!", filename.c_str());
-		return false;
-	}
 
 	Citro3DTexture2D::Citro3DTexture2D(uint32_t width, uint32_t height) 
 		: m_Width(width > MIN_TEX_DIMENSION ? width: MIN_TEX_DIMENSION), m_Height(height > MIN_TEX_DIMENSION ? height: MIN_TEX_DIMENSION)
@@ -105,12 +83,12 @@ namespace Entry {
 	{
 		// Note: to use, copy .t3x from /build to same filepath as texture file
 		std::string romfsPath = path;
-		bool correctFormat = RootTexturePath(romfsPath);
+		bool correctFormat = FixTexturePath(romfsPath);
 
 		if (!correctFormat) return;
 
 		if (!loadTextureFromFile(&m_Texture, NULL, romfsPath.c_str())) {
-			ET_CORE_ERROR(romfsPath.c_str());
+			ET_CORE_INFO("Could not load texture: \%s", romfsPath.c_str());
 			//svcBreak(USERBREAK_PANIC);
 		}
 		C3D_TexSetFilter(&m_Texture, GPU_NEAREST, GPU_NEAREST);

@@ -45,14 +45,12 @@ namespace Entry {
 
         glm::vec2 cp = Input::GetJoystickPos();
         m_Slider3DState = Input::GetSlider3D();
-        
+
         glm::vec3 forward = m_Camera.forward;
         glm::vec3 right = m_Camera.right;
         //forward.y = 0; // uncomment to only move laterally
         //right.y = 0; // uncomment to only move laterally
-        float speedMult = Input::GetButton(KeyCode::LeftShift) ? m_MouseSpeedMult : 1.0f;
-
-        m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts * speedMult) + (right * (cp.x * m_CameraTranslationSpeed * ts * speedMult));
+        m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts) + (right * (cp.x * m_CameraTranslationSpeed * ts));
         int LandR = (Input::GetButton(ET_PAD_R) ? 1 : 0) - (Input::GetButton(ET_PAD_L) ? 1 : 0);
         m_CamPos.y += LandR * m_CameraVertSpeed * ts;
 
@@ -68,10 +66,8 @@ namespace Entry {
                 m_RotMouseCurrentPos.x = Input::GetMouseX();
                 m_RotMouseCurrentPos.y = Input::GetMouseY();
 
-
                 float mouseDeltaX = m_RotMouseStartPos.x - m_RotMouseCurrentPos.x;
                 float mouseDeltaY = m_RotMouseStartPos.y - m_RotMouseCurrentPos.y;
-
                 m_CamRot = glm::vec4(m_CamStartRot.x + (mouseDeltaY * m_MouseSpeed), m_CamStartRot.y + (mouseDeltaX * m_MouseSpeed), m_CamStartRot.z, m_CamStartRot.w);
             }
         }

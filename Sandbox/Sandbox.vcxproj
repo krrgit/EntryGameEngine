@@ -146,6 +146,9 @@
       <Project>{37E91D0D-A3FD-45BE-6C7F-E91DD85242EF}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\UnlitTexture.v.pica" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

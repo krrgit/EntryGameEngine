@@ -1,4 +1,4 @@
-﻿#include "Sandbox3D.h"
+#include "Sandbox3D.h"
 #include "imgui.h"
 #include "Entry/Core/Input.h"
 
@@ -19,7 +19,6 @@ void Sandbox3D::OnAttach()
     std::string meshPath = "assets/models/shield.obj";
     m_Teapot = Entry::Mesh::Create(meshPath);
 }
-
 
 void Sandbox3D::OnDetach()
 {
@@ -71,15 +70,7 @@ void Sandbox3D::OnImGuiRender()
     ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
-
-    auto props = m_Teapot->GetMaterial(0)->GetProps();
-    ImGui::Text("Material: %s", props.Name.c_str());
-    ImGui::InputFloat3("Diffuse", props.Diffuse);
-    ImGui::InputFloat3("Ambient", props.Ambient);
-    ImGui::InputFloat3("Specular0", props.Specular0);
-    ImGui::InputFloat3("Specular1", props.Specular1);
-    ImGui::InputFloat3("Emission", props.Emission);
-
+    
     ImGui::End();
 }
 
