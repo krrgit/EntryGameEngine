@@ -51,9 +51,9 @@ INCLUDES	:=  $(shell find Entry/src -type d \
 	Entry/vendor/fast_obj
 
 GRAPHICS	:=	Sandbox/assets/**
-GFXBUILD	:=	$(BUILD)
+# GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
-#GFXBUILD	:=	$(ROMFS)/gfx
+GFXBUILD	:=	$(ROMFS)/gfx
 
 #---------------------------------------------------------------------------------
 # options for code generation

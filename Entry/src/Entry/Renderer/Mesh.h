@@ -4,6 +4,8 @@
 
 #include "VertexArray.h"
 #include "Texture.h"
+#include "Material.h"
+
 
 #include <string>
 #include <glm/glm.hpp>
@@ -16,11 +18,6 @@ namespace Entry {
 		uint32_t MaterialID;
 	};
 
-	struct Material {
-		std::string Name;
-		uint32_t TextureID;
-	};
-
 	class Mesh {
 	public:
 		virtual ~Mesh() = default;
@@ -30,7 +27,7 @@ namespace Entry {
 		virtual const std::vector<SubMesh>& GetSubMeshes() const = 0;
 
 		virtual void Bind() = 0;
-		virtual void BindMaterial(uint16_t materialID) = 0;
+		virtual Ref<Material> GetMaterial(int materialID) = 0;
 
 		virtual uint16_t GetMaterialCount() const = 0;
 		virtual uint16_t GetTextuerCount() const = 0;

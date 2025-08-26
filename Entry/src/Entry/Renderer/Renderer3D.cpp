@@ -818,7 +818,8 @@ namespace Entry {
         for (uint16_t i = 0; i < submeshes.size(); ++i)
         {
             SubMesh& currentSubMesh = submeshes[i];
-            mesh->BindMaterial(currentSubMesh.MaterialID);
+            mesh->GetMaterial(currentSubMesh.MaterialID)->Bind();
+            //mesh->BindMaterial(currentSubMesh.MaterialID);
 
             RenderCommand::DrawIndexed(mesh->GetVertexArray(), currentSubMesh.indexCount, currentSubMesh.indexOffset);
         }

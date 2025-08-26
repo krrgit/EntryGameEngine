@@ -56,25 +56,36 @@ namespace Entry {
 		}
 	}
 
-	static void CreateSubMeshes(std::vector<SubMesh>& submeshes, std::vector<Material>& materials, std::vector<Ref<Texture2D>>& textures, Ref<fastObjMesh> obj_mesh)
+	static void CreateSubMeshes(std::vector<SubMesh>& submeshes, std::vector<Ref<Material>>& materials, std::vector<Ref<Texture2D>>& textures, Ref<fastObjMesh> obj_mesh)
 	{
 		submeshes.clear();
 		materials.clear();
 		textures.clear();
 
-		// Get Materials
-		for (uint32_t i = 0; i < obj_mesh->material_count; ++i)
-		{
-			Material mat = { obj_mesh->materials[i].name, obj_mesh->materials[i].map_Kd-1};
-			materials.push_back(mat);
-		}
-
 		// Get Textures
 		for (uint32_t i = 0; i < obj_mesh->texture_count; ++i)
 		{
 			if (obj_mesh->textures[i].path == nullptr) continue;
-			Ref<Texture2D> tex = Texture2D::Create(obj_mesh->textures[i].path);
-			textures.push_back(tex);
+			textures.push_back(Texture2D::Create(obj_mesh->textures[i].path));
+		}
+
+		// Get Materials
+		for (uint32_t i = 0; i < obj_mesh->material_count; ++i)
+		{
+			//Material mat = { obj_mesh->materials[i].name, obj_mesh->materials[i].map_Kd-1};
+			MaterialProps props = {
+				{	// Material Values
+					obj_mesh->materials[i].Ka[0], obj_mesh->materials[i].Ka[1], obj_mesh->materials[i].Ka[2],
+					obj_mesh->materials[i].Kd[0], obj_mesh->materials[i].Kd[1], obj_mesh->materials[i].Kd[2],
+					obj_mesh->materials[i].Ks[0], obj_mesh->materials[i].Ks[1], obj_mesh->materials[i].Ks[2],
+					obj_mesh->materials[i].Ks[0], obj_mesh->materials[i].Ks[1], obj_mesh->materials[i].Ks[2], // TODO: Double check
+					obj_mesh->materials[i].Ke[0], obj_mesh->materials[i].Ke[1], obj_mesh->materials[i].Ke[2]
+				},
+				obj_mesh->materials[i].name, 
+				textures[obj_mesh->materials[i].map_Kd - 1]
+			};
+
+			materials.push_back(Material::Create(props));
 		}
 
 		// Create submeshes from objects (-o)
@@ -143,10 +154,5 @@ namespace Entry {
 	void OpenGLMesh::Bind()
 	{
 		m_VertexArray->Bind();
-	}
-	void OpenGLMesh::BindMaterial(uint16_t materialID)
-	{
-		if (m_MaterialCount == 0) return;
-		m_Textures[m_Materials[materialID].TextureID]->Bind(0);
 	}
 }

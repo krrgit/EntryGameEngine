@@ -17,7 +17,8 @@ namespace Entry {
 		virtual const std::vector<SubMesh>& GetSubMeshes() const override { return m_SubMeshes; }
 
 		virtual void Bind() override;
-		virtual void BindMaterial(uint16_t materialID) override;
+
+		virtual Ref<Material> GetMaterial(int materialID) override { return materialID < m_MaterialCount ? m_Materials[materialID] : nullptr; };
 
 		virtual uint16_t GetMaterialCount() const { return m_MaterialCount; }
 		virtual uint16_t GetTextuerCount() const { return m_TextureCount; }
@@ -30,7 +31,7 @@ namespace Entry {
 		std::string m_Name;
 		Ref<VertexArray> m_VertexArray;
 		std::vector<SubMesh> m_SubMeshes;
-		std::vector<Material> m_Materials;
+		std::vector<Ref<Material>> m_Materials;
 		std::vector<Ref<Texture2D>> m_Textures;
 		uint16_t m_MaterialCount, m_TextureCount;
 		uint16_t m_PolygonCount, m_VertexCount, m_IndexCount;
