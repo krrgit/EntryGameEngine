@@ -45,10 +45,10 @@ namespace Entry
 
 	glm::vec2 Input::GetJoystickPos()
 	{
-		int x = (GetButton(ET_PAD_CPAD_RIGHT) ? 1 : 0) - (GetButton(ET_PAD_CPAD_LEFT) ? 1 : 0);
-		int y = (GetButton(ET_PAD_CPAD_UP) ? 1 : 0) - (GetButton(ET_PAD_CPAD_DOWN) ? 1 : 0);
-		
-		return {x, y};
+		float x = (GetButton(ET_PAD_CPAD_RIGHT) ? 1 : 0) - (GetButton(ET_PAD_CPAD_LEFT) ? 1 : 0);
+		float y = (GetButton(ET_PAD_CPAD_UP) ? 1 : 0) - (GetButton(ET_PAD_CPAD_DOWN) ? 1 : 0);
+		float mag = x != 0 && y != 0 ? 0.70710678f : 1.0f;  // 1/sqrt(2)
+		return {x * mag, y * mag};
 	}
 
 	float Input::GetSlider3D()

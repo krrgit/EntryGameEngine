@@ -804,23 +804,26 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
+        s_Data.WhiteTexture->Bind();
         s_Data.UnlitTextureShader->Bind();
         s_Data.UnlitTextureShader->SetFloat4("u_Color", color);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data.UnlitTextureShader->SetMat4("u_Transform", transform);
 
-        //mesh->Bind();
-        s_Data.WhiteTexture->Bind();
         mesh->GetVertexArray()->Bind();
-        auto submeshes = mesh->GetSubMeshes();
 
-        for (uint16_t i = 0; i < submeshes.size(); ++i)
+        Ref<Material> lastMaterial = nullptr;
+        for (const SubMesh& submesh : mesh->GetSubMeshes()) 
         {
-            SubMesh& currentSubMesh = submeshes[i];
-            mesh->BindMaterial(currentSubMesh.MaterialID);
+            auto material = mesh->GetMaterial(submesh.MaterialID);
+            if (material != lastMaterial)
+            {
+                material->Bind();
+                lastMaterial = material;
+            }
 
-            RenderCommand::DrawIndexed(mesh->GetVertexArray(), currentSubMesh.indexCount, currentSubMesh.indexOffset);
+            RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
         }
 
         s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
