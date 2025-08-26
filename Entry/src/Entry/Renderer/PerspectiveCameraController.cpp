@@ -50,9 +50,7 @@ namespace Entry {
         glm::vec3 right = m_Camera.right;
         //forward.y = 0; // uncomment to only move laterally
         //right.y = 0; // uncomment to only move laterally
-        float speedMult = Input::GetButton(KeyCode::LeftShift) ? m_MouseSpeedMult : 1.0f;
-
-        m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts * speedMult) + (right * (cp.x * m_CameraTranslationSpeed * ts * speedMult));
+        m_CamPos = m_CamPos + forward * (cp.y * m_CameraTranslationSpeed * ts) + (right * (cp.x * m_CameraTranslationSpeed * ts));
         int LandR = (Input::GetButton(ET_PAD_R) ? 1 : 0) - (Input::GetButton(ET_PAD_L) ? 1 : 0);
         m_CamPos.y += LandR * m_CameraVertSpeed * ts;
 
