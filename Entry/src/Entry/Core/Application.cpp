@@ -36,7 +36,7 @@ namespace Entry
         //std::string windowNames[] = { "Top Screen", "Bottom Screen" };
         //uint32_t windowResolutions[2][2] = {{400, 240}, {320, 240}};
         //bool enableStereo3D = true;
-        int clearColor = 0x101010FF; // 0x68B0D8FF;
+        int clearColor = 0x68B0D8FF;
 
         if (appProps == nullptr) InitDefaultAppProperties();
         else m_AppProps = *appProps;

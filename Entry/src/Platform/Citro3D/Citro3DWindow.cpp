@@ -160,7 +160,7 @@ namespace Entry
 				// Pass through vertex color
 				C3D_TexEnv* env = C3D_GetTexEnv(0);
 				C3D_TexEnvInit(env);
-				C3D_TexEnvSrc(env, C3D_Both, GPU_FRAGMENT_PRIMARY_COLOR, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+				C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
 				C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
 
 				// Clear out the other texenvs
