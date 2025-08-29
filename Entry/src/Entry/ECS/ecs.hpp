@@ -86,6 +86,16 @@ namespace Entry {
             }
 
             template<typename T>
+            T* try_get(Entity e) {
+                auto storage = getStorage<T>();
+                if (!storage) return nullptr;
+                auto it = storage->data.find(e);
+                if (it != storage->data.end())
+                    return &it->second;
+                return nullptr;
+            }
+
+            template<typename T>
             void remove(Entity e) {
                 auto type = typeId<T>();
                 if (!components.count(type)) return;

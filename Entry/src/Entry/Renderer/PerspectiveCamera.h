@@ -42,14 +42,15 @@ namespace Entry {
 
 		void Set3DValue(float slider3DState) { m_Slider3DState = slider3DState; RecalculateProjectionViewMatrix(); }
 
-		 
 		const glm::mat4& GetProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ProjectionMatrix : m_ProjectionMatrixR; }
 		const glm::mat4& GetViewMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewMatrix : m_ViewMatrixR; }
 		const glm::mat4& GetViewProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewProjectionMatrix : m_ViewProjectionMatrixR ; }
+
+		static void CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float iod = 0.0f, bool leftSide = true);
 	private:
 		void RecalculateViewMatrix();
 		void RecalculateProjectionViewMatrix();
-
+		void RecalculateNormals();
 #ifdef ET_PLATOFRM_3DS
 		void PrintPosition() {
 			consoleClear();

@@ -34,6 +34,14 @@ void Sandbox3D::OnAttach()
     m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform = shieldTransform;
     m_ShieldEntity.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
+    m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+    glm::mat4 camTransform(1.0f);
+    camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 2.0f));
+    m_CameraEntity.GetComponent<Entry::TransformComponent>().Transform = camTransform;
+    glm::mat4 projection(1.0f);
+    Entry::PerspectiveCamera::CalculateProjection(projection, 400.0f/240.0f, 80.0f);
+    m_CameraEntity.AddComponent<Entry::CameraComponent>(projection);
+
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
     //static const C3D_Material material =
@@ -90,12 +98,12 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
     //Render
-    Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
+    //Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
     // Update Scene
-    m_ActiveScene->OnUpdate(ts);
+    m_ActiveScene->OnUpdate(ts, screenSide);
 
-    Entry::Renderer3D::EndScene();
+    //Entry::Renderer3D::EndScene();
 
 }
 
