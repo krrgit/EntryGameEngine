@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj\include;vendor\stb_image;vendor\entt-2.0.0\src\entt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -100,7 +100,7 @@
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj\include;vendor\stb_image;vendor\entt-2.0.0\src\entt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -128,7 +128,7 @@
       <PrecompiledHeaderFile>etpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;ET_PLATFORM_WINDOWS;ET_BUILD_DLL;ET_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui-3ds\imgui;vendor\glm;vendor\fast_obj\include;vendor\stb_image;vendor\entt-2.0.0\src\entt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -164,6 +164,7 @@
     <ClInclude Include="src\Entry\Core\Timestep.h" />
     <ClInclude Include="src\Entry\Core\Window.h" />
     <ClInclude Include="src\Entry\Debug\Instrumentor.h" />
+    <ClInclude Include="src\Entry\ECS\ecs.hpp" />
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Entry\Events\ButtonEvent.h" />
     <ClInclude Include="src\Entry\Events\CirclePadEvent.h" />
@@ -187,6 +188,8 @@
     <ClInclude Include="src\Entry\Renderer\Shader.h" />
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Entry\Scene\Components.h" />
+    <ClInclude Include="src\Entry\Scene\Scene.h" />
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
@@ -744,6 +747,7 @@
     <ClCompile Include="src\Entry\Renderer\Shader.cpp" />
     <ClCompile Include="src\Entry\Renderer\Texture.cpp" />
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Entry\Scene\Scene.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />

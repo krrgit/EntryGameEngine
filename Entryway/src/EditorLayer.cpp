@@ -1,6 +1,7 @@
 #include "EditorLayer.h"
 #include "imgui.h"
 #include "Entry/Core/Input.h"
+#include "Entry/Scene/Components.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
@@ -17,15 +18,23 @@ namespace Entry {
     {
 	    ET_PROFILE_FUNCTION();
 
-        m_CheckerboardTexture = Entry::Texture2D::Create("assets/textures/Checkerboard.png");
-        std::string meshPath = "assets/models/shield.obj";
-        m_Model = Entry::Mesh::Create(meshPath);
-        m_Plane = Entry::Mesh::Create("assets/models/plane.obj");
-
         Entry::FramebufferSpecification frameBufSpec;
         frameBufSpec.Width = 400;
         frameBufSpec.Height = 240;
         m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+
+        m_ActiveScene.reset(new Scene());
+
+        auto plane = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().assign<TransformComponent>(plane);
+        m_ActiveScene->Reg().assign<MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+
+        auto shield = m_ActiveScene->CreateEntity();
+        glm::mat4 shieldTransform(1.0f);
+        shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
+        shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
+        m_ActiveScene->Reg().assign<TransformComponent>(shield, shieldTransform);
+        m_ActiveScene->Reg().assign<MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
     }
 
     void EditorLayer::OnDetach()
@@ -48,19 +57,19 @@ namespace Entry {
         Entry::Renderer3D::ResetStats();
         Entry::Renderer3D::SetStatsTimestep(ts);
 
-        m_Rotation += ts.GetSeconds();
-        m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
+
+        //m_Rotation += ts.GetSeconds();
+        //m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
         //Render
         Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-        glm::vec4 teapotColor(1.0f);
-        //Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
-        Entry::Renderer3D::DrawMesh(m_Plane, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), teapotColor);
-        Entry::Renderer3D::DrawMesh(m_Model, glm::vec3(0.0f, 2.0f, -3.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(0.01f), teapotColor);
+        
+        // Update Scene
+        m_ActiveScene->OnUpdate(ts);
+
         Entry::Renderer3D::EndScene();
 
         m_Framebuffer->Unbind();
-
     }
 
     void EditorLayer::OnImGuiRender()

@@ -839,6 +839,32 @@ namespace Entry {
         s_Data.Stats.DrawCalls++;
     }
 
+    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::mat4& transform)
+    {
+        ET_PROFILE_FUNCTION();
+
+        s_Data.LitTextureShader->Bind();
+        s_Data.LitTextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+
+        glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
+        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
+
+        //mesh->Bind();
+        s_Data.WhiteTexture->Bind();
+        mesh->GetVertexArray()->Bind();
+
+        for (auto submesh : mesh->GetSubMeshes())
+        {
+            mesh->GetMaterial(submesh.MaterialID)->Bind();
+            RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
+        }
+
+        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
+        s_Data.Stats.VertexCount += mesh->GetVertexCount();
+        s_Data.Stats.IndexCount += mesh->GetIndexCount();
+        s_Data.Stats.DrawCalls++;
+    }
+
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {
         //Search for batch assigned to texture in slots
         int batchIndex = -1;

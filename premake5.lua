@@ -15,7 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Entry/vendor/GLFW/include"
 IncludeDir["Glad"] = "Entry/vendor/Glad/include"
 IncludeDir["ImGui"] = "Entry/vendor/imgui-3ds/imgui"
-IncludeDir["fast_obj"] = "Entry/vendor/fast_obj"
+IncludeDir["fast_obj"] = "Entry/vendor/fast_obj/include"
 IncludeDir["glm"] = "Entry/vendor/glm"
 IncludeDir["stb_image"] = "Entry/vendor/stb_image"
 IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
@@ -81,8 +81,13 @@ project "Entry"
 		"Glad",
 		"ImGui",
 		"opengl32.lib",
-		"dwmapi.lib"
+		"dwmapi.lib",
 	}
+
+	-- Turn off PCH for just EntityX sources
+    filter "files:Entry/vendor/entityx/**.cc"
+        flags { "NoPCH" }
+    filter {}
 
 	filter "system:windows"
 		cppdialect "C++11"
@@ -131,7 +136,7 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++11"
 	staticruntime "on"
 	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -184,7 +189,7 @@ project "Entryway"
 	location "Entryway"
 	kind "ConsoleApp"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++11"
 	staticruntime "on"
 	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")

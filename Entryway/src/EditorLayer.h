@@ -23,12 +23,7 @@ namespace Entry {
         
         bool m_ViewportFocused = false, m_ViewportHovered = false;
 
-        // Temp
-        Ref<Texture2D> m_CheckerboardTexture;
-        Ref<Texture2D> m_EntryLogoTexture;
-
-        Ref<Mesh> m_Model;
-        Ref<Mesh> m_Plane;
+        Ref<Scene> m_ActiveScene;
 
         glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 

@@ -38,7 +38,6 @@ SOURCES		:=	$(shell find Entry/src -type d \
 	) \
 	$(shell find Sandbox -type d) \
 	Entry/vendor/imgui-3ds/imgui \
-	Entry/vendor/fast_obj
 
 DATA		:=	data
 INCLUDES	:=  $(shell find Entry/src -type d \
@@ -48,7 +47,7 @@ INCLUDES	:=  $(shell find Entry/src -type d \
 	Entry/vendor/spdlog/include \
 	Entry/vendor/imgui-3ds/imgui \
 	Entry/vendor/glm \
-	Entry/vendor/fast_obj
+	Entry/vendor/fast_obj/include \
 
 GRAPHICS	:=	Sandbox/assets/**
 # GFXBUILD	:=	$(BUILD)

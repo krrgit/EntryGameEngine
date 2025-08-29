@@ -17,13 +17,19 @@
 #define SCREEN_BOTTOM 1
 
 namespace Entry {
+	// C++11 backport of std::make_unique
+	template<typename T, typename... Args>
+	std::unique_ptr<T> make_unique(Args&&... args) {
+		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+	}
+
 	template<typename T>
 	using Scope = std::unique_ptr<T>;
 	//template<typename T, typename ... Args>
 	//constexpr Scope<T> CreateScope(Args&& ... args)
 	//{
 	//	return std::make_unique<T>(std::forward<Args>(args)...);
-	//} // only available in more recent versions of C++ ?
+	//} // only available in more recent versions of C++14
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;

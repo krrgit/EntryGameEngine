@@ -21,10 +21,8 @@ class Sandbox3D : public Entry::Layer
 
     // Temp
     Entry::Ref<Entry::Framebuffer> m_Framebuffer; // removing this stops checkerboard from working??? T-T
-    Entry::Ref<Entry::Texture2D> m_CheckerboardTexture;
-    Entry::Ref<Entry::Texture2D> m_EntryLogoTexture;
-    Entry::Ref<Entry::Mesh> m_Model;
-    Entry::Ref<Entry::Mesh> m_Plane;
+
+    Entry::Ref<Entry::Scene> m_ActiveScene;
     
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
     glm::vec4 m_LightPosition = { 0.0f, 1.0f, 0.0f, 1.0f };

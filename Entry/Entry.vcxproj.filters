@@ -25,6 +25,9 @@
     <Filter Include="src\Entry\Renderer">
       <UniqueIdentifier>{F49A886E-E07E-49C4-49DF-431735E23346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entry\Scene">
+      <UniqueIdentifier>{2B577E85-97E2-EB49-A0F3-6E3E0CFE474A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Entry\Utils">
       <UniqueIdentifier>{6EEBAB85-DA76-194A-E387-9C3E4F92754A}</UniqueIdentifier>
     </Filter>
@@ -174,6 +177,9 @@
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\Material.h">
+      <Filter>src\Entry\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Entry\Renderer\Mesh.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
@@ -204,6 +210,12 @@
     <ClInclude Include="src\Entry\Renderer\VertexArray.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entry\Scene\Components.h">
+      <Filter>src\Entry\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Scene\Scene.h">
+      <Filter>src\Entry\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h">
       <Filter>src\Entry\Utils</Filter>
     </ClInclude>
@@ -214,6 +226,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h">
@@ -1809,8 +1824,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry\Renderer\Material.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h" />
+    <ClInclude Include="src\Entry\ECS\ecs.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1835,6 +1849,9 @@
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp">
+      <Filter>src\Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\Material.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\Mesh.cpp">
@@ -1867,6 +1884,9 @@
     <ClCompile Include="src\Entry\Renderer\VertexArray.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Entry\Scene\Scene.cpp">
+      <Filter>src\Entry\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1874,6 +1894,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp">
@@ -1912,7 +1935,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entry\Renderer\Material.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp" />
   </ItemGroup>
 </Project>

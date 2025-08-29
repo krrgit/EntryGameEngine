@@ -27,12 +27,12 @@ project "ImGui"
 
 	filter "system:windows"
 		systemversion "latest"
-		cppdialect "C++14"
+		cppdialect "C++11"
 
 	filter "system:linux"
 		pic "On"
 		systemversion "latest"
-		cppdialect "C++14"
+		cppdialect "C++11"
 
 	filter "configurations:Debug"
 		runtime "Debug"

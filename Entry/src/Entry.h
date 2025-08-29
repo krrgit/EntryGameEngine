@@ -14,6 +14,9 @@
 #include "Entry/Log/LogLayer.h"
 #include "Entry/ImGui/ImGuiLayer.h"
 
+#include "Entry/Scene/Scene.h"
+#include "Entry/Scene/Components.h"
+
 // ---Renderer--------------------------
 #include "Entry/Renderer/Renderer.h"
 #include "Entry/Renderer/Renderer3D.h"

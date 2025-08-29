@@ -1,6 +1,7 @@
 #include "Sandbox3D.h"
 #include "imgui.h"
 #include "Entry/Core/Input.h"
+#include "Entry/Scene/Components.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
@@ -21,10 +22,18 @@ void Sandbox3D::OnAttach()
 {
 	ET_PROFILE_FUNCTION();
 
-    m_CheckerboardTexture = Entry::Texture2D::Create("assets/textures/Checkerboard.png");
-    m_Plane = Entry::Mesh::Create("assets/models/plane.obj");
-    std::string meshPath = "assets/models/shield.obj";
-    m_Model = Entry::Mesh::Create(meshPath);
+    m_ActiveScene.reset(new Entry::Scene());
+    
+    auto plane = m_ActiveScene->CreateEntity();
+    m_ActiveScene->Reg().assign <Entry::TransformComponent> (plane);
+    m_ActiveScene->Reg().assign<Entry::MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+
+    auto shield = m_ActiveScene->CreateEntity();
+    glm::mat4 shieldTransform(1.0f);
+    shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
+    shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
+    m_ActiveScene->Reg().assign<Entry::TransformComponent>(shield, shieldTransform);
+    m_ActiveScene->Reg().assign<Entry::MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
@@ -83,10 +92,10 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
 
     //Render
     Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-    glm::vec4 teapotColor(1.0f);
-    //Entry::Renderer3D::DrawQuad(glm::vec3(0.0f), glm::quat(glm::vec3(1.57f, 0.0f, 0.0f)), glm::vec3(10.0f), m_CheckerboardTexture);
-    Entry::Renderer3D::DrawMesh(m_Plane, glm::vec3(0.0f, 0.0f, 0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), teapotColor);
-    Entry::Renderer3D::DrawMesh(m_Model, glm::vec3(0.0f, 2.0f, 0.0f), glm::quat(glm::vec3(0.0f, m_Rotation, 0.0f)), glm::vec3(0.02f), teapotColor);
+
+    // Update Scene
+    m_ActiveScene->OnUpdate(ts);
+
     Entry::Renderer3D::EndScene();
 
 }
