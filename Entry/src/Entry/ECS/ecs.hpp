@@ -18,6 +18,7 @@ namespace Entry {
 		private:
             Entity nextEntity = 1;
 			std::vector <Entity> entities;
+            std::size_t typeCounter = 0;
 
 			struct IComponentStorage {
 				virtual ~IComponentStorage() = default;
@@ -33,8 +34,6 @@ namespace Entry {
             };
 
             // Unique type ID generator without RTTI
-            std::size_t typeCounter = 0;
-
             template<typename T>
             std::size_t typeId() {
                 static std::size_t id = typeCounter++;
@@ -42,7 +41,6 @@ namespace Entry {
             }
 
 			std::unordered_map<std::size_t, std::unique_ptr<IComponentStorage>> components;
-
 
         public:
             // --- Entities ---
@@ -60,22 +58,23 @@ namespace Entry {
 
             // --- Components ---
             template<typename T, typename... Args>
-            void assign(Entity e, Args&&... args) {
+            T& emplace(Entity e, Args&&... args) {
                 auto type = typeId<T>();
                 if (!components.count(type))
                     components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
                 auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
-                storage->data[e] = T(std::forward<Args>(args)...);
+                auto& component = storage->data[e] = T(std::forward<Args>(args)...);
+                return component;
             }
 
             template<typename T>
-            T* get(Entity e) {
+            T& get(Entity e) {
                 auto type = typeId<T>();
-                if (!components.count(type)) return nullptr;
                 auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
                 auto it = storage->data.find(e);
-                if (it != storage->data.end()) return &it->second;
-                return nullptr;
+                if (!storage || it == storage->data.end())
+                    ET_CORE_ERROR("Component not found for entity");
+                return it->second;
             }
 
             template<typename T>
@@ -84,6 +83,12 @@ namespace Entry {
                 if (!components.count(type)) return;
                 auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
                 storage->remove(e);
+            }
+
+            template<typename T>
+            bool has(Entity e) {
+                auto type = typeId<T>();
+                return components.count(type);
             }
 
             // --- Views ---

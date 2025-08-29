@@ -1825,6 +1825,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\ECS\ecs.hpp" />
+    <ClInclude Include="src\Entry\Scene\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1935,5 +1936,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Entry\Scene\Entity.cpp" />
   </ItemGroup>
 </Project>

@@ -24,16 +24,15 @@ void Sandbox3D::OnAttach()
 
     m_ActiveScene.reset(new Entry::Scene());
     
-    auto plane = m_ActiveScene->CreateEntity();
-    m_ActiveScene->Reg().assign <Entry::TransformComponent> (plane);
-    m_ActiveScene->Reg().assign<Entry::MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+    auto plane = m_ActiveScene->CreateEntity("Plane");
+    plane.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
     auto shield = m_ActiveScene->CreateEntity();
     glm::mat4 shieldTransform(1.0f);
     shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
     shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-    m_ActiveScene->Reg().assign<Entry::TransformComponent>(shield, shieldTransform);
-    m_ActiveScene->Reg().assign<Entry::MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
+    shield.GetComponent<Entry::TransformComponent>().Transform = shieldTransform;
+    shield.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);

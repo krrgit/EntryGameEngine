@@ -5,18 +5,21 @@
 #include "Entry/ECS/ecs.hpp"
 
 namespace Entry {
+
+	class Entity;
+
 	class Scene 
 	{
 	public:
 		Scene();
 		~Scene();
 
-		uint32_t CreateEntity();
-
-		ECS::Registry& Reg() { return m_Registry; }
+		Entity CreateEntity(const std::string& name = std::string());
 
 		void OnUpdate(Timestep ts);
 	private:
 		ECS::Registry m_Registry;
+
+		friend class Entity;
 	};
 }

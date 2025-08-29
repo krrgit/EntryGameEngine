@@ -16,6 +16,7 @@
 
 #include "Entry/Scene/Scene.h"
 #include "Entry/Scene/Components.h"
+#include "Entry/Scene/Entity.h"
 
 // ---Renderer--------------------------
 #include "Entry/Renderer/Renderer.h"

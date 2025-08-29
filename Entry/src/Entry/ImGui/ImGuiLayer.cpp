@@ -259,7 +259,7 @@ namespace Entry
 			dispatcher.Dispatch<MouseMovedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
 			dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
 			dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-			dispatcher.Dispatch<KeyTypedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+			//dispatcher.Dispatch<KeyTypedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
 			dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 	}
 
@@ -325,6 +325,7 @@ namespace Entry
 		if (keycode > 0 && keycode < 0x10000)
 			io.AddInputCharacter((unsigned short)keycode);
 		
+		ET_INFO("ImGui key typed");
 		return e.Handled;
 	}
 

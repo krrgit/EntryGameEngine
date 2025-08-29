@@ -1,7 +1,6 @@
 #include "EditorLayer.h"
 #include "imgui.h"
 #include "Entry/Core/Input.h"
-#include "Entry/Scene/Components.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
@@ -25,16 +24,26 @@ namespace Entry {
 
         m_ActiveScene.reset(new Scene());
 
-        auto plane = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().assign<TransformComponent>(plane);
-        m_ActiveScene->Reg().assign<MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+        auto plane = m_ActiveScene->CreateEntity("Plane");
+        plane.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
-        auto shield = m_ActiveScene->CreateEntity();
+        m_ShieldEntity = m_ActiveScene->CreateEntity("Shield");
         glm::mat4 shieldTransform(1.0f);
         shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
         shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-        m_ActiveScene->Reg().assign<TransformComponent>(shield, shieldTransform);
-        m_ActiveScene->Reg().assign<MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
+        m_ShieldEntity.GetComponent<TransformComponent>().Transform = shieldTransform;
+
+        m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
+
+        //m_ActiveScene->Reg().assign<TransformComponent>(plane);
+        //m_ActiveScene->Reg().assign<MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+
+        //auto shield = m_ActiveScene->CreateEntity();
+        //glm::mat4 shieldTransform(1.0f);
+        //shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
+        //shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
+        //m_ActiveScene->Reg().assign<TransformComponent>(shield, shieldTransform);
+        //m_ActiveScene->Reg().assign<MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
     }
 
     void EditorLayer::OnDetach()
@@ -63,7 +72,7 @@ namespace Entry {
 
         //Render
         Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-        
+
         // Update Scene
         m_ActiveScene->OnUpdate(ts);
 
@@ -162,7 +171,17 @@ namespace Entry {
         ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
-    
+
+        ImGui::Separator();
+        if (m_ShieldEntity) {
+            ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
+            
+            ImGui::InputFloat3("Position", (float*)&m_ShieldPosition);
+            m_ShieldEntity.GetComponent<TransformComponent>().Transform[3] = glm::vec4(m_ShieldPosition, 1.0f);
+
+        }
+
+
         ImGui::End();
     
         
