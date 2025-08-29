@@ -27,12 +27,12 @@ void Sandbox3D::OnAttach()
     auto plane = m_ActiveScene->CreateEntity("Plane");
     plane.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
-    auto shield = m_ActiveScene->CreateEntity();
+    m_ShieldEntity = m_ActiveScene->CreateEntity();
     glm::mat4 shieldTransform(1.0f);
     shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
     shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-    shield.GetComponent<Entry::TransformComponent>().Transform = shieldTransform;
-    shield.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
+    m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform = shieldTransform;
+    m_ShieldEntity.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
@@ -105,6 +105,7 @@ void Sandbox3D::OnImGuiRender()
  
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+    ImGui::SliderFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform[3]), -10.0f, 10.0f);
     ImGui::SliderFloat3("Light Position", glm::value_ptr(m_LightPosition), -10.0f, 10.0f);
     
     auto stats = Entry::Renderer3D::GetStats();
@@ -117,6 +118,7 @@ void Sandbox3D::OnImGuiRender()
 #endif // ET_PLATFORM_WINDOWS
 
     ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
+
     
     ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
