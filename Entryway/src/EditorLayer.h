@@ -26,7 +26,10 @@ namespace Entry {
         Ref<Scene> m_ActiveScene;
 
         Entity m_ShieldEntity;
-        glm::vec3 m_ShieldPosition{ 0.0f, 2.0f, 0.0f };
+        Entity m_CameraEntity;
+        Entity m_SecondCamera;
+
+        bool m_PrimaryCamera = true;
 
         glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 

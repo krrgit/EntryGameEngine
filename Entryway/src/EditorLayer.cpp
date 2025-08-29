@@ -32,18 +32,57 @@ namespace Entry {
         shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
         shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
         m_ShieldEntity.GetComponent<TransformComponent>().Transform = shieldTransform;
-
         m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
-        //m_ActiveScene->Reg().assign<TransformComponent>(plane);
-        //m_ActiveScene->Reg().assign<MeshRendererComponent>(plane, Entry::Mesh::Create("assets/models/plane.obj"));
+        // FOR 3DS PLATFORM// For other platforms/editor (PC)
+        float fov = 80.0f;
+        float aspect = 1280.0f/720.0f;
 
-        //auto shield = m_ActiveScene->CreateEntity();
-        //glm::mat4 shieldTransform(1.0f);
-        //shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
-        //shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-        //m_ActiveScene->Reg().assign<TransformComponent>(shield, shieldTransform);
-        //m_ActiveScene->Reg().assign<MeshRendererComponent>(shield, Entry::Mesh::Create("assets/models/shield.obj"));
+        // Left Side
+        float iod = -0.0f; // 3D effect value
+        float screen = 2.0f; // No clue what this is
+        //float fovx = glm::radians(fov);
+        //float fovx_tan = tanf(fovx / 2.0f);
+        float nearPlane = 0.01f;
+        float farPlane = 1000.0f;
+        bool isLeftHanded = false;
+
+        // Stereo shift (sign flips per eye)
+        float eyeShift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
+
+        float fovY = glm::radians(fov);
+        float tanHalfFovY = tanf(fovY / 2.0f);
+        float tanHalfFovX = tanHalfFovY * aspect;
+
+        glm::mat4 m_ProjectionMatrix = glm::mat3(0);
+
+        // Column 0 (X axis scaling)
+        m_ProjectionMatrix[0][0] = 1.0f / tanHalfFovX;
+
+        // Column 1 (Y axis scaling — 3DS screen tilt handled here)
+        m_ProjectionMatrix[1][1] = 1.0f / tanHalfFovY;
+        m_ProjectionMatrix[1][2] = -((isLeftHanded ? 1.0f : -1.0f) * eyeShift) / tanHalfFovX; // tilt offset
+
+        // Column 2 (Z)
+        m_ProjectionMatrix[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+        m_ProjectionMatrix[2][3] = -1.0f;
+
+        // Column 3 (Translation / depth)
+        m_ProjectionMatrix[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        glm::mat4 camTransform(1.0f);
+        camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 2.0f));
+        m_CameraEntity.GetComponent<TransformComponent>().Transform = camTransform;
+        m_CameraEntity.AddComponent<CameraComponent>(m_ProjectionMatrix);
+
+        m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
+        camTransform = glm::mat4(1.0f);
+        camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 2.0f));
+        m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;
+        auto& cc = m_SecondCamera.AddComponent<CameraComponent>(m_ProjectionMatrix);
+        cc.Primary = false;
     }
 
     void EditorLayer::OnDetach()
@@ -71,12 +110,12 @@ namespace Entry {
         //m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
         //Render
-        Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
+        //Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
 
         // Update Scene
-        m_ActiveScene->OnUpdate(ts);
+        m_ActiveScene->OnUpdate(ts, screenSide);
 
-        Entry::Renderer3D::EndScene();
+        //Entry::Renderer3D::EndScene();
 
         m_Framebuffer->Unbind();
     }
@@ -176,9 +215,18 @@ namespace Entry {
         if (m_ShieldEntity) {
             ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
             
-            ImGui::InputFloat3("Position", (float*)&m_ShieldPosition);
-            m_ShieldEntity.GetComponent<TransformComponent>().Transform[3] = glm::vec4(m_ShieldPosition, 1.0f);
+            ImGui::DragFloat3("Shield: Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.001f);
+        }
+            
+        if (m_CameraEntity) {
+            ImGui::Text("%s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
+            ImGui::DragFloat3("Camera: Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.001f);
+        }
 
+        if (ImGui::Checkbox("Camera A", &m_PrimaryCamera)) 
+        {
+            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+            m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
         }
 
 

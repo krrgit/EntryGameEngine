@@ -158,14 +158,47 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 	}
 
-    void Renderer3D::BeginScene(const PerspectiveCamera& camera, uint16_t screenSide)
+    void Renderer3D::BeginScene(const Camera& camera, const glm::mat4& transform, uint16_t screenSide)
     {
+        ET_PROFILE_FUNCTION();
+
 #ifdef ET_PLATFORM_WINDOWS
         RenderCommand::SetClearColor(0x68B0D8FF);
         RenderCommand::Clear();
 #endif // ET_PLATFORM_WINDOWS
 
+        glm::mat4 view = glm::inverse(transform);
+        glm::mat4 proj = camera.GetProjection(screenSide);
+        glm::mat4 viewProj = proj * view;
+
+        s_Data.LitTextureShader->Bind();
+        s_Data.LitTextureShader->SetMat4("u_Projection", proj);
+        s_Data.m_ViewMatrix = view;
+        s_Data.m_ViewProjectionMatrix = viewProj;
+
+        s_Data.WhiteTexture->Bind(0);
+
+        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
+            s_Data.RenderBatches[i].IndexCount = 0;
+            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
+            s_Data.RenderBatches[i].BatchTexture = nullptr;
+        }
+
+        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
+        s_Data.IndexCount = 0;
+        s_Data.BatchSlotIndex = 1;
+
+    }
+
+    void Renderer3D::BeginScene(const PerspectiveCamera& camera, uint16_t screenSide)
+    {
         ET_PROFILE_FUNCTION();
+
+#ifdef ET_PLATFORM_WINDOWS
+        RenderCommand::SetClearColor(0x68B0D8FF);
+        RenderCommand::Clear();
+#endif // ET_PLATFORM_WINDOWS
+
 
         //s_Data.TextureShader->Bind();
         //s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));

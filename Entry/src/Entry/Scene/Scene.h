@@ -16,7 +16,7 @@ namespace Entry {
 
 		Entity CreateEntity(const std::string& name = std::string());
 
-		void OnUpdate(Timestep ts);
+		void OnUpdate(Timestep ts, uint16_t screenSide);
 	private:
 		ECS::Registry m_Registry;
 

@@ -13,10 +13,18 @@ namespace Entry {
 		// -------- Entity --------
 		using Entity = std::uint32_t;
 
+        // special null entity value
+        struct null_t {
+            constexpr operator Entity() const { return invalid; }
+            static constexpr Entity invalid = (Entity)(-1); // 0xFFFFFFFF
+        };
+
+        constexpr null_t null{};
+
 
 		class Registry {
 		private:
-            Entity nextEntity = 1;
+            Entity nextEntity = 0;
 			std::vector <Entity> entities;
             std::size_t typeCounter = 0;
 
@@ -91,36 +99,47 @@ namespace Entry {
                 return components.count(type);
             }
 
-            // --- Views ---
-            // Single-component view
-            template<typename T>
-            std::vector<Entity> view() {
-                std::vector<Entity> result;
-                auto type = typeId<T>();
-                if (!components.count(type)) return result;
-                auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
-                for (auto& pair : storage->data) result.push_back(pair.first);
-                return result;
-            }
+            // --- View Class ---
+            template<typename... Components>
+            class View {
+                Registry& registry;
+                std::vector<Entity> entities;
 
-            // Multi-component view
+            public:
+                View(Registry& reg, std::vector<Entity> ents)
+                    : registry(reg), entities(std::move(ents)) {}
+
+                std::vector<Entity>::iterator begin() { return entities.begin(); }
+                std::vector<Entity>::iterator end() { return entities.end(); }
+
+                template<typename T>
+                T& get(Entity e) {
+                    return registry.get<T>(e);
+                }
+
+                template<typename T>
+                T* try_get(Entity e) {
+                    return registry.try_get<T>(e);
+                }
+            };
+
+            // --- Create a View ---
             template<typename T, typename... Ts>
-            std::vector<Entity> view() {
+            View<T, Ts...> view() {
                 std::vector<Entity> result;
 
-                // Find the smallest storage to iterate over
-                ComponentStorage<T>* mainStorage = getStorage<T>();
-                if (!mainStorage) return result;
+                auto mainStorage = getStorage<T>();
+                if (!mainStorage) return View<T, Ts...>(*this, result);
 
                 for (auto& pair : mainStorage->data) {
                     Entity e = pair.first;
-                    if (hasComponents<Ts...>(e)) {
+                    if (hasComponents<Ts...>(e))
                         result.push_back(e);
-                    }
                 }
 
-                return result;
+                return View<T, Ts...>(*this, result);
             }
+
         private:
 
             // Helper: get storage

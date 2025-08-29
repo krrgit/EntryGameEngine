@@ -188,6 +188,7 @@
     <ClInclude Include="src\Entry\Renderer\Shader.h" />
     <ClInclude Include="src\Entry\Renderer\Texture.h" />
     <ClInclude Include="src\Entry\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Entry\Renderer\Camera.h" />
     <ClInclude Include="src\Entry\Scene\Components.h" />
     <ClInclude Include="src\Entry\Scene\Entity.h" />
     <ClInclude Include="src\Entry\Scene\Scene.h" />

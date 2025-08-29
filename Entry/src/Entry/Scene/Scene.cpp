@@ -29,13 +29,42 @@ namespace Entry {
 		return entity;
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnUpdate(Timestep ts, uint16_t screenSide)
 	{
-		for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
-			TransformComponent& transform = m_Registry.get<TransformComponent>(e);
-			MeshRendererComponent& meshRender= m_Registry.get<MeshRendererComponent>(e);
+		// View: ideal for 1 component
+		// Group: ideal for multiple components
+		
+		// Render Meshes
+		Camera* mainCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
+		{
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view) 
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& camera = view.get<CameraComponent>(entity);
 
-			Renderer3D::DrawMesh(meshRender.mesh, transform);
+				if (camera.Primary) 
+				{
+					mainCamera = &camera.Camera;
+					cameraTransform = &transform.Transform;
+					break;
+				}
+			}
+		}
+
+		if (mainCamera) 
+		{
+			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), *cameraTransform);
+
+			for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
+				TransformComponent& transform = m_Registry.get<TransformComponent>(e);
+				MeshRendererComponent& meshRender= m_Registry.get<MeshRendererComponent>(e);
+
+				Renderer3D::DrawMesh(meshRender.mesh, transform);
+			}
+
+			Renderer3D::EndScene();
 		}
 	}
 } 

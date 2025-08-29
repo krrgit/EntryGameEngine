@@ -8,6 +8,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "Entry/Renderer/Camera.h"
+
 namespace Entry {
 	
 	class Renderer3D 
@@ -16,7 +18,8 @@ namespace Entry {
 			static void Init();
 			static void Shutdown();
 
-			static void BeginScene(const PerspectiveCamera& camera, uint16_t screenSide = 0);
+			static void BeginScene(const Camera& camera, const glm::mat4& transform, uint16_t screenSide = 0);
+			static void BeginScene(const PerspectiveCamera& camera, uint16_t screenSide = 0); // TODO: Remove
 			static void EndScene();
 			static void Flush();
 

@@ -2,6 +2,7 @@
 
 #include "Entry/Core/Core.h"
 #include "Entry/Renderer/Mesh.h"
+#include "Entry/Renderer/Camera.h"
 
 #include <glm/glm.hpp>
 
@@ -37,6 +38,15 @@ namespace Entry {
 			: mesh(_mesh) {}
 	};
 
+	struct CameraComponent 
+	{
+		Entry::Camera Camera;
+		bool Primary = true; // TODO: think about moving to scene 
 
-
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Camera(projection) {
+		}
+	};
 }
