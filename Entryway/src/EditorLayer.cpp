@@ -34,54 +34,18 @@ namespace Entry {
         m_ShieldEntity.GetComponent<TransformComponent>().Transform = shieldTransform;
         m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
-        // FOR 3DS PLATFORM// For other platforms/editor (PC)
-        float fov = 80.0f;
-        float aspect = 1280.0f/720.0f;
-
-        // Left Side
-        float iod = -0.0f; // 3D effect value
-        float screen = 2.0f; // No clue what this is
-        //float fovx = glm::radians(fov);
-        //float fovx_tan = tanf(fovx / 2.0f);
-        float nearPlane = 0.01f;
-        float farPlane = 1000.0f;
-        bool isLeftHanded = false;
-
-        // Stereo shift (sign flips per eye)
-        float eyeShift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
-
-        float fovY = glm::radians(fov);
-        float tanHalfFovY = tanf(fovY / 2.0f);
-        float tanHalfFovX = tanHalfFovY * aspect;
-
-        glm::mat4 m_ProjectionMatrix = glm::mat3(0);
-
-        // Column 0 (X axis scaling)
-        m_ProjectionMatrix[0][0] = 1.0f / tanHalfFovX;
-
-        // Column 1 (Y axis scaling — 3DS screen tilt handled here)
-        m_ProjectionMatrix[1][1] = 1.0f / tanHalfFovY;
-        m_ProjectionMatrix[1][2] = -((isLeftHanded ? 1.0f : -1.0f) * eyeShift) / tanHalfFovX; // tilt offset
-
-        // Column 2 (Z)
-        m_ProjectionMatrix[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
-        m_ProjectionMatrix[2][3] = -1.0f;
-
-        // Column 3 (Translation / depth)
-        m_ProjectionMatrix[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
-
-
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
         glm::mat4 camTransform(1.0f);
         camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 2.0f));
         m_CameraEntity.GetComponent<TransformComponent>().Transform = camTransform;
-        m_CameraEntity.AddComponent<CameraComponent>(m_ProjectionMatrix);
+        auto& mainCam = m_CameraEntity.AddComponent<CameraComponent>();
+        mainCam.Camera.SetViewportSize(1280.0f, 720.0f);
 
         m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
         camTransform = glm::mat4(1.0f);
         camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 2.0f));
         m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;
-        auto& cc = m_SecondCamera.AddComponent<CameraComponent>(m_ProjectionMatrix);
+        auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
     }
 
@@ -94,6 +58,19 @@ namespace Entry {
     void EditorLayer::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
+
+        // Resize 
+        FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero size framebuffer is invalid 
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        {
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+            printf("resize viewport\n");
+        }
+
         // Update
         if (m_ViewportFocused) {
             ET_PROFILE_SCOPE("CameraController::OnUpdate");
@@ -215,24 +192,29 @@ namespace Entry {
         if (m_ShieldEntity) {
             ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
             
-            ImGui::DragFloat3("Shield: Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.001f);
+            ImGui::DragFloat3("Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
         }
             
         if (m_CameraEntity) {
             ImGui::Text("%s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
-            ImGui::DragFloat3("Camera: Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.001f);
+            ImGui::DragFloat3("Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
         }
-
         if (ImGui::Checkbox("Camera A", &m_PrimaryCamera)) 
         {
             m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
             m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
         }
 
+        {
+            auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+            float camFOV = camera.GetPerspectiveFOV();
+            if (ImGui::DragFloat("2nd Camera FOV", &camFOV, 0.1f, 0.0f, 180.0f)) {
+                camera.SetPerspectiveFOV(camFOV);
+            }
+        }
 
         ImGui::End();
     
-        
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
         ImGui::Begin("Viewport");
 
@@ -242,13 +224,7 @@ namespace Entry {
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || m_ViewportHovered);
         
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0) 
-        {
-            m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-            m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-        }
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
         void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});

@@ -160,6 +160,13 @@ namespace Entry {
                 return static_cast<ComponentStorage<T>*>(components[type].get());
             }
 
+            // Base case: no components to check
+            template<typename... Ts>
+            typename std::enable_if<sizeof...(Ts) == 0, bool>::type
+            hasComponents(Entity) {
+                return true;
+            }
+
             // Helper: check if entity has all components
             template<typename T>
             bool hasComponents(Entity e) {

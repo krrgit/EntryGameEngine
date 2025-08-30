@@ -45,12 +45,11 @@ namespace Entry {
 	}
 
 
-	void PerspectiveCamera::CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float iod, bool leftSide)
+	void PerspectiveCamera::CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float nearClip, float farClip, float iod, bool leftSide)
 	{
 		switch (Renderer::GetAPI()) {
 		case RendererAPI::API::Citro3D:
 		{
-
 			// FOR 3DS PLATFORM
 			// 3DS screens are sideways. See mtx_persptilt.c for more details.
 			// Mtx_PerspStereoTilt()
@@ -61,8 +60,6 @@ namespace Entry {
 			float fovx = glm::radians(fov);
 			float fovx_tan = tanf(fovx / 2.0f);
 			float fovx_tan_invaspect = fovx_tan * invaspect;
-			float nearPlane = 0.01f;
-			float farPlane = 1000.0f;
 			bool isLeftHanded = false;
 			float eyeShift = iod / (2.0f * screen); // 'near' not in the numerator because it cancels out in mp.r[1].z
 
@@ -71,10 +68,10 @@ namespace Entry {
 			out[0][1] = 1.0f / fovx_tan;
 			out[1][0] = -1.0f / (fovx_tan * invaspect);
 			out[1][3] = iod / 2.0f;
-			out[2][3] = farPlane * nearPlane / (nearPlane - farPlane);
+			out[2][3] = farClip * nearClip / (nearClip - farClip);
 			out[3][2] = isLeftHanded ? 1.0f : -1.0f;
 			out[1][2] = -out[3][2] * eyeShift / fovx_tan_invaspect;
-			out[2][2] = -out[3][2] * nearPlane / (nearPlane - farPlane);
+			out[2][2] = -out[3][2] * nearClip / (nearClip - farClip);
 
 			out = glm::transpose(out);
 		}
@@ -85,8 +82,6 @@ namespace Entry {
 			// Left Side
 			iod = leftSide ? -iod : iod; // 3D effect value
 			float screen = 2.0f; // No clue what this is
-			float nearPlane = 0.01f;
-			float farPlane = 1000.0f;
 			bool isLeftHanded = false;
 
 			// Stereo shift (sign flips per eye)
@@ -106,11 +101,11 @@ namespace Entry {
 			out[1][2] = -((isLeftHanded ? 1.0f : -1.0f) * eyeShift) / tanHalfFovX; // tilt offset
 
 			// Column 2 (Z)
-			out[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+			out[2][2] = -(farClip + nearClip) / (farClip - nearClip);
 			out[2][3] = -1.0f;
 
 			// Column 3 (Translation / depth)
-			out[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+			out[3][2] = -(2.0f * farClip * nearClip) / (farClip - nearClip);
 		}
 			break;
 		}

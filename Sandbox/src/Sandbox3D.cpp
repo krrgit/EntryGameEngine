@@ -38,9 +38,17 @@ void Sandbox3D::OnAttach()
     glm::mat4 camTransform(1.0f);
     camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 2.0f));
     m_CameraEntity.GetComponent<Entry::TransformComponent>().Transform = camTransform;
-    glm::mat4 projection(1.0f);
-    Entry::PerspectiveCamera::CalculateProjection(projection, 400.0f/240.0f, 80.0f);
-    m_CameraEntity.AddComponent<Entry::CameraComponent>(projection);
+    auto& mainCam = m_CameraEntity.AddComponent<Entry::CameraComponent>();
+    mainCam.Camera.SetViewportSize(400.0f, 240.0f);
+
+    m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
+    camTransform = glm::mat4(1.0f);
+    camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 2.0f));
+    m_SecondCamera.GetComponent<Entry::TransformComponent>().Transform = camTransform;
+    auto& cc = m_SecondCamera.AddComponent<Entry::CameraComponent>();
+    cc.Camera.SetViewportSize(400.0f, 240.0f);
+    cc.Primary = false;
+
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
@@ -114,7 +122,24 @@ void Sandbox3D::OnImGuiRender()
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
     ImGui::SliderFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform[3]), -10.0f, 10.0f);
-    ImGui::SliderFloat3("Light Position", glm::value_ptr(m_LightPosition), -10.0f, 10.0f);
+
+    if (m_CameraEntity) {
+        ImGui::Text("%s", m_CameraEntity.GetComponent<Entry::TagComponent>().Tag.c_str());
+        ImGui::DragFloat3("Position", glm::value_ptr(m_CameraEntity.GetComponent<Entry::TransformComponent>().Transform[3]), 0.02f);
+    }
+    if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+    {
+        m_CameraEntity.GetComponent<Entry::CameraComponent>().Primary = m_PrimaryCamera;
+        m_SecondCamera.GetComponent<Entry::CameraComponent>().Primary = !m_PrimaryCamera;
+    }
+
+    {
+        auto& camera = m_SecondCamera.GetComponent<Entry::CameraComponent>().Camera;
+        float camFOV = camera.GetPerspectiveFOV();
+        if (ImGui::DragFloat("2nd Camera FOV", &camFOV, 0.1f, 0.0f, 180.0f)) {
+            camera.SetPerspectiveFOV(camFOV);
+        }
+    }
     
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");

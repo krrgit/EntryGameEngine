@@ -5,9 +5,7 @@
 namespace Entry {
 	class Camera {
 	public:
-		Camera() {
-			m_Projection = glm::mat4(1.0f);
-		}
+		Camera() = default;
 		Camera(const glm::mat4& projection)
 			: m_Projection(projection) {} // TODO: FIX right side
 
@@ -15,7 +13,7 @@ namespace Entry {
 
 		// TODO:
 		// SetPerspective, SetOrthographic, m_ProjectionRightSide (Stereo 3D)
-	private:
-		glm::mat4 m_Projection;
+	protected:
+		glm::mat4 m_Projection = glm::mat4(1.0f);
 	};
 }

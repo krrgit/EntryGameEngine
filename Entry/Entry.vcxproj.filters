@@ -1827,6 +1827,7 @@
     <ClInclude Include="src\Entry\ECS\ecs.hpp" />
     <ClInclude Include="src\Entry\Scene\Entity.h" />
     <ClInclude Include="src\Entry\Renderer\Camera.h" />
+    <ClInclude Include="src\Entry\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1938,5 +1939,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Scene\Entity.cpp" />
+    <ClCompile Include="src\Entry\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>
