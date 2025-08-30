@@ -77,6 +77,8 @@ namespace Entry {
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
         m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -187,6 +189,7 @@ namespace Entry {
             ImGui::EndMenuBar();
         }
 
+        m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Settings");
         ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));

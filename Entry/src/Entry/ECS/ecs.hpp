@@ -74,6 +74,15 @@ namespace Entry {
                 return e;
             }
 
+            template<typename Func>
+            void each(Func func)
+            {
+                for (auto e : entities)
+                {
+                    func(e);
+                }
+            }
+
             void destroy(Entity e) {
                 entities.erase(std::remove(entities.begin(), entities.end(), e), entities.end());
                 // remove all components of this entity

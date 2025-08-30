@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entry.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Entry {
     class EditorLayer : public Layer
@@ -34,5 +35,8 @@ namespace Entry {
         glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
         float m_Rotation = 0.0f;
+
+        // Panels
+        SceneHierarchyPanel m_SceneHierarchyPanel;
     };
 }

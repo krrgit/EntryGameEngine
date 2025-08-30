@@ -36,7 +36,15 @@ namespace Entry {
 		}
 
 		operator bool() const { return m_EntityHandle != 0; }
-	
+		operator uint32_t() const { return m_EntityHandle; }
+
+		bool operator==(const Entity& other) const { 
+			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+		}
+
+		bool operator!=(const Entity& other) const {
+			return !(*this == other);
+		}
 	private:
 		ECS::Entity m_EntityHandle { 0 };
 		Scene* m_Scene = nullptr;
