@@ -49,6 +49,36 @@ void Sandbox3D::OnAttach()
     cc.Camera.SetViewportSize(400.0f, 240.0f);
     cc.Primary = false;
 
+    class CameraController : public Entry::ScriptableEntity
+    {
+    public:
+        void OnCreate()
+        {
+            printf("CameraController::OnCreate\n");
+        }
+
+        void OnDestroy()
+        {
+        }
+
+        void OnUpdate(Entry::Timestep ts)
+        {
+            auto& transform = GetComponent<Entry::TransformComponent>().Transform;
+            float speed = 5.0f;
+
+            if (Entry::Input::GetButton(Entry::KeyCode::PAD_DLEFT))
+                transform[3][0] -= speed * ts;
+            if (Entry::Input::GetButton(Entry::KeyCode::PAD_DRIGHT))
+                transform[3][0] += speed * ts;
+            if (Entry::Input::GetButton(Entry::KeyCode::PAD_DUP))
+                transform[3][2] -= speed * ts;
+            if (Entry::Input::GetButton(Entry::KeyCode::PAD_DDOWN))
+                transform[3][2] += speed * ts;
+        }
+    };
+
+    m_CameraEntity.AddComponent<Entry::NativeScriptComponent>().Bind<CameraController>();
+
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);

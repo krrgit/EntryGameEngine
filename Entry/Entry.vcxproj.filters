@@ -1828,6 +1828,7 @@
     <ClInclude Include="src\Entry\Scene\Entity.h" />
     <ClInclude Include="src\Entry\Renderer\Camera.h" />
     <ClInclude Include="src\Entry\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Entry\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">

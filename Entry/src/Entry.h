@@ -15,8 +15,9 @@
 #include "Entry/ImGui/ImGuiLayer.h"
 
 #include "Entry/Scene/Scene.h"
-#include "Entry/Scene/Components.h"
 #include "Entry/Scene/Entity.h"
+#include "Entry/Scene/ScriptableEntity.h"
+#include "Entry/Scene/Components.h"
 
 // ---Renderer--------------------------
 #include "Entry/Renderer/Renderer.h"

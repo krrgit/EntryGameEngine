@@ -24,6 +24,7 @@ namespace Entry {
 	}
 	void SceneCamera::RecalculateProjection()
 	{
+		// TODO: support stereo 3D 
 		PerspectiveCamera::CalculateProjection(m_Projection, m_AspectRatio, m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
 	}
 }

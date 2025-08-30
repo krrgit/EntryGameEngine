@@ -47,6 +47,36 @@ namespace Entry {
         m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate() 
+            {
+                printf("CameraController::OnCreate\n");
+            }
+
+            void OnDestroy() 
+            {
+            }
+
+            void OnUpdate(Timestep ts) 
+            {
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                float speed = 5.0f;
+
+                if (Input::IsKeyPressed(KeyCode::A))
+                    transform[3][0] -= speed * ts;
+                if (Input::IsKeyPressed(KeyCode::D))
+                    transform[3][0] += speed * ts;
+                if (Input::IsKeyPressed(KeyCode::W))
+                    transform[3][2] -= speed * ts;
+                if (Input::IsKeyPressed(KeyCode::S))
+                    transform[3][2] += speed * ts;
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
@@ -67,8 +97,6 @@ namespace Entry {
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
-            printf("resize viewport\n");
         }
 
         // Update
@@ -82,18 +110,8 @@ namespace Entry {
         Entry::Renderer3D::ResetStats();
         Entry::Renderer3D::SetStatsTimestep(ts);
 
-
-        //m_Rotation += ts.GetSeconds();
-        //m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
-
-        //Render
-        //Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-
         // Update Scene
         m_ActiveScene->OnUpdate(ts, screenSide);
-
-        //Entry::Renderer3D::EndScene();
-
         m_Framebuffer->Unbind();
     }
 
@@ -192,12 +210,12 @@ namespace Entry {
         if (m_ShieldEntity) {
             ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
             
-            ImGui::DragFloat3("Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
+            ImGui::DragFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
         }
             
         if (m_CameraEntity) {
             ImGui::Text("%s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
-            ImGui::DragFloat3("Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
+            ImGui::DragFloat3("Cam Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
         }
         if (ImGui::Checkbox("Camera A", &m_PrimaryCamera)) 
         {

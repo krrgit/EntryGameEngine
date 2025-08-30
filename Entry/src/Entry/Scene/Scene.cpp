@@ -31,6 +31,22 @@ namespace Entry {
 
 	void Scene::OnUpdate(Timestep ts, uint16_t screenSide)
 	{
+		// Update Scripts 
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](ECS::Entity entity, NativeScriptComponent& nsc) 
+			{
+				// Simulate Create
+				if (!nsc.Instance)
+				{
+					nsc.InstantiateFunction();
+					nsc.Instance->m_Entity = Entity{ entity, this };
+					nsc.OnCreateFunction(nsc.Instance);
+				}
+
+				nsc.OnUpdateFunction(nsc.Instance, ts);
+			});
+		}
+
 		// View: ideal for 1 component
 		// Group: ideal for multiple components
 		

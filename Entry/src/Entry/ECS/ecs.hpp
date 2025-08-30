@@ -21,6 +21,22 @@ namespace Entry {
 
         constexpr null_t null{};
 
+        // Utility: index_sequence for C++11
+        template<std::size_t... Ints>
+        struct index_sequence
+        {
+            typedef index_sequence type;
+        };
+
+        template<std::size_t N, std::size_t... Ints>
+        struct make_index_sequence : make_index_sequence<N - 1, N - 1, Ints...> {};
+
+        template<std::size_t... Ints>
+        struct make_index_sequence<0, Ints...> : index_sequence<Ints...> {};
+
+        template<typename... Ts>
+        using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
+
 
 		class Registry {
 		private:
@@ -130,6 +146,22 @@ namespace Entry {
                 template<typename T>
                 T* try_get(Entity e) {
                     return registry.try_get<T>(e);
+                }
+
+                template<typename Func>
+                void each(Func&& func)
+                {
+                    for (Entity e : entities)
+                    {
+                        callFunc(e, func, index_sequence_for<Components...>{});
+                    }
+                }
+            private:
+                template<typename Func, std::size_t... Is>
+                void callFunc(Entity e, Func& func, index_sequence<Is...>)
+                {
+                    // Expand Components... pack, fetch each component, and call func
+                    func(e, registry.get<Components>(e)...);
                 }
             };
 
