@@ -56,6 +56,7 @@ namespace Entry
 		return 0.0f;
 	}
 
+	// TODO: IsKeyPressed should be Editor only, GetButton should simulate gamepad inputs (or pass through actual gamepad)
 	bool Input::IsKeyPressed(KeyCode key) 
 	{
 		return GetButton(key);

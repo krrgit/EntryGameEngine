@@ -53,7 +53,6 @@ namespace Entry {
         public:
             void OnCreate() 
             {
-                printf("CameraController::OnCreate\n");
             }
 
             void OnDestroy() 
@@ -77,6 +76,7 @@ namespace Entry {
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+        m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
