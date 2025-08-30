@@ -40,7 +40,7 @@ namespace Entry {
 
 		class Registry {
 		private:
-            Entity nextEntity = 0;
+            Entity nextEntity = 1;
 			std::vector <Entity> entities;
             std::size_t typeCounter = 0;
 
