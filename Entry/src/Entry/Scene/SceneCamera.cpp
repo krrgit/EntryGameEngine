@@ -3,6 +3,8 @@
 #include "SceneCamera.h"
 #include "Entry/Renderer/PerspectiveCamera.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Entry {
 	SceneCamera::SceneCamera()
 	{
@@ -11,10 +13,17 @@ namespace Entry {
 
 	void SceneCamera::SetPerspective(float fov, float nearClip, float farClip)
 	{
+		m_ProjectionType = ProjectionType::Persepective;
 		m_PerspectiveFOV = fov;
 		m_PerspectiveNear = nearClip;
 		m_PerspectiveFar = farClip;
 
+		RecalculateProjection();
+	}
+	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
+	{
+		m_ProjectionType = ProjectionType::Orthographic;
+		m_OrthographicSize = size;
 		RecalculateProjection();
 	}
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
@@ -24,7 +33,19 @@ namespace Entry {
 	}
 	void SceneCamera::RecalculateProjection()
 	{
-		// TODO: support stereo 3D 
-		PerspectiveCamera::CalculateProjection(m_Projection, m_AspectRatio, m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
+		if (m_ProjectionType == ProjectionType::Persepective)
+		{
+			// TODO: support stereo 3D 
+			PerspectiveCamera::CalculateProjection(m_Projection, m_AspectRatio, m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
+		}
+		else
+		{
+			//float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
+			//float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
+			//float orthoBottom = -m_OrthographicSize * 0.5f;
+			//float orthoTop = -m_OrthographicSize * 0.5f;
+			//m_Projection = glm::ortho(orthoLeft, orthoBottom, orthoBottom, orthoTop, -1.0f, 1.0f);
+			PerspectiveCamera::CalculateOrthographic(m_Projection, m_OrthographicSize, m_AspectRatio);
+		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Entry {
 		const glm::vec3 GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) { m_Position = position; RecalculateViewMatrix();
 			//PrintViewMatrix();
-		//PrintPosition();
+			//PrintPosition();
 		}
 		
 		const glm::vec4 GetRotation() const { return m_Rotation; }
@@ -46,7 +46,8 @@ namespace Entry {
 		const glm::mat4& GetViewMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewMatrix : m_ViewMatrixR; }
 		const glm::mat4& GetViewProjectionMatrix(uint16_t screenSide = 0) const { return screenSide == 0 ? m_ViewProjectionMatrix : m_ViewProjectionMatrixR ; }
 
-		static void CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float nearClip = 0.001f, float farClip = 1000.0f, float iod = 0.0f, bool leftSide = true);
+		static void CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float nearClip = 0.001f, float farClip = 1000.0f, float iod = 0.0f, bool leftSideScreen = true);
+		static void CalculateOrthographic(glm::mat4& out, float size, float aspectRatio, float nearClip = 0.0f, float farClip = 1.0f);
 	private:
 		void RecalculateViewMatrix();
 		void RecalculateProjectionViewMatrix();

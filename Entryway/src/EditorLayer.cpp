@@ -27,6 +27,12 @@ namespace Entry {
         auto plane = m_ActiveScene->CreateEntity("Plane");
         plane.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
+        auto planetwo = m_ActiveScene->CreateEntity("Plane (2)");
+        planetwo.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
+        glm::mat4 planeTransform(1.0f);
+        planeTransform = glm::rotate(planeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0, 0));
+        planetwo.GetComponent<TransformComponent>().Transform = planeTransform;
+
         m_ShieldEntity = m_ActiveScene->CreateEntity("Shield");
         glm::mat4 shieldTransform(1.0f);
         shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
@@ -36,14 +42,14 @@ namespace Entry {
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
         glm::mat4 camTransform(1.0f);
-        camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 2.0f));
+        camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 10.0f));
         m_CameraEntity.GetComponent<TransformComponent>().Transform = camTransform;
         auto& mainCam = m_CameraEntity.AddComponent<CameraComponent>();
         mainCam.Camera.SetViewportSize(1280.0f, 720.0f);
 
         m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
         camTransform = glm::mat4(1.0f);
-        camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 2.0f));
+        camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 0.0f));
         m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
@@ -228,9 +234,9 @@ namespace Entry {
 
         {
             auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-            float camFOV = camera.GetPerspectiveFOV();
+            float camFOV = camera.GetPerspectiveVerticalFOV();
             if (ImGui::DragFloat("2nd Camera FOV", &camFOV, 0.1f, 0.0f, 180.0f)) {
-                camera.SetPerspectiveFOV(camFOV);
+                camera.SetPerspectiveVerticalFOV(camFOV);
             }
         }
 

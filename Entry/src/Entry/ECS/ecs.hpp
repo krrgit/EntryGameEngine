@@ -129,9 +129,14 @@ namespace Entry {
             }
 
             template<typename T>
-            bool has(Entity e) {
+            bool has(Entity e)
+            {
                 auto type = typeId<T>();
-                return components.count(type);
+                auto it = components.find(type);
+                if (it == components.end()) return false;
+
+                auto storage = static_cast<ComponentStorage<T>*>(it->second.get());
+                return storage->data.count(e) > 0;
             }
 
             // --- View Class ---
