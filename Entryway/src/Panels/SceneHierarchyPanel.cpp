@@ -167,5 +167,54 @@ namespace Entry
 				ImGui::TreePop();
 			}
 		}
+	
+		if (entity.HasComponent<MeshRendererComponent>())
+		{
+			if (ImGui::TreeNodeEx((void*)typeid(MeshRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Mesh Renderer"))
+			{
+				auto& meshComponent = entity.GetComponent<MeshRendererComponent>();
+				auto& mesh = meshComponent.mesh;	
+				static std::string filepath = meshComponent.mesh->GetFilePath().c_str();
+				static Entity thisEntity = entity;
+
+				if (thisEntity != entity)
+				{
+					filepath = meshComponent.mesh->GetFilePath().c_str();
+					thisEntity = entity;
+				}
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy_s(buffer, sizeof(buffer), filepath.c_str());
+				if (ImGui::InputText("Mesh", buffer, sizeof(buffer)))
+				{
+					filepath = std::string(buffer);
+				}
+				if (ImGui::Button("Reload"))
+				{
+					Ref<Mesh> newMesh = Mesh::Create(filepath);
+					if (newMesh->GetIndexCount() > 0)
+					{
+						meshComponent.mesh = newMesh;
+					}
+				}
+
+				// TODO: Add default material when none supplied
+				if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Materials"))
+				{
+					static size_t size = mesh->GetMaterialCount();
+					ImGui::Text("Size: %d", size);
+					size_t index = 0;
+					for (auto material : mesh->GetMaterials())
+					{
+						ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
+					}
+					ImGui::TreePop();
+				}
+				//ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+
+				ImGui::TreePop();
+			}
+		}
 	}
 }

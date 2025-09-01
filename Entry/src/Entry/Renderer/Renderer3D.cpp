@@ -72,6 +72,7 @@ namespace Entry {
         glm::mat4 m_ViewMatrix;
         glm::mat4 m_ViewProjectionMatrix;
 
+        Ref<Material> DefaultMaterial;
     };
 
     static Renderer3DData s_Data;
@@ -148,6 +149,14 @@ namespace Entry {
             s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
             s_Data.WhiteTexture->Bind(0);
         }
+
+        // Create Default Material
+        MaterialValues defMatVal{ 0.8f, 0.8f, 0.8f };
+        MaterialProps defMatProps;
+        defMatProps.Values = defMatVal;
+        defMatProps.Name = "Default Material";
+        defMatProps.DiffuseMap = s_Data.WhiteTexture;
+        s_Data.DefaultMaterial = Material::Create(defMatProps);
 
         // Set first texture slot to 0
         s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
@@ -888,9 +897,18 @@ namespace Entry {
 
         for (auto submesh : mesh->GetSubMeshes())
         {
-            mesh->GetMaterial(submesh.MaterialID)->Bind();
+            // Use Default Material
+            if (mesh->GetMaterialCount() == 0)
+            {
+                s_Data.DefaultMaterial->Bind();
+            }
+            else
+            {
+                mesh->GetMaterial(submesh.MaterialID)->Bind();
+            }
             RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
         }
+
 
         s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
         s_Data.Stats.VertexCount += mesh->GetVertexCount();

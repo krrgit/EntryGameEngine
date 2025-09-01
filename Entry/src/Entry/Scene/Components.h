@@ -41,6 +41,7 @@ namespace Entry
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 		MeshRendererComponent(const Ref<Mesh> _mesh)
 			: mesh(_mesh) {}
+
 	};
 
 	struct CameraComponent

@@ -28,6 +28,7 @@ namespace Entry {
 
 		virtual void Bind() = 0;
 		virtual Ref<Material> GetMaterial(int materialID) = 0;
+		virtual std::vector<Ref<Material>> GetMaterials() = 0;
 
 		virtual uint16_t GetMaterialCount() const = 0;
 		virtual uint16_t GetTextuerCount() const = 0;
@@ -35,6 +36,9 @@ namespace Entry {
 		virtual uint16_t GetVertexCount() const = 0;
 		virtual uint16_t GetIndexCount() const = 0;
 		virtual uint16_t GetPolygonCount() const = 0;
+
+		virtual std::string GetFilePath() const = 0;
+		virtual std::string GetFileName() const = 0;
 	private:
 	};
 }

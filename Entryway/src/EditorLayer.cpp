@@ -40,14 +40,14 @@ namespace Entry {
         m_ShieldEntity.GetComponent<TransformComponent>().Transform = shieldTransform;
         m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         glm::mat4 camTransform(1.0f);
         camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 10.0f));
         m_CameraEntity.GetComponent<TransformComponent>().Transform = camTransform;
         auto& mainCam = m_CameraEntity.AddComponent<CameraComponent>();
         mainCam.Camera.SetViewportSize(1280.0f, 720.0f);
 
-        m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
+        m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
         camTransform = glm::mat4(1.0f);
         camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 0.0f));
         m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;

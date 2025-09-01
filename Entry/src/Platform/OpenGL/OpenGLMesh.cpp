@@ -8,6 +8,21 @@
 
 namespace Entry {
 
+	std::string ExtractFileName(const std::string& path)
+	{
+		// Find last slash or backslash
+		size_t slashPos = path.find_last_of("/\\");
+		std::string filename = (slashPos == std::string::npos) ? path : path.substr(slashPos + 1);
+
+		// Find last dot
+		size_t dotPos = filename.find_last_of('.');
+		if (dotPos == std::string::npos)
+		{
+			return filename; // no extension
+		}
+		return filename.substr(0, dotPos);
+	}
+
 	static void FastOBJToBuffers(std::vector<float>* outVertices, std::vector<uint16_t>* outIndices, Ref<fastObjMesh> obj_mesh)
 	{
 		outVertices->clear();
@@ -103,14 +118,15 @@ namespace Entry {
 			submeshes.push_back(submesh);
 		}
 
-		submeshes.resize(submeshes.size());
-		materials.resize(materials.size());
-		textures.resize(textures.size());
+		submeshes.shrink_to_fit();
+		materials.shrink_to_fit();
+		textures.shrink_to_fit();
 	}
 
 	OpenGLMesh::OpenGLMesh(const std::string& path)
 	{
-		m_Name = path;
+		m_FileName = ExtractFileName(path);
+		m_FilePath = path;
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
 
@@ -144,10 +160,10 @@ namespace Entry {
 		m_TextureCount = m_Textures.size();
 
 		if (indices.size() == 0) {
-			printf("Failed to load \"%s\"\n", m_Name.c_str());
+			printf("Failed to load \"%s\"\n", m_FileName.c_str());
 		}
 		else {
-			printf("Loaded \"%s\" successfully\n", m_Name.c_str());
+			printf("Loaded \"%s\" successfully\n", m_FileName.c_str());
 			printf("Indices: %d\n", m_IndexCount);
 			printf("Vertices: %d\n", m_VertexCount);
 			printf("SubMeshes: %d\n", m_SubMeshes.size());
@@ -158,6 +174,7 @@ namespace Entry {
 
 	OpenGLMesh::~OpenGLMesh()
 	{
+		printf("Destroyed %s", m_FileName.c_str());
 	}
 
 	void OpenGLMesh::Bind()

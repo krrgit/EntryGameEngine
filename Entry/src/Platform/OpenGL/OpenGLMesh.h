@@ -19,6 +19,7 @@ namespace Entry {
 		virtual void Bind() override;
 
 		virtual Ref<Material> GetMaterial(int materialID) override { return materialID < m_MaterialCount ? m_Materials[materialID] : nullptr; };
+		virtual std::vector<Ref<Material>> GetMaterials() override { return m_Materials; };
 
 		virtual uint16_t GetMaterialCount() const { return m_MaterialCount; }
 		virtual uint16_t GetTextuerCount() const { return m_TextureCount; }
@@ -27,8 +28,12 @@ namespace Entry {
 		virtual uint16_t GetVertexCount() const { return m_VertexCount; }
 		virtual uint16_t GetIndexCount() const { return m_IndexCount; }
 
+		virtual std::string GetFileName() const { return m_FileName; }
+		virtual std::string GetFilePath() const { return m_FilePath; }
+
 	private:
-		std::string m_Name;
+		std::string m_FileName;
+		std::string m_FilePath;
 		Ref<VertexArray> m_VertexArray;
 		std::vector<SubMesh> m_SubMeshes;
 		std::vector<Ref<Material>> m_Materials;
