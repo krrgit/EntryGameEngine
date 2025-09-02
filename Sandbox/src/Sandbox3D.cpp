@@ -26,29 +26,19 @@ void Sandbox3D::OnAttach()
     
     auto plane = m_ActiveScene->CreateEntity("Plane");
     plane.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
-    glm::mat4 planeTransform(1.0f);
-    planeTransform = glm::rotate(planeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0, 0));
-    plane.GetComponent<Entry::TransformComponent>().Transform = planeTransform;
 
-
-    m_ShieldEntity = m_ActiveScene->CreateEntity();
-    glm::mat4 shieldTransform(1.0f);
-    shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
-    shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-    m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform = shieldTransform;
+    m_ShieldEntity = m_ActiveScene->CreateEntity("Shield");
+    m_ShieldEntity.GetComponent<Entry::TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 0.0f);
+    m_ShieldEntity.GetComponent<Entry::TransformComponent>().Scale = glm::vec3(0.02f, 0.02f, 0.02f);
     m_ShieldEntity.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
-    m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-    glm::mat4 camTransform(1.0f);
-    camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 10.0f));
-    m_CameraEntity.GetComponent<Entry::TransformComponent>().Transform = camTransform;
+    m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
+    m_CameraEntity.GetComponent<Entry::TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 10.0f);
     auto& mainCam = m_CameraEntity.AddComponent<Entry::CameraComponent>();
     mainCam.Camera.SetViewportSize(400.0f, 240.0f);
 
-    m_SecondCamera = m_ActiveScene->CreateEntity("Camera Entity");
-    camTransform = glm::mat4(1.0f);
-    camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 0.0f));
-    m_SecondCamera.GetComponent<Entry::TransformComponent>().Transform = camTransform;
+    m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
+    m_SecondCamera.GetComponent<Entry::TransformComponent>().Position = glm::vec3(2.0f, 2.0f, 5.0f);
     auto& cc = m_SecondCamera.AddComponent<Entry::CameraComponent>();
     cc.Camera.SetViewportSize(400.0f, 240.0f);
     cc.Primary = false;
@@ -67,17 +57,17 @@ void Sandbox3D::OnAttach()
 
         void OnUpdate(Entry::Timestep ts)
         {
-            auto& transform = GetComponent<Entry::TransformComponent>().Transform;
+            auto& position = GetComponent<Entry::TransformComponent>().Position;
             float speed = 5.0f;
 
             if (Entry::Input::GetButton(Entry::KeyCode::PAD_DLEFT))
-                transform[3][0] -= speed * ts;
+                position.x -= speed * ts;
             if (Entry::Input::GetButton(Entry::KeyCode::PAD_DRIGHT))
-                transform[3][0] += speed * ts;
+                position.x += speed * ts;
             if (Entry::Input::GetButton(Entry::KeyCode::PAD_DUP))
-                transform[3][2] -= speed * ts;
+                position.z -= speed * ts;
             if (Entry::Input::GetButton(Entry::KeyCode::PAD_DDOWN))
-                transform[3][2] += speed * ts;
+                position.z += speed * ts;
         }
     };
 
@@ -155,7 +145,7 @@ void Sandbox3D::OnImGuiRender()
  
     ImGui::Begin("Settings");
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-    ImGui::SliderFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<Entry::TransformComponent>().Transform[3]), -10.0f, 10.0f);
+    ImGui::SliderFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<Entry::TransformComponent>().Position), -10.0f, 10.0f);
 
     auto& cameraComponent = m_CameraEntity.GetComponent<Entry::CameraComponent>();
     auto& camera = cameraComponent.Camera;

@@ -27,30 +27,18 @@ namespace Entry {
         auto plane = m_ActiveScene->CreateEntity("Plane");
         plane.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
-        auto planetwo = m_ActiveScene->CreateEntity("Plane (2)");
-        planetwo.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
-        glm::mat4 planeTransform(1.0f);
-        planeTransform = glm::rotate(planeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0, 0));
-        planetwo.GetComponent<TransformComponent>().Transform = planeTransform;
-
         m_ShieldEntity = m_ActiveScene->CreateEntity("Shield");
-        glm::mat4 shieldTransform(1.0f);
-        shieldTransform = glm::translate(shieldTransform, glm::vec3(0.0f, 2.0f, 0.0f));
-        shieldTransform = glm::scale(shieldTransform, glm::vec3(0.02f, 0.02f, 0.02f));
-        m_ShieldEntity.GetComponent<TransformComponent>().Transform = shieldTransform;
+        m_ShieldEntity.GetComponent<TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 0.0f);
+        m_ShieldEntity.GetComponent<TransformComponent>().Scale = glm::vec3(0.02f, 0.02f, 0.02f);
         m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-        glm::mat4 camTransform(1.0f);
-        camTransform = glm::translate(camTransform, glm::vec3(0.0f, 2.0f, 10.0f));
-        m_CameraEntity.GetComponent<TransformComponent>().Transform = camTransform;
+        m_CameraEntity.GetComponent<TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 10.0f);
         auto& mainCam = m_CameraEntity.AddComponent<CameraComponent>();
         mainCam.Camera.SetViewportSize(1280.0f, 720.0f);
 
         m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-        camTransform = glm::mat4(1.0f);
-        camTransform = glm::translate(camTransform, glm::vec3(3.0f, 2.0f, 0.0f));
-        m_SecondCamera.GetComponent<TransformComponent>().Transform = camTransform;
+        m_SecondCamera.GetComponent<TransformComponent>().Position = glm::vec3( 2.0f, 2.0f, 5.0f);
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
 
@@ -67,17 +55,17 @@ namespace Entry {
 
             void OnUpdate(Timestep ts) 
             {
-                auto& transform = GetComponent<TransformComponent>().Transform;
+                auto& position = GetComponent<TransformComponent>().Position;
                 float speed = 5.0f;
 
                 if (Input::IsKeyPressed(KeyCode::A))
-                    transform[3][0] -= speed * ts;
+                    position.x -= speed * ts;
                 if (Input::IsKeyPressed(KeyCode::D))
-                    transform[3][0] += speed * ts;
+                    position.x += speed * ts;
                 if (Input::IsKeyPressed(KeyCode::W))
-                    transform[3][2] -= speed * ts;
+                    position.z -= speed * ts;
                 if (Input::IsKeyPressed(KeyCode::S))
-                    transform[3][2] += speed * ts;
+                    position.z += speed * ts;
             }
         };
 
@@ -219,12 +207,12 @@ namespace Entry {
         if (m_ShieldEntity) {
             ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
             
-            ImGui::DragFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
+            ImGui::DragFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Position), 0.02f);
         }
             
         if (m_CameraEntity) {
             ImGui::Text("%s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
-            ImGui::DragFloat3("Cam Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]), 0.02f);
+            ImGui::DragFloat3("Cam Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Position), 0.02f);
         }
         if (ImGui::Checkbox("Camera A", &m_PrimaryCamera)) 
         {

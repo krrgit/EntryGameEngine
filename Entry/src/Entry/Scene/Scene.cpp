@@ -52,7 +52,7 @@ namespace Entry {
 		
 		// Render Meshes
 		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view) 
@@ -63,7 +63,7 @@ namespace Entry {
 				if (camera.Primary) 
 				{
 					mainCamera = &camera.Camera;
-					cameraTransform = &transform.Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -71,13 +71,13 @@ namespace Entry {
 
 		if (mainCamera) 
 		{
-			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), *cameraTransform);
+			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
 
 			for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
-				auto& transform = m_Registry.get<TransformComponent>(e);
+				auto transform = m_Registry.get<TransformComponent>(e);
 				auto& meshRender= m_Registry.get<MeshRendererComponent>(e);
 
-				Renderer3D::DrawMesh(meshRender.mesh, transform);
+				Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
 			}
 
 			Renderer3D::EndScene();
