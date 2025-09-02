@@ -185,11 +185,9 @@ namespace Entry {
 
         m_SceneHierarchyPanel.OnImGuiRender();
 
-        ImGui::Begin("Settings");
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+        ImGui::Begin("Stats");
 
         auto stats = Entry::Renderer3D::GetStats();
-        ImGui::Text("Renderer3D Stats:");
 #ifdef ET_PLATFORM_3DS
         ImGui::Text("FPS: %.1f fps\nCPU: %.2f ms\nGPU: %.2f ms\n", 1000.0f / (C3D_GetProcessingTime() + C3D_GetDrawingTime()), C3D_GetProcessingTime(), C3D_GetDrawingTime()); // Temp
 #endif // ET_PLATFORM_3DS
@@ -202,31 +200,6 @@ namespace Entry {
         ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
-
-        ImGui::Separator();
-        if (m_ShieldEntity) {
-            ImGui::Text("%s", m_ShieldEntity.GetComponent<TagComponent>().Tag.c_str());
-            
-            ImGui::DragFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<TransformComponent>().Position), 0.02f);
-        }
-            
-        if (m_CameraEntity) {
-            ImGui::Text("%s", m_CameraEntity.GetComponent<TagComponent>().Tag.c_str());
-            ImGui::DragFloat3("Cam Position", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Position), 0.02f);
-        }
-        if (ImGui::Checkbox("Camera A", &m_PrimaryCamera)) 
-        {
-            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-            m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-        }
-
-        {
-            auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-            float camFOV = camera.GetPerspectiveVerticalFOV();
-            if (ImGui::DragFloat("2nd Camera FOV", &camFOV, 0.1f, 0.0f, 180.0f)) {
-                camera.SetPerspectiveVerticalFOV(camFOV);
-            }
-        }
 
         ImGui::End();
     

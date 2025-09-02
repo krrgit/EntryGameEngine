@@ -51,7 +51,7 @@ namespace Entry {
         static const uint32_t MaxPolygons = 5298; // Max: 5298 (seems like CPU bottleneck)
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3;
-        static const uint32_t MaxBatches = 6; // Randomly selected tbh
+        static const uint32_t MaxBatches = 1; // Randomly selected tbh
         static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
         bool AllowMultipleBatchesPerTexture = true;
 

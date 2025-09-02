@@ -32,8 +32,8 @@ namespace Entry {
 		virtual std::string GetFilePath() const { return m_FilePath; }
 
 	private:
-		std::string m_FileName;
-		std::string m_FilePath;
+		std::string m_FileName = "";
+		std::string m_FilePath = "";
 		Ref<VertexArray> m_VertexArray;
 		std::vector<SubMesh> m_SubMeshes;
 		std::vector<Ref<Material>> m_Materials;

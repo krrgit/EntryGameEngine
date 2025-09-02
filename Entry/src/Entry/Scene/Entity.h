@@ -15,7 +15,10 @@ namespace Entry {
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args) {
 			ET_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
+
+			return component;
 		}
 
 		template<typename T>
@@ -36,7 +39,9 @@ namespace Entry {
 		}
 
 		operator bool() const { return m_EntityHandle != 0; }
+		//operator ECS::Entity() const { return m_EntityHandle; }
 		operator uint32_t() const { return m_EntityHandle; }
+
 
 		bool operator==(const Entity& other) const { 
 			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;

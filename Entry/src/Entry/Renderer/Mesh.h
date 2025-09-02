@@ -21,7 +21,7 @@ namespace Entry {
 	class Mesh {
 	public:
 		virtual ~Mesh() = default;
-		static Ref<Mesh> Create(const std::string& path);
+		static Ref<Mesh> Create(const std::string& path = "");
 
 		virtual Ref<VertexArray> GetVertexArray() const = 0;
 		virtual const std::vector<SubMesh>& GetSubMeshes() const = 0;
