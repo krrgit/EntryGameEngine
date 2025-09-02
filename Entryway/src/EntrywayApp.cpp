@@ -27,7 +27,7 @@ namespace Entry {
 
     Application* CreateApplication() 
     {
-        WindowProps mainEditorWindow("Entryway", 1280, 720, 0, false, false);
+        WindowProps mainEditorWindow("Entryway", 1600, 900, 0, false, false);
         mainEditorWindow.Title = "Entryway: Editor";
         WindowProps touchWindow(WindowProps::WINDOW_3DS_BOTTOM);
         touchWindow.Title = "Entryway: Bottom Screen";

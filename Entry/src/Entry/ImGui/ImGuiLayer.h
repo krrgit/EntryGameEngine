@@ -29,6 +29,7 @@ namespace Entry {
 
 		void BlockEvents(bool block) { m_BlockEvents = block; }
 
+		void SetDarkThemeColors();
 	private:
 		bool OnScreenTouchedEvent(ScreenTouchedEvent& e);
 		bool OnScreenReleasedEvent(ScreenReleasedEvent& e);

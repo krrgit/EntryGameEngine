@@ -46,26 +46,6 @@ namespace Entry
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
-
-			if (ImGui::Button("Add Component"))
-				ImGui::OpenPopup("AddComponent");
-
-			if (ImGui::BeginPopup("AddComponent"))
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-				if (ImGui::MenuItem("Mesh Renderer"))
-				{
-					m_SelectionContext.AddComponent<MeshRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-
-				ImGui::EndPopup();
-			}
-
 		}
 
 		ImGui::End();
@@ -74,9 +54,14 @@ namespace Entry
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 2.0f));
+		
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		bool entityDeleted = false;
+		ImGui::PopStyleVar(2);
 
 		if (ImGui::IsItemClicked())
 		{
@@ -94,7 +79,7 @@ namespace Entry
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity+1000), flags, tag.c_str());
 			if (opened)
 				ImGui::TreePop();
@@ -112,6 +97,9 @@ namespace Entry
 
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
@@ -127,7 +115,9 @@ namespace Entry
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.88f, 0.26f, 0.36f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.98f, 0.46f, 0.56f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.88f, 0.26f, 0.36f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("X", buttonSize)) values.x = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -138,7 +128,9 @@ namespace Entry
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.5f, 0.74f, 0.26f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.7f, 0.84f, 0.46f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.5f, 0.74f, 0.26f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize)) values.y = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -149,9 +141,10 @@ namespace Entry
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.59f, 0.94f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.4f, 0.79f, 1.0f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.59f, 0.94f, 1.0f });
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize)) values.z = resetValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
-
 
 		ImGui::SameLine();
 		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
@@ -162,128 +155,27 @@ namespace Entry
 		ImGui::PopID();
 	}
 
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	template<typename T, typename UIFunction>
+	static void DrawComponent(const std::string name, Entity entity, UIFunction uiFunction) 
 	{
-		if (entity.HasComponent<TagComponent>())
+		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap 
+			| ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
+
+		if (entity.HasComponent<T>())
 		{
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			auto& component = entity.GetComponent<T>();
+			ImVec2 contenRegionAvailable = ImGui::GetContentRegionAvail();
 			
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-			{
-				tag = std::string(buffer);
-			}
-		}
-
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
-
-		if (entity.HasComponent<TransformComponent>())
-		{
-			bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
-
-
-			if (open)
-			{
-				auto& tc = entity.GetComponent<TransformComponent>();
-				DrawVec3Control("Position", tc.Position);
-				glm::vec3 rotation = glm::degrees(tc.Rotation);
-				DrawVec3Control("Rotation", rotation);
-				tc.Rotation = glm::radians(rotation);
-				DrawVec3Control("Scale", tc.Scale, 1.0f);
-
-				ImGui::TreePop();
-			}
-		}
-
-		if (entity.HasComponent<CameraComponent>()) 
-		{
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera"))
-			{
-				auto& cameraComponent = entity.GetComponent<CameraComponent>();
-				auto& camera = cameraComponent.Camera;
-
-				ImGui::Checkbox("Primary", &cameraComponent.Primary);
-				ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
-
-
-				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-				const char* currentProjectionTypeString = projectionTypeStrings[(int)cameraComponent.Camera.GetProjectionType()];
-				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-				{
-					for (int i = 0; i < 2; ++i)
-					{
-						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-						{
-							currentProjectionTypeString = projectionTypeStrings[i];
-							camera.SetProjectionType((SceneCamera::ProjectionType)i);
-						}
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
-					}
-					ImGui::EndCombo();
-				}
-
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Persepective)
-				{
-					float fov = camera.GetPerspectiveVerticalFOV();
-
-					if (ImGui::DragFloat("FOV", &fov, 0.1f, 1.0f, 179.0f))
-					{
-						camera.SetPerspectiveVerticalFOV(fov);
-					}
-
-					float nearClip = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near Clip", &nearClip, 0.1f, 0.0f))
-					{
-						camera.SetPerspectiveNearClip(nearClip);
-					}
-
-					float farClip = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far Clip", &farClip, 0.1f, 0.0f))
-					{
-						camera.SetPerspectiveFarClip(farClip);
-					}
-				}
-				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-				{
-					float size = camera.GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &size, 0.1f))
-					{
-						camera.SetOrthographicSize(size);
-					}
-
-					float nearClip = camera.GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near Clip", &nearClip, 0.1f, 0.0f))
-					{
-						camera.SetOrthographicNearClip(nearClip);
-					}
-
-					float farClip = camera.GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far Clip", &farClip, 0.1f, 0.0f))
-					{
-						camera.SetOrthographicFarClip(farClip);
-					}
-				}
-
-
-				ImGui::TreePop();
-			}
-		}
-	
-		if (entity.HasComponent<MeshRendererComponent>())
-		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-			bool open = ImGui::TreeNodeEx((void*)typeid(MeshRendererComponent).hash_code(), treeNodeFlags, "Mesh Renderer");
-			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
-			if (ImGui::Button("+", ImVec2{ 20.0f, 20.0f }))
+			float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			ImGui::Separator();
+			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+			ImGui::PopStyleVar();
+			ImGui::SameLine(contenRegionAvailable.x - lineHeight * 0.5f);
+			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-			ImGui::PopStyleVar();
 
 			bool removeComponent = false;
 			if (ImGui::BeginPopup("ComponentSettings"))
@@ -297,64 +189,186 @@ namespace Entry
 
 			if (open)
 			{
-				auto& meshComponent = entity.GetComponent<MeshRendererComponent>();
-				auto& mesh = meshComponent.mesh;
-				std::string meshPath = mesh != nullptr ? mesh->GetFilePath().c_str() : "";
-				static std::string filepath = meshPath;
-				static Entity thisEntity = entity;
-
-				if (thisEntity != entity)
-				{
-					filepath = meshPath;
-					thisEntity = entity;
-				}
-
-				char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
-				strcpy_s(buffer, sizeof(buffer), filepath.c_str());
-				if (ImGui::InputText("Mesh", buffer, sizeof(buffer)))
-				{
-					filepath = std::string(buffer);
-				}
-
-				if (ImGui::Button("Reload"))
-				{
-					std::ifstream file(filepath.c_str());
-					if (file.good())
-					{
-						Ref<Mesh> newMesh = Mesh::Create(filepath);
-						meshComponent.mesh = newMesh;
-					}
-					else
-					{
-						auto errorMsg = filepath + " does not exist!";
-						ET_CORE_ERROR(errorMsg);
-						filepath = meshPath;
-					}
-				}
-
-				// TODO: Add default material when none supplied
-				if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), treeNodeFlags, "Materials"))
-				{
-					static size_t size = mesh != nullptr ? mesh->GetMaterialCount() : 0;
-					ImGui::Text("Size: %d", size);
-					size_t index = 0;
-
-					if (mesh != nullptr)
-					{
-						for (auto material : mesh->GetMaterials())
-						{
-							ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
-						}
-					}
-					ImGui::TreePop();
-				}
-
+				uiFunction(component);
 				ImGui::TreePop();
 			}
 
 			if (removeComponent)
-				entity.RemoveComponent<MeshRendererComponent>();
+				entity.RemoveComponent<T>();
 		}
+	}
+
+	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	{
+		if (entity.HasComponent<TagComponent>())
+		{
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+			{
+				tag = std::string(buffer);
+			}
+		}
+
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+
+		if (ImGui::Button("Add Component"))
+			ImGui::OpenPopup("AddComponent");
+
+		if (ImGui::BeginPopup("AddComponent"))
+		{
+			if (ImGui::MenuItem("Camera"))
+			{
+				m_SelectionContext.AddComponent<CameraComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Mesh Renderer"))
+			{
+				m_SelectionContext.AddComponent<MeshRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+		ImGui::PopItemWidth();
+		ImGui::Separator();
+
+
+		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component) 
+		{
+			DrawVec3Control("Position", component.Position);
+			glm::vec3 rotation = glm::degrees(component.Rotation);
+			DrawVec3Control("Rotation", rotation);
+			component.Rotation = glm::radians(rotation);
+			DrawVec3Control("Scale", component.Scale, 1.0f);
+		});
+
+		DrawComponent<CameraComponent>("Camera", entity, [&](CameraComponent& component) {
+			auto& camera = component.Camera;
+
+			ImGui::Checkbox("Primary", &component.Primary);
+			ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+
+
+			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+			const char* currentProjectionTypeString = projectionTypeStrings[(int)component.Camera.GetProjectionType()];
+			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+					{
+						currentProjectionTypeString = projectionTypeStrings[i];
+						camera.SetProjectionType((SceneCamera::ProjectionType)i);
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Persepective)
+			{
+				float fov = camera.GetPerspectiveVerticalFOV();
+
+				if (ImGui::DragFloat("FOV", &fov, 0.1f, 1.0f, 179.0f))
+				{
+					camera.SetPerspectiveVerticalFOV(fov);
+				}
+
+				float nearClip = camera.GetPerspectiveNearClip();
+				if (ImGui::DragFloat("Near Clip", &nearClip, 0.1f, 0.0f))
+				{
+					camera.SetPerspectiveNearClip(nearClip);
+				}
+
+				float farClip = camera.GetPerspectiveFarClip();
+				if (ImGui::DragFloat("Far Clip", &farClip, 0.1f, 0.0f))
+				{
+					camera.SetPerspectiveFarClip(farClip);
+				}
+			}
+			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+			{
+				float size = camera.GetOrthographicSize();
+				if (ImGui::DragFloat("Size", &size, 0.1f))
+				{
+					camera.SetOrthographicSize(size);
+				}
+
+				float nearClip = camera.GetOrthographicNearClip();
+				if (ImGui::DragFloat("Near Clip", &nearClip, 0.1f, 0.0f))
+				{
+					camera.SetOrthographicNearClip(nearClip);
+				}
+
+				float farClip = camera.GetOrthographicFarClip();
+				if (ImGui::DragFloat("Far Clip", &farClip, 0.1f, 0.0f))
+				{
+					camera.SetOrthographicFarClip(farClip);
+				}
+			}
+		});
+
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](MeshRendererComponent& component) 
+		{
+			auto& mesh = component.mesh;
+			std::string meshPath = mesh != nullptr ? mesh->GetFilePath().c_str() : "";
+			static std::string filepath = meshPath;
+			static Entity thisEntity = entity;
+
+			if (thisEntity != entity)
+			{
+				filepath = meshPath;
+				thisEntity = entity;
+			}
+
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			strcpy_s(buffer, sizeof(buffer), filepath.c_str());
+			if (ImGui::InputText("Mesh", buffer, sizeof(buffer)))
+			{
+				filepath = std::string(buffer);
+			}
+
+			if (ImGui::Button("Reload"))
+			{
+				std::ifstream file(filepath.c_str());
+				if (file.good())
+				{
+					Ref<Mesh> newMesh = Mesh::Create(filepath);
+					component.mesh = newMesh;
+				}
+				else
+				{
+					auto errorMsg = filepath + " does not exist!";
+					ET_CORE_ERROR(errorMsg);
+					filepath = meshPath;
+				}
+			}
+
+			// TODO: Add default material when none supplied
+			if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth, "Materials"))
+			{
+				static size_t size = mesh != nullptr ? mesh->GetMaterialCount() : 0;
+				ImGui::Text("Size: %d", size);
+				size_t index = 0;
+
+				if (mesh != nullptr)
+				{
+					for (auto material : mesh->GetMaterials())
+					{
+						ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
+					}
+				}
+				ImGui::TreePop();
+			}
+		});
 	}
 }
