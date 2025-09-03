@@ -19,11 +19,13 @@ IncludeDir["fast_obj"] = "Entry/vendor/fast_obj/include"
 IncludeDir["glm"] = "Entry/vendor/glm"
 IncludeDir["stb_image"] = "Entry/vendor/stb_image"
 IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
+IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
 	include "Entry/vendor/Glad"
 	include "Entry/vendor/imgui-3ds"
+	include "Entry/vendor/yaml-cpp"
 
 group ""
 
@@ -60,7 +62,8 @@ project "Entry"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
-		"GLFW_INCLUDE_NONE"
+		"GLFW_INCLUDE_NONE",
+		"YAML_CPP_STATIC_DEFINE"
 	}
 
 	includedirs
@@ -73,6 +76,7 @@ project "Entry"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.fast_obj}",
 		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links 
@@ -80,14 +84,10 @@ project "Entry"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib",
 		"dwmapi.lib",
 	}
-
-	-- Turn off PCH for just EntityX sources
-    filter "files:Entry/vendor/entityx/**.cc"
-        flags { "NoPCH" }
-    filter {}
 
 	filter "system:windows"
 		cppdialect "C++11"
@@ -155,6 +155,7 @@ project "Sandbox"
 		"Entry/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links
@@ -208,6 +209,7 @@ project "Entryway"
 		"Entry/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links

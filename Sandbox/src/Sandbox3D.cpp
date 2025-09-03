@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
+#include "Entry/Scene/SceneSerializer.h"
+
 //#include <citro3d.h>
 //static C3D_LightEnv lightEnv;
 //static C3D_Light light;
@@ -24,6 +26,7 @@ void Sandbox3D::OnAttach()
 
     m_ActiveScene.reset(new Entry::Scene());
     
+#if 0
     auto plane = m_ActiveScene->CreateEntity("Plane");
     plane.AddComponent<Entry::MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
@@ -72,7 +75,12 @@ void Sandbox3D::OnAttach()
     };
 
     m_CameraEntity.AddComponent<Entry::NativeScriptComponent>().Bind<CameraController>();
+#endif
 
+    Entry::SceneSerializer serializer(m_ActiveScene);
+    serializer.Deserialize("romfs:/assets/scenes/Example.entry");
+
+    m_ActiveScene->OnViewportResize(400, 240);
 
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
@@ -129,46 +137,15 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     m_Rotation += ts.GetSeconds();
     m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
-    //Render
-    //Entry::Renderer3D::BeginScene(m_CameraController.GetCamera(), screenSide);
-
     // Update Scene
     m_ActiveScene->OnUpdate(ts, screenSide);
-
-    //Entry::Renderer3D::EndScene();
-
 }
 
 void Sandbox3D::OnImGuiRender() 
 {
     ET_PROFILE_FUNCTION();
  
-    ImGui::Begin("Settings");
-    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-    ImGui::SliderFloat3("Shield Position", glm::value_ptr(m_ShieldEntity.GetComponent<Entry::TransformComponent>().Position), -10.0f, 10.0f);
-
-    auto& cameraComponent = m_CameraEntity.GetComponent<Entry::CameraComponent>();
-    auto& camera = cameraComponent.Camera;
-
-    const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-    const char* currentProjectionTypeString = projectionTypeStrings[(int)cameraComponent.Camera.GetProjectionType()];
-    if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-    {
-        for (int i = 0; i < 2; ++i)
-        {
-            bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-            if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
-            {
-                currentProjectionTypeString = projectionTypeStrings[i];
-                camera.SetProjectionType((Entry::SceneCamera::ProjectionType)i);
-            }
-
-            if (isSelected)
-                ImGui::SetItemDefaultFocus();
-        }
-        ImGui::EndCombo();
-    }
-
+    ImGui::Begin("Stats");
 
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");
@@ -181,7 +158,6 @@ void Sandbox3D::OnImGuiRender()
 
     ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
 
-    
     ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
     ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());

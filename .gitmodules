@@ -4,3 +4,6 @@
 [submodule "Entry/vendor/imgui"]
 	path = Entry/vendor/imgui
 	url = https://github.com/krrgit/imgui
+[submodule "Entry/vendor/yaml-cpp"]
+	path = Entry/vendor/yaml-cpp
+	url = https://github.com/TheCherno/yaml-cpp

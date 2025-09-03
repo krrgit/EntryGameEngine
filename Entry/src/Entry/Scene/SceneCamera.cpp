@@ -24,6 +24,8 @@ namespace Entry {
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
 		m_OrthographicSize = size;
+		m_OrthographicNear = nearClip;
+		m_OrthographicFar = farClip;
 		RecalculateProjection();
 	}
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)

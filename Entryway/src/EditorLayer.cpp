@@ -5,6 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
+#include "Entry/Scene/SceneSerializer.h"
+
 namespace Entry {
 
     EditorLayer::EditorLayer()
@@ -24,6 +26,8 @@ namespace Entry {
 
         m_ActiveScene.reset(new Scene());
 
+#if 0
+
         auto plane = m_ActiveScene->CreateEntity("Plane");
         plane.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
 
@@ -35,11 +39,12 @@ namespace Entry {
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         m_CameraEntity.GetComponent<TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 10.0f);
         auto& mainCam = m_CameraEntity.AddComponent<CameraComponent>();
-        mainCam.Camera.SetViewportSize(1280.0f, 720.0f);
+        mainCam.Camera.SetViewportSize(1280, 720);
 
         m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
         m_SecondCamera.GetComponent<TransformComponent>().Position = glm::vec3( 2.0f, 2.0f, 5.0f);
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
+        cc.Camera.SetViewportSize(1280, 720);
         cc.Primary = false;
 
         class CameraController : public ScriptableEntity
@@ -71,6 +76,7 @@ namespace Entry {
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
         m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
@@ -180,6 +186,18 @@ namespace Entry {
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
                 //ImGui::MenuItem("Padding", NULL, &opt_padding);
                 //ImGui::Separator();
+                if (ImGui::MenuItem("Serialize"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Serialize("assets/scenes/Example.entry");
+                }
+
+                if (ImGui::MenuItem("Deserialize"))
+                {
+
+                    SceneSerializer serializer(m_ActiveScene);
+                    serializer.Deserialize("assets/scenes/Example.entry");
+                }
 
                 if (ImGui::MenuItem("Exit")) Entry::Application::Get().Close();
                 ImGui::EndMenu();
@@ -209,7 +227,7 @@ namespace Entry {
         ImGui::End();
     
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-        ImGui::Begin("Viewport");
+        ImGui::Begin("Scene");
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();

@@ -47,7 +47,7 @@ namespace Entry
 		if (props.Screen == 0) {
 			Result rc = romfsInit();
 			if (rc) { ET_CORE_INFO("romfs Init Successful!\n"); }
-			else { printf("romfsInit: %08lX\n", rc); }
+			else { ET_CORE_INFO("romfsInit: {0}\n", rc); }
 		}
 
 		m_Data.Title = props.Title;

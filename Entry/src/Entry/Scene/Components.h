@@ -48,11 +48,12 @@ namespace Entry
 	struct MeshRendererComponent
 	{
 		Ref<Mesh> mesh;
+		std::string meshPath;
 
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 		MeshRendererComponent(const Ref<Mesh> _mesh)
-			: mesh(_mesh) {}
+			: mesh(_mesh), meshPath(_mesh->GetFilePath()){}
 
 	};
 

@@ -1,0 +1,56 @@
+Scene: Untitlted
+Entities:
+  - Entity: 1239876591047
+    TagComponent:
+      Tag: Plane
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      MeshPath: assets/models/plane.obj
+  - Entity: 1239876591047
+    TagComponent:
+      Tag: Shield
+    TransformComponent:
+      Position: [0, 2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+    MeshRendererComponent:
+      MeshPath: assets/models/shield.obj
+  - Entity: 1239876591047
+    TagComponent:
+      Tag: Camera A
+    TransformComponent:
+      Position: [0, 2, 10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 1239876591047
+    TagComponent:
+      Tag: Camera B
+    TransformComponent:
+      Position: [2, 2, 5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: false
+      FixedAspectRatio: false
