@@ -6,8 +6,8 @@
 #include <typeindex>
 #include <memory>
 
-namespace Entry {
-
+namespace Entry 
+{
 	namespace ECS
 	{
 		// -------- Entity --------
@@ -20,6 +20,20 @@ namespace Entry {
         };
 
         constexpr null_t null{};
+
+        inline std::size_t getNextGlobalTypeId() 
+        {
+            static std::size_t g_typeCounter = 0;
+            return g_typeCounter++; 
+        }
+
+        // Unique type ID generator without RTTI
+        template<typename T>
+        std::size_t typeId()
+        {
+            static std::size_t id = getNextGlobalTypeId();
+            return id;
+        }
 
         // Utility: index_sequence for C++11
         template<std::size_t... Ints>
@@ -57,13 +71,6 @@ namespace Entry {
                 bool contains(Entity e) const override { return data.find(e) != data.end(); }
             };
 
-            // Unique type ID generator without RTTI
-            template<typename T>
-            std::size_t typeId() {
-                static std::size_t id = typeCounter++;
-                return id;
-            }
-
 			std::unordered_map<std::size_t, std::unique_ptr<IComponentStorage>> components;
 
         public:
@@ -95,9 +102,23 @@ namespace Entry {
                 auto type = typeId<T>();
                 if (!components.count(type))
                     components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
+
                 auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
-                auto& component = storage->data[e] = T(std::forward<Args>(args)...);
-                return component;
+
+                // C++11 piecewise in-place construction
+                auto res = storage->data.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(e),
+                    std::forward_as_tuple(std::forward<Args>(args)...)
+                );
+                return res.first->second;
+                //auto type = typeId<T>();
+                //if (!components.count(type))
+                //    components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
+                //auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
+                //auto& component = storage->data[e] = T(std::forward<Args>(args)...);
+
+                //return component;
             }
 
             template<typename T>
@@ -152,6 +173,8 @@ namespace Entry {
                 std::vector<Entity>::iterator begin() { return entities.begin(); }
                 std::vector<Entity>::iterator end() { return entities.end(); }
 
+                size_t size() { return entities.size(); }
+
                 template<typename T>
                 T& get(Entity e) {
                     return registry.get<T>(e);
@@ -203,6 +226,7 @@ namespace Entry {
             ComponentStorage<T>* getStorage() {
                 auto type = typeId<T>();
                 if (!components.count(type)) return nullptr;
+
                 return static_cast<ComponentStorage<T>*>(components[type].get());
             }
 

@@ -17,6 +17,7 @@ namespace Entry {
 
 	Scene::~Scene()
 	{
+		ET_CORE_INFO("Destroy Scene");
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)

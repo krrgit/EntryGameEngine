@@ -16,27 +16,33 @@ namespace Entry {
     	    void OnUpdate(Timestep ts, uint16_t screenSide = 0) override;
             virtual void OnImGuiRender() override ;
             void OnEvent(Event& event) override;
+    private:
+        bool OnKeyPressed(KeyPressedEvent& e);
+
+        void NewScene();
+        void OpenScene();
+        void SaveSceneAs();
 
         private:
-        PerspectiveCameraController m_CameraController;
-        Ref<Framebuffer> m_Framebuffer;
-        glm::vec2 m_ViewportSize = { 0,0 };
+            PerspectiveCameraController m_CameraController;
+            Ref<Framebuffer> m_Framebuffer;
+            glm::vec2 m_ViewportSize = { 0,0 };
         
-        bool m_ViewportFocused = false, m_ViewportHovered = false;
+            bool m_ViewportFocused = false, m_ViewportHovered = false;
 
-        Ref<Scene> m_ActiveScene;
+            Ref<Scene> m_ActiveScene;
 
-        Entity m_ShieldEntity;
-        Entity m_CameraEntity;
-        Entity m_SecondCamera;
+            Entity m_ShieldEntity;
+            Entity m_CameraEntity;
+            Entity m_SecondCamera;
 
-        bool m_PrimaryCamera = true;
+            bool m_PrimaryCamera = true;
 
-        glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+            glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
-        float m_Rotation = 0.0f;
+            float m_Rotation = 0.0f;
 
-        // Panels
-        SceneHierarchyPanel m_SceneHierarchyPanel;
+            // Panels
+            SceneHierarchyPanel m_SceneHierarchyPanel;
     };
 }

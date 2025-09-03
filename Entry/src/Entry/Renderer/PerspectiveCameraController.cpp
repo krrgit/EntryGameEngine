@@ -97,7 +97,6 @@ namespace Entry {
 
     bool PerspectiveCameraController::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
     {
-        ET_CORE_WARN("Mouse Button Released");
         if (m_MouseRotation) {
             StopRotateCamera();
         }
@@ -113,16 +112,12 @@ namespace Entry {
         m_RotMouseStartPos.x = Input::GetMouseX();
         m_RotMouseStartPos.y = Input::GetMouseY();
         m_CamStartRot = m_CamRot;
-
-        ET_CORE_WARN("Rotate Camera");
     }
 
     void PerspectiveCameraController::StopRotateCamera()
     {
         ET_PROFILE_FUNCTION();
         m_MouseRotation = false;
-
-        ET_CORE_WARN("Stop Rotate Camera");
     }
 #endif // ET_PLATFORM_WINDOWS
 

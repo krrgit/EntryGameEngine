@@ -17,4 +17,16 @@ namespace Entry
 		C3D_Runtime += osTickCounterRead(&C3D_RuntimeTickCounter) * 0.001f;
 		return C3D_Runtime;
 	}
+
+	std::string FileDialogs::OpenFile(const char* filter)
+	{
+		// Unused on 3DS
+		return std::string();
+	}
+
+	std::string FileDialogs::SaveFile(const char* filter)
+	{
+		// Unused on 3DS
+		return std::string();
+	}
 }

@@ -6,6 +6,7 @@
 #include <chrono>
 
 #include "Entry/Scene/SceneSerializer.h"
+#include "Entry/Utils/PlatformUtils.h"
 
 namespace Entry {
 
@@ -183,21 +184,14 @@ namespace Entry {
             {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
-                //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-                //ImGui::MenuItem("Padding", NULL, &opt_padding);
-                //ImGui::Separator();
-                if (ImGui::MenuItem("Serialize"))
-                {
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Serialize("assets/scenes/Example.entry");
-                }
+                if (ImGui::MenuItem("New", "Ctrl+N"))
+                    NewScene();
 
-                if (ImGui::MenuItem("Deserialize"))
-                {
+                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                    OpenScene();
 
-                    SceneSerializer serializer(m_ActiveScene);
-                    serializer.Deserialize("assets/scenes/Example.entry");
-                }
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                    SaveSceneAs();
 
                 if (ImGui::MenuItem("Exit")) Entry::Application::Get().Close();
                 ImGui::EndMenu();
@@ -224,6 +218,7 @@ namespace Entry {
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
+
         ImGui::End();
     
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
@@ -248,5 +243,64 @@ namespace Entry {
     void EditorLayer::OnEvent(Entry::Event& event) 
     {
 	    m_CameraController.OnEvent(event);
+
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+    }
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        if (e.GetRepeatCount() > 0) { return false; }
+
+        bool ctrlPressed = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+        bool shiftPressed = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+
+        // Shortcuts
+        switch (e.GetKeyCode())
+        {
+        case KeyCode::N:
+            if (ctrlPressed) 
+                NewScene();
+            break; 
+        case KeyCode::O:
+            if (ctrlPressed) 
+                OpenScene();
+            break;
+        case KeyCode::S:
+            if (ctrlPressed && shiftPressed)
+                SaveSceneAs();
+            break;
+        default:
+            break;
+        }
+        return false;
+    }
+    void EditorLayer::NewScene()
+    {
+        m_ActiveScene.reset(new Scene());
+        m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = FileDialogs::OpenFile("Entry Scene (*.entry)\0*.entry\0");
+        if (!filepath.empty())
+        {
+            m_ActiveScene.reset(new Scene());
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(filepath);
+        }
+    }
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filepath = FileDialogs::SaveFile("Entry Scene (*.entry)\0*.entry\0");
+        if (!filepath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(filepath);
+        }
     }
 }

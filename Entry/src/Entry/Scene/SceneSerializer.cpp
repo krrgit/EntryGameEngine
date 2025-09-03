@@ -175,7 +175,7 @@ namespace Entry
 			out << YAML::BeginMap; // MeshRendererComponent
 
 			auto& meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
-			out << YAML::Key << "MeshPath" << meshRendererComponent.meshPath;
+			out << YAML::Key << "MeshPath" << meshRendererComponent.mesh->GetFilePath();
 			out << YAML::EndMap;
 		}
 

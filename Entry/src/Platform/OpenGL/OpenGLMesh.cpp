@@ -174,7 +174,7 @@ namespace Entry {
 
 	OpenGLMesh::~OpenGLMesh()
 	{
-		printf("Destroyed %s", m_FileName.c_str());
+		ET_CORE_ERROR("Destroyed {0}", m_FileName.c_str());
 	}
 
 	void OpenGLMesh::Bind()
