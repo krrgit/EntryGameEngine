@@ -71,3 +71,7 @@ backups/
 bin-int/
 /Entry/vendor/GLFW
 /enc_temp_folder
+Entryway/EntryProfile-Runtime.json
+Entryway/EntryProfile-Shutdown.json
+Entryway/EntryProfile-Startup.json
+Entry/vendor/yaml-cpp

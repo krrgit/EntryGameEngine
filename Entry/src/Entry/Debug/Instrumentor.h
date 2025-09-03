@@ -153,7 +153,12 @@ namespace Entry {
     #define ET_PROFILE_BEGIN_SESSION(name, filepath)  ::Entry::Instrumentor::Get().BeginSession(name, filepath)
     #define ET_PROFILE_END_SESSION() ::Entry::Instrumentor::Get().EndSession()
     #define ET_PROFILE_SCOPE(name) ::Entry::InstrumentationTimer CONCAT(timer, __LINE__)(name);
+#ifdef ET_PLATFORM_3DS
     #define ET_PROFILE_FUNCTION() ET_PROFILE_SCOPE(__PRETTY_FUNCTION__)
+#endif
+#ifdef ET_PLATFORM_WINDOWS
+    #define ET_PROFILE_FUNCTION() ET_PROFILE_SCOPE(__FUNCSIG__)
+#endif
 #else
     #define ET_PROFILE_BEGIN_SESSION(name, filepath)
     #define ET_PROFILE_END_SESSION()
