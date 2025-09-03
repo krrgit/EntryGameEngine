@@ -48,7 +48,7 @@ namespace Entry {
         // Max Indices: ~62208
 
         // Per Batch Limitations
-        static const uint32_t MaxPolygons = 5298; // Max: 5298 (seems like CPU bottleneck)
+        static const uint32_t MaxPolygons = 1024; // Max: 5298 (seems like CPU bottleneck)
         static const uint32_t MaxVertices = MaxPolygons * 2;
         static const uint16_t MaxIndices = MaxPolygons * 3;
         static const uint32_t MaxBatches = 1; // Randomly selected tbh

@@ -165,13 +165,18 @@ namespace Entry
 		{
 			auto& component = entity.GetComponent<T>();
 			ImVec2 contenRegionAvailable = ImGui::GetContentRegionAvail();
-			
+
+			ImGuiIO& io = ImGui::GetIO();
+			auto boldFont = io.Fonts->Fonts[0];
+			ImGui::PushFont(boldFont);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 			float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			ImGui::Separator();
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
+			ImGui::PopFont();
 			ImGui::SameLine(contenRegionAvailable.x - lineHeight * 0.5f);
+
 			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
@@ -207,10 +212,14 @@ namespace Entry
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
+			ImGuiIO& io = ImGui::GetIO();
+			auto boldFont = io.Fonts->Fonts[0];
+			ImGui::PushFont(boldFont);
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
+			ImGui::PopFont();
 		}
 
 		ImGui::SameLine();
@@ -235,8 +244,6 @@ namespace Entry
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
-		ImGui::Separator();
-
 
 		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component) 
 		{
