@@ -74,4 +74,3 @@ bin-int/
 Entryway/EntryProfile-Runtime.json
 Entryway/EntryProfile-Shutdown.json
 Entryway/EntryProfile-Startup.json
-Entry/vendor/yaml-cpp
