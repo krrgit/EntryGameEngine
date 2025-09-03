@@ -184,14 +184,21 @@ namespace Entry {
             {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
-                if (ImGui::MenuItem("New", "Ctrl+N"))
+                if (ImGui::MenuItem("New Scene", "Ctrl+N"))
                     NewScene();
 
-                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
                     OpenScene();
+
+                ImGui::Separator();
+
+                if (ImGui::MenuItem("Save", "Ctrl + S"))
+                    SaveScene();
 
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
                     SaveSceneAs();
+
+                ImGui::Separator();
 
                 if (ImGui::MenuItem("Exit")) Entry::Application::Get().Close();
                 ImGui::EndMenu();
@@ -266,8 +273,13 @@ namespace Entry {
                 OpenScene();
             break;
         case KeyCode::S:
-            if (ctrlPressed && shiftPressed)
-                SaveSceneAs();
+            if (ctrlPressed)
+            {
+                if (shiftPressed) 
+                    SaveSceneAs();
+                else 
+                    SaveScene();
+            }
             break;
         default:
             break;
@@ -280,6 +292,8 @@ namespace Entry {
         m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        m_SceneFilePath = "";
     }
     void EditorLayer::OpenScene()
     {
@@ -292,6 +306,8 @@ namespace Entry {
 
             SceneSerializer serializer(m_ActiveScene);
             serializer.Deserialize(filepath);
+
+            m_SceneFilePath = filepath;
         }
     }
     void EditorLayer::SaveSceneAs()
@@ -301,6 +317,21 @@ namespace Entry {
         {
             SceneSerializer serializer(m_ActiveScene);
             serializer.Serialize(filepath);
+            m_SceneFilePath = filepath;
+        }
+
+    }
+
+    void EditorLayer::SaveScene()
+    {
+        if (!m_SceneFilePath.empty())
+        {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(m_SceneFilePath);
+        }
+        else
+        {
+            SaveSceneAs();
         }
     }
 }
