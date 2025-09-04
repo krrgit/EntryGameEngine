@@ -229,8 +229,19 @@ namespace Entry {
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
-        ImGui::End();
+        ImGui::End(); // Stats
     
+        ImGui::Begin("Editor Camera");
+        ImGui::Text("Distance: %.2f", m_EditorCamera.GetDistance());
+        glm::vec3 editCamPos = m_EditorCamera.GetPosition();
+        glm::vec3 focalPoint = m_EditorCamera.GetFocalPoint();
+        ImGui::Text("Camera Position: { %.2f, %.2f, %.2f}", editCamPos.x, editCamPos.y, editCamPos.z);
+        ImGui::Text("Focal Point: { %.2f, %.2f, %.2f}", focalPoint.x, focalPoint.y, focalPoint.z);
+        ImGui::Text("Pitch: %.2f", glm::degrees(m_EditorCamera.GetPitch()));
+        ImGui::Text("Yaw: %.2f", glm::degrees(m_EditorCamera.GetYaw()));
+
+        ImGui::End(); // Editor Camera
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
         ImGui::Begin("Scene");
 
@@ -292,7 +303,7 @@ namespace Entry {
         }
 
 
-        ImGui::End();
+        ImGui::End(); // Scene 
         ImGui::PopStyleVar();
 
         ImGui::End();

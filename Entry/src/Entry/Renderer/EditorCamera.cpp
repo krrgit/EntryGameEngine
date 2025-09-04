@@ -1,5 +1,7 @@
 // Source: https://github.com/TheCherno/Hazel
 #include "etpch.h"
+
+#ifdef ET_PLATFORM_WINDOWS
 #include "EditorCamera.h"
 
 #include "Entry/Core/Input.h"
@@ -56,14 +58,24 @@ namespace Entry {
 	float EditorCamera::ZoomSpeed() const
 	{
 		float distance = m_Distance * 0.2f;
-		distance = std::max(distance, 0.0f);
+		distance = std::min(distance, 0.0f);
 		float speed = distance * distance;
-		speed = std::min(speed, 100.0f); // max speed = 100
+		speed = std::max(speed, 100.0f); // max speed = 100
 		return speed;
 	}
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
+		bool mouseButtonPressed = (Input::IsMouseButtonPressed(Mouse::ButtonLeft) || Input::IsMouseButtonPressed(Mouse::ButtonMiddle) || Input::IsMouseButtonPressed(Mouse::ButtonRight));
+		if (!m_StartMoving && mouseButtonPressed)
+		{
+			m_StartMoving = true;
+			m_InitialMousePosition = { Input::GetMouseX(), Input::GetMouseY() };
+		} else if (m_StartMoving && !mouseButtonPressed)
+		{ 
+			m_StartMoving = false;
+		}
+
 		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 		glm::vec2 delta = (m_InitialMousePosition - mouse) * 0.003f;
 		m_InitialMousePosition = mouse;
@@ -80,7 +92,15 @@ namespace Entry {
 			if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
 				MousePan(delta);
 			else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
-				MouseRotate(delta);
+				MouseLookAround(delta);
+		}
+
+		// Reset Focal Point
+		if (m_ResetFocalPoint && !Input::IsMouseButtonPressed(Mouse::ButtonRight))
+		{
+			m_ResetFocalPoint = false;
+			m_Distance = m_InitialDistance;
+			m_FocalPoint = m_Position + (GetForwardDirection() * m_Distance);
 		}
 
 		UpdateView();
@@ -115,13 +135,28 @@ namespace Entry {
 		m_Pitch += delta.y * RotationSpeed();
 	}
 
+	void EditorCamera::MouseLookAround(const glm::vec2& delta) 
+	{
+		if (!m_ResetFocalPoint)
+		{
+			// Store
+			m_ResetFocalPoint = true;
+			m_InitialDistance = m_Distance;
+			m_InitialFocalPoint = m_FocalPoint;
+			// Set
+			m_Distance = 0.0f;
+			m_FocalPoint = m_Position;
+		}
+		MouseRotate(delta);
+	}
+
 	void EditorCamera::MouseZoom(float delta)
 	{
-		m_Distance -= delta * ZoomSpeed();
-		if (m_Distance < 1.0f)
+		m_Distance += delta * (m_Distance * 0.5f);
+		if (m_Distance > -0.1f)
 		{
-			m_FocalPoint += GetForwardDirection();
-			m_Distance = 1.0f;
+			m_FocalPoint -= GetForwardDirection() * 5.0f;
+			m_Distance = -5.0f;
 		}
 	}
 
@@ -151,3 +186,4 @@ namespace Entry {
 	}
 
 }
+#endif // ET_PLATFORM_WINDOWS
