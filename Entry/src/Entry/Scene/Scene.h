@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entry/Core/Timestep.h"
+#include "Entry/Renderer/EditorCamera.h"
 
 #include "Entry/ECS/ecs.hpp"
 
@@ -17,7 +18,8 @@ namespace Entry {
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep ts, uint16_t screenSide);
+		void OnUpdateRuntime(Timestep ts, uint16_t screenSide);
+		void OnUpdateEditor(Timestep ts, uint16_t screenSide, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

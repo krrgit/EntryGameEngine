@@ -3,6 +3,8 @@
 #include "Entry.h"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Entry/Renderer/EditorCamera.h"
+
 namespace Entry {
     class EditorLayer : public Layer
     {
@@ -34,6 +36,9 @@ namespace Entry {
             Ref<Scene> m_ActiveScene;
 
             bool m_PrimaryCamera = true;
+
+            EditorCamera m_EditorCamera;
+
             std::string m_SceneFilePath = "";
             int m_GizmoType = -1;
 

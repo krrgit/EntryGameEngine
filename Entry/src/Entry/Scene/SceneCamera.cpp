@@ -38,7 +38,7 @@ namespace Entry {
 		if (m_ProjectionType == ProjectionType::Persepective)
 		{
 			// TODO: support stereo 3D 
-			PerspectiveCamera::CalculateProjection(m_Projection, m_AspectRatio, m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
+			m_Projection = PerspectiveCamera::CalculateProjection(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 		else
 		{
@@ -47,7 +47,7 @@ namespace Entry {
 			//float orthoBottom = -m_OrthographicSize * 0.5f;
 			//float orthoTop = -m_OrthographicSize * 0.5f;
 			//m_Projection = glm::ortho(orthoLeft, orthoBottom, orthoBottom, orthoTop, -1.0f, 1.0f);
-			PerspectiveCamera::CalculateOrthographic(m_Projection, m_OrthographicSize, m_AspectRatio);
+			m_Projection = PerspectiveCamera::CalculateOrthographic(m_OrthographicSize, m_AspectRatio);
 		}
 	}
 }

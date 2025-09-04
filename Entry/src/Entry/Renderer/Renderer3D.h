@@ -9,6 +9,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "Entry/Renderer/Camera.h"
+#include "Entry/Renderer/EditorCamera.h"
 
 namespace Entry {
 	
@@ -19,6 +20,7 @@ namespace Entry {
 			static void Shutdown();
 
 			static void BeginScene(const Camera& camera, const glm::mat4& transform, uint16_t screenSide = 0);
+			static void BeginScene(const EditorCamera& camera, uint16_t screenSide = 0);
 			static void BeginScene(const PerspectiveCamera& camera, uint16_t screenSide = 0); // TODO: Remove
 			static void EndScene();
 			static void Flush();

@@ -35,7 +35,23 @@ namespace Entry {
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep ts, uint16_t screenSide)
+	void Scene::OnUpdateEditor(Timestep ts, uint16_t screenSide, EditorCamera& camera)
+	{
+		Renderer3D::BeginScene(camera, screenSide);
+
+		for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>())
+		{
+			auto transform = m_Registry.get<TransformComponent>(e);
+			auto& meshRender = m_Registry.get<MeshRendererComponent>(e);
+
+			if (!meshRender.mesh) continue;
+			Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
+		}
+
+		Renderer3D::EndScene();
+	}
+
+	void Scene::OnUpdateRuntime(Timestep ts, uint16_t screenSide)
 	{
 		// Update Scripts 
 		{

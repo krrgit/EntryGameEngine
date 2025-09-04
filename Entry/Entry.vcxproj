@@ -177,6 +177,7 @@
     <ClInclude Include="src\Entry\Math\MathUtils.h" />
     <ClInclude Include="src\Entry\Renderer\Buffer.h" />
     <ClInclude Include="src\Entry\Renderer\Camera.h" />
+    <ClInclude Include="src\Entry\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Entry\Renderer\Material.h" />
     <ClInclude Include="src\Entry\Renderer\Mesh.h" />
@@ -742,6 +743,7 @@
     <ClCompile Include="src\Entry\Log\LogLayer.cpp" />
     <ClCompile Include="src\Entry\Math\MathUtils.cpp" />
     <ClCompile Include="src\Entry\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Entry\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Material.cpp" />
     <ClCompile Include="src\Entry\Renderer\Mesh.cpp" />
