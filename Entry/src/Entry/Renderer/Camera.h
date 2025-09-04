@@ -9,7 +9,7 @@ namespace Entry {
 		Camera(const glm::mat4& projection)
 			: m_Projection(projection) {} // TODO: FIX right side
 
-		const glm::mat4& GetProjection(uint16_t screenSide) const { return m_Projection; }
+		const glm::mat4& GetProjection(uint16_t screenSide = 0) const { return m_Projection; }
 
 		// TODO:
 		// SetPerspective, SetOrthographic, m_ProjectionRightSide (Stereo 3D)

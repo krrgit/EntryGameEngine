@@ -20,6 +20,7 @@ IncludeDir["glm"] = "Entry/vendor/glm"
 IncludeDir["stb_image"] = "Entry/vendor/stb_image"
 IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
 IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -57,6 +58,8 @@ project "Entry"
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
 	defines
@@ -77,6 +80,7 @@ project "Entry"
 		"%{IncludeDir.fast_obj}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links 
@@ -88,6 +92,9 @@ project "Entry"
 		"opengl32.lib",
 		"dwmapi.lib",
 	}
+
+	filter "files:Entry/vendor/ImGuizmo/**.cpp"
+    flags { "NoPCH" }
 
 	filter "system:windows"
 		cppdialect "C++11"
@@ -132,7 +139,7 @@ project "Entry"
 	filter {"system:windows", "configurations:Release"}
 		buildoptions "/MT"
 
-project "Sandbox"
+project "Sandbox" -- APPLICATION
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
@@ -186,7 +193,7 @@ project "Sandbox"
 	filter {"system:windows", "configurations:Release"}
 		buildoptions "/MT"
 
-project "Entryway"
+project "Entryway" -- EDITOR
 	location "Entryway"
 	kind "ConsoleApp"
 	language "C++"
@@ -210,6 +217,7 @@ project "Entryway"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 	}
 
 	links

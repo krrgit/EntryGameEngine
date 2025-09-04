@@ -234,7 +234,11 @@ namespace Entry
 	{
 		ET_PROFILE_FUNCTION();
 		for (Layer* layer : m_LayerStack)
+		{
+			if (e.Handled) 
+				break;
 			layer->OnEvent(e);
+		}
 	}
 
 	//void WindowsWindow::SetClearColor(uint32_t color)

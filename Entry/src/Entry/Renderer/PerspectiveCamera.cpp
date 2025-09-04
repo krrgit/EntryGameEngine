@@ -66,7 +66,7 @@ namespace Entry {
 		mtx[3][2] = nearClip * farClip / (nearClip - farClip);
 		mtx[2][3] = isLeftHanded ? 1.0f : -1.0f;
 		mtx[2][0] = mtx[2][3] * shift / fovy_tan_aspect;
-		mtx[2][2] = -mtx[2][3] * nearClip / (nearClip - farClip);
+		mtx[2][2] = mtx[2][3] * (farClip + nearClip) / (farClip - nearClip);
 	}
 
 	static void PersptiveStereoTilt(glm::mat4& mtx, float fovx, float invaspect, float nearClip, float farClip, float iod, float screen, bool isLeftHanded)
@@ -89,10 +89,8 @@ namespace Entry {
 		mtx[3][2] = nearClip * farClip / (nearClip - farClip);
 		mtx[2][3] = isLeftHanded ? 1.0f : -1.0f;
 		mtx[2][1] = -mtx[2][3] * shift / fovx_tan_invaspect;
-		mtx[2][2] = -mtx[2][3] * nearClip / (nearClip - farClip);
+		mtx[2][2] = -mtx[2][3] * (nearClip) / (farClip - nearClip); // 3DS Specific
 	}
-
-
 
 	PerspectiveCamera::PerspectiveCamera(float _aspectRatio, float _fov)
 	{
@@ -130,29 +128,29 @@ namespace Entry {
 	}
 
 
-	void PerspectiveCamera::CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float nearClip, float farClip, float iod, bool leftSideScreen)
+	void PerspectiveCamera::CalculateProjection(glm::mat4& out, float aspectRatio, float fov, float nearClip, float farClip, float iod, bool isLeftHanded)
 	{
 
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::Citro3D: // FOR 3DS PLATFORM
-			PersptiveStereoTilt(out, fov, aspectRatio, nearClip, farClip, iod, 2.0f, false);
+			PersptiveStereoTilt(out, fov, aspectRatio, nearClip, farClip, iod, 2.0f, isLeftHanded);
 			break;
 		default: // For OTHER PLATFORMS/EDITOR (PC)
-			PerspectiveStereo(out, fov, aspectRatio, nearClip, farClip, iod, 2.0f, false);
+			PerspectiveStereo(out, fov, aspectRatio, nearClip, farClip, iod, 2.0f, isLeftHanded);
 			break;
 		}
 	}
 
-	void PerspectiveCamera::CalculateOrthographic(glm::mat4& out, float size, float aspectRatio, float nearClip, float farClip)
+	void PerspectiveCamera::CalculateOrthographic(glm::mat4& out, float size, float aspectRatio, float nearClip, float farClip, bool isLeftHanded)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::Citro3D: // FOR 3DS PLATFORM
-			OrthographicTilt(out, size, aspectRatio, nearClip, farClip, false);
+			OrthographicTilt(out, size, aspectRatio, nearClip, farClip, isLeftHanded);
 			break;
 		default: // For OTHER PLATFORMS/EDITOR (PC)
-			Orthographic(out, size, aspectRatio, nearClip, farClip, false);
+			Orthographic(out, size, aspectRatio, nearClip, farClip, isLeftHanded);
 			break;
 		}
 	}
@@ -174,14 +172,14 @@ namespace Entry {
 
 	void PerspectiveCamera::RecalculateProjectionViewMatrix()
 	{
-		CalculateProjection(m_ProjectionMatrix, m_AspectRatio, m_FOV, m_Slider3DState);
+		CalculateProjection(m_ProjectionMatrix, m_AspectRatio, m_FOV, -m_Slider3DState);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 
 		// 3DS Only
 		if (m_Slider3DState > 0.0f)
 		{
 			// Right Side
-			CalculateProjection(m_ProjectionMatrixR, m_AspectRatio, m_FOV, m_Slider3DState, false);
+			CalculateProjection(m_ProjectionMatrixR, m_AspectRatio, m_FOV, m_Slider3DState);
 			m_ViewProjectionMatrixR = m_ProjectionMatrixR * m_ViewMatrix; // m_ViewMatrixR (?)
 		}
 

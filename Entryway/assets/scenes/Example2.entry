@@ -22,7 +22,7 @@ Entities:
     TagComponent:
       Tag: Camera A
     TransformComponent:
-      Position: [0, 2, 10]
+      Position: [0, 2, -10]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -40,7 +40,7 @@ Entities:
     TagComponent:
       Tag: Camera B
     TransformComponent:
-      Position: [2, 2, 5]
+      Position: [2, 2, -5]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:

@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;..\Entry\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;..\Entry\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -116,7 +116,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>ET_PLATFORM_WINDOWS;ET_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Entry\vendor\spdlog\include;..\Entry\src;..\Entry\vendor;..\Entry\vendor\glm;..\Entry\vendor\imgui-3ds\imgui;..\Entry\vendor\yaml-cpp\include;..\Entry\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

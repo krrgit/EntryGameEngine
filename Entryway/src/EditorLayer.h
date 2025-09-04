@@ -33,17 +33,14 @@ namespace Entry {
 
             Ref<Scene> m_ActiveScene;
 
+            bool m_PrimaryCamera = true;
+            std::string m_SceneFilePath = "";
+            int m_GizmoType = -1;
+
+            // TEMP
             Entity m_ShieldEntity;
             Entity m_CameraEntity;
             Entity m_SecondCamera;
-
-            bool m_PrimaryCamera = true;
-
-            glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
-
-            float m_Rotation = 0.0f;
-
-            std::string m_SceneFilePath = "";
 
             // Panels
             SceneHierarchyPanel m_SceneHierarchyPanel;

@@ -119,6 +119,13 @@ namespace Entry {
 
 	void ImGuiLayer::OnEvent(Event& event) 
 	{
+		if (m_BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
+
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<ScreenTouchedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnScreenTouchedEvent));
 		dispatcher.Dispatch<ButtonPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnButtonPressedEvent));
@@ -292,14 +299,16 @@ namespace Entry
 			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
 			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 		}
-			EventDispatcher dispatcher(event);
-			dispatcher.Dispatch<MouseButtonPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
-			dispatcher.Dispatch<MouseButtonReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
-			//dispatcher.Dispatch<MouseMovedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
-			dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
-			dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-			//dispatcher.Dispatch<KeyTypedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
-			//dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
+		
+		//EventDispatcher dispatcher(event);
+		//dispatcher.Dispatch<MouseButtonPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
+		//dispatcher.Dispatch<MouseButtonReleasedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
+		//dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
+		//dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
+
+		//dispatcher.Dispatch<MouseMovedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
+		//dispatcher.Dispatch<KeyTypedEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
+		//dispatcher.Dispatch<WindowResizeEvent>(ET_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
 	}
 
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)

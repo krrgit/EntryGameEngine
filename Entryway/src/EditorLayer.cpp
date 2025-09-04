@@ -8,6 +8,10 @@
 #include "Entry/Scene/SceneSerializer.h"
 #include "Entry/Utils/PlatformUtils.h"
 
+#include <ImGuizmo.h>
+
+#include "Entry/Math/MathUtils.h"
+
 namespace Entry {
 
     EditorLayer::EditorLayer()
@@ -212,19 +216,13 @@ namespace Entry {
         ImGui::Begin("Stats");
 
         auto stats = Entry::Renderer3D::GetStats();
-#ifdef ET_PLATFORM_3DS
-        ImGui::Text("FPS: %.1f fps\nCPU: %.2f ms\nGPU: %.2f ms\n", 1000.0f / (C3D_GetProcessingTime() + C3D_GetDrawingTime()), C3D_GetProcessingTime(), C3D_GetDrawingTime()); // Temp
-#endif // ET_PLATFORM_3DS
-#ifdef ET_PLATFORM_WINDOWS
         ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);
-#endif // ET_PLATFORM_WINDOWS
 
         ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
 
         ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
-
 
         ImGui::End();
     
@@ -233,14 +231,60 @@ namespace Entry {
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || m_ViewportHovered);
+        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
         
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
         void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
+
+        // Gizmos
+        Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if (selectedEntity && m_GizmoType != -1)
+        {
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+
+            float windowWidth = (float)ImGui::GetWindowWidth();
+            float windowHeight = (float)ImGui::GetWindowHeight();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+            // Entity
+            auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+            const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+            
+            glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+            const glm::mat4& cameraProjection = camera.GetProjection();
+
+            //Entity Transform
+            auto& tc =selectedEntity.GetComponent<TransformComponent>();
+            glm::mat4& transform = tc.GetTransform();
+
+            // Snapping
+            bool snap = Input::IsKeyPressed(KeyCode::LeftControl);
+            float snapValue = m_GizmoType != ImGuizmo::OPERATION::ROTATE ? 0.5f : 45.0f; // 0.5f for Position/Scale; 45 degrees for Rotation.
+
+            float snapValues[3] = { snapValue, snapValue, snapValue };
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                nullptr, snap ? snapValues : nullptr);
+
+            if (ImGuizmo::IsUsing())
+            {
+                glm::vec3 position, rotation, scale;
+                MathUtils::DecomposeTransform(transform, position, rotation, scale);
+
+                glm::vec3 deltaRotation = rotation - tc.Rotation;
+                tc.Position = position;
+                tc.Rotation += deltaRotation;
+                tc.Scale = scale;
+            }
+        }
+
+
         ImGui::End();
         ImGui::PopStyleVar();
 
@@ -283,6 +327,28 @@ namespace Entry {
             break;
         default:
             break;
+        }
+
+        if (m_ViewportFocused || m_ViewportHovered)
+        {
+            // Gizmos
+            switch (e.GetKeyCode()) 
+            {
+                case KeyCode::Q:
+                m_GizmoType = -1;
+                break;
+                case KeyCode::W:
+                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+                break;
+                case KeyCode::E:
+                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+                break;
+                case KeyCode::R:
+                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+                break;
+            default:
+            break;
+            }
         }
         return false;
     }
