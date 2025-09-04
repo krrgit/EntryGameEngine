@@ -208,8 +208,8 @@ namespace Entry
 	{
 		if (entity.HasComponent<TagComponent>())
 		{
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
-			
+			static Entity thisEntity = entity;
+			auto& tag = thisEntity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
@@ -220,6 +220,8 @@ namespace Entry
 			{
 				tag = std::string(buffer);
 			}
+
+			thisEntity = entity;
 			ImGui::PopFont();
 		}
 
