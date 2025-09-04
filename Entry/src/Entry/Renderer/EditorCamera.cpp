@@ -14,6 +14,8 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
 
 namespace Entry {
 
@@ -26,7 +28,7 @@ namespace Entry {
 	void EditorCamera::UpdateProjection()
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-		m_Projection = PerspectiveCamera::CalculateProjection(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);// glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+		m_Projection = PerspectiveCamera::CalculateProjection(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);
 	}
 
 	void EditorCamera::UpdateView()

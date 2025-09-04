@@ -6,7 +6,6 @@
 #include "Texture.h"
 #include "Material.h"
 
-
 #include <string>
 #include <glm/glm.hpp>
 
@@ -39,6 +38,7 @@ namespace Entry {
 
 		virtual std::string GetFilePath() const = 0;
 		virtual std::string GetFileName() const = 0;
+
 	private:
 	};
 }

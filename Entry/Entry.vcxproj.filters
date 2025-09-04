@@ -22,6 +22,9 @@
     <Filter Include="src\Entry\Log">
       <UniqueIdentifier>{5F26A30F-CBE6-1E46-9421-68C300A16322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entry\Math">
+      <UniqueIdentifier>{27450804-1313-FC09-FCA6-6C30E813D86E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Entry\Renderer">
       <UniqueIdentifier>{F49A886E-E07E-49C4-49DF-431735E23346}</UniqueIdentifier>
     </Filter>
@@ -174,10 +177,16 @@
     <ClInclude Include="src\Entry\Log\LogLayer.h">
       <Filter>src\Entry\Log</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entry\Math\MathUtils.h">
+      <Filter>src\Entry\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Entry\Renderer\Buffer.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Renderer\Camera.h">
+      <Filter>src\Entry\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Renderer\EditorCamera.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h">
@@ -233,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="src\Entry\Scene\ScriptableEntity.h">
       <Filter>src\Entry\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Utils\ModelUtils.h">
+      <Filter>src\Entry\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Utils\PlatformUtils.h">
       <Filter>src\Entry\Utils</Filter>
@@ -1845,8 +1857,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry\Math\MathUtils.h" />
-    <ClInclude Include="src\Entry\Renderer\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1867,7 +1877,13 @@
     <ClCompile Include="src\Entry\Log\LogLayer.cpp">
       <Filter>src\Entry\Log</Filter>
     </ClCompile>
+    <ClCompile Include="src\Entry\Math\MathUtils.cpp">
+      <Filter>src\Entry\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Entry\Renderer\Buffer.cpp">
+      <Filter>src\Entry\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entry\Renderer\EditorCamera.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp">
@@ -1969,7 +1985,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entry\Math\MathUtils.cpp" />
-    <ClCompile Include="src\Entry\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>
