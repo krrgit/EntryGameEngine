@@ -2,6 +2,7 @@
 
 #include "Entry.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 #include "Entry/Renderer/EditorCamera.h"
 
@@ -54,5 +55,6 @@ namespace Entry {
 
             // Panels
             SceneHierarchyPanel m_SceneHierarchyPanel;
+            ContentBrowserPanel m_ContentBrowserPanel;
     };
 }

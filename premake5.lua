@@ -197,7 +197,7 @@ project "Entryway" -- EDITOR
 	location "Entryway"
 	kind "ConsoleApp"
 	language "C++"
-	cppdialect "C++11"
+	cppdialect "C++17"  -- Maybe keep on C++11 ?
 	staticruntime "on"
 	
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
