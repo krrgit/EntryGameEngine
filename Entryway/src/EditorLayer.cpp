@@ -24,7 +24,8 @@ namespace Entry {
     {
 	    ET_PROFILE_FUNCTION();
 
-        Entry::FramebufferSpecification frameBufSpec;
+        FramebufferSpecification frameBufSpec;
+        frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         frameBufSpec.Width = 400;
         frameBufSpec.Height = 240;
         m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
@@ -124,6 +125,24 @@ namespace Entry {
 
         // Update Scene
         m_ActiveScene->OnUpdateEditor(ts, screenSide, m_EditorCamera);
+
+        ImVec2 mousePos = ImGui::GetMousePos();
+        mousePos.x -= m_ViewportBounds[0].x;
+        mousePos.y -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        mousePos.y = viewportSize.y - mousePos.y;
+
+        int mouseX = (int)mousePos.x;
+        int mouseY = (int)mousePos.y;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+        {
+           int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+            ET_CORE_WARN("PixelData = {0}", pixelData);
+        }
+
+
+
         m_Framebuffer->Unbind();
     }
 
@@ -246,10 +265,12 @@ namespace Entry {
         ImGui::Text("Right: { %.2f, %.2f, %.2f}", right.x, right.y, right.z);
         ImGui::Text("Up: { %.2f, %.2f, %.2f}", up.x, up.y, up.z);
 
-        ImGui::End(); // Editor Camera
+        ImGui::End(); // END: Editor Camera
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-        ImGui::Begin("Scene");
+        ImGui::Begin("Scene"); // BEGIN: Scene Window
+
+        auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -258,8 +279,19 @@ namespace Entry {
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
+        void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID(0);
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
+
+        auto windowSize = ImGui::GetWindowSize();
+        ImVec2 minBound = ImGui::GetWindowPos();
+        minBound.x += viewportOffset.x;
+        minBound.y += viewportOffset.y;
+
+        ImVec2 maxBound = { minBound.x + windowSize.x ,minBound.y + windowSize.y };
+        m_ViewportBounds[0] = { minBound.x, minBound.y };
+        m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
+
 
         // Gizmos
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
