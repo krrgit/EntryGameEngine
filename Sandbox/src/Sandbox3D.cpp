@@ -138,7 +138,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     m_Rotation = m_Rotation > 6.28f ? 0 : m_Rotation;
 
     // Update Scene
-    m_ActiveScene->OnUpdate(ts, screenSide);
+    m_ActiveScene->OnUpdateRuntime(ts, screenSide);
 }
 
 void Sandbox3D::OnImGuiRender() 

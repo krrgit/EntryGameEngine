@@ -235,10 +235,16 @@ namespace Entry {
         ImGui::Text("Distance: %.2f", m_EditorCamera.GetDistance());
         glm::vec3 editCamPos = m_EditorCamera.GetPosition();
         glm::vec3 focalPoint = m_EditorCamera.GetFocalPoint();
+        glm::vec3 forward = m_EditorCamera.GetForwardDirection();
+        glm::vec3 right = m_EditorCamera.GetRightDirection();
+        glm::vec3 up = m_EditorCamera.GetUpDirection();
         ImGui::Text("Camera Position: { %.2f, %.2f, %.2f}", editCamPos.x, editCamPos.y, editCamPos.z);
         ImGui::Text("Focal Point: { %.2f, %.2f, %.2f}", focalPoint.x, focalPoint.y, focalPoint.z);
         ImGui::Text("Pitch: %.2f", glm::degrees(m_EditorCamera.GetPitch()));
         ImGui::Text("Yaw: %.2f", glm::degrees(m_EditorCamera.GetYaw()));
+        ImGui::Text("Forward: { %.2f, %.2f, %.2f}", forward.x, forward.y, forward.z);
+        ImGui::Text("Right: { %.2f, %.2f, %.2f}", right.x, right.y, right.z);
+        ImGui::Text("Up: { %.2f, %.2f, %.2f}", up.x, up.y, up.z);
 
         ImGui::End(); // Editor Camera
 

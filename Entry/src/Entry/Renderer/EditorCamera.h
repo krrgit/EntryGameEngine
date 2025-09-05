@@ -1,14 +1,18 @@
-// Source: https://github.com/TheCherno/Hazel
+// Source (Modified): https://github.com/TheCherno/Hazel
 #pragma once
-#ifdef ET_PLATFORM_WINDOWS
+
 #include "Camera.h"
 #include "Entry/Core/Timestep.h"
 #include "Entry/Events/Event.h"
+
+#ifdef ET_PLATFORM_WINDOWS
 #include "Entry/Events/MouseEvent.h"
+#endif // ET_PLATFORM_WINDOWS
 
 #include <glm/glm.hpp>
 
-namespace Entry {
+namespace Entry
+{
 
 	class EditorCamera : public Camera
 	{
@@ -21,7 +25,7 @@ namespace Entry {
 
 		inline float GetDistance() const { return m_Distance; }
 		inline void SetDistance(float distance) { m_Distance = distance; }
-		inline glm::vec3 GetFocalPoint() const { return m_FocalPoint;  }
+		inline glm::vec3 GetFocalPoint() const { return m_FocalPoint; }
 
 		inline void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
 
@@ -40,7 +44,9 @@ namespace Entry {
 		void UpdateProjection();
 		void UpdateView();
 
+#ifdef ET_PLATFORM_WINDOWS
 		bool OnMouseScroll(MouseScrolledEvent& e);
+#endif // ET_PLATFORM_WINDOWS
 
 		void MousePan(const glm::vec2& delta);
 		void MouseRotate(const glm::vec2& delta);
@@ -59,7 +65,7 @@ namespace Entry {
 
 		glm::mat4 m_ViewMatrix;
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f }; // Calculated from m_FocalPoint * m_Distance
-		glm::vec3 m_FocalPoint = { 0.0f, 1.0f, 0.0f }; 
+		glm::vec3 m_FocalPoint = { 0.0f, 1.0f, 0.0f };
 
 		glm::vec2 m_InitialMousePosition = { 0.0f, 0.0f };
 
@@ -70,8 +76,7 @@ namespace Entry {
 
 		bool m_ResetFocalPoint = false;
 		float m_InitialDistance = -10.0f;
-		glm::vec3 m_InitialFocalPoint{0.0f};
+		glm::vec3 m_InitialFocalPoint{ 0.0f };
 	};
 
 }
-#endif

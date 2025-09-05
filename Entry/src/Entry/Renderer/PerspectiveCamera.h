@@ -38,7 +38,7 @@ namespace Entry {
 		}
 		
 		const glm::vec4 GetRotation() const { return m_Rotation; }
-		void SetRotation(const glm::vec4& rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
+		void SetRotation(const glm::vec4& rotation) { m_Rotation = rotation; RecalculateViewMatrix(); } // Expects radians
 
 		void Set3DValue(float slider3DState) { m_Slider3DState = slider3DState; RecalculateProjectionViewMatrix(); }
 

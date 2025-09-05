@@ -1,23 +1,49 @@
-// Source: https://github.com/TheCherno/Hazel
+// Source (Modified): https://github.com/TheCherno/Hazel
 #include "etpch.h"
 
-#ifdef ET_PLATFORM_WINDOWS
 #include "EditorCamera.h"
 
 #include "Entry/Core/Input.h"
 #include "Entry/Core/KeyCodes.h"
+
+#ifdef ET_PLATFORM_WINDOWS
 #include "Entry/Core/MouseCodes.h"
+#endif // ET_PLATFORM_WINDOWS
 
 #include "PerspectiveCamera.h"
 
-#include <glfw/glfw3.h>
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace Entry {
+
+	static glm::mat4 QuatToMat4(const glm::quat& q)
+	{
+		glm::mat4 Result(1.0f);
+		float qxx(q.x * q.x);
+		float qyy(q.y * q.y);
+		float qzz(q.z * q.z);
+		float qxz(q.x * q.z);
+		float qxy(q.x * q.y);
+		float qyz(q.y * q.z);
+		float qwx(q.w * q.x);
+		float qwy(q.w * q.y);
+		float qwz(q.w * q.z);
+
+		Result[0][0] = 1.0f - 2.0f * (qyy + qzz);
+		Result[0][1] = 2.0f * (qxy + qwz);
+		Result[0][2] = 2.0f * (qxz - qwy);
+
+		Result[1][0] = 2.0f * (qxy - qwz);
+		Result[1][1] = 1.0f - 2.0f * (qxx + qzz);
+		Result[1][2] = 2.0f * (qyz + qwx);
+
+		Result[2][0] = 2.0f * (qxz + qwy);
+		Result[2][1] = 2.0f * (qyz - qwx);
+		Result[2][2] = 1.0f - 2.0f * (qxx + qyy);
+		return Result;
+
+	}
 
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(PerspectiveCamera::CalculateProjection(m_FOV, m_AspectRatio, m_NearClip, m_FarClip))
@@ -37,7 +63,7 @@ namespace Entry {
 		m_Position = CalculatePosition();
 
 		glm::quat orientation = GetOrientation();
-		m_ViewMatrix = glm::translate(glm::mat4(1.0f), m_Position) * glm::toMat4(orientation); //TODO: Replace glm::ToMat4() to remove GLM_ENABLE_EXPERIMENTAL
+		m_ViewMatrix = glm::translate(glm::mat4(1.0f), m_Position) * QuatToMat4(orientation);
 		m_ViewMatrix = glm::inverse(m_ViewMatrix);
 	}
 
@@ -68,12 +94,15 @@ namespace Entry {
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
-		bool mouseButtonPressed = (Input::IsMouseButtonPressed(Mouse::ButtonLeft) || Input::IsMouseButtonPressed(Mouse::ButtonMiddle) || Input::IsMouseButtonPressed(Mouse::ButtonRight));
-		if (!m_StartMoving && mouseButtonPressed)
+#ifdef ET_PLATFORM_WINDOWS
+		bool anyMouseButtonPressed = (Input::IsMouseButtonPressed(Mouse::ButtonLeft)   || 
+									  Input::IsMouseButtonPressed(Mouse::ButtonMiddle) || 
+									  Input::IsMouseButtonPressed(Mouse::ButtonRight));
+		if (!m_StartMoving && anyMouseButtonPressed)
 		{
 			m_StartMoving = true;
 			m_InitialMousePosition = { Input::GetMouseX(), Input::GetMouseY() };
-		} else if (m_StartMoving && !mouseButtonPressed)
+		} else if (m_StartMoving && !anyMouseButtonPressed)
 		{ 
 			m_StartMoving = false;
 		}
@@ -104,16 +133,20 @@ namespace Entry {
 			m_Distance = m_InitialDistance;
 			m_FocalPoint = m_Position + (GetForwardDirection() * m_Distance);
 		}
+#endif // ET_PLATFORM_WINDOWS
 
 		UpdateView();
 	}
 
 	void EditorCamera::OnEvent(Event& e)
 	{
+#ifdef ET_PLATFORM_WINDOWS
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(ET_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
+#endif // ET_PLATFORM_WINDOWS
 	}
 
+#ifdef ET_PLATFORM_WINDOWS
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
 	{
 		float delta = e.GetYOffset() * -0.1f;
@@ -121,6 +154,8 @@ namespace Entry {
 		UpdateView();
 		return false;
 	}
+#endif // ET_PLATFORM_WINDOWS
+
 
 	void EditorCamera::MousePan(const glm::vec2& delta)
 	{
@@ -164,17 +199,18 @@ namespace Entry {
 
 	glm::vec3 EditorCamera::GetUpDirection() const
 	{
-		return glm::rotate(GetOrientation(), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		return GetOrientation() * glm::vec3(0.0f, 1.0f, 0.0f); // glm::rotate(GetOrientation(), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	glm::vec3 EditorCamera::GetRightDirection() const
 	{
-		return glm::rotate(GetOrientation(), glm::vec3(1.0f, 0.0f, 0.0f));
+		return GetOrientation() * glm::vec3(1.0f, 0.0f, 0.0f);// glm::rotate(GetOrientation(), glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	glm::vec3 EditorCamera::GetForwardDirection() const
 	{
-		return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
+		return GetOrientation() * glm::vec3(0.0f, 0.0f, -1.0f); //glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
 	}
 
 	glm::vec3 EditorCamera::CalculatePosition() const
@@ -188,4 +224,3 @@ namespace Entry {
 	}
 
 }
-#endif // ET_PLATFORM_WINDOWS
