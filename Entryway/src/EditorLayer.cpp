@@ -143,11 +143,8 @@ namespace Entry {
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
         {
            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-           printf("Hovered Entity: %d\n", pixelData);
            m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
         }
-
-
 
         m_Framebuffer->Unbind();
     }
