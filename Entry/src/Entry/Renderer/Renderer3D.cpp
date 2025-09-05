@@ -27,6 +27,11 @@ namespace Entry {
         glm::vec3 Position;
         glm::vec4 Color;
         glm::vec2 TexCoord;
+
+#ifdef ET_PLATFORM_WINDOWS
+        // Editor-only
+        int EntityID = 0; // TODO: Use this after Render Batches for meshes is implemented.
+#endif // ET_PLATFORM_WINDOWS
     };
 
     struct RenderBatch {
@@ -171,11 +176,6 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-#ifdef ET_PLATFORM_WINDOWS
-        RenderCommand::SetClearColor(0x68B0D8FF);
-        RenderCommand::Clear();
-#endif // ET_PLATFORM_WINDOWS
-
         glm::mat4 view = glm::inverse(transform);
         glm::mat4 proj = camera.GetProjection(screenSide);
         glm::mat4 viewProj = proj * view;
@@ -202,11 +202,6 @@ namespace Entry {
     void Renderer3D::BeginScene(const EditorCamera& camera, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
-
-#ifdef ET_PLATFORM_WINDOWS
-        RenderCommand::SetClearColor(0x68B0D8FF);
-        RenderCommand::Clear();
-#endif // ET_PLATFORM_WINDOWS
 
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 proj = camera.GetProjection(screenSide);
@@ -946,6 +941,12 @@ namespace Entry {
         s_Data.Stats.VertexCount += mesh->GetVertexCount();
         s_Data.Stats.IndexCount += mesh->GetIndexCount();
         s_Data.Stats.DrawCalls++;
+    }
+
+    void Renderer3D::DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
+    {
+        s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
+        DrawMesh(mrc.mesh, transform);
     }
 
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {

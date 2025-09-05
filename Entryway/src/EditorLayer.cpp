@@ -118,10 +118,15 @@ namespace Entry {
 
         m_EditorCamera.OnUpdate(ts);
 
-        m_Framebuffer->Bind();
-
         Entry::Renderer3D::ResetStats();
         Entry::Renderer3D::SetStatsTimestep(ts);
+
+        m_Framebuffer->Bind();
+        RenderCommand::SetClearColor(0x68B0D8FF);
+        RenderCommand::Clear();
+
+        // Clear our entity ID attachment to -1
+        m_Framebuffer->ClearAttachment(1, -1);
 
         // Update Scene
         m_ActiveScene->OnUpdateEditor(ts, screenSide, m_EditorCamera);
@@ -138,7 +143,7 @@ namespace Entry {
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
         {
            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-            ET_CORE_WARN("PixelData = {0}", pixelData);
+           m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
         }
 
 
@@ -238,6 +243,14 @@ namespace Entry {
         m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Stats");
+
+        std::string name = "None";
+        if (m_HoveredEntity)
+        {
+            name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+        }
+        ImGui::Text("Hovered Entity: %s", name.c_str());
+
 
         auto stats = Entry::Renderer3D::GetStats();
         ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);

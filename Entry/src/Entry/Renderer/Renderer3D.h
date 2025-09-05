@@ -10,7 +10,7 @@
 
 #include "Entry/Renderer/Camera.h"
 #include "Entry/Renderer/EditorCamera.h"
-
+#include "Entry/Scene/Components.h"
 
 namespace Entry {
 	
@@ -35,6 +35,8 @@ namespace Entry {
 
 			static void DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
 			static void DrawMesh(Ref<Mesh> mesh, const glm::mat4& transform);
+
+			static void DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID);
 	
 			struct Statistics {
 				uint32_t DrawCalls = 0;

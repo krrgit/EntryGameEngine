@@ -42,6 +42,8 @@ namespace Entry {
             std::string m_SceneFilePath = "";
             int m_GizmoType = -1;
 
+            Entity m_HoveredEntity;
+
             // TEMP
             Entity m_ShieldEntity;
             Entity m_CameraEntity;

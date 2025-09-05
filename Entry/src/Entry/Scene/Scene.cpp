@@ -39,13 +39,13 @@ namespace Entry {
 	{
 		Renderer3D::BeginScene(camera, screenSide);
 
-		for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>())
+		for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
 		{
-			auto transform = m_Registry.get<TransformComponent>(e);
-			auto& meshRender = m_Registry.get<MeshRendererComponent>(e);
+			auto transform = m_Registry.get<TransformComponent>(entity);
+			auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
 
-			if (!meshRender.mesh) continue;
-			Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
+			if (!meshRenderer.mesh) continue;
+			Renderer3D::DrawMeshEntity(transform.GetTransform(), meshRenderer, entity);
 		}
 
 		Renderer3D::EndScene();
@@ -95,9 +95,9 @@ namespace Entry {
 		{
 			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
 
-			for (ECS::Entity e : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
-				auto transform = m_Registry.get<TransformComponent>(e);
-				auto& meshRender= m_Registry.get<MeshRendererComponent>(e);
+			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
+				auto transform = m_Registry.get<TransformComponent>(entity);
+				auto& meshRender= m_Registry.get<MeshRendererComponent>(entity);
 
 				if (!meshRender.mesh) continue;
 				Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
