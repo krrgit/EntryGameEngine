@@ -29,8 +29,10 @@ namespace Entry {
 
         private:
             PerspectiveCameraController m_CameraController;
-            Ref<Framebuffer> m_Framebuffer;
-            glm::vec2 m_ViewportSize = { 0, 0 };
+            Ref<Framebuffer> m_SceneFramebuffer;
+            Ref<Framebuffer> m_GameFramebuffer;
+            glm::vec2 m_SceneViewportSize = { 0, 0 };
+            glm::vec2 m_GameViewportSize = { 0, 0 };
             glm::vec2 m_ViewportBounds[2];
         
             bool m_ViewportFocused = false, m_ViewportHovered = false;

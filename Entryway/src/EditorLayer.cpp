@@ -24,11 +24,17 @@ namespace Entry {
     {
 	    ET_PROFILE_FUNCTION();
 
-        FramebufferSpecification frameBufSpec;
-        frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-        frameBufSpec.Width = 400;
-        frameBufSpec.Height = 240;
-        m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+        FramebufferSpecification sceneFrameBufSpec;
+        sceneFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+        sceneFrameBufSpec.Width = 400;
+        sceneFrameBufSpec.Height = 240;
+        m_SceneFramebuffer = Entry::Framebuffer::Create(sceneFrameBufSpec);
+
+        FramebufferSpecification gameFrameBufSpec;
+        gameFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
+        gameFrameBufSpec.Width = 400;
+        gameFrameBufSpec.Height = 240;
+        m_GameFramebuffer = Entry::Framebuffer::Create(sceneFrameBufSpec);
 
         m_ActiveScene.reset(new Scene());
 
@@ -100,14 +106,23 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 
         // Resize 
-        FramebufferSpecification spec = m_Framebuffer->GetSpecification();
-        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero size framebuffer is invalid 
-            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        FramebufferSpecification sceneSpec = m_SceneFramebuffer->GetSpecification();
+        if (m_SceneViewportSize.x > 0.0f && m_SceneViewportSize.y > 0.0f && // zero size framebuffer is invalid 
+            (sceneSpec.Width != m_SceneViewportSize.x || sceneSpec.Height != m_SceneViewportSize.y))
         {
-            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+            m_EditorCamera.SetViewportSize(m_SceneViewportSize.x, m_SceneViewportSize.y);
+            //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
+            //m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+        }
+
+        FramebufferSpecification gameSpec = m_GameFramebuffer->GetSpecification();
+        if (m_GameViewportSize.x > 0.0f && m_GameViewportSize.y > 0.0f && // zero size framebuffer is invalid 
+            (gameSpec.Width != m_GameViewportSize.x || gameSpec.Height != m_GameViewportSize.y))
+        {
+            //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
+            m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+            m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
         }
 
         // Update
@@ -121,12 +136,12 @@ namespace Entry {
         Entry::Renderer3D::ResetStats();
         Entry::Renderer3D::SetStatsTimestep(ts);
 
-        m_Framebuffer->Bind();
+        m_SceneFramebuffer->Bind();
         RenderCommand::SetClearColor(0x68B0D8FF);
         RenderCommand::Clear();
 
         // Clear our entity ID attachment to -1
-        m_Framebuffer->ClearAttachment(1, -1);
+        m_SceneFramebuffer->ClearAttachment(1, -1);
 
         // Update Scene
         m_ActiveScene->OnUpdateEditor(ts, screenSide, m_EditorCamera);
@@ -142,11 +157,17 @@ namespace Entry {
 
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
         {
-           int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+           int pixelData = m_SceneFramebuffer->ReadPixel(1, mouseX, mouseY);
            m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
         }
 
-        m_Framebuffer->Unbind();
+        m_SceneFramebuffer->Unbind();
+
+        m_GameFramebuffer->Bind();
+        RenderCommand::SetClearColor(0x68B0D8FF);
+        RenderCommand::Clear();
+        m_ActiveScene->OnUpdateRuntime(ts, screenSide);
+        m_GameFramebuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -240,7 +261,7 @@ namespace Entry {
 
         m_SceneHierarchyPanel.OnImGuiRender();
 
-        ImGui::Begin("Stats");
+        ImGui::Begin("Stats"); // BEGIN: Stats Panel
 
         std::string name = "None";
         if (m_HoveredEntity)
@@ -259,27 +280,10 @@ namespace Entry {
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
-        ImGui::End(); // Stats
-    
-        ImGui::Begin("Editor Camera");
-        ImGui::Text("Distance: %.2f", m_EditorCamera.GetDistance());
-        glm::vec3 editCamPos = m_EditorCamera.GetPosition();
-        glm::vec3 focalPoint = m_EditorCamera.GetFocalPoint();
-        glm::vec3 forward = m_EditorCamera.GetForwardDirection();
-        glm::vec3 right = m_EditorCamera.GetRightDirection();
-        glm::vec3 up = m_EditorCamera.GetUpDirection();
-        ImGui::Text("Camera Position: { %.2f, %.2f, %.2f}", editCamPos.x, editCamPos.y, editCamPos.z);
-        ImGui::Text("Focal Point: { %.2f, %.2f, %.2f}", focalPoint.x, focalPoint.y, focalPoint.z);
-        ImGui::Text("Pitch: %.2f", glm::degrees(m_EditorCamera.GetPitch()));
-        ImGui::Text("Yaw: %.2f", glm::degrees(m_EditorCamera.GetYaw()));
-        ImGui::Text("Forward: { %.2f, %.2f, %.2f}", forward.x, forward.y, forward.z);
-        ImGui::Text("Right: { %.2f, %.2f, %.2f}", right.x, right.y, right.z);
-        ImGui::Text("Up: { %.2f, %.2f, %.2f}", up.x, up.y, up.z);
-
-        ImGui::End(); // END: Editor Camera
+        ImGui::End(); // END: Stats Panel
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-        ImGui::Begin("Scene"); // BEGIN: Scene Window
+        ImGui::Begin("Scene"); // BEGIN: Scene Panel
 
         auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -292,10 +296,10 @@ namespace Entry {
         Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
         
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        m_SceneViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID(0);
-        ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
+        void* textureID = (void*)m_SceneFramebuffer->GetColorAttachmentRendererID(0);
+        ImGui::Image(textureID, ImVec2{ m_SceneViewportSize.x, m_SceneViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
 
         // Gizmos
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -347,9 +351,25 @@ namespace Entry {
                 tc.Scale = scale;
             }
         }
+        ImGui::End(); // END: Scene Panel
+        ImGui::PopStyleVar();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+        ImGui::Begin("Game [Top Screen]"); // BEGIN: Game [Top Screen] Panel
+
+        ImVec2 gameViewportPanelSize = ImGui::GetContentRegionAvail();
+        static float cameraAspectRatio = 400.0f / 240.0f;
+        float panelAspectRatio = gameViewportPanelSize.x / gameViewportPanelSize.y;
+
+        m_GameViewportSize = (cameraAspectRatio > panelAspectRatio) ?
+            glm::vec2{ gameViewportPanelSize.x, gameViewportPanelSize.x / cameraAspectRatio } :
+            glm::vec2{ gameViewportPanelSize.y * cameraAspectRatio, gameViewportPanelSize.y };
 
 
-        ImGui::End(); // Scene 
+        void* gameTextureID = (void*)m_GameFramebuffer->GetColorAttachmentRendererID(0);
+        ImGui::SetCursorPosX((gameViewportPanelSize.x - m_GameViewportSize.x) * 0.5f); // Center Horizontally
+        ImGui::Image(gameTextureID, ImVec2{ m_GameViewportSize.x, m_GameViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1,0 });
+        ImGui::End(); // Game [Top Screen] Panel
         ImGui::PopStyleVar();
 
         ImGui::End();
@@ -430,8 +450,8 @@ namespace Entry {
     void EditorLayer::NewScene()
     {
         m_ActiveScene.reset(new Scene());
-        m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+        m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
         m_SceneFilePath = "";
@@ -442,7 +462,7 @@ namespace Entry {
         if (!filepath.empty())
         {
             m_ActiveScene.reset(new Scene());
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
             SceneSerializer serializer(m_ActiveScene);
