@@ -143,6 +143,7 @@ namespace Entry {
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
         {
            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+           printf("Hovered Entity: %d\n", pixelData);
            m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
         }
 
@@ -283,7 +284,11 @@ namespace Entry {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
         ImGui::Begin("Scene"); // BEGIN: Scene Window
 
-        auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -294,17 +299,6 @@ namespace Entry {
 
         void* textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID(0);
         ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
-
-        auto windowSize = ImGui::GetWindowSize();
-        ImVec2 minBound = ImGui::GetWindowPos();
-        minBound.x += viewportOffset.x;
-        minBound.y += viewportOffset.y;
-
-        ImVec2 maxBound = { minBound.x + windowSize.x ,minBound.y + windowSize.y };
-        m_ViewportBounds[0] = { minBound.x, minBound.y };
-        m_ViewportBounds[1] = { maxBound.x, maxBound.y };
-
-
 
         // Gizmos
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -341,6 +335,10 @@ namespace Entry {
                 (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
                 nullptr, snap ? snapValues : nullptr);
 
+            // Disable when moving editor camera
+            bool MoveEditorCameraLeftClick = (Input::IsKeyPressed(Key::LeftAlt) && Input::IsMouseButtonPressed(MouseCode::Button0));
+            ImGuizmo::Enable(!MoveEditorCameraLeftClick);
+
             if (ImGuizmo::IsUsing())
             {
                 glm::vec3 position, rotation, scale;
@@ -367,6 +365,7 @@ namespace Entry {
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(ET_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(ET_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
     }
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {
@@ -419,6 +418,15 @@ namespace Entry {
             default:
             break;
             }
+        }
+        return false;
+    }
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == MouseCode::Button0)
+        {
+            if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+            m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
         }
         return false;
     }
