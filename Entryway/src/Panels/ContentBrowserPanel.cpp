@@ -84,7 +84,7 @@ namespace Entry
 		ImGui::Text("sm");
 		ImGui::SameLine();
 		ImGui::PushItemWidth((panelWidth / 4.0f) - 50.0f);
-		ImGui::SliderFloat("##thumbnailSize", &thumbnailSize, 64, 256,"%.0f");
+		ImGui::SliderFloat("##thumbnailSize", &thumbnailSize, 32, 128,"%.0f");
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ImGui::Text("lrg");

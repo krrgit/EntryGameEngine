@@ -4,6 +4,7 @@
 #include "Entry/Core/Log.h"
 #include "Entry/Scene/Scene.h"
 #include "Entry/Scene/Entity.h"
+#include "Entry/Scene/Components.h"
 
 namespace Entry
 {
@@ -23,6 +24,8 @@ namespace Entry
 	private:
 		void DrawEntityNode(Entity entity);
 		void DrawComponents(Entity entity);
+
+		void LoadMeshInMRC(std::string& filepath, std::string& currentPath, MeshRendererComponent& component);
 	private:
 		Ref<Scene> m_Context;
 

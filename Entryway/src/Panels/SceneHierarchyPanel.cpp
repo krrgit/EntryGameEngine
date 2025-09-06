@@ -4,11 +4,12 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include "Entry/Scene/Components.h"
-
+#include <filesystem> // C++17
 
 namespace Entry
 {
+	extern const std::filesystem::path g_AssetPath;
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
@@ -352,20 +353,23 @@ namespace Entry
 				filepath = std::string(buffer);
 			}
 
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					if (wcsstr(path, L".obj") != 0)
+					{
+						filepath = (std::filesystem::path(g_AssetPath) / path).string();
+						LoadMeshInMRC(filepath, meshPath, component);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			if (ImGui::Button("Reload"))
 			{
-				std::ifstream file(filepath.c_str());
-				if (file.good())
-				{
-					Ref<Mesh> newMesh = Mesh::Create(filepath);
-					component.mesh = newMesh;
-				}
-				else
-				{
-					auto errorMsg = filepath + " does not exist!";
-					ET_CORE_ERROR(errorMsg);
-					filepath = meshPath;
-				}
+				LoadMeshInMRC(filepath, meshPath, component);
 			}
 
 			// TODO: Add default material when none supplied
@@ -385,5 +389,20 @@ namespace Entry
 				ImGui::TreePop();
 			}
 		});
+	}
+	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, std::string& currentPath, MeshRendererComponent& component)
+	{
+		std::ifstream file(filepath.c_str());
+		if (file.good())
+		{
+			Ref<Mesh> newMesh = Mesh::Create(filepath);
+			component.mesh = newMesh;
+		}
+		else
+		{
+			auto errorMsg = filepath + " does not exist!";
+			ET_CORE_ERROR(errorMsg);
+			filepath = currentPath;
+		}
 	}
 }
