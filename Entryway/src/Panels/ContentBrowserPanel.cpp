@@ -27,7 +27,7 @@ namespace Entry
 			}
 		}
 
-		static float padding = 16.0f;
+		static float padding = 6.0f;
 		static float thumbnailSize = 64.0f;
 		float cellSize = thumbnailSize + padding;
 
@@ -35,41 +35,60 @@ namespace Entry
 		int columnCount = (int)(panelWidth / cellSize);
 		columnCount = columnCount < 1 ? 1 : columnCount;
 
-		ImGui::Columns(columnCount, 0, false);
-
-
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+		if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_HorizontalScrollbar))
 		{
-			const auto& path = directoryEntry.path();
-			auto relativePath = std::filesystem::relative(path, g_AssetPath);
-			std::string filenameString  = relativePath.filename().string();
+			ImGui::Columns(columnCount, 0, false);
 
-			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
-			ImGui::ImageButton(path.string().c_str(), (ImTextureID)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 
-			if (ImGui::BeginDragDropSource())
+			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 			{
-				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Always);
-				ImGui::EndDragDropSource();
+				const auto& path = directoryEntry.path();
+				auto relativePath = std::filesystem::relative(path, g_AssetPath);
+				std::string filenameString = relativePath.filename().string();
+
+				Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				ImGui::ImageButton(path.string().c_str(), (ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+				if (ImGui::BeginDragDropSource())
+				{
+					const wchar_t* itemPath = relativePath.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Always);
+					ImGui::EndDragDropSource();
+				}
+
+				ImGui::PopStyleColor();
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (directoryEntry.is_directory())
+						m_CurrentDirectory /= path.filename();
+				}
+				ImGui::TextWrapped(filenameString.c_str());
+
+				ImGui::NextColumn();
 			}
 
-			ImGui::PopStyleColor();
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (directoryEntry.is_directory())
-					m_CurrentDirectory /= path.filename();
-			}
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
+			ImGui::Columns(1);
 		}
+		ImGui::EndChild();
 
-		ImGui::Columns(1);
+		//bool show = true;
+		//ImGui::ShowDemoWindow(&show);
 
-		ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		ImGui::SliderFloat("Padding", &padding, 0, 32);
+		ImGui::Separator();
+
+
+		ImGui::SetCursorPosX(panelWidth * 3.0f / 4.0f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("sm");
+		ImGui::SameLine();
+		ImGui::PushItemWidth((panelWidth / 4.0f) - 50.0f);
+		ImGui::SliderFloat("##thumbnailSize", &thumbnailSize, 64, 256,"%.0f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		ImGui::Text("lrg");
+
 
         ImGui::End();
 	}
