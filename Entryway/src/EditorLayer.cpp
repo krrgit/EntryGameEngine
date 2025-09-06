@@ -14,6 +14,9 @@
 
 namespace Entry {
 
+    // TODO: Once we have projects, change this
+    extern const std::filesystem::path g_AssetPath;
+
     EditorLayer::EditorLayer()
         : Layer("EditorLayer"), m_CameraController(400.0f/ 240.0f, 80.0f)
     {
@@ -302,6 +305,19 @@ namespace Entry {
         void* textureID = (void*)m_SceneFramebuffer->GetColorAttachmentRendererID(0);
         ImGui::Image(textureID, ImVec2{ m_SceneViewportSize.x, m_SceneViewportSize.y }, ImVec2{0, 1}, ImVec2{1,0});
 
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                if (wcsstr(path, L".entry") != 0)
+                {
+                    OpenScene(std::filesystem::path(g_AssetPath) / path);
+                } 
+                // TODO: Add other file types here
+            }
+            ImGui::EndDragDropTarget();
+        }
+
         // Gizmos
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         if (selectedEntity && m_GizmoType != -1)
@@ -462,16 +478,21 @@ namespace Entry {
         std::string filepath = FileDialogs::OpenFile("Entry Scene (*.entry)\0*.entry\0");
         if (!filepath.empty())
         {
-            m_ActiveScene.reset(new Scene());
-            m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
-            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-            SceneSerializer serializer(m_ActiveScene);
-            serializer.Deserialize(filepath);
-
-            m_SceneFilePath = filepath;
+            OpenScene(filepath);
         }
     }
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    {
+        m_ActiveScene.reset(new Scene());
+        m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+        SceneSerializer serializer(m_ActiveScene);
+        serializer.Deserialize(path.string());
+
+        m_SceneFilePath = path.string();
+    }
+
     void EditorLayer::SaveSceneAs()
     {
         std::string filepath = FileDialogs::SaveFile("Entry Scene (*.entry)\0*.entry\0");

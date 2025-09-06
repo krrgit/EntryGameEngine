@@ -25,6 +25,7 @@ namespace Entry {
 
         void NewScene();
         void OpenScene();
+        void OpenScene(const std::filesystem::path& path); // C++17
         void SaveScene();
         void SaveSceneAs();
 
