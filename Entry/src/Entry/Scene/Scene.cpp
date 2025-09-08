@@ -51,6 +51,49 @@ namespace Entry {
 		Renderer3D::EndScene();
 	}
 
+	/// <summary>
+	/// Renders the camera in-game when in editor mode.
+	/// </summary>
+	/// <param name="ts"></param>
+	/// <param name="screenSide"></param>
+	void Scene::OnUpdateEditorInGame(Timestep ts, uint16_t screenSide)
+	{
+		// Render Meshes
+		Camera* mainCamera = nullptr;
+		glm::mat4 cameraTransform;
+		{
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& camera = view.get<CameraComponent>(entity);
+
+				if (camera.Primary)
+				{
+					mainCamera = &camera.Camera;
+					cameraTransform = transform.GetTransform();
+					break;
+				}
+			}
+		}
+
+		if (mainCamera)
+		{
+			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
+
+			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
+			{
+				auto transform = m_Registry.get<TransformComponent>(entity);
+				auto& meshRender = m_Registry.get<MeshRendererComponent>(entity);
+
+				if (!meshRender.mesh) continue;
+				Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
+			}
+
+			Renderer3D::EndScene();
+		}
+	}
+
 	void Scene::OnUpdateRuntime(Timestep ts, uint16_t screenSide)
 	{
 		// Update Scripts 
@@ -106,6 +149,7 @@ namespace Entry {
 			Renderer3D::EndScene();
 		}
 	}
+
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
 		m_ViewportWidth = width;

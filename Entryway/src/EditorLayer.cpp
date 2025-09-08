@@ -27,6 +27,10 @@ namespace Entry {
     {
 	    ET_PROFILE_FUNCTION();
 
+        m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
+        m_IconAdvance = Texture2D::Create("Resources/Icons/StepButton.png");
+
         FramebufferSpecification sceneFrameBufSpec;
         sceneFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         sceneFrameBufSpec.Width = 400;
@@ -128,12 +132,6 @@ namespace Entry {
             m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
         }
 
-        // Update
-        if (m_ViewportFocused) {
-            ET_PROFILE_SCOPE("CameraController::OnUpdate");
-            m_CameraController.OnUpdate(ts);
-        }
-
         m_EditorCamera.OnUpdate(ts);
 
         Entry::Renderer3D::ResetStats();
@@ -169,7 +167,17 @@ namespace Entry {
         m_GameFramebuffer->Bind();
         RenderCommand::SetClearColor(0x68B0D8FF);
         RenderCommand::Clear();
-        m_ActiveScene->OnUpdateRuntime(ts, screenSide);
+        
+        switch (m_SceneState)
+        {
+        case SceneState::Edit:
+            m_ActiveScene->OnUpdateEditorInGame(ts, screenSide);
+            break;
+        case SceneState::Play:
+            m_ActiveScene->OnUpdateRuntime(ts, screenSide); // TODO: Fix when play button is properly setup
+            break;
+        }
+
         m_GameFramebuffer->Unbind();
     }
 
@@ -188,8 +196,8 @@ namespace Entry {
         if (opt_fullscreen)
         {
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowPos({ viewport->WorkPos.x, viewport->WorkPos.y});
+            ImGui::SetNextWindowSize({ viewport->WorkSize.x, viewport->WorkSize.y});
             ImGui::SetNextWindowViewport(viewport->ID);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -228,6 +236,7 @@ namespace Entry {
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::SetCursorPosY(50.0f); // Reserve Space for Toolbar 
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
@@ -388,8 +397,69 @@ namespace Entry {
         ImGui::Image(gameTextureID, ImVec2{ m_GameViewportSize.x, m_GameViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1,0 });
         ImGui::End(); // Game [Top Screen] Panel
         ImGui::PopStyleVar();
+        
+        UI_Toolbar();
 
         ImGui::End();
+    }
+
+
+    void EditorLayer::UI_Toolbar()
+    {
+
+        bool show = true;
+        ImGui::ShowDemoWindow(&show);
+
+
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos({ viewport->WorkPos.x, viewport->WorkPos.y + 20.0f });
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::SetNextWindowSize({ viewport->WorkSize .x , 30.0f});
+        ImGui::SetNextWindowSizeConstraints({ viewport->WorkSize.x , 30.0f }, { viewport->WorkSize.x , 30.0f });
+        //ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+        window_flags |= ImGuiWindowFlags_NoDocking;
+
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+
+        ImGui::Begin("##Toolbar", nullptr, window_flags);
+        
+        float buttonSize = 20.0f;
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconPause;
+        ImVec4 activeButtonColor = ImVec4(0.24f, 0.52f, 0.88f, 1.0f);
+        
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = m_SceneState == SceneState::Edit ? colors[ImGuiCol_ButtonHovered] : activeButtonColor;
+        const auto& buttonActive = m_SceneState == SceneState::Edit ? colors[ImGuiCol_ButtonActive] : activeButtonColor;
+        const auto& button = m_SceneState == SceneState::Edit ? colors[ImGuiCol_Button] : activeButtonColor;
+
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (buttonSize * 0.5f));
+        ImGui::SetCursorPosY((ImGui::GetWindowContentRegionMax().y * 0.5f) - (buttonSize * 0.5f));
+
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(button.x, button.y, button.z, 0.5f));
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 1));
+
+        if (ImGui::ImageButton("##Play Button", icon->GetRendererID(), { buttonSize, buttonSize }, ImVec2(0,0), ImVec2(1,1)))
+        {
+            if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+            else if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+        }
+        
+        ImGui::PopStyleVar(); // Button Style
+        ImGui::PopStyleColor(3); // Button Color
+
+        ImGui::PopStyleVar(4); // Toolbar Style
+        ImGui::End();
+
     }
 
     void EditorLayer::OnEvent(Entry::Event& event) 
@@ -516,5 +586,15 @@ namespace Entry {
         {
             SaveSceneAs();
         }
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
     }
 }

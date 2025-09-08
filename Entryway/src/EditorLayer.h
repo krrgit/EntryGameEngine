@@ -28,16 +28,25 @@ namespace Entry {
         void OpenScene(const std::filesystem::path& path); // C++17
         void SaveScene();
         void SaveSceneAs();
+        
+        void OnScenePlay();
+        void OnSceneStop();
+
+        // UI Panels
+        void UI_Toolbar();
 
         private:
             PerspectiveCameraController m_CameraController;
+
             Ref<Framebuffer> m_SceneFramebuffer;
-            Ref<Framebuffer> m_GameFramebuffer;
             glm::vec2 m_SceneViewportSize = { 0, 0 };
-            glm::vec2 m_GameViewportSize = { 0, 0 };
             glm::vec2 m_ViewportBounds[2];
-        
+
             bool m_ViewportFocused = false, m_ViewportHovered = false;
+
+            Ref<Framebuffer> m_GameFramebuffer;
+            glm::vec2 m_GameViewportSize = { 0, 0 };
+        
             Ref<Scene> m_ActiveScene;
 
             bool m_PrimaryCamera = true;
@@ -46,6 +55,11 @@ namespace Entry {
 
             std::string m_SceneFilePath = "";
             int m_GizmoType = -1;
+
+            enum class SceneState
+            {
+                Edit = 0, Play = 1
+            };
 
             Entity m_HoveredEntity;
 
@@ -57,5 +71,10 @@ namespace Entry {
             // Panels
             SceneHierarchyPanel m_SceneHierarchyPanel;
             ContentBrowserPanel m_ContentBrowserPanel;
+
+            Ref<Texture2D> m_IconPlay, m_IconPause, m_IconAdvance;
+
+            SceneState m_SceneState = SceneState::Edit;
+
     };
 }
