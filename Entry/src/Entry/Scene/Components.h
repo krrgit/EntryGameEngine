@@ -49,11 +49,14 @@ namespace Entry
 	struct MeshRendererComponent
 	{
 		Ref<Mesh> mesh;
+		Ref<Material> material;
 
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 		MeshRendererComponent(const Ref<Mesh> _mesh)
-			: mesh(_mesh) {}
+			: mesh(_mesh), material(_mesh->GetMaterialCount() > 0 ? _mesh->GetMaterial(0) : nullptr)
+		{
+		}
 
 	};
 

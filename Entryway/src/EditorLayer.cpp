@@ -236,7 +236,7 @@ namespace Entry {
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-            ImGui::SetCursorPosY(50.0f); // Reserve Space for Toolbar 
+            ImGui::SetCursorPosY(52.0f); // Reserve Space for Toolbar 
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
@@ -276,12 +276,12 @@ namespace Entry {
 
         ImGui::Begin("Stats"); // BEGIN: Stats Panel
 
-        std::string name = "None";
-        if (m_HoveredEntity)
-        {
-            name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-        }
-        ImGui::Text("Hovered Entity: %s", name.c_str());
+        //std::string name = "None";
+        //if (m_HoveredEntity)
+        //{
+        //    name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+        //}
+        //ImGui::Text("Hovered Entity: %s", name.c_str());
 
 
         auto stats = Entry::Renderer3D::GetStats();
@@ -406,11 +406,6 @@ namespace Entry {
 
     void EditorLayer::UI_Toolbar()
     {
-
-        bool show = true;
-        ImGui::ShowDemoWindow(&show);
-
-
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos({ viewport->WorkPos.x, viewport->WorkPos.y + 20.0f });
         ImGui::SetNextWindowViewport(viewport->ID);

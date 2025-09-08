@@ -5,6 +5,8 @@
 
 #include "Entry/Utils/ModelUtils.h"
 
+#include "Entry/Renderer/Renderer3D.h"
+
 namespace Entry {
 
 	OpenGLMesh::OpenGLMesh(const std::string& path)
@@ -35,6 +37,9 @@ namespace Entry {
 		Ref<IndexBuffer> indexBuffer;
 		indexBuffer.reset(IndexBuffer::Create(indices.data(), indices.size()));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
+
+		if (m_Materials.size() == 0)
+			m_Materials.push_back(Renderer3D::GetDefaultMaterial());
 
 		m_VertexCount = vertices.size() / 8;
 		m_IndexCount = indices.size();

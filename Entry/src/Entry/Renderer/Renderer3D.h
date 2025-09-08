@@ -51,6 +51,8 @@ namespace Entry {
 			static void ResetStats();
 			static void SetStatsTimestep(Timestep ts);
 			static Statistics GetStats();
+
+			static Ref<Material> GetDefaultMaterial();
 	private:
 		static int GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount);
 		//static void FlushAndReset();

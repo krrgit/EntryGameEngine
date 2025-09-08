@@ -37,7 +37,7 @@ namespace Entry
 		// Right-click on blank space
 		if (ImGui::BeginPopupContextWindow(0, 1 |  ImGuiPopupFlags_NoOpenOverItems))
 		{
-			if (ImGui::MenuItem("Create Empty Entity"))
+			if (ImGui::MenuItem("Create Empty"))
 				m_Context->CreateEntity("Entity");
 			ImGui::EndPopup();
 		}
@@ -78,7 +78,7 @@ namespace Entry
 		//// Right-click on entity
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete"))
 				entityDeleted = true;
 
 			ImGui::EndPopup();
@@ -107,17 +107,31 @@ namespace Entry
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0, 4 });
+
+		ImGui::AlignTextToFramePadding();
+
+		float localColumnWidth = columnWidth - ImGui::GetCursorPosX();
+
+
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::SetColumnWidth(0, localColumnWidth);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
 
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+		float posY = ImGui::GetCursorPosY() + 3;
+		ImGui::SetCursorPosY(posY);
 
-		float lineHeight = ImGui::GetFontSize() + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0, 0 });
+
+		float lineHeight = ImGui::GetFontSize() + GImGui->Style.FramePadding.y;
+		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight + 8.0f };
+
+		ImGui::PushMultiItemsWidths(3, ImGui::GetContentRegionAvail().x - (buttonSize.x * 2.5f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0.5f });
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.88f, 0.26f, 0.36f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.98f, 0.46f, 0.56f, 1.0f });
@@ -157,8 +171,44 @@ namespace Entry
 		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
 		ImGui::PopItemWidth();
 
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(4);
 		ImGui::Columns(1);
+		ImGui::PopID();
+	}
+
+	static void DrawDragnDropField(const std::string& label, std::string& value, float columnWidth = 100.0f)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0, 4 });
+
+		ImGui::AlignTextToFramePadding();
+
+		float localColumnWidth = columnWidth - ImGui::GetCursorPosX();
+
+		ImGui::PushID(label.c_str());
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, localColumnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		float posY = ImGui::GetCursorPosY() + 3;
+		ImGui::SetCursorPosY(posY);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0, 0 });
+
+		float lineHeight = ImGui::GetFontSize() + GImGui->Style.FramePadding.y;
+		ImVec2 buttonSize = { ImGui::GetContentRegionAvail().x, lineHeight + 8.0f };
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0.5f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+
+		ImGui::PushFont(boldFont);
+		ImGui::Button(value.c_str(), buttonSize);
+		ImGui::PopFont();
+
+		ImGui::PopStyleVar(4);
 		ImGui::PopID();
 	}
 
@@ -212,9 +262,16 @@ namespace Entry
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		float columnWidth = 130.0f;
+		
 		if (entity.HasComponent<TagComponent>())
 		{
 			static Entity thisEntity = entity;
+
+			// thisEntity was deleted
+			if (!thisEntity.HasComponent<TagComponent>())
+				thisEntity = entity;
+
 			auto& tag = thisEntity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
@@ -234,7 +291,7 @@ namespace Entry
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
 
-		if (ImGui::Button("Add Component"))
+		if (ImGui::Button("+ Component"))
 			ImGui::OpenPopup("AddComponent");
 
 		if (ImGui::BeginPopup("AddComponent"))
@@ -256,11 +313,11 @@ namespace Entry
 
 		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component) 
 		{
-			DrawVec3Control("Position", component.Position);
+			DrawVec3Control("Position", component.Position, 0.0f, columnWidth);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
-			DrawVec3Control("Rotation", rotation);
+			DrawVec3Control("Rotation", rotation, 0.0f, columnWidth);
 			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale, 1.0f);
+			DrawVec3Control("Scale", component.Scale, 1.0f, columnWidth);
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [&](CameraComponent& component) {
@@ -268,7 +325,6 @@ namespace Entry
 
 			ImGui::Checkbox("Primary", &component.Primary);
 			ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
-
 
 			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeStrings[(int)component.Camera.GetProjectionType()];
@@ -345,13 +401,7 @@ namespace Entry
 				thisEntity = entity;
 			}
 
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), filepath.c_str());
-			if (ImGui::InputText("Mesh", buffer, sizeof(buffer)))
-			{
-				filepath = std::string(buffer);
-			}
+			DrawDragnDropField("Mesh", filepath, columnWidth);
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -366,28 +416,32 @@ namespace Entry
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::Columns(1); // Needed after DrawDragnDropField()
 
-			if (ImGui::Button("Reload"))
-			{
-				LoadMeshInMRC(filepath, meshPath, component);
-			}
+			std::string label = "Material";
+			std::string mtlName = component.material ? component.material->GetProps().Name : "None";
+			DrawDragnDropField(label, mtlName, columnWidth);
+			ImGui::Columns(1);
 
 			// TODO: Add default material when none supplied
-			if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth, "Materials"))
-			{
-				static size_t size = mesh != nullptr ? mesh->GetMaterialCount() : 0;
-				ImGui::Text("Size: %d", size);
-				size_t index = 0;
+			//if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth, "Materials"))
+			//{
+			//	static size_t size = mesh != nullptr ? mesh->GetMaterialCount() : 1;
+			//	ImGui::Text("Size: %d", size);
+			//	size_t index = 0;
 
-				if (mesh != nullptr)
-				{
-					for (auto material : mesh->GetMaterials())
-					{
-						ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
-					}
-				}
-				ImGui::TreePop();
-			}
+			//	if (mesh != nullptr)
+			//	{
+			//		for (auto material : mesh->GetMaterials())
+			//		{
+			//			//ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
+			//			std::string label = "Element " + std::to_string(index++);
+			//			label += ": ";
+			//			DrawDragnDropField(label, material->GetProps().Name, 130.0f);
+			//		}
+			//	}
+			//	ImGui::TreePop();
+			//}
 		});
 	}
 	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, std::string& currentPath, MeshRendererComponent& component)
@@ -397,6 +451,7 @@ namespace Entry
 		{
 			Ref<Mesh> newMesh = Mesh::Create(filepath);
 			component.mesh = newMesh;
+			component.material = newMesh->GetMaterial(0);
 		}
 		else
 		{

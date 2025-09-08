@@ -924,18 +924,9 @@ namespace Entry {
 
         for (auto submesh : mesh->GetSubMeshes())
         {
-            // Use Default Material
-            if (mesh->GetMaterialCount() == 0)
-            {
-                s_Data.DefaultMaterial->Bind();
-            }
-            else
-            {
-                mesh->GetMaterial(submesh.MaterialID)->Bind();
-            }
+            mesh->GetMaterial(submesh.MaterialID)->Bind();
             RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
         }
-
 
         s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
         s_Data.Stats.VertexCount += mesh->GetVertexCount();
@@ -945,6 +936,9 @@ namespace Entry {
 
     void Renderer3D::DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
     {
+        if (!mrc.material)
+            return;
+
         s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
         DrawMesh(mrc.mesh, transform);
     }
@@ -1005,5 +999,12 @@ namespace Entry {
     {
         return s_Data.Stats;
     }
+
+    Ref<Material> Renderer3D::GetDefaultMaterial()
+    {
+        return s_Data.DefaultMaterial;
+    }
+
+    
 
 }
