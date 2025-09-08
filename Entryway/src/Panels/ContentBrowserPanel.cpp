@@ -19,6 +19,7 @@ namespace Entry
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Project");
+
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
 			if (ImGui::Button("<-"))
@@ -64,6 +65,11 @@ namespace Entry
 					if (directoryEntry.is_directory())
 						m_CurrentDirectory /= path.filename();
 				}
+
+				// Center Text
+				ImVec2 textSize = ImGui::CalcTextSize(filenameString.c_str(),0,false, thumbnailSize);
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (thumbnailSize - textSize.x) * 0.5f);
+
 				ImGui::TextWrapped(filenameString.c_str());
 
 				ImGui::NextColumn();
