@@ -21,6 +21,7 @@ IncludeDir["stb_image"] = "Entry/vendor/stb_image"
 IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
 IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
+-- IncludeDir["tinygltf"] = "Entry/vendor/tinygltf"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -60,6 +61,9 @@ project "Entry"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
+		-- "%{prj.name}/vendor/tinygltf/**.h",
+		-- "%{prj.name}/vendor/tinygltf/**.cpp",
+		-- "%{prj.name}/vendor/tinygltf/**.hpp",
 	}
 
 	defines
@@ -81,6 +85,7 @@ project "Entry"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.tinygltf}",
 	}
 
 	links 
@@ -94,6 +99,9 @@ project "Entry"
 	}
 
 	filter "files:Entry/vendor/ImGuizmo/**.cpp"
+    flags { "NoPCH" }
+	
+	filter "files:Entry/vendor/tinygltf/**.cpp"
     flags { "NoPCH" }
 
 	filter "system:windows"
@@ -218,6 +226,7 @@ project "Entryway" -- EDITOR
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
+		-- "%{IncludeDir.tinygltf}",
 	}
 
 	links

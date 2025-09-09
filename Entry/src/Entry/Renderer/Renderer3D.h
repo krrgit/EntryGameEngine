@@ -2,7 +2,7 @@
 
 #include "PerspectiveCamera.h"
 #include "Texture.h"
-#include "Mesh.h"
+#include "Model.h"
 #include "Entry/Core/Timestep.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -33,10 +33,10 @@ namespace Entry {
 			static void DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 			static void DrawCube(const glm::vec3& position, glm::vec4& color);
 
-			static void DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
-			static void DrawMesh(Ref<Mesh> mesh, const glm::mat4& transform);
+			static void DrawModel(Ref<Model> Model, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
+			static void DrawModel(Ref<Model> Model, const glm::mat4& transform);
 
-			static void DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID);
+			static void DrawModelEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID);
 	
 			struct Statistics {
 				uint32_t DrawCalls = 0;

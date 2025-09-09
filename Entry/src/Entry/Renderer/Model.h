@@ -11,19 +11,21 @@
 
 namespace Entry {
 
-	struct SubMesh {
+	struct Mesh {
 		uint32_t indexCount;
 		uint32_t indexOffset;
+		uint32_t vertexCount;
+		uint32_t* vertexOffset;
 		uint32_t MaterialID;
 	};
 
-	class Mesh {
+	class Model {
 	public:
-		virtual ~Mesh() = default;
-		static Ref<Mesh> Create(const std::string& path = "");
+		virtual ~Model() = default;
+		static Ref<Model> Create(const std::string& path = "");
 
 		virtual Ref<VertexArray> GetVertexArray() const = 0;
-		virtual const std::vector<SubMesh>& GetSubMeshes() const = 0;
+		virtual const std::vector<Mesh>& GetMeshes() const = 0;
 
 		virtual void Bind() = 0;
 		virtual Ref<Material> GetMaterial(int materialID) = 0;

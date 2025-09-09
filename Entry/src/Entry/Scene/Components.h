@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entry/Core/Core.h"
-#include "Entry/Renderer/Mesh.h"
+#include "Entry/Renderer/Model.h"
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
@@ -48,13 +48,13 @@ namespace Entry
 
 	struct MeshRendererComponent
 	{
-		Ref<Mesh> mesh;
+		Ref<Model> model;
 		Ref<Material> material;
 
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
-		MeshRendererComponent(const Ref<Mesh> _mesh)
-			: mesh(_mesh), material(_mesh->GetMaterialCount() > 0 ? _mesh->GetMaterial(0) : nullptr)
+		MeshRendererComponent(const Ref<Model> _model)
+			: model(_model), material(_model->GetMaterialCount() > 0 ? _model->GetMaterial(0) : nullptr)
 		{
 		}
 

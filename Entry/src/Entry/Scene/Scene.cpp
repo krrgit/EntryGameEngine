@@ -42,10 +42,10 @@ namespace Entry {
 		for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
 		{
 			auto transform = m_Registry.get<TransformComponent>(entity);
-			auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
+			auto& ModelRenderer = m_Registry.get<MeshRendererComponent>(entity);
 
-			if (!meshRenderer.mesh) continue;
-			Renderer3D::DrawMeshEntity(transform.GetTransform(), meshRenderer, entity);
+			if (!ModelRenderer.model) continue;
+			Renderer3D::DrawModelEntity(transform.GetTransform(), ModelRenderer, entity);
 		}
 
 		Renderer3D::EndScene();
@@ -58,7 +58,7 @@ namespace Entry {
 	/// <param name="screenSide"></param>
 	void Scene::OnUpdateEditorInGame(Timestep ts, uint16_t screenSide)
 	{
-		// Render Meshes
+		// Render Modeles
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -84,10 +84,10 @@ namespace Entry {
 			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
 			{
 				auto transform = m_Registry.get<TransformComponent>(entity);
-				auto& meshRender = m_Registry.get<MeshRendererComponent>(entity);
+				auto& ModelRender = m_Registry.get<MeshRendererComponent>(entity);
 
-				if (!meshRender.mesh) continue;
-				Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
+				if (!ModelRender.model) continue;
+				Renderer3D::DrawModel(ModelRender.model, transform.GetTransform());
 			}
 
 			Renderer3D::EndScene();
@@ -115,7 +115,7 @@ namespace Entry {
 		// View: ideal for 1 component
 		// Group: ideal for multiple components
 		
-		// Render Meshes
+		// Render Modeles
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -140,10 +140,10 @@ namespace Entry {
 
 			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
 				auto transform = m_Registry.get<TransformComponent>(entity);
-				auto& meshRender= m_Registry.get<MeshRendererComponent>(entity);
+				auto& ModelRender= m_Registry.get<MeshRendererComponent>(entity);
 
-				if (!meshRender.mesh) continue;
-				Renderer3D::DrawMesh(meshRender.mesh, transform.GetTransform());
+				if (!ModelRender.model) continue;
+				Renderer3D::DrawModel(ModelRender.model, transform.GetTransform());
 			}
 
 			Renderer3D::EndScene();

@@ -195,7 +195,7 @@
     <ClInclude Include="src\Entry\Renderer\Material.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry\Renderer\Mesh.h">
+    <ClInclude Include="src\Entry\Renderer\Model.h">
       <Filter>src\Entry\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Renderer\PerspectiveCamera.h">
@@ -261,7 +261,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h">
+    <ClInclude Include="src\Platform\OpenGL\OpenGLModel.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1892,7 +1892,7 @@
     <ClCompile Include="src\Entry\Renderer\Material.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entry\Renderer\Mesh.cpp">
+    <ClCompile Include="src\Entry\Renderer\Model.cpp">
       <Filter>src\Entry\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Renderer\PerspectiveCamera.cpp">
@@ -1946,7 +1946,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp">
+    <ClCompile Include="src\Platform\OpenGL\OpenGLModel.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">

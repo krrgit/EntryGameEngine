@@ -30,7 +30,7 @@ namespace Entry {
 
 #ifdef ET_PLATFORM_WINDOWS
         // Editor-only
-        int EntityID = 0; // TODO: Use this after Render Batches for meshes is implemented.
+        int EntityID = 0; // TODO: Use this after Render Batches for Modeles is implemented.
 #endif // ET_PLATFORM_WINDOWS
     };
 
@@ -881,7 +881,7 @@ namespace Entry {
         s_Data.Stats.IndexCount += 36;
     }
 
-    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
+    void Renderer3D::DrawModel(Ref<Model> Model, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
     {
         ET_PROFILE_FUNCTION();
 
@@ -891,24 +891,24 @@ namespace Entry {
         glm::mat4 modelView = s_Data.m_ViewMatrix * glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
 
-        //mesh->Bind();
+        //Model->Bind();
         s_Data.WhiteTexture->Bind();
-        mesh->GetVertexArray()->Bind();
-        //auto submeshes = mesh->GetSubMeshes();
+        Model->GetVertexArray()->Bind();
+        //auto subModeles = Model->GetSubModeles();
 
-        for (auto submesh : mesh->GetSubMeshes())
+        for (auto mesh : Model->GetMeshes())
         {
-            mesh->GetMaterial(submesh.MaterialID)->Bind();
-            RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
+            Model->GetMaterial(mesh.MaterialID)->Bind();
+            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.indexCount, mesh.indexOffset);
         }
 
-        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
-        s_Data.Stats.VertexCount += mesh->GetVertexCount();
-        s_Data.Stats.IndexCount += mesh->GetIndexCount();
+        s_Data.Stats.PolygonCount += Model->GetPolygonCount();
+        s_Data.Stats.VertexCount += Model->GetVertexCount();
+        s_Data.Stats.IndexCount += Model->GetIndexCount();
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer3D::DrawMesh(Ref<Mesh> mesh, const glm::mat4& transform)
+    void Renderer3D::DrawModel(Ref<Model> Model, const glm::mat4& transform)
     {
         ET_PROFILE_FUNCTION();
 
@@ -918,29 +918,29 @@ namespace Entry {
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
         s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
 
-        //mesh->Bind();
+        //Model->Bind();
         s_Data.WhiteTexture->Bind();
-        mesh->GetVertexArray()->Bind();
+        Model->GetVertexArray()->Bind();
 
-        for (auto submesh : mesh->GetSubMeshes())
+        for (auto mesh : Model->GetMeshes())
         {
-            mesh->GetMaterial(submesh.MaterialID)->Bind();
-            RenderCommand::DrawIndexed(mesh->GetVertexArray(), submesh.indexCount, submesh.indexOffset);
+            Model->GetMaterial(mesh.MaterialID)->Bind();
+            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.indexCount, mesh.indexOffset);
         }
 
-        s_Data.Stats.PolygonCount += mesh->GetPolygonCount();
-        s_Data.Stats.VertexCount += mesh->GetVertexCount();
-        s_Data.Stats.IndexCount += mesh->GetIndexCount();
+        s_Data.Stats.PolygonCount += Model->GetPolygonCount();
+        s_Data.Stats.VertexCount += Model->GetVertexCount();
+        s_Data.Stats.IndexCount += Model->GetIndexCount();
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer3D::DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
+    void Renderer3D::DrawModelEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
     {
         if (!mrc.material)
             return;
 
         s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
-        DrawMesh(mrc.mesh, transform);
+        DrawModel(mrc.model, transform);
     }
 
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {

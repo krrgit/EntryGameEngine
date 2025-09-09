@@ -50,12 +50,12 @@ namespace Entry {
 #if 0
 
         auto plane = m_ActiveScene->CreateEntity("Plane");
-        plane.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/plane.obj"));
+        plane.AddComponent<MeshRendererComponent>(Entry::Model::Create("assets/models/plane.obj"));
 
         m_ShieldEntity = m_ActiveScene->CreateEntity("Shield");
         m_ShieldEntity.GetComponent<TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 0.0f);
         m_ShieldEntity.GetComponent<TransformComponent>().Scale = glm::vec3(0.02f, 0.02f, 0.02f);
-        m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Mesh::Create("assets/models/shield.obj"));
+        m_ShieldEntity.AddComponent<MeshRendererComponent>(Entry::Model::Create("assets/models/shield.obj"));
 
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         m_CameraEntity.GetComponent<TransformComponent>().Position = glm::vec3(0.0f, 2.0f, 10.0f);

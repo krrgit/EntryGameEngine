@@ -1,5 +1,5 @@
 #include "etpch.h"
-#include "Citro3DMesh.h"
+#include "Citro3DModel.h"
 
 #include <sstream>
 #include <initializer_list>
@@ -9,7 +9,7 @@
 #include "Entry/Renderer/Renderer3D.h"
 
 namespace Entry {	
-	Citro3DMesh::Citro3DMesh(const std::string& path)
+	Citro3DModel::Citro3DModel(const std::string& path)
 	{
 		ET_PROFILE_FUNCTION();
 
@@ -22,7 +22,7 @@ namespace Entry {
 		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(m_FilePath.c_str()));
 
 		FastOBJToBuffers(&vertices, &indices, obj_mesh);
-		CreateSubMeshes(m_SubMeshes, m_Materials, m_Textures, obj_mesh);
+		CreateMeshes(m_Meshes, m_Materials, m_Textures, obj_mesh);
 
 		m_VertexArray = VertexArray::Create();
 
@@ -58,16 +58,16 @@ namespace Entry {
 			ET_CORE_INFO("Loaded \"{0}\" successfully!", m_FileName.c_str());
 			ET_CORE_TRACE("Indices: {0}", m_IndexCount);
 			ET_CORE_TRACE("Vertices: {0}", m_VertexCount);
-			ET_CORE_TRACE("SubMeshes: {0}", m_SubMeshes.size());
+			ET_CORE_TRACE("Meshes: {0}", m_Meshes.size());
 			ET_CORE_TRACE("Materials: {0}", m_MaterialCount);
 			ET_CORE_TRACE("Textures: {0}", m_TextureCount);
 		}
 	}
-	Citro3DMesh::~Citro3DMesh()
+	Citro3DModel::~Citro3DModel()
 	{
 	}
 
-	void Citro3DMesh::Bind()
+	void Citro3DModel::Bind()
 	{
 		m_VertexArray->Bind();
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "VertexArray.h"
-#include "Mesh.h"
+#include "Model.h"
 
 namespace Entry {
 	class RendererAPI 

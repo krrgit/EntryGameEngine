@@ -390,7 +390,7 @@ namespace Entry
 
 		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](MeshRendererComponent& component) 
 		{
-			auto& mesh = component.mesh;
+			auto& mesh = component.model;
 			std::string meshPath = mesh != nullptr ? mesh->GetFilePath().c_str() : "";
 			static std::string filepath = meshPath;
 			static Entity thisEntity = entity;
@@ -408,7 +408,7 @@ namespace Entry
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-					if (wcsstr(path, L".obj") != 0)
+					if (wcsstr(path, L".gltf") != 0)
 					{
 						filepath = (std::filesystem::path(g_AssetPath) / path).string();
 						LoadMeshInMRC(filepath, meshPath, component);
@@ -449,9 +449,9 @@ namespace Entry
 		std::ifstream file(filepath.c_str());
 		if (file.good())
 		{
-			Ref<Mesh> newMesh = Mesh::Create(filepath);
-			component.mesh = newMesh;
-			component.material = newMesh->GetMaterial(0);
+			Ref<Model> newModel = Model::Create(filepath);
+			component.model = newModel;
+			component.material = newModel->GetMaterial(0);
 		}
 		else
 		{

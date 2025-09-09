@@ -1,22 +1,23 @@
 #pragma once
 
-#include "Entry/Renderer/Mesh.h"
+#include "Entry/Renderer/Model.h"
 
 #include "Entry/Renderer/VertexArray.h"
 #include "Entry/Renderer/Buffer.h"
 
+
 namespace Entry {
-	class Citro3DMesh: public Mesh
+	class OpenGLModel: public Model
 	{
 	public:
-		Citro3DMesh(const std::string& path);
-		virtual ~Citro3DMesh();
+		OpenGLModel(const std::string& path);
+		virtual ~OpenGLModel();
 
 		virtual Ref<VertexArray> GetVertexArray() const override { return m_VertexArray; }
-		virtual const std::vector<SubMesh>& GetSubMeshes() const override { return m_SubMeshes; }
+		virtual const std::vector<Mesh>& GetMeshes() const override { return m_Meshes; }
 
 		virtual void Bind() override;
-		
+
 		virtual Ref<Material> GetMaterial(int materialID) override { return materialID < m_MaterialCount ? m_Materials[materialID] : nullptr; };
 		virtual std::vector<Ref<Material>> GetMaterials() override { return m_Materials; };
 
@@ -31,15 +32,14 @@ namespace Entry {
 		virtual std::string GetFilePath() const { return m_FilePath; }
 
 	private:
-		std::string m_FileName;
-		std::string m_FilePath;
+		std::string m_FileName = "";
+		std::string m_FilePath = "";
 		Ref<VertexArray> m_VertexArray;
-		std::vector<SubMesh> m_SubMeshes;
+		std::vector<Mesh> m_Meshes;
 		std::vector<Ref<Material>> m_Materials;
 		std::vector<Ref<Texture2D>> m_Textures;
-		uint16_t m_MaterialCount, m_TextureCount;
-		uint16_t m_PolygonCount, m_VertexCount, m_IndexCount;
-
+		uint16_t m_MaterialCount, m_TextureCount = 0;
+		uint16_t m_PolygonCount, m_VertexCount, m_IndexCount = 0;
 	};
 
 }

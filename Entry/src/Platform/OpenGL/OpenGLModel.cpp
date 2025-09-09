@@ -1,5 +1,5 @@
 #include "etpch.h"
-#include "OpenGLMesh.h"
+#include "OpenGLModel.h"
 #include <sstream>
 #include <initializer_list>
 
@@ -9,17 +9,18 @@
 
 namespace Entry {
 
-	OpenGLMesh::OpenGLMesh(const std::string& path)
+	OpenGLModel::OpenGLModel(const std::string& path)
 	{
 		m_FileName = ExtractFileName(path);
 		m_FilePath = path;
+        std::string directory = ExtractDirectory(path);
+
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
 
-		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(path.c_str()));
-
-		FastOBJToBuffers(&vertices, &indices, obj_mesh);
-		CreateSubMeshes(m_SubMeshes, m_Materials, m_Textures, obj_mesh);
+		Ref<fastObjMesh> obj_Model = Ref<fastObjMesh>(fast_obj_read(path.c_str()));
+		FastOBJToBuffers(&vertices, &indices, obj_Model);
+		FastOBJCreateMeshes(m_Meshes, m_Materials, m_Textures, obj_Model);
 
 		m_VertexArray = VertexArray::Create();
 
@@ -55,18 +56,18 @@ namespace Entry {
 			ET_CORE_INFO("Loaded \"{0}\" successfully!", m_FileName.c_str());
 			ET_CORE_TRACE("Indices: {0}", m_IndexCount);
 			ET_CORE_TRACE("Vertices: {0}", m_VertexCount);
-			ET_CORE_TRACE("SubMeshes: {0}", m_SubMeshes.size());
+			ET_CORE_TRACE("SubModeles: {0}", m_Meshes.size());
 			ET_CORE_TRACE("Materials: {0}", m_MaterialCount);
 			ET_CORE_TRACE("Textures: {0}", m_TextureCount);
 		}
 	}
 
-	OpenGLMesh::~OpenGLMesh()
+	OpenGLModel::~OpenGLModel()
 	{
 		ET_CORE_ERROR("Destroyed {0}", m_FileName.c_str());
 	}
 
-	void OpenGLMesh::Bind()
+	void OpenGLModel::Bind()
 	{
 		m_VertexArray->Bind();
 	}
