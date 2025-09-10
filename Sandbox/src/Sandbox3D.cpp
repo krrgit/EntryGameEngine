@@ -78,10 +78,11 @@ void Sandbox3D::OnAttach()
 #endif
 
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/Example.entry");
+    serializer.Deserialize("romfs:/assets/scenes/testScene.entry");
 
     m_ActiveScene->OnViewportResize(400, 240);
 
+    m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
     //static const C3D_Material material =

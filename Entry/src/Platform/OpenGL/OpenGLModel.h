@@ -15,6 +15,7 @@ namespace Entry {
 
 		virtual Ref<VertexArray> GetVertexArray() const override { return m_VertexArray; }
 		virtual const std::vector<Mesh>& GetMeshes() const override { return m_Meshes; }
+		virtual const Mesh* GetMesh(int meshID) const override { return &m_Meshes[meshID]; }
 
 		virtual void Bind() override;
 

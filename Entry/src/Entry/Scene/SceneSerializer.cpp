@@ -175,7 +175,13 @@ namespace Entry
 			out << YAML::BeginMap; // MeshRendererComponent
 
 			auto& meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
-			out << YAML::Key << "MeshPath" << meshRendererComponent.model->GetFilePath();
+			std::string modelPath = meshRendererComponent.model->GetFilePath();
+
+			std::replace(modelPath.begin(), modelPath.end(), '\\', '/');
+
+			out << YAML::Key << "Model" << modelPath;
+			out << YAML::Key << "MeshID" << meshRendererComponent.mesh->MeshID;
+			out << YAML::Key << "MaterialID" << meshRendererComponent.mesh->MaterialID;
 			out << YAML::EndMap;
 		}
 
@@ -271,8 +277,10 @@ namespace Entry
 				auto meshRendererComponent = entity["MeshRendererComponent"];
 				if (meshRendererComponent)
 				{
-					auto mesh = Model::Create(meshRendererComponent["MeshPath"].as<std::string>());
-					deserializedEntity.AddComponent<MeshRendererComponent>(mesh);
+					Ref<Model> model = Model::Create(meshRendererComponent["Model"].as<std::string>());
+					const Mesh* mesh = model->GetMesh(meshRendererComponent["MeshID"].as<int>());
+					Ref<Material> material = model->GetMaterial(meshRendererComponent["MaterialID"].as<int>());
+					deserializedEntity.AddComponent<MeshRendererComponent>(model, mesh, material);
 				}
 			}
 		}

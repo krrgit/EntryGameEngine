@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Entry/Core/Core.h"
+#include <string>
 
 namespace Entry {
 	class Texture {
 	public:
 		virtual ~Texture() = default;
 		
+		virtual std::string GetName() const = 0;
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;

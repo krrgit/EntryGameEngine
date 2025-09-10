@@ -15,6 +15,8 @@ namespace Entry {
 
 		m_FileName = ExtractFileName(path);
 		m_FilePath = "romfs:/" + path;
+
+		ET_CORE_INFO("Model: {0}", m_FilePath.c_str());
 		
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;
@@ -56,11 +58,11 @@ namespace Entry {
 		}
 		else {
 			ET_CORE_INFO("Loaded \"{0}\" successfully!", m_FileName.c_str());
-			ET_CORE_TRACE("Indices: {0}", m_IndexCount);
-			ET_CORE_TRACE("Vertices: {0}", m_VertexCount);
-			ET_CORE_TRACE("Meshes: {0}", m_Meshes.size());
-			ET_CORE_TRACE("Materials: {0}", m_MaterialCount);
-			ET_CORE_TRACE("Textures: {0}", m_TextureCount);
+			//ET_CORE_TRACE("Indices: {0}", m_IndexCount);
+			//ET_CORE_TRACE("Vertices: {0}", m_VertexCount);
+			//ET_CORE_TRACE("Meshes: {0}", m_Meshes.size());
+			//ET_CORE_TRACE("Materials: {0}", m_MaterialCount);
+			//ET_CORE_TRACE("Textures: {0}", m_TextureCount);
 		}
 	}
 	Citro3DModel::~Citro3DModel()

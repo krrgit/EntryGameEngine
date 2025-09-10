@@ -45,7 +45,7 @@ namespace Entry {
 			auto& ModelRenderer = m_Registry.get<MeshRendererComponent>(entity);
 
 			if (!ModelRenderer.model) continue;
-			Renderer3D::DrawModelEntity(transform.GetTransform(), ModelRenderer, entity);
+			Renderer3D::DrawMeshEntity(transform.GetTransform(), ModelRenderer, entity);
 		}
 
 		Renderer3D::EndScene();
@@ -140,10 +140,12 @@ namespace Entry {
 
 			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
 				auto transform = m_Registry.get<TransformComponent>(entity);
-				auto& ModelRender= m_Registry.get<MeshRendererComponent>(entity);
+				auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
 
-				if (!ModelRender.model) continue;
-				Renderer3D::DrawModel(ModelRender.model, transform.GetTransform());
+				if (!meshRenderer.model) {
+					continue; 
+				}
+				Renderer3D::DrawMesh(transform.GetTransform(), meshRenderer);
 			}
 
 			Renderer3D::EndScene();

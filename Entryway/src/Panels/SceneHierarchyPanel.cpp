@@ -10,6 +10,14 @@ namespace Entry
 {
 	extern const std::filesystem::path g_AssetPath;
 
+	bool IsModelFile(const wchar_t* path)
+	{
+		return	wcsstr(path, L".obj") != 0 ||
+			wcsstr(path, L".dae") != 0 ||
+			wcsstr(path, L".gltf") != 0 ||
+			wcsstr(path, L".fbx") != 0;
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
@@ -25,7 +33,7 @@ namespace Entry
 	{
 		ImGui::Begin("Hierarchy");
 
-		m_Context->m_Registry.each([&](ECS::Entity entityID) 
+		m_Context->m_Registry.each([&](ECS::Entity entityID)
 		{
 			Entity entity{ entityID, m_Context.get() };
 			DrawEntityNode(entity);
@@ -33,9 +41,9 @@ namespace Entry
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
-		
+
 		// Right-click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1 |  ImGuiPopupFlags_NoOpenOverItems))
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 		{
 			if (ImGui::MenuItem("Create Empty"))
 				m_Context->CreateEntity("Entity");
@@ -63,7 +71,7 @@ namespace Entry
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 2.0f));
-		
+
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
@@ -87,7 +95,7 @@ namespace Entry
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity+1000), flags, tag.c_str());
+			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity + 1000), flags, tag.c_str());
 			if (opened)
 				ImGui::TreePop();
 
@@ -213,9 +221,9 @@ namespace Entry
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string name, Entity entity, UIFunction uiFunction) 
+	static void DrawComponent(const std::string name, Entity entity, UIFunction uiFunction)
 	{
-		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap 
+		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
 
 		if (entity.HasComponent<T>())
@@ -262,8 +270,9 @@ namespace Entry
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		float columnWidth = 130.0f;
-		
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		float columnWidth = std::max(130.0f, panelWidth * 0.4f);
+
 		if (entity.HasComponent<TagComponent>())
 		{
 			static Entity thisEntity = entity;
@@ -311,7 +320,7 @@ namespace Entry
 		}
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component) 
+		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component)
 		{
 			DrawVec3Control("Position", component.Position, 0.0f, columnWidth);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
@@ -388,76 +397,67 @@ namespace Entry
 			}
 		});
 
-		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](MeshRendererComponent& component) 
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](MeshRendererComponent& component)
 		{
-			auto& mesh = component.model;
-			std::string meshPath = mesh != nullptr ? mesh->GetFilePath().c_str() : "";
-			static std::string filepath = meshPath;
-			static Entity thisEntity = entity;
+			auto& mesh = component.mesh;
+			std::string meshName = mesh != nullptr ? component.mesh->Name.c_str() : "None";
+			static std::string modelPath = component.model ? component.model->GetFilePath().c_str() : "None";
 
-			if (thisEntity != entity)
-			{
-				filepath = meshPath;
-				thisEntity = entity;
-			}
 
-			DrawDragnDropField("Mesh", filepath, columnWidth);
+			DrawDragnDropField("Model", modelPath, columnWidth);
 
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-					if (wcsstr(path, L".gltf") != 0)
+					if (IsModelFile(path))
 					{
-						filepath = (std::filesystem::path(g_AssetPath) / path).string();
-						LoadMeshInMRC(filepath, meshPath, component);
+						modelPath = (std::filesystem::path(g_AssetPath) / path).string();
+						LoadMeshInMRC(modelPath, 0, component); // TODO: Set properly when meshes are displayed in ContentBrowserPanel
 					}
 				}
 				ImGui::EndDragDropTarget();
 			}
-			ImGui::Columns(1); // Needed after DrawDragnDropField()
+			ImGui::Columns(1);
+
+			//DrawDragnDropField("Mesh", meshName, columnWidth);
+			int meshID = component.mesh ? component.mesh->MeshID : 0;
+			int maxID = component.model ? component.model->GetMeshes().size() - 1 : 0;
+			if (ImGui::DragInt("MeshID", &meshID, 0.1f, 0, maxID) && component.model)
+			{
+				component.mesh = component.model->GetMesh(meshID);
+				component.material = component.model->GetMaterial(component.mesh->MaterialID);
+			}
+
+			ImGui::Columns(1); // Reset after DrawDragnDropField()
 
 			std::string label = "Material";
 			std::string mtlName = component.material ? component.material->GetProps().Name : "None";
 			DrawDragnDropField(label, mtlName, columnWidth);
 			ImGui::Columns(1);
 
-			// TODO: Add default material when none supplied
-			//if (ImGui::TreeNodeEx((void*)typeid(Material).hash_code(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth, "Materials"))
-			//{
-			//	static size_t size = mesh != nullptr ? mesh->GetMaterialCount() : 1;
-			//	ImGui::Text("Size: %d", size);
-			//	size_t index = 0;
-
-			//	if (mesh != nullptr)
-			//	{
-			//		for (auto material : mesh->GetMaterials())
-			//		{
-			//			//ImGui::Text("Element %d: %s", index++, material->GetProps().Name.c_str());
-			//			std::string label = "Element " + std::to_string(index++);
-			//			label += ": ";
-			//			DrawDragnDropField(label, material->GetProps().Name, 130.0f);
-			//		}
-			//	}
-			//	ImGui::TreePop();
-			//}
+			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
+			DrawDragnDropField("Texture", texName, columnWidth);
+			ImGui::Columns(1); // Reset after DrawDragnDropField()
 		});
 	}
-	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, std::string& currentPath, MeshRendererComponent& component)
+	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, int meshID, MeshRendererComponent& component)
 	{
 		std::ifstream file(filepath.c_str());
 		if (file.good())
 		{
-			Ref<Model> newModel = Model::Create(filepath);
-			component.model = newModel;
-			component.material = newModel->GetMaterial(0);
+			Ref<Model> model = Model::Create(filepath);
+			auto mesh = model->GetMesh(meshID);
+
+			component.model = model;
+			component.mesh = mesh; // TODO: only allow dragging of meshes not models
+			component.material = model->GetMaterial(mesh->MaterialID);
 		}
 		else
 		{
 			auto errorMsg = filepath + " does not exist!";
 			ET_CORE_ERROR(errorMsg);
-			filepath = currentPath;
 		}
 	}
 }

@@ -12,11 +12,13 @@
 namespace Entry {
 
 	struct Mesh {
-		uint32_t indexCount;
-		uint32_t indexOffset;
-		uint32_t vertexCount;
-		uint32_t* vertexOffset;
+		std::string Name;
+		uint32_t IndexCount;
+		uint32_t IndexOffset;
+		uint32_t MeshID;
 		uint32_t MaterialID;
+		uint32_t VertexCount;
+		uint32_t PolygonCount;
 	};
 
 	class Model {
@@ -26,6 +28,7 @@ namespace Entry {
 
 		virtual Ref<VertexArray> GetVertexArray() const = 0;
 		virtual const std::vector<Mesh>& GetMeshes() const = 0;
+		virtual const Mesh* GetMesh(int meshID) const = 0;
 
 		virtual void Bind() = 0;
 		virtual Ref<Material> GetMaterial(int materialID) = 0;

@@ -108,6 +108,8 @@ namespace Entry {
 		std::string gfxPath = path;
 		bool correctFormat = GFXTexturePath(gfxPath);
 
+		ET_CORE_INFO("Texture: {0}", gfxPath.c_str());
+
 		if (!correctFormat) return;
 
 		if (!loadTextureFromFile(&m_Texture, NULL, gfxPath.c_str())) {

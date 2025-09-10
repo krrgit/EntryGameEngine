@@ -14,6 +14,7 @@ namespace Entry {
 		OpenGLTexture2D(const std::string& path);
 		virtual ~OpenGLTexture2D();
 
+		virtual std::string GetName() const override { return m_Name; };
 		virtual uint32_t GetWidth() const override { return m_Width;  }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
@@ -27,6 +28,7 @@ namespace Entry {
 			return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
 		}
 	private:
+		std::string m_Name;
 		std::string m_Path;
 		uint32_t m_Width, m_Height;
 		uint32_t m_RendererID;

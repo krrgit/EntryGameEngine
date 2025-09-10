@@ -13,9 +13,9 @@ namespace Entry
 	public:
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& context);
-		
+
 		void SetContext(const Ref<Scene>& context);
-		
+
 		void OnImGuiRender();
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
@@ -25,7 +25,7 @@ namespace Entry
 		void DrawEntityNode(Entity entity);
 		void DrawComponents(Entity entity);
 
-		void LoadMeshInMRC(std::string& filepath, std::string& currentPath, MeshRendererComponent& component);
+		void LoadMeshInMRC(std::string& filepath, int meshID, MeshRendererComponent& component);
 	private:
 		Ref<Scene> m_Context;
 

@@ -75,9 +75,9 @@ namespace Entry
 				}
 
 				// Append to vertex buffer
-				outVertices->push_back(px);
+				outVertices->push_back(-px);
 				outVertices->push_back(py);
-				outVertices->push_back(pz);
+				outVertices->push_back(-pz);
 				outVertices->push_back(u);
 				outVertices->push_back(v);
 				outVertices->push_back(nx);
@@ -135,9 +135,13 @@ namespace Entry
 			uint32_t indexCount = nextIndexOffset - currentObj.index_offset;
 
 			Mesh mesh {
+                currentObj.name,
 				indexCount,
 				currentObj.index_offset,
-				obj_mesh->face_materials[currentObj.face_offset]
+                o,
+				obj_mesh->face_materials[currentObj.face_offset],
+                currentObj.face_count * 3,
+                currentObj.face_count,
 			};
 			meshes.push_back(mesh);
 		}

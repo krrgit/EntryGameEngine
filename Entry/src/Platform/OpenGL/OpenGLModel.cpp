@@ -56,7 +56,7 @@ namespace Entry {
 			ET_CORE_INFO("Loaded \"{0}\" successfully!", m_FileName.c_str());
 			ET_CORE_TRACE("Indices: {0}", m_IndexCount);
 			ET_CORE_TRACE("Vertices: {0}", m_VertexCount);
-			ET_CORE_TRACE("SubModeles: {0}", m_Meshes.size());
+			ET_CORE_TRACE("Meshes: {0}", m_Meshes.size());
 			ET_CORE_TRACE("Materials: {0}", m_MaterialCount);
 			ET_CORE_TRACE("Textures: {0}", m_TextureCount);
 		}

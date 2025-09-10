@@ -11,6 +11,7 @@ namespace Entry {
 		Citro3DTexture2D(const std::string& path);
 		virtual ~Citro3DTexture2D();
 
+		virtual std::string GetName() const override { return m_Name; };
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 
@@ -25,6 +26,7 @@ namespace Entry {
 			return m_RendererID == ((Citro3DTexture2D&)other).m_RendererID;
 		}
 	private:
+		std::string m_Name;
 		uint32_t m_Width, m_Height;
 		int m_RendererID;
 		GPU_TEXCOLOR m_DataFormat;

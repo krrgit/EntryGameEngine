@@ -899,7 +899,7 @@ namespace Entry {
         for (auto mesh : Model->GetMeshes())
         {
             Model->GetMaterial(mesh.MaterialID)->Bind();
-            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.indexCount, mesh.indexOffset);
+            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.IndexCount, mesh.IndexOffset);
         }
 
         s_Data.Stats.PolygonCount += Model->GetPolygonCount();
@@ -919,13 +919,13 @@ namespace Entry {
         s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
 
         //Model->Bind();
-        s_Data.WhiteTexture->Bind();
         Model->GetVertexArray()->Bind();
+
 
         for (auto mesh : Model->GetMeshes())
         {
             Model->GetMaterial(mesh.MaterialID)->Bind();
-            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.indexCount, mesh.indexOffset);
+            RenderCommand::DrawIndexed(Model->GetVertexArray(), mesh.IndexCount, mesh.IndexOffset);
         }
 
         s_Data.Stats.PolygonCount += Model->GetPolygonCount();
@@ -934,13 +934,37 @@ namespace Entry {
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer3D::DrawModelEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
+    void Renderer3D::DrawMesh(const glm::mat4& transform, MeshRendererComponent& mrc)
+    {
+        ET_PROFILE_FUNCTION();
+
+        if (!mrc.material) return;
+
+        s_Data.LitTextureShader->Bind();
+        s_Data.LitTextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+
+        glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
+        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
+
+        //Model->Bind();
+        mrc.model->GetVertexArray()->Bind();
+
+        mrc.model->GetMaterial(mrc.mesh->MaterialID)->Bind();
+        RenderCommand::DrawIndexed(mrc.model->GetVertexArray(), mrc.mesh->IndexCount, mrc.mesh->IndexOffset);
+
+        s_Data.Stats.PolygonCount += mrc.mesh->PolygonCount;
+        s_Data.Stats.VertexCount += mrc.mesh->VertexCount;
+        s_Data.Stats.IndexCount += mrc.mesh->IndexCount;
+        s_Data.Stats.DrawCalls++;
+    }
+
+    void Renderer3D::DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
     {
         if (!mrc.material)
             return;
 
         s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
-        DrawModel(mrc.model, transform);
+        DrawMesh(transform, mrc);
     }
 
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {
