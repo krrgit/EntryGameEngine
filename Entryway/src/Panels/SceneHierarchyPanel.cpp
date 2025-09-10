@@ -424,7 +424,7 @@ namespace Entry
 			//DrawDragnDropField("Mesh", meshName, columnWidth);
 			int meshID = component.mesh ? component.mesh->MeshID : 0;
 			int maxID = component.model ? component.model->GetMeshes().size() - 1 : 0;
-			if (ImGui::DragInt("MeshID", &meshID, 0.1f, 0, maxID) && component.model)
+			if (ImGui::DragInt("MeshID", &meshID, 0.1f, 0, maxID, "%d", ImGuiSliderFlags_AlwaysClamp) && component.model)
 			{
 				component.mesh = component.model->GetMesh(meshID);
 				component.material = component.model->GetMaterial(component.mesh->MaterialID);
