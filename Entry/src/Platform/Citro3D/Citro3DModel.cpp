@@ -22,7 +22,7 @@ namespace Entry {
 		Ref<fastObjMesh> obj_mesh = Ref<fastObjMesh>(fast_obj_read(m_FilePath.c_str()));
 
 		FastOBJToBuffers(&vertices, &indices, obj_mesh);
-		CreateMeshes(m_Meshes, m_Materials, m_Textures, obj_mesh);
+		FastOBJCreateMeshes(m_Meshes, m_Materials, m_Textures, obj_mesh);
 
 		m_VertexArray = VertexArray::Create();
 
