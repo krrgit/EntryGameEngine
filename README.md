@@ -29,36 +29,46 @@ Sandbox()
 # Features and Status
 ## PC Editor
 [x] Port ImGui to work in-engine.
-[ ] Render screen(s) to ImGui.
-[ ] Create Layout + Windows.
-[ ] Implement OpenGL API.
-[ ] Build Standalone Windows program.
-[ ] Feature to compile game from editor.
+[x] Render Top Screen to ImGui.
+[x] Create Layout + Windows.
+[x] Implement OpenGL API.
+[x] Build Standalone Windows program.
+[ ] Play/Pause/Reset Scenes.
+[ ] Render mesh wireframe in editor camera. 
+[ ] Render editor grid in editor camera.
+[ ] Render collider wireframes.
+[ ] Options to build/clean build/clean game from editor.
+[ ] Bottom screen scene editing into editor.
+[ ] Render Bottom Screen to ImGui (need to figure out how to handle bottom screen.)
 
 ## Renderer
 [x] Simple3D Renderer (has Camera, renders cubes, quads.)
 [x] Implement .obj rendering support. (fastObjMesh)
-[x] Simple Batch Rendering (atm batch by texture, create multiple batches for same texture if needed. Maybe batch by materal in the future?)
-[x] Instancing.
-[ ] Implement Materials.
-[ ] Load .mtl files into materials.
-[ ] Implement Phong Lighting.
+[x] Implement Materials.
+[x] Load .mtl files into materials.
+[x] Support other model files (.fbx)
+[ ] Implement Lighting.
+[ ] Shaders for certain art styles (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
+[ ] "Bind" shaders to materials.
+[ ] Implement Shadows. (Realtime(?), Projection, faded circle fake shadow thing)
 [ ] Implement Effects (built-in to the GPU.)
-[ ] Support other model files (.fbx)
-[ ] Implement Texture Generation.
-[ ] Implement Shadows (?)
 [ ] Implement Animations.
+[ ] (Refactor for Meshes) Simple Batch Rendering (works for quads/cubes only (useless.))
+[ ] Implement Texture Generation.
 
 ## Game Systems (the big ones)
-[ ] Entity Component System (Flecs? needs C++11 support)
-[ ] Scene Management System
+[x] Entity Component System (Custom ECS system)
+[x] Scene Management System
+[-] Native Scripting/C# Scripting (C# not implemented)
 [ ] Physics Engine + Collision System/Components (Bullet? Newton Dynamics? PhysX? Jolt?)
-[ ] Scripting
+[ ] Asset Management System
 [ ] Audio
 [ ] Networking (?)
 
 ## Quality of Life Things
-[ ] Use premake instead of make so it's easy to build.
+[x] Use premake instead of make so it's easy to build.
+[ ] (Editor) Drag-n-drop models into scene to create entity.
+[ ] (Editor) Copy/Paste entities/components.
  
 ## Renderer API Abstraction
 There exists some abstraction between the renderer and the Citro3D library. If there are no plans to implement an editor application on PC, or support other APIs, this abstraction may be removed for potentially better performance.
