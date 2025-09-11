@@ -1,5 +1,6 @@
 #include "etpch.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
+#include "Entry/Utils/StringUtils.h"
 
 #include <stb_image.h>
 
@@ -47,6 +48,8 @@ namespace Entry {
 		: m_Path(path)
 	{
 		ET_PROFILE_FUNCTION();
+
+		m_Name = ExtractFileName(path);
 
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);

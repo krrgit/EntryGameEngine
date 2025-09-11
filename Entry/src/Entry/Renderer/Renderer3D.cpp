@@ -934,7 +934,7 @@ namespace Entry {
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer3D::DrawMesh(const glm::mat4& transform, MeshRendererComponent& mrc)
+    void Renderer3D::DrawMesh(MeshRendererComponent& mrc, const glm::mat4& transform)
     {
         ET_PROFILE_FUNCTION();
 
@@ -958,13 +958,13 @@ namespace Entry {
         s_Data.Stats.DrawCalls++;
     }
 
-    void Renderer3D::DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID)
+    void Renderer3D::DrawMeshEntity(MeshRendererComponent& mrc, const glm::mat4& transform, int entityID)
     {
         if (!mrc.material)
             return;
 
         s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
-        DrawMesh(transform, mrc);
+        DrawMesh(mrc, transform);
     }
 
     int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {

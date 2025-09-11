@@ -35,9 +35,9 @@ namespace Entry {
 
 			static void DrawModel(Ref<Model> Model, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
 			static void DrawModel(Ref<Model> Model, const glm::mat4& transform);
-			static void DrawMesh(const glm::mat4& transform, MeshRendererComponent& mrc);
+			static void DrawMesh(MeshRendererComponent& mrc, const glm::mat4& transform);
 
-			static void DrawMeshEntity(const glm::mat4& transform, MeshRendererComponent& mrc, int entityID);
+			static void DrawMeshEntity(MeshRendererComponent& mrc, const glm::mat4& transform, int entityID);
 	
 			struct Statistics {
 				uint32_t DrawCalls = 0;

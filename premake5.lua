@@ -21,13 +21,14 @@ IncludeDir["stb_image"] = "Entry/vendor/stb_image"
 IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
 IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
--- IncludeDir["tinygltf"] = "Entry/vendor/tinygltf"
+IncludeDir["assimp"] = "Entry/vendor/assimp/assimp/include"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
 	include "Entry/vendor/Glad"
 	include "Entry/vendor/imgui-3ds"
 	include "Entry/vendor/yaml-cpp"
+	include "Entry/vendor/assimp"
 
 group ""
 
@@ -61,9 +62,6 @@ project "Entry"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
-		-- "%{prj.name}/vendor/tinygltf/**.h",
-		-- "%{prj.name}/vendor/tinygltf/**.cpp",
-		-- "%{prj.name}/vendor/tinygltf/**.hpp",
 	}
 
 	defines
@@ -85,7 +83,7 @@ project "Entry"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.tinygltf}",
+		"%{IncludeDir.assimp}",
 	}
 
 	links 
@@ -96,6 +94,7 @@ project "Entry"
 		"yaml-cpp",
 		"opengl32.lib",
 		"dwmapi.lib",
+		"assimp"
 	}
 
 	filter "files:Entry/vendor/ImGuizmo/**.cpp"
@@ -226,7 +225,7 @@ project "Entryway" -- EDITOR
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		-- "%{IncludeDir.tinygltf}",
+		"%{IncludeDir.assimp}",
 	}
 
 	links

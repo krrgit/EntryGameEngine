@@ -7,35 +7,10 @@
 #include <string>
 #include <glm/glm.hpp>
 
-//#include <tiny_gltf.h>
+#include "StringUtils.h"
 
 namespace Entry
 {
-	static std::string ExtractFileName(const std::string& path)
-	{
-		// Find last slash or backslash
-		size_t slashPos = path.find_last_of("/\\");
-		std::string filename = (slashPos == std::string::npos) ? path : path.substr(slashPos + 1);
-
-		// Find last dot
-		size_t dotPos = filename.find_last_of('.');
-		if (dotPos == std::string::npos)
-		{
-			return filename; // no extension
-		}
-		return filename.substr(0, dotPos);
-	}
-
-	static std::string ExtractDirectory(const std::string& path)
-	{
-		// Find last slash or backslash
-		size_t slashPos = path.find_last_of("/\\");
-		std::string directory = (slashPos == std::string::npos) ? path : path.substr(0, slashPos);
-
-		return directory;
-	}
-
-
 	static void FastOBJToBuffers(
         std::vector<float>* outVertices, 
         std::vector<uint16_t>* outIndices, 

@@ -1,7 +1,9 @@
 #include "etpch.h"
 #include "Citro3DTexture.h"
+#include "Entry/Utils/StringUtils.h"
 
 #include <algorithm>
+
 
 #define MIN_TEX_DIMENSION 8
 
@@ -37,27 +39,6 @@ namespace Entry {
 		// Delete the t3x object since we don't need it
 		Tex3DS_TextureFree(t3x);
 		return true;
-	}
-
-	bool FixTexturePath(std::string& filename) {
-		const std::string prefix = "romfs:/";
-		const std::string from = ".png";
-		const std::string to = ".t3x";
-
-		// Ensure prefix
-		if (filename.rfind(prefix, 0) != 0) { // doesn't start with prefix
-			filename = prefix + filename;
-		}
-
-		// Replace .png with .t3x
-		size_t pos = filename.rfind(from);
-		if (pos != std::string::npos && pos == filename.size() - from.size()) {
-			filename.replace(pos, from.size(), to);
-			return true;
-		}
-
-		ET_CORE_ERROR("%s: Only .png texture files are supported!", filename.c_str());
-		return false;
 	}
 
 	bool GFXTexturePath(std::string& filename) {
@@ -107,6 +88,8 @@ namespace Entry {
 		// Note: to use, copy .t3x from /build to same filepath as texture file
 		std::string gfxPath = path;
 		bool correctFormat = GFXTexturePath(gfxPath);
+
+		m_Name = ExtractFileName(path);
 
 		ET_CORE_INFO("Texture: {0}", gfxPath.c_str());
 

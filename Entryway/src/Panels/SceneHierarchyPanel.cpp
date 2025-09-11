@@ -403,7 +403,6 @@ namespace Entry
 			std::string meshName = mesh != nullptr ? component.mesh->Name.c_str() : "None";
 			static std::string modelPath = component.model ? component.model->GetFilePath().c_str() : "None";
 
-
 			DrawDragnDropField("Model", modelPath, columnWidth);
 
 			if (ImGui::BeginDragDropTarget())
@@ -424,7 +423,7 @@ namespace Entry
 			//DrawDragnDropField("Mesh", meshName, columnWidth);
 			int meshID = component.mesh ? component.mesh->MeshID : 0;
 			int maxID = component.model ? component.model->GetMeshes().size() - 1 : 0;
-			if (ImGui::DragInt("MeshID", &meshID, 0.1f, 0, maxID, "%d", ImGuiSliderFlags_AlwaysClamp) && component.model)
+			if (ImGui::DragInt("MeshID", &meshID, 0.1f, 0, maxID, "%d", ImGuiSliderFlags_ClampZeroRange | ImGuiSliderFlags_ClampOnInput) && component.model)
 			{
 				component.mesh = component.model->GetMesh(meshID);
 				component.material = component.model->GetMaterial(component.mesh->MaterialID);
@@ -438,7 +437,7 @@ namespace Entry
 			ImGui::Columns(1);
 
 			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
-			DrawDragnDropField("Texture", texName, columnWidth);
+			DrawDragnDropField("Diffuse Map", texName, columnWidth);
 			ImGui::Columns(1); // Reset after DrawDragnDropField()
 		});
 	}
