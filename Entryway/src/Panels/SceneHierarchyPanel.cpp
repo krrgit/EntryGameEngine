@@ -31,6 +31,9 @@ namespace Entry
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		bool show = true;
+		ImGui::ShowDemoWindow(&show);
+
 		ImGui::Begin("Hierarchy");
 
 		m_Context->m_Registry.each([&](ECS::Entity entityID)
@@ -240,7 +243,7 @@ namespace Entry
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::PopFont();
-			ImGui::SameLine(contenRegionAvailable.x - lineHeight * 0.5f);
+			ImGui::SameLine(contenRegionAvailable.x + 1.0f - lineHeight * 0.5f);
 
 			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
 			{
@@ -273,20 +276,24 @@ namespace Entry
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		float columnWidth = std::max(130.0f, panelWidth * 0.4f);
 
+
 		if (entity.HasComponent<TagComponent>())
 		{
 			static Entity thisEntity = entity;
+			bool entityDeleted = !thisEntity.HasComponent<TagComponent>();
 
-			// thisEntity was deleted
-			if (!thisEntity.HasComponent<TagComponent>())
+			if (entityDeleted)
 				thisEntity = entity;
-
+			
 			auto& tag = thisEntity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
 			ImGuiIO& io = ImGui::GetIO();
 			auto boldFont = io.Fonts->Fonts[0];
+
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - GImGui->Style.FramePadding.x - 92.0f);
+
 			ImGui::PushFont(boldFont);
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
@@ -295,6 +302,10 @@ namespace Entry
 
 			thisEntity = entity;
 			ImGui::PopFont();
+
+			ImGui::PopItemWidth();
+
+			ImGui::SetItemTooltip("UUID: %u", entity.GetUUID());
 		}
 
 		ImGui::SameLine();
@@ -401,7 +412,7 @@ namespace Entry
 		{
 			auto& mesh = component.mesh;
 			std::string meshName = mesh != nullptr ? component.mesh->Name.c_str() : "None";
-			static std::string modelPath = component.model ? component.model->GetFilePath().c_str() : "None";
+			std::string modelPath = component.model ? component.model->GetFilePath().c_str() : "None";
 
 			DrawDragnDropField("Model", modelPath, columnWidth);
 
