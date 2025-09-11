@@ -162,6 +162,7 @@
     <ClInclude Include="src\Entry\Core\Log.h" />
     <ClInclude Include="src\Entry\Core\MouseCodes.h" />
     <ClInclude Include="src\Entry\Core\Timestep.h" />
+    <ClInclude Include="src\Entry\Core\UUID.h" />
     <ClInclude Include="src\Entry\Core\Window.h" />
     <ClInclude Include="src\Entry\Debug\Instrumentor.h" />
     <ClInclude Include="src\Entry\Events\ApplicationEvent.h" />
@@ -741,6 +742,7 @@
     <ClCompile Include="src\Entry\Core\Layer.cpp" />
     <ClCompile Include="src\Entry\Core\LayerStack.cpp" />
     <ClCompile Include="src\Entry\Core\Log.cpp" />
+    <ClCompile Include="src\Entry\Core\UUID.cpp" />
     <ClCompile Include="src\Entry\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Entry\Log\LogLayer.cpp" />
     <ClCompile Include="src\Entry\Math\MathUtils.cpp" />

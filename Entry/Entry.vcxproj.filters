@@ -1858,6 +1858,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Utils\StringUtils.h" />
+    <ClInclude Include="src\Entry\Core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1986,5 +1987,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Entry\Core\UUID.cpp" />
   </ItemGroup>
 </Project>

@@ -116,9 +116,11 @@ namespace Entry
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		ET_CORE_ASSERT(entity.HasComponent<IDComponent>());
+
 		out << YAML::BeginMap; // Entity
 		out << YAML::Key << "Entity";
-		out << YAML::Value << "1239876591047";  // TODO: Entity ID goes here
+		out << YAML::Value << entity.GetUUID();  // TODO: Entity ID goes here
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -242,7 +244,7 @@ namespace Entry
 				
 				ET_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
+				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)

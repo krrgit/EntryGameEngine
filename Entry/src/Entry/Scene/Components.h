@@ -1,9 +1,9 @@
 #pragma once
 
+#include "SceneCamera.h"
 #include "Entry/Core/Core.h"
 #include "Entry/Renderer/Model.h"
-#include "SceneCamera.h"
-#include "ScriptableEntity.h"
+#include "Entry/Core/UUID.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,6 +13,17 @@
 
 namespace Entry
 {
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+		IDComponent(uint64_t _id)
+			: ID(_id)
+		{}
+
+	};
 
 	struct TagComponent
 	{
@@ -71,6 +82,8 @@ namespace Entry
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	// Forward Declaration
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* Instance = nullptr;

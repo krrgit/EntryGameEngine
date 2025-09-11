@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Scene.h"
-
+#include "Entry/Core/UUID.h"
 #include "Entry/ECS/ecs.hpp"
+#include "Components.h"
+
 
 namespace Entry {
 
@@ -39,9 +41,10 @@ namespace Entry {
 		}
 
 		operator bool() const { return m_EntityHandle != 0; }
-		//operator ECS::Entity() const { return m_EntityHandle; }
+		//operator ECS::Entity() const { return m_EntityHandle; } // Uncomment?
 		operator uint32_t() const { return m_EntityHandle; }
 
+		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
 		bool operator==(const Entity& other) const { 
 			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;

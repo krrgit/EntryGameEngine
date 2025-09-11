@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Entry/Core/UUID.h"
 #include "Entry/Core/Timestep.h"
-#include "Entry/Renderer/EditorCamera.h"
-
 #include "Entry/ECS/ecs.hpp"
+#include "Entry/Renderer/EditorCamera.h"
 
 namespace Entry {
 
@@ -16,6 +16,7 @@ namespace Entry {
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateEditor(Timestep ts, uint16_t screenSide, EditorCamera& camera);

@@ -946,7 +946,6 @@ namespace Entry {
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
         s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
 
-        //Model->Bind();
         mrc.model->GetVertexArray()->Bind();
 
         mrc.model->GetMaterial(mrc.mesh->MaterialID)->Bind();
