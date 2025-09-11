@@ -26,11 +26,15 @@ namespace Entry {
         void NewScene();
         void OpenScene();
         void OpenScene(const std::filesystem::path& path); // C++17
-        void SaveScene();
         void SaveSceneAs();
+        void SaveScene();
+
+        void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
         
         void OnScenePlay();
         void OnSceneStop();
+
+        void OnDuplicateEntity();
 
         // UI Panels
         void UI_Toolbar();
@@ -54,7 +58,7 @@ namespace Entry {
 
             EditorCamera m_EditorCamera;
 
-            std::string m_SceneFilePath = "";
+            std::filesystem::path m_EditorScenePath;
             int m_GizmoType = -1;
 
             enum class SceneState

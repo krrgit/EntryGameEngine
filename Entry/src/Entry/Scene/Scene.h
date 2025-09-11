@@ -26,6 +26,8 @@ namespace Entry {
 		void OnUpdateRuntime(Timestep ts, uint16_t screenSide);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		Entity DuplicateEntity(Entity entity);
+
 		Entity GetPrimaryCameraEntity();
 	private:
 		template<typename T>

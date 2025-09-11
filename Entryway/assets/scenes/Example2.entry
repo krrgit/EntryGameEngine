@@ -33,7 +33,7 @@ Entities:
     TagComponent:
       Tag: Shield
     TransformComponent:
-      Position: [-4.5999999, 2, 0]
+      Position: [-1.85263491, 2, 0]
       Rotation: [0, 0, 0]
       Scale: [0.0199999996, 0.0199999996, 0.0199999996]
     MeshRendererComponent:

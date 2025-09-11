@@ -30,5 +30,7 @@ namespace Entry
 		Ref<Scene> m_Context;
 
 		Entity m_SelectionContext;
+
+		Entity m_EntityToDuplicate;
 	};
 }

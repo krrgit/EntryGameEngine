@@ -36,6 +36,13 @@ namespace Entry {
 		}
 	}
 
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+	}
+
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
 	{
 		Ref<Scene> newScene;
@@ -221,6 +228,18 @@ namespace Entry {
 			else 
 				cameraComponent.Camera.SetViewportSize(width, height); // Do something else?
 		}
+	}
+
+	Entity Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetName());
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+
+		return newEntity;
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()

@@ -59,6 +59,13 @@ namespace Entry
 		}
 
 		ImGui::End();
+
+		if (m_EntityToDuplicate)
+		{
+			auto newEntity = m_Context->DuplicateEntity(m_EntityToDuplicate);
+			m_EntityToDuplicate = {};
+			m_SelectionContext = newEntity;
+		}
 	}
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
 	{
@@ -86,6 +93,11 @@ namespace Entry
 		//// Right-click on entity
 		if (ImGui::BeginPopupContextItem())
 		{
+			if (ImGui::MenuItem("Duplicate"))
+				m_EntityToDuplicate = entity;
+
+			ImGui::Separator();
+
 			if (ImGui::MenuItem("Delete"))
 				entityDeleted = true;
 
