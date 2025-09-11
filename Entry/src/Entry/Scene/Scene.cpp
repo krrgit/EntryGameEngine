@@ -21,6 +21,53 @@ namespace Entry {
 		ET_CORE_INFO("Destroy Scene");
 	}
 
+	template<typename Component>
+	static void CopyComponent(ECS::Registry& dst, ECS::Registry& src, const std::unordered_map<UUID, ECS::Entity>& entityMap)
+	{
+		auto view = src.view<Component>();
+		for (auto e : view)
+		{
+			UUID uuid = src.get<IDComponent>(e).ID;
+			ET_CORE_ASSERT(entityMap.find(uuid) != entityMap.end());
+			ECS::Entity dstEntityID = entityMap.at(uuid);
+
+			auto& component = src.get<Component>(e);
+			dst.emplace_or_replace<Component>(dstEntityID, component);
+		}
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> other)
+	{
+		Ref<Scene> newScene;
+		newScene.reset(new Scene());
+
+		newScene->m_ViewportWidth = other->m_ViewportWidth;
+		newScene->m_ViewportHeight = other->m_ViewportHeight;
+
+		std::unordered_map<UUID, ECS::Entity> entityMap;
+
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = newScene->m_Registry;
+
+		// Create Entities in new scene
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto& e : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(e).Tag;
+			Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
+			entityMap[uuid] = (ECS::Entity)newEntity;
+		}
+
+		// Copy Components (except IDComponent and TagComponent)
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+
+		return newScene;
+	}
+
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		return CreateEntityWithUUID(UUID(), name);
@@ -171,6 +218,8 @@ namespace Entry {
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			if (!cameraComponent.FixedAspectRatio)
 				cameraComponent.Camera.SetViewportSize(width, height);
+			else 
+				cameraComponent.Camera.SetViewportSize(width, height); // Do something else?
 		}
 	}
 

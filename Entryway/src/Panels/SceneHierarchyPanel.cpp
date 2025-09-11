@@ -31,9 +31,6 @@ namespace Entry
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		bool show = true;
-		ImGui::ShowDemoWindow(&show);
-
 		ImGui::Begin("Hierarchy");
 
 		m_Context->m_Registry.each([&](ECS::Entity entityID)
@@ -279,13 +276,13 @@ namespace Entry
 
 		if (entity.HasComponent<TagComponent>())
 		{
-			static Entity thisEntity = entity;
-			bool entityDeleted = !thisEntity.HasComponent<TagComponent>();
+			//static Entity thisEntity = entity;
+			//bool entityDeleted = !thisEntity.HasComponent<TagComponent>();
 
-			if (entityDeleted)
-				thisEntity = entity;
+			//if (entityDeleted)
+			//	thisEntity = entity;
 			
-			auto& tag = thisEntity.GetComponent<TagComponent>().Tag;
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
@@ -300,7 +297,7 @@ namespace Entry
 				tag = std::string(buffer);
 			}
 
-			thisEntity = entity;
+			//thisEntity = entity;
 			ImGui::PopFont();
 
 			ImGui::PopItemWidth();

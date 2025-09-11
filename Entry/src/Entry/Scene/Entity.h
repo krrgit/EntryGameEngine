@@ -41,7 +41,7 @@ namespace Entry {
 		}
 
 		operator bool() const { return m_EntityHandle != 0; }
-		//operator ECS::Entity() const { return m_EntityHandle; } // Uncomment?
+		//operator ECS::Entity() const { return m_EntityHandle; } // operator uint32_t() is the same
 		operator uint32_t() const { return m_EntityHandle; }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().ID; }

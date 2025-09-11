@@ -548,14 +548,23 @@ namespace Entry {
     }
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
-        m_ActiveScene.reset(new Scene());
-        m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        if (m_SceneState != SceneState::Edit)
+            OnSceneStop();
 
-        SceneSerializer serializer(m_ActiveScene);
-        serializer.Deserialize(path.string());
+        Ref<Scene> newScene;
+        newScene.reset(new Scene());
 
-        m_SceneFilePath = path.string();
+        SceneSerializer serializer(newScene);
+        
+        if (serializer.Deserialize(path.string()))
+        {
+            m_EditorScene = newScene;
+            m_EditorScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+            m_SceneFilePath = path.string();
+
+            m_ActiveScene = m_EditorScene;
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        }
     }
 
     void EditorLayer::SaveSceneAs()
@@ -586,10 +595,16 @@ namespace Entry {
     void EditorLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
+        m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        //m_RuntimeScene->OnRuntimeStart(); // TODO
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
+        //m_ActiveScene->OnRuntimeStop(); // TODO
+        m_ActiveScene = m_EditorScene;
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 }

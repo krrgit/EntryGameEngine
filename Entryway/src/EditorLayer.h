@@ -48,6 +48,7 @@ namespace Entry {
             glm::vec2 m_GameViewportSize = { 0, 0 };
         
             Ref<Scene> m_ActiveScene;
+            Ref<Scene> m_EditorScene;
 
             bool m_PrimaryCamera = true;
 

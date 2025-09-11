@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <unordered_map>
 #include <vector>
 #include <cstdint>
@@ -112,13 +112,45 @@ namespace Entry
                     std::forward_as_tuple(std::forward<Args>(args)...)
                 );
                 return res.first->second;
-                //auto type = typeId<T>();
-                //if (!components.count(type))
-                //    components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
-                //auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
-                //auto& component = storage->data[e] = T(std::forward<Args>(args)...);
+            }
 
-                //return component;
+            template<typename T>
+            T& emplace_or_replace(Entity e, const T& value)
+            {
+                auto type = typeId<T>();
+                if (!components.count(type))
+                    components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
+
+                auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
+
+                if (storage->data.find(e) != storage->data.end())
+                    // emplace
+                    storage->data[e] = value;
+                else
+                    // replace
+                    storage->data.emplace(e, value);
+
+                return storage->data[e];
+            }
+
+            // this handles emplace_or_replace(entity, Component(args...))
+            template<typename T> 
+            T& emplace_or_replace(Entity e, T&& value)
+            {
+                auto type = typeId<T>();
+                if (!components.count(type))
+                    components[type] = std::unique_ptr<IComponentStorage>(new ComponentStorage<T>());
+
+                auto storage = static_cast<ComponentStorage<T>*>(components[type].get());
+
+                if (storage->data.find(e) != storage->data.end())
+                    // emplace
+                    storage->data[e] = std::move(value);
+                else
+                    // replace
+                    storage->data.emplace(e, std::move(value));
+
+                return storage->data[e];
             }
 
             template<typename T>

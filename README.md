@@ -33,7 +33,7 @@ Sandbox()
 [x] Create Layout + Windows.
 [x] Implement OpenGL API.
 [x] Build Standalone Windows program.
-[ ] Play/Pause/Reset Scenes.
+[x] Play/Stop Scenes (scene resets after stopping).
 [ ] Render mesh wireframe in editor camera. 
 [ ] Render editor grid in editor camera.
 [ ] Render collider wireframes.
