@@ -1,4 +1,4 @@
-; Texture + Color Shader
+; Lit Texture + Color Shader
 
 ; Uniforms
 .fvec u_Projection[4], u_ModelView[4], u_Color

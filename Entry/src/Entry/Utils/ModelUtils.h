@@ -2,6 +2,7 @@
 
 #include "Entry/Core/Core.h"
 #include "Entry/Renderer/Model.h"
+#include "Entry/Renderer/Renderer3D.h"
 
 #include <fast_obj.h>
 #include <string>
@@ -96,7 +97,8 @@ namespace Entry
 					obj_mesh->materials[i].Ke[0], obj_mesh->materials[i].Ke[1], obj_mesh->materials[i].Ke[2]
 				},
 				obj_mesh->materials[i].name,
-				textures[obj_mesh->materials[i].map_Kd - 1]
+				textures[obj_mesh->materials[i].map_Kd - 1],
+                Renderer3D::GetDefaultShader()
 			};
 
 			materials.push_back(Material::Create(props));

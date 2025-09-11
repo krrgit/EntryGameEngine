@@ -12,6 +12,7 @@ namespace Entry {
 
         virtual void Bind() override;
         virtual MaterialProps& GetProps() { return m_Props; }
+        virtual Shader* GetShader() override { return m_Props.ShaderProgram; }
 
     private:
         MaterialProps m_Props;

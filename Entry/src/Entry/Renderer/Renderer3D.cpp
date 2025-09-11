@@ -10,16 +10,9 @@
 
 #ifdef ET_PLATFORM_3DS
 //Shaders
-// #include "vshader01_shbin.h" // Flat Color Shader
-#include "vshader02_shbin.h" // Texture Shader
-#include "phongshader_shbin.h" // Phong Shader
-#include "normalcolorshader_shbin.h" // Normal Color Shader
 #include "UnlitTexture_shbin.h" // Unlit Texture Shader
-#include "LitTexture_shbin.h" // Unlit Texture Shader
+#include "LitTexture_shbin.h" // Lit Texture Shader
 #endif // ET_PLATFORM_3DS
-
-//#include <GLFW/glfw3.h>
-//#include <glad/glad.h>
 
 namespace Entry {
 
@@ -60,10 +53,7 @@ namespace Entry {
         static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
         bool AllowMultipleBatchesPerTexture = true;
 
-        Ref <Shader> TextureShader;
-        Ref <Shader> PhongShader;
-        Ref <Shader> UnlitTextureShader;
-        Ref <Shader> LitTextureShader;
+        std::vector<Ref<Shader>> Shaders;
         Ref <Texture2D> WhiteTexture;
 
         std::array<RenderBatch, MaxBatches> RenderBatches;
@@ -75,9 +65,11 @@ namespace Entry {
         uint32_t m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
         glm::mat4 m_ViewMatrix;
+        glm::mat4 m_ProjectionMatrix;
         glm::mat4 m_ViewProjectionMatrix;
 
         Ref<Material> DefaultMaterial;
+        Shader* DefaultShader;
     };
 
     static Renderer3DData s_Data;
@@ -126,23 +118,26 @@ namespace Entry {
 
 #ifdef ET_PLATFORM_3DS
         // SHADERS
-        s_Data.TextureShader.reset(Shader::Create(vshader02_shbin, vshader02_shbin_size));
-        s_Data.TextureShader->Bind();
-        s_Data.PhongShader.reset(Shader::Create(phongshader_shbin, phongshader_shbin_size));
-        s_Data.UnlitTextureShader.reset(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size));
-        s_Data.LitTextureShader.reset(Shader::Create(LitTexture_shbin, LitTexture_shbin_size));
+        s_Data.Shaders.push_back(Ref<Shader>(Shader::Create(LitTexture_shbin, LitTexture_shbin_size)));
+        s_Data.Shaders.push_back(Ref<Shader>(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size)));
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
         int32_t samplers[s_Data.MaxBatches];
         for (uint32_t i = 0; i < s_Data.MaxBatches; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
-        s_Data.UnlitTextureShader.reset(Shader::Create("assets/shaders/UnlitTexture.glsl"));
-        s_Data.LitTextureShader.reset(Shader::Create("assets/shaders/LitTexture.glsl"));
+        s_Data.Shaders.push_back(Ref<Shader>(Shader::Create("assets/shaders/LitTexture.glsl")));
+        s_Data.Shaders.push_back(Ref<Shader>(Shader::Create("assets/shaders/UnlitTexture.glsl")));
+
+        for (auto& s : s_Data.Shaders)
+        {
+            s->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
+        }
+
 #endif // ET_PLATFORM_WINDOWS
+
+        // Set Default Shader
+        s_Data.DefaultShader = s_Data.Shaders[1].get();
 
         // CREATE WHITE TEXTURE
         {
@@ -172,20 +167,14 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
 	}
 
+    // Runtime BeginScene()
     void Renderer3D::BeginScene(const Camera& camera, const glm::mat4& transform, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
 
-        glm::mat4 view = glm::inverse(transform);
-        glm::mat4 proj = camera.GetProjection(screenSide);
-        glm::mat4 viewProj = proj * view;
-
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetMat4("u_Projection", proj);
-        s_Data.m_ViewMatrix = view;
-        s_Data.m_ViewProjectionMatrix = viewProj;
-
-        s_Data.WhiteTexture->Bind(0);
+        s_Data.m_ViewMatrix = glm::inverse(transform);
+        s_Data.m_ProjectionMatrix = camera.GetProjection(screenSide);
+        s_Data.m_ViewProjectionMatrix = s_Data.m_ProjectionMatrix * s_Data.m_ViewMatrix;
 
         for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
@@ -196,23 +185,22 @@ namespace Entry {
         s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
         s_Data.IndexCount = 0;
         s_Data.BatchSlotIndex = 1;
-
     }
 
     void Renderer3D::BeginScene(const EditorCamera& camera, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
 
-        glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 proj = camera.GetProjection(screenSide);
-        glm::mat4 viewProj = proj * view;
+        s_Data.m_ViewMatrix = camera.GetViewMatrix();
+        s_Data.m_ProjectionMatrix = camera.GetProjection(screenSide);
+        s_Data.m_ViewProjectionMatrix = s_Data.m_ProjectionMatrix * s_Data.m_ViewMatrix;
 
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetMat4("u_Projection", proj);
-        s_Data.m_ViewMatrix = view;
-        s_Data.m_ViewProjectionMatrix = viewProj;
+        for (uint32_t i = 0; i < s_Data.Shaders.size(); ++i)
+        {
+            s_Data.Shaders[i]->Bind();
+            s_Data.Shaders[i]->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+        }
 
-        s_Data.WhiteTexture->Bind(0);
 
         for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i)
         {
@@ -235,17 +223,18 @@ namespace Entry {
         RenderCommand::Clear();
 #endif // ET_PLATFORM_WINDOWS
 
-
-        //s_Data.TextureShader->Bind();
-        //s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
-        //s_Data.UnlitTextureShader->Bind();
-        //s_Data.UnlitTextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix(screenSide));
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetMat4("u_Projection", camera.GetProjectionMatrix(screenSide));
         s_Data.m_ViewMatrix = camera.GetViewMatrix(screenSide);
+        s_Data.m_ProjectionMatrix = camera.GetProjectionMatrix(screenSide);
         s_Data.m_ViewProjectionMatrix = camera.GetViewProjectionMatrix(screenSide);
 
-        s_Data.WhiteTexture->Bind(0);
+        for (uint32_t i = 0; i < s_Data.Shaders.size(); ++i)
+        {
+            s_Data.Shaders[i]->Bind();
+            s_Data.Shaders[i]->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+        }
+
+        //s_Data.LitTextureShader->Bind();
+        //s_Data.LitTextureShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
 
         for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
             s_Data.RenderBatches[i].IndexCount = 0;
@@ -262,15 +251,15 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        Flush();
+        //Flush();
     }
 
     void Renderer3D::Flush()
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetMat4("u_ViewProjection", s_Data.m_ViewProjectionMatrix);
+        s_Data.Shaders[0]->Bind();
+        s_Data.Shaders[0]->SetMat4("u_ViewProjection", s_Data.m_ViewProjectionMatrix);
 
         // TODO: maybe set TexEnv here?
         for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
@@ -562,7 +551,7 @@ namespace Entry {
         if (batchIndex < 0) { return; }
         RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
 
-        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
+        //s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
 
         // Front Face
         batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
@@ -885,11 +874,11 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetFloat4("u_Color", color);
+        s_Data.Shaders[0]->Bind();
+        s_Data.Shaders[0]->SetFloat4("u_Color", color);
 
         glm::mat4 modelView = s_Data.m_ViewMatrix * glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
+        s_Data.Shaders[0]->SetMat4("u_ModelView", modelView);
 
         //Model->Bind();
         s_Data.WhiteTexture->Bind();
@@ -912,11 +901,11 @@ namespace Entry {
     {
         ET_PROFILE_FUNCTION();
 
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        s_Data.Shaders[0]->Bind();
+        s_Data.Shaders[0]->SetFloat4("u_Color", glm::vec4(1.0f));
 
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
-        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
+        s_Data.Shaders[0]->SetMat4("u_ModelView", modelView);
 
         //Model->Bind();
         Model->GetVertexArray()->Bind();
@@ -940,15 +929,18 @@ namespace Entry {
 
         if (!mrc.material) return;
 
-        s_Data.LitTextureShader->Bind();
-        s_Data.LitTextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+        Material* meshMtl = mrc.material.get();
+        Shader* meshShader = meshMtl->GetShader();
 
-        glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
-        s_Data.LitTextureShader->SetMat4("u_ModelView", modelView);
-
+        meshShader->Bind();
+        meshMtl->Bind();
         mrc.model->GetVertexArray()->Bind();
+        
+        glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
+        meshShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+        meshShader->SetMat4("u_ModelView", modelView);
+        meshShader->SetFloat4("u_Color", glm::vec4(1.0f));
 
-        mrc.model->GetMaterial(mrc.mesh->MaterialID)->Bind();
         RenderCommand::DrawIndexed(mrc.model->GetVertexArray(), mrc.mesh->IndexCount, mrc.mesh->IndexOffset);
 
         s_Data.Stats.PolygonCount += mrc.mesh->PolygonCount;
@@ -962,7 +954,7 @@ namespace Entry {
         if (!mrc.material)
             return;
 
-        s_Data.LitTextureShader->SetInt("u_EntityID", entityID);
+        mrc.material->GetShader()->SetInt("u_EntityID", entityID);
         DrawMesh(mrc, transform);
     }
 
@@ -1028,6 +1020,9 @@ namespace Entry {
         return s_Data.DefaultMaterial;
     }
 
-    
+    Shader* Renderer3D::GetDefaultShader()
+    {
+        return s_Data.DefaultShader;
+    }
 
 }

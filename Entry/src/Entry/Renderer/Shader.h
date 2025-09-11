@@ -8,6 +8,8 @@ namespace Entry {
 	public:
 		virtual ~Shader() = default;
 
+		virtual std::string GetName() const = 0;
+
 		virtual void Bind() = 0;
 		virtual void Unbind() const = 0;
 

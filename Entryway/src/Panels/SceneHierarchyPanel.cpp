@@ -456,6 +456,12 @@ namespace Entry
 			DrawDragnDropField(label, mtlName, columnWidth);
 			ImGui::Columns(1);
 
+			ImGui::Separator();
+
+			std::string shaderName = component.material ? component.material->GetShader()->GetName() : "None";
+			DrawDragnDropField("Shader", shaderName, columnWidth);
+			ImGui::Columns(1); // Reset after DrawDragnDropField()
+
 			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
 			DrawDragnDropField("Diffuse Map", texName, columnWidth);
 			ImGui::Columns(1); // Reset after DrawDragnDropField()

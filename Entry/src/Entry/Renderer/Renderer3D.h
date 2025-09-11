@@ -54,6 +54,7 @@ namespace Entry {
 			static Statistics GetStats();
 
 			static Ref<Material> GetDefaultMaterial();
+			static Shader* GetDefaultShader();
 	private:
 		static int GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount);
 		//static void FlushAndReset();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entry/Core/Core.h"
-
+#include "Shader.h"
 #include "Texture.h"
 
 namespace Entry {
@@ -18,6 +18,7 @@ namespace Entry {
 		MaterialValues Values;
 		std::string Name;
 		Ref<Texture2D> DiffuseMap;
+		Shader* ShaderProgram;
 	};
 
 	class Material {
@@ -26,6 +27,7 @@ namespace Entry {
 
 		virtual void Bind() = 0;
 		virtual MaterialProps& GetProps() = 0;
+		virtual Shader* GetShader() = 0;
 
 		static Ref<Material> Create(const MaterialProps& props);
 	};

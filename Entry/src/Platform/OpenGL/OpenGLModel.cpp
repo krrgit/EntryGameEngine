@@ -116,7 +116,8 @@ namespace Entry {
 					emissive.r, emissive.g, emissive.b,
 				},
 				g_scene->mMaterials[i]->GetName().C_Str(),
-				texCount > 0 ? diffuseMap : nullptr
+				texCount > 0 ? diffuseMap : nullptr,
+				Renderer3D::GetDefaultShader()
 			};
 
 

@@ -15,6 +15,8 @@ namespace Entry {
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		virtual ~OpenGLShader();
 
+		virtual std::string GetName() const override { return m_Name; };
+
 		virtual void Bind() override;
 		virtual void Unbind() const override;
 
@@ -24,8 +26,6 @@ namespace Entry {
 		virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
 		virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
-
-		//virtual const std::string& GetName() const override { return m_Name; }
 
 		void UploadUniformInt(const std::string& name, int value);
 		void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);

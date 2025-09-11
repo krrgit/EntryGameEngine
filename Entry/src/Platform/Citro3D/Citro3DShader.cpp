@@ -36,6 +36,8 @@ namespace Entry {
         shaderProgramInit(&program);
         shaderProgramSetVsh(&program, &vshader_dvlb->DVLE[0]);
         C3D_BindProgram(&program);
+
+        m_Name = "Untitled"; // TODO: Add Name
     }
 
     Citro3DShader::~Citro3DShader()

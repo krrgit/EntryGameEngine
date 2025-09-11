@@ -11,6 +11,8 @@ namespace Entry {
 		Citro3DShader(u32* shbinData, u32 shBinSize);
 		~Citro3DShader();
 
+		virtual std::string GetName() const override { return m_Name; };
+
 		virtual void Bind();
 		virtual void Unbind() const;
 
@@ -30,6 +32,7 @@ namespace Entry {
 		void UploadUniformMat3(std::string name, const glm::mat3* matrix);
 		void UploadUniformMat4(std::string name, const glm::mat4& matrix);
 	private:
+		std::string m_Name;
 		uint32_t m_RendererID;
 		DVLB_s* vshader_dvlb;
 		shaderProgram_s program;
