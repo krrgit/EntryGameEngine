@@ -11,4 +11,18 @@ namespace Entry {
 	{
 		m_Props.DiffuseMap->Bind();
 	}
+	void OpenGLMaterial::OnShaderChange()
+	{
+		switch (m_Props.shader)
+		{
+		case ShaderProgramEnum::Lit:
+			m_TexEnvProps = s_TexEnvLitProps;
+			break;
+		case ShaderProgramEnum::Unlit:
+			m_TexEnvProps = s_TexEnvUnlitProps;
+			break;
+		default:
+		break;
+		}
+	}
 }

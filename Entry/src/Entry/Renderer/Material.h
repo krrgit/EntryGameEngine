@@ -3,8 +3,10 @@
 #include "Entry/Core/Core.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "TextureEnvironment.h"
 
 namespace Entry {
+
 	struct MaterialValues {
 		float Ambient[3];
 		float Diffuse[3];
@@ -29,6 +31,9 @@ namespace Entry {
 		virtual MaterialProps& GetProps() = 0;
 		virtual ShaderProgram GetShader() = 0;
 		virtual void SetShader(ShaderProgram program) = 0;
+
+		virtual void SetTexEnvProps(TexEnvProps& props) = 0;
+		virtual const TexEnvProps& GetTexEnvProps() = 0;
 
 		static Ref<Material> Create(const MaterialProps& props);
 	};

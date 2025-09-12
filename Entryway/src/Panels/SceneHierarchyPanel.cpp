@@ -290,6 +290,9 @@ namespace Entry
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		float columnWidth = std::max(130.0f, panelWidth * 0.4f);
 
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -303,8 +306,6 @@ namespace Entry
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			ImGuiIO& io = ImGui::GetIO();
-			auto boldFont = io.Fonts->Fonts[0];
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - GImGui->Style.FramePadding.x - 92.0f);
 
@@ -490,6 +491,32 @@ namespace Entry
 			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
 			DrawDragnDropField("Diffuse Map", texName, columnWidth);
 			ImGui::Columns(1); // Reset after DrawDragnDropField()
+			
+			ImGui::Separator();
+			ImGui::PushFont(boldFont);
+			ImGui::Text("Texture Environment");
+			ImGui::PopFont();
+			if (component.material)
+			{
+				auto& te = component.material->GetTexEnvProps();
+
+				const char* channels[] = {"RGB", "Alpha", "", "RGBA"};
+				const char* blendModes[] = { "Replace", "Modulate", "Add", "Signed Add", "Interpolat", "Subtract", "Dot3 RGB", "Dot3 RGBA", "Multiply Add", "Add Multiply"};
+				const char* sources[] = {"Primary Color", "Fragment Primary Color", "Fragment Seocndary Color", "Texture0", "Texture1", "Texture2", "Texture3", "Previous Buffer", "Constant", "Previous"};
+
+				const char* c = channels[(int)te.Channels];
+				const char* bm = blendModes[(int)te.BlendMode];
+				const char* s1 = sources[(int)te.Source1];
+				const char* s2 = sources[(int)te.Source2];
+				const char* s3 = sources[(int)te.Source3];
+				ImGui::Text("Channels: %s", c);
+				ImGui::Text("Blend Mode: %s", bm);
+				ImGui::Text("Source 1: %s", s1);
+				ImGui::Text("Source 2: %s", s2);
+				ImGui::Text("Source 3: %s", s3);
+			}
+
+
 		});
 
 		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)
