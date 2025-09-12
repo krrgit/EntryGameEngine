@@ -285,7 +285,12 @@ namespace Entry {
 
 
         auto stats = Entry::Renderer3D::GetStats();
+
+        std::string hovered = m_HoveredEntity ? m_HoveredEntity.GetName() : "None";
+        ImGui::Text("Hovered:, %s", hovered.c_str());
+        
         ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);
+
 
         ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
 
@@ -499,6 +504,8 @@ namespace Entry {
                 OnDuplicateEntity();
             break;
         case KeyCode::Delete:
+            m_HoveredEntity = m_SceneHierarchyPanel.GetSelectedEntity() == m_HoveredEntity ? Entity() : m_HoveredEntity;
+            ImGuizmo::SetNotOver();
             m_SceneHierarchyPanel.DeleteSelectedEntity();
             break;
         default:
@@ -532,6 +539,7 @@ namespace Entry {
     {
         if (e.GetMouseButton() == MouseCode::Button0)
         {
+            
             if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
             m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
         }
