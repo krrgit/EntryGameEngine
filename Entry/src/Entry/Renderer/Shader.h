@@ -5,12 +5,12 @@
 
 namespace Entry {
 
-	enum ShaderProgramEnum
+	enum ShaderProgramEnum : uint16_t
 	{
 		Lit,
 		Unlit,
-		// Toon,
-		// VertexLit
+		// Toon,		// TODO
+		// VertexLit,	// TODO 
 		NoShader = -1,
 	};
 	struct ShaderProgram
