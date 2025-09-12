@@ -18,7 +18,7 @@ namespace Entry {
 		MaterialValues Values;
 		std::string Name;
 		Ref<Texture2D> DiffuseMap;
-		Shader* ShaderProgram;
+		ShaderProgram shader;
 	};
 
 	class Material {
@@ -27,7 +27,8 @@ namespace Entry {
 
 		virtual void Bind() = 0;
 		virtual MaterialProps& GetProps() = 0;
-		virtual Shader* GetShader() = 0;
+		virtual ShaderProgram GetShader() = 0;
+		virtual void SetShader(ShaderProgram program) = 0;
 
 		static Ref<Material> Create(const MaterialProps& props);
 	};

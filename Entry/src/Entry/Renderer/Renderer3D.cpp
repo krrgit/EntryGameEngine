@@ -23,13 +23,13 @@ namespace Entry {
 
 #ifdef ET_PLATFORM_WINDOWS
         // Editor-only
-        int EntityID = 0; // TODO: Use this after Render Batches for Modeles is implemented.
+        int EntityID = 0; // TODO: Use this after Render Batches for Meshes is implemented.
 #endif // ET_PLATFORM_WINDOWS
     };
 
     struct RenderBatch {
-        Ref <VertexArray> QuadVertexArray;
-        Ref <VertexBuffer> QuadVertexBuffer;
+        Ref <VertexArray> MeshVertexArray;
+        Ref <VertexBuffer> MeshVertexBuffer;
 
         uint32_t IndexCount = 0;
         QuadVertex* VertexBufferBase = nullptr;
@@ -45,31 +45,29 @@ namespace Entry {
         // Max Vertcies: ~41472
         // Max Indices: ~62208
 
-        // Per Batch Limitations
-        static const uint32_t MaxPolygons = 1024; // Max: 5298 (seems like CPU bottleneck)
-        static const uint32_t MaxVertices = MaxPolygons * 2;
-        static const uint16_t MaxIndices = MaxPolygons * 3;
-        static const uint32_t MaxBatches = 1; // Randomly selected tbh
-        static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
-        bool AllowMultipleBatchesPerTexture = true;
+        // Per Batch Limitations (Unused)
+        //static const uint32_t MaxPolygons = 1024; // Max: 5298 (seems like CPU bottleneck)
+        //static const uint32_t MaxVertices = MaxPolygons * 2;
+        //static const uint16_t MaxIndices = MaxPolygons * 3;
+        //static const uint32_t MaxBatches = 1; // Randomly selected tbh
+        //bool AllowMultipleBatchesPerTexture = true;
+        ////std::array<RenderBatch, MaxBatches> RenderBatches;
+        //uint32_t IndexCount;
+        //uint32_t m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
+        static const uint32_t MaxTextureSlots = 4; // 3 texture units slots, 1 proceedural generated texture slot (set by PICA 200)
         std::vector<Ref<Shader>> Shaders;
         Ref <Texture2D> WhiteTexture;
 
-        std::array<RenderBatch, MaxBatches> RenderBatches;
-        uint32_t BatchSlotIndex = 1; // 0 = white texture
-
-        uint32_t IndexCount;
         Renderer3D::Statistics Stats;
-
-        uint32_t m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
         glm::mat4 m_ViewMatrix;
         glm::mat4 m_ProjectionMatrix;
         glm::mat4 m_ViewProjectionMatrix;
 
         Ref<Material> DefaultMaterial;
-        Shader* DefaultShader;
+        ShaderProgram DefaultShader;
+        ShaderProgram BindedShader;
     };
 
     static Renderer3DData s_Data;
@@ -78,43 +76,6 @@ namespace Entry {
 	{
         ET_PROFILE_FUNCTION();
 
-        uint16_t quadIndices[s_Data.MaxIndices];
-
-        uint16_t offset = 0;
-        for (uint16_t i = 0; i < s_Data.MaxIndices; i += 6)
-        {
-            quadIndices[i + 0] = offset + 0;
-            quadIndices[i + 1] = offset + 1;
-            quadIndices[i + 2] = offset + 2;
-
-            quadIndices[i + 3] = offset + 2;
-            quadIndices[i + 4] = offset + 3;
-            quadIndices[i + 5] = offset + 0;
-
-            offset += 4;
-        }
-
-        std::shared_ptr<IndexBuffer> squareIB;
-        squareIB.reset(IndexBuffer::Create(quadIndices, s_Data.MaxIndices));
-
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
-            RenderBatch* batch = &s_Data.RenderBatches[i];
-
-            batch->QuadVertexArray = VertexArray::Create();
-
-            batch->QuadVertexBuffer.reset(VertexBuffer::Create(sizeof(QuadVertex) * s_Data.MaxVertices));
-            batch->QuadVertexBuffer->SetLayout({
-                { ShaderDataType::Float3, "a_Position" },
-                { ShaderDataType::Float4, "a_Color" },
-                { ShaderDataType::Float2, "a_TexCoord" }
-                });
-            batch->QuadVertexArray->AddVertexBuffer(batch->QuadVertexBuffer);
-            batch->VertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-            batch->QuadVertexBuffer->Bind();
-
-            batch->QuadVertexArray->SetIndexBuffer(squareIB);
-            batch->QuadVertexArray->Bind();
-        }
 
 #ifdef ET_PLATFORM_3DS
         // SHADERS
@@ -122,8 +83,8 @@ namespace Entry {
         s_Data.Shaders.push_back(Ref<Shader>(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size)));
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
-        int32_t samplers[s_Data.MaxBatches];
-        for (uint32_t i = 0; i < s_Data.MaxBatches; i++)
+        int32_t samplers[s_Data.MaxTextureSlots];
+        for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
             samplers[i] = i;
 
         s_Data.Shaders.push_back(Ref<Shader>(Shader::Create("assets/shaders/LitTexture.glsl")));
@@ -131,13 +92,14 @@ namespace Entry {
 
         for (auto& s : s_Data.Shaders)
         {
-            s->SetIntArray("u_Textures", samplers, s_Data.MaxBatches);
+            s->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
         }
 
 #endif // ET_PLATFORM_WINDOWS
 
         // Set Default Shader
-        s_Data.DefaultShader = s_Data.Shaders[1].get();
+        s_Data.DefaultShader = ShaderProgram(ShaderProgramEnum::Lit);
+        s_Data.BindedShader = ShaderProgramEnum::NoShader;
 
         // CREATE WHITE TEXTURE
         {
@@ -156,10 +118,8 @@ namespace Entry {
         defMatProps.Values = defMatVal;
         defMatProps.Name = "Default Material";
         defMatProps.DiffuseMap = s_Data.WhiteTexture;
+        defMatProps.shader = s_Data.DefaultShader;
         s_Data.DefaultMaterial = Material::Create(defMatProps);
-
-        // Set first texture slot to 0
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
 	}
 
 	void Renderer3D::Shutdown()
@@ -176,17 +136,19 @@ namespace Entry {
         s_Data.m_ProjectionMatrix = camera.GetProjection(screenSide);
         s_Data.m_ViewProjectionMatrix = s_Data.m_ProjectionMatrix * s_Data.m_ViewMatrix;
 
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
-            s_Data.RenderBatches[i].IndexCount = 0;
-            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
-            s_Data.RenderBatches[i].BatchTexture = nullptr;
-        }
-
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
-        s_Data.IndexCount = 0;
-        s_Data.BatchSlotIndex = 1;
+        s_Data.BindedShader = ShaderProgramEnum::NoShader; // Reset
+        
+        // Doesn't work on 3DS
+        // Note: When setting values of a shader(i.e. u_Projection, previously set shaders are unset).
+        // Atm we set it at runtime.
+        //for (uint32_t i = 0; i < s_Data.Shaders.size(); ++i)
+        //{
+        //    s_Data.Shaders[i]->Bind();
+        //    s_Data.Shaders[i]->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+        //}
     }
 
+    // Editor BeginScene()
     void Renderer3D::BeginScene(const EditorCamera& camera, uint16_t screenSide)
     {
         ET_PROFILE_FUNCTION();
@@ -195,679 +157,12 @@ namespace Entry {
         s_Data.m_ProjectionMatrix = camera.GetProjection(screenSide);
         s_Data.m_ViewProjectionMatrix = s_Data.m_ProjectionMatrix * s_Data.m_ViewMatrix;
 
-        for (uint32_t i = 0; i < s_Data.Shaders.size(); ++i)
-        {
-            s_Data.Shaders[i]->Bind();
-            s_Data.Shaders[i]->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
-        }
-
-
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i)
-        {
-            s_Data.RenderBatches[i].IndexCount = 0;
-            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
-            s_Data.RenderBatches[i].BatchTexture = nullptr;
-        }
-
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
-        s_Data.IndexCount = 0;
-        s_Data.BatchSlotIndex = 1;
-    }
-
-    void Renderer3D::BeginScene(const PerspectiveCamera& camera, uint16_t screenSide)
-    {
-        ET_PROFILE_FUNCTION();
-
-#ifdef ET_PLATFORM_WINDOWS
-        RenderCommand::SetClearColor(0x68B0D8FF);
-        RenderCommand::Clear();
-#endif // ET_PLATFORM_WINDOWS
-
-        s_Data.m_ViewMatrix = camera.GetViewMatrix(screenSide);
-        s_Data.m_ProjectionMatrix = camera.GetProjectionMatrix(screenSide);
-        s_Data.m_ViewProjectionMatrix = camera.GetViewProjectionMatrix(screenSide);
-
-        for (uint32_t i = 0; i < s_Data.Shaders.size(); ++i)
-        {
-            s_Data.Shaders[i]->Bind();
-            s_Data.Shaders[i]->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
-        }
-
-        //s_Data.LitTextureShader->Bind();
-        //s_Data.LitTextureShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
-
-        for (uint32_t i = 0; i < Renderer3DData::MaxBatches; ++i) {
-            s_Data.RenderBatches[i].IndexCount = 0;
-            s_Data.RenderBatches[i].VertexBufferPtr = s_Data.RenderBatches[i].VertexBufferBase;
-            s_Data.RenderBatches[i].BatchTexture = nullptr;
-        }
-
-        s_Data.RenderBatches[0].BatchTexture = s_Data.WhiteTexture;
-        s_Data.IndexCount = 0;
-        s_Data.BatchSlotIndex = 1;
+        s_Data.BindedShader = ShaderProgramEnum::NoShader; // Reset
     }
 
     void Renderer3D::EndScene()
     {
         ET_PROFILE_FUNCTION();
-
-        //Flush();
-    }
-
-    void Renderer3D::Flush()
-    {
-        ET_PROFILE_FUNCTION();
-
-        s_Data.Shaders[0]->Bind();
-        s_Data.Shaders[0]->SetMat4("u_ViewProjection", s_Data.m_ViewProjectionMatrix);
-
-        // TODO: maybe set TexEnv here?
-        for (uint32_t i = 0; i < s_Data.BatchSlotIndex; i++) {
-            RenderBatch* batch = &s_Data.RenderBatches[i];
-            uint32_t dataSize = (uint8_t*)batch->VertexBufferPtr - (uint8_t*)batch->VertexBufferBase;
-            if (dataSize == 0) continue;
-            batch->QuadVertexBuffer->SetData(batch->VertexBufferBase, dataSize);
-
-            batch->QuadVertexArray->Bind();
-            batch->BatchTexture->Bind(0);
-            RenderCommand::DrawIndexed(batch->QuadVertexArray, batch->IndexCount);
-
-            s_Data.Stats.DrawCalls++;
-        }
-    }
-
-	void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
-	{
-        ET_PROFILE_FUNCTION();
-
-        const int quadIndexCount = 6;
-        int batchIndex = GetBatch(s_Data.WhiteTexture, quadIndexCount);
-        if (batchIndex < 0) { return; }
-        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        s_Data.Stats.PolygonCount += 2;
-        s_Data.Stats.VertexCount += 4;
-        s_Data.Stats.IndexCount += 6;
-
-        //s_Data->TextureShader->SetFloat4("u_Color", color);
-        //s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        //s_Data->WhiteTexture->Bind();
-
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data->TextureShader->SetMat4("u_Transform", transform);
-
-        //s_Data->QuadVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
-	}
-
-	void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
-	{
-        ET_PROFILE_FUNCTION();
-
-        const uint32_t cubeIndexCount = 36;
-        int batchIndex = GetBatch(s_Data.WhiteTexture, cubeIndexCount);
-        if (batchIndex < 0) { return; }
-        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
-
-        // Front Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Back Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Top Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Bottom Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Right Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Left Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        s_Data.Stats.PolygonCount += 12;
-        s_Data.Stats.VertexCount += 24;
-        s_Data.Stats.IndexCount += 36;
-
-        //s_Data->TextureShader->SetFloat4("u_Color", color);
-        //s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        //s_Data->WhiteTexture->Bind();
-        //
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data->TextureShader->SetMat4("u_Transform", transform);
-
-        //s_Data->CubeVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
-	}
-
-
-    void Renderer3D::DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
-    {
-        ET_PROFILE_FUNCTION();
-
-        const glm::vec4 color(1.0f);
-
-        const uint32_t quadIndexCount = 6;
-        int batchIndex = GetBatch(texture, quadIndexCount);
-        if (batchIndex < 0) { return; }
-        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, -0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f * size.x, 0.5f * size.y, 0 }) * rotation);
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        s_Data.Stats.PolygonCount += 2;
-        s_Data.Stats.VertexCount += 4;
-        s_Data.Stats.IndexCount += 6;
-
-        //s_Data->TextureShader->SetFloat4("u_Color", tintColor);
-        //s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
-        //texture->Bind(); 
-
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data->TextureShader->SetMat4("u_Transform", transform);
-
-
-        //s_Data->QuadVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
-    }
-    
-    void Renderer3D::DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
-    {
-        ET_PROFILE_FUNCTION();
-
-        const uint32_t cubeIndexCount = 36;
-        int batchIndex = GetBatch(texture, cubeIndexCount);
-        if (batchIndex < 0) { return; }
-        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
-
-        //s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
-
-        // Front Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Back Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Top Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Bottom Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Right Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Left Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }) * rotation * size);
-        batch->VertexBufferPtr->Color = tintColor;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        s_Data.Stats.PolygonCount += 12;
-        s_Data.Stats.VertexCount += 24;
-        s_Data.Stats.IndexCount += 36;
-
-        //s_Data->TextureShader->SetFloat4("u_Color", tintColor);
-        //s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
-        //texture->Bind();
-
-        //glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
-        //s_Data->TextureShader->SetMat4("u_Transform", transform);
-
-        //s_Data->CubeVertexArray->Bind();
-        //RenderCommand::DrawIndexed(s_Data->CubeVertexArray);
-    }
-
-    void Renderer3D::DrawCube(const glm::vec3& position, glm::vec4& color)
-    {
-        ET_PROFILE_FUNCTION();
-
-        const uint32_t cubeIndexCount = 36;
-        int batchIndex = GetBatch(s_Data.WhiteTexture, cubeIndexCount);
-        if (batchIndex < 0) { return; }
-        RenderBatch* batch = &s_Data.RenderBatches[batchIndex];
-
-        // Front Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Back Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Top Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Bottom Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Right Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ 0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        // Left Face
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, -0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, 0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->VertexBufferPtr->Position = position + (glm::vec3({ -0.5f, 0.5f, -0.5f }));
-        batch->VertexBufferPtr->Color = color;
-        batch->VertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-        batch->VertexBufferPtr++;
-
-        batch->IndexCount += 6;
-        s_Data.IndexCount += 6;
-
-        s_Data.Stats.PolygonCount += 12;
-        s_Data.Stats.VertexCount += 24;
-        s_Data.Stats.IndexCount += 36;
     }
 
     void Renderer3D::DrawModel(Ref<Model> Model, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color)
@@ -880,10 +175,8 @@ namespace Entry {
         glm::mat4 modelView = s_Data.m_ViewMatrix * glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), size);
         s_Data.Shaders[0]->SetMat4("u_ModelView", modelView);
 
-        //Model->Bind();
         s_Data.WhiteTexture->Bind();
         Model->GetVertexArray()->Bind();
-        //auto subModeles = Model->GetSubModeles();
 
         for (auto mesh : Model->GetMeshes())
         {
@@ -907,9 +200,7 @@ namespace Entry {
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
         s_Data.Shaders[0]->SetMat4("u_ModelView", modelView);
 
-        //Model->Bind();
         Model->GetVertexArray()->Bind();
-
 
         for (auto mesh : Model->GetMeshes())
         {
@@ -930,14 +221,20 @@ namespace Entry {
         if (!mrc.material) return;
 
         Material* meshMtl = mrc.material.get();
-        Shader* meshShader = meshMtl->GetShader();
+        Shader* meshShader = s_Data.Shaders[(int)meshMtl->GetShader()].get();
 
-        meshShader->Bind();
+        // Only bind when not current shader
+        if (meshMtl->GetShader() != s_Data.BindedShader)
+        {
+            meshShader->Bind();
+            meshShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+            s_Data.BindedShader = meshMtl->GetShader();
+        }
+
         meshMtl->Bind();
         mrc.model->GetVertexArray()->Bind();
-        
+
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
-        meshShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
         meshShader->SetMat4("u_ModelView", modelView);
         meshShader->SetFloat4("u_Color", glm::vec4(1.0f));
 
@@ -954,52 +251,12 @@ namespace Entry {
         if (!mrc.material)
             return;
 
-        mrc.material->GetShader()->SetInt("u_EntityID", entityID);
+        s_Data.Shaders[(int)mrc.material->GetShader()]->SetInt("u_EntityID", entityID);
         DrawMesh(mrc, transform);
-    }
-
-    int Renderer3D::GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount) {
-        //Search for batch assigned to texture in slots
-        int batchIndex = -1;
-        bool foundButFull = false;
-        for (uint32_t i = 0; i < s_Data.BatchSlotIndex; ++i) {
-            if (*s_Data.RenderBatches[i].BatchTexture.get() == *textureRef.get()) {
-                if (s_Data.RenderBatches[i].IndexCount + indexCount < Renderer3DData::MaxIndices) {
-                    batchIndex = i;
-                    break;
-                }
-                else {
-                    foundButFull = true;
-                }
-            }
-        }
-
-        // Add batch if:
-        // 2. Not found but there are open batch slots.
-        // 1. Found but no space (AllowMultpleBatchesPerTexture needs to be enabled)
-        // Otherwise don't draw.
-        if (batchIndex == -1) {
-
-            if (s_Data.BatchSlotIndex >= Renderer3DData::MaxBatches) {
-                return -1;
-            }
-
-            if (foundButFull && !s_Data.AllowMultipleBatchesPerTexture) {
-                return -1;
-            }
-
-            batchIndex = s_Data.BatchSlotIndex;
-            s_Data.RenderBatches[s_Data.BatchSlotIndex].BatchTexture = textureRef;
-
-            s_Data.BatchSlotIndex++;
-        }
-
-        return batchIndex;
     }
 
     void Renderer3D::ResetStats()
     {
-        //memset(&s_Data.Stats, 0, sizeof(Statistics));
         s_Data.Stats.DeltaTime = 0;
         s_Data.Stats.DrawCalls = 0;
         s_Data.Stats.IndexCount = 0;
@@ -1020,7 +277,7 @@ namespace Entry {
         return s_Data.DefaultMaterial;
     }
 
-    Shader* Renderer3D::GetDefaultShader()
+    ShaderProgram Renderer3D::GetDefaultShader()
     {
         return s_Data.DefaultShader;
     }

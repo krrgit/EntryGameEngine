@@ -4,6 +4,41 @@
 #include <glm/glm.hpp>
 
 namespace Entry {
+
+	enum ShaderProgramEnum
+	{
+		Lit,
+		Unlit,
+		// Toon,
+		// VertexLit
+		NoShader = -1,
+	};
+	struct ShaderProgram
+	{
+		ShaderProgramEnum value = ShaderProgramEnum::Lit;
+
+		ShaderProgram() = default;
+
+		ShaderProgram(ShaderProgramEnum v)
+			: value(v) 
+		{}
+
+		std::string string() const
+		{
+			switch (value)
+			{
+			case Lit:   return "Lit";
+			case Unlit: return "Unlit";
+				// case Toon: return "Toon";
+				// case VertexLit: return "VertexLit";
+			default:    return "Unknown";
+			}
+		}
+
+		// implicit conversion back to enum
+		operator ShaderProgramEnum() const { return value; }
+	};
+
 	class Shader {
 	public:
 		virtual ~Shader() = default;

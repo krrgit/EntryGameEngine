@@ -22,16 +22,7 @@ namespace Entry {
 
 			static void BeginScene(const Camera& camera, const glm::mat4& transform, uint16_t screenSide = 0);
 			static void BeginScene(const EditorCamera& camera, uint16_t screenSide = 0);
-			static void BeginScene(const PerspectiveCamera& camera, uint16_t screenSide = 0); // TODO: Remove
 			static void EndScene();
-			static void Flush();
-
-			// Primitives
-			static void DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
-			static void DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
-			static void DrawQuad(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
-			static void DrawCube(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
-			static void DrawCube(const glm::vec3& position, glm::vec4& color);
 
 			static void DrawModel(Ref<Model> Model, const glm::vec3& position, const glm::quat& rotation, const glm::vec3& size, glm::vec4& color);
 			static void DrawModel(Ref<Model> Model, const glm::mat4& transform);
@@ -54,10 +45,8 @@ namespace Entry {
 			static Statistics GetStats();
 
 			static Ref<Material> GetDefaultMaterial();
-			static Shader* GetDefaultShader();
+			static ShaderProgram GetDefaultShader();
 	private:
-		static int GetBatch(Ref<Texture2D> textureRef, uint32_t indexCount);
-		//static void FlushAndReset();
 	};
 
 }

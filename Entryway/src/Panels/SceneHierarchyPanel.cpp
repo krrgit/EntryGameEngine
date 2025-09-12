@@ -458,9 +458,24 @@ namespace Entry
 
 			ImGui::Separator();
 
-			std::string shaderName = component.material ? component.material->GetShader()->GetName() : "None";
-			DrawDragnDropField("Shader", shaderName, columnWidth);
-			ImGui::Columns(1); // Reset after DrawDragnDropField()
+			const char* shaderProgramStrings[] = { "Lit", "Unlit" }; // TODO: Fix to accomodate more shaders
+			const char* currentShaderProgramString = shaderProgramStrings[(int)component.material->GetShader()];
+			if (ImGui::BeginCombo("Shader", currentShaderProgramString))
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					bool isSelected = currentShaderProgramString == shaderProgramStrings[i];
+					if (ImGui::Selectable(shaderProgramStrings[i], isSelected))
+					{
+						currentShaderProgramString = shaderProgramStrings[i];
+						component.material->SetShader((ShaderProgramEnum)i);
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
 
 			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
 			DrawDragnDropField("Diffuse Map", texName, columnWidth);
