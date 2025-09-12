@@ -62,9 +62,9 @@ namespace Entry {
 					outVertices->push_back(tu);
 					outVertices->push_back(tv);
 
-					outVertices->push_back(nx);
+					outVertices->push_back(-nx);
 					outVertices->push_back(ny);
-					outVertices->push_back(nz);
+					outVertices->push_back(-nz);
 
 					// Index just refers to the vertex we *just* pushed
 					outIndices->push_back(runningIndex++);
