@@ -187,6 +187,20 @@ namespace Entry
 			out << YAML::EndMap;
 		}
 
+		if (entity.HasComponent<LightComponent>())
+		{
+			out << YAML::Key << "LightComponent";
+			out << YAML::BeginMap; // LightComponent
+
+			auto& lightComponent = entity.GetComponent<LightComponent>();
+
+			out << YAML::Key << "Type" << (int)lightComponent.Type;
+			out << YAML::Key << "Strength" << lightComponent.Strength;
+			out << YAML::Key << "Angle" << lightComponent.Angle;
+			out << YAML::Key << "Color" << YAML::Value << lightComponent.Color;
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -283,6 +297,19 @@ namespace Entry
 					const Mesh* mesh = model->GetMesh(meshRendererComponent["MeshID"].as<int>());
 					Ref<Material> material = model->GetMaterial(meshRendererComponent["MaterialID"].as<int>());
 					deserializedEntity.AddComponent<MeshRendererComponent>(model, mesh, material);
+				}
+
+				auto lightComponent = entity["LightComponent"];
+				if (lightComponent)
+				{
+					LightProps props {
+						(LightType)lightComponent["Type"].as<int>(),
+						lightComponent["Strength"].as<float>(),
+						lightComponent["Angle"].as<float>(),
+						lightComponent["Color"].as<glm::vec3>(),
+						deserializedEntity.GetComponent<TransformComponent>().Position
+					};
+					deserializedEntity.AddComponent<LightComponent>(props);
 				}
 			}
 		}

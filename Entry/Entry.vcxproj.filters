@@ -1859,6 +1859,8 @@
     </ClInclude>
     <ClInclude Include="src\Entry\Utils\StringUtils.h" />
     <ClInclude Include="src\Entry\Core\UUID.h" />
+    <ClInclude Include="src\Entry\Renderer\Light.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLLight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1988,5 +1990,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Entry\Core\UUID.cpp" />
+    <ClCompile Include="src\Entry\Renderer\Light.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLLight.cpp" />
   </ItemGroup>
 </Project>

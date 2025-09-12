@@ -340,6 +340,11 @@ namespace Entry
 				m_SelectionContext.AddComponent<MeshRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (ImGui::MenuItem("Light"))
+			{
+				m_SelectionContext.AddComponent<LightComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndPopup();
 		}
@@ -485,6 +490,17 @@ namespace Entry
 			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
 			DrawDragnDropField("Diffuse Map", texName, columnWidth);
 			ImGui::Columns(1); // Reset after DrawDragnDropField()
+		});
+
+		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)
+		{
+			ImGui::Text("Type: %d", component.Type);
+			if (component.Type == LightType::Phong)
+				ImGui::DragFloat("Strength",&component.Strength);
+			else
+				ImGui::DragFloat("Angle", &component.Angle);
+
+			ImGui::ColorEdit3("Color", glm::value_ptr(component.Color));
 		});
 	}
 	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, int meshID, MeshRendererComponent& component)

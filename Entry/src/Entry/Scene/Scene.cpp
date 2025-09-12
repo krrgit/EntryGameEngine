@@ -100,6 +100,18 @@ namespace Entry {
 	{
 		Renderer3D::BeginScene(camera, screenSide);
 
+		// Update Lights
+		{
+			auto view = m_Registry.view<TransformComponent, LightComponent>();
+			for (auto entity : view)
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& light = view.get<LightComponent>(entity);
+
+				light.RendererLight->SetPosition(transform.Position);
+			}
+		}
+
 		for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
 		{
 			auto transform = m_Registry.get<TransformComponent>(entity);
@@ -176,7 +188,8 @@ namespace Entry {
 		// View: ideal for 1 component
 		// Group: ideal for multiple components
 		
-		// Render Modeles
+		// Render Meshes
+		glm::mat4 viewMatrix(1.0f);
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -190,8 +203,23 @@ namespace Entry {
 				{
 					mainCamera = &camera.Camera;
 					cameraTransform = transform.GetTransform();
+					viewMatrix = glm::inverse(transform.GetTransform());
 					break;
 				}
+			}
+		}
+
+		// Update Lights
+		{
+			auto view = m_Registry.view<TransformComponent, LightComponent>();
+			for (auto entity : view)
+			{
+				auto& transform = view.get<TransformComponent>(entity);
+				auto& light = view.get<LightComponent>(entity);
+
+				auto clip = viewMatrix * glm::vec4(transform.Position, 1.0f);
+				glm::vec3 clipPos{clip.x, clip.y, clip.z};
+				//light.RendererLight->SetPosition(clipPos);
 			}
 		}
 
@@ -294,6 +322,12 @@ namespace Entry {
 
 	template<>
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<LightComponent>(Entity entity, LightComponent& component)
 	{
 
 	}

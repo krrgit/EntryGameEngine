@@ -5,7 +5,7 @@
 
 namespace Entry {
 
-	enum ShaderProgramEnum : uint16_t
+	enum ShaderProgramEnum : int
 	{
 		Lit,
 		Unlit,

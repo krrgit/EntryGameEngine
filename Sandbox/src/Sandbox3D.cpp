@@ -8,11 +8,11 @@
 
 #include "Entry/Scene/SceneSerializer.h"
 
-//#include <citro3d.h>
-//static C3D_LightEnv lightEnv;
-//static C3D_Light light;
-//static C3D_LightLut lut_Phong;
-//static C3D_FVec lightVec;
+#include <citro3d.h>
+static C3D_LightEnv lightEnv;
+static C3D_Light light;
+static C3D_LightLut lut_Phong;
+static C3D_FVec lightVec;
 
 Sandbox3D::Sandbox3D()
     : Layer("Sandbox3D"), m_CameraController(400.0f/ 240.0f, 80.0f)
@@ -78,34 +78,36 @@ void Sandbox3D::OnAttach()
 #endif
 
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/testScene.entry");
+    serializer.Deserialize("romfs:/assets/scenes/LightTest.entry");
 
     m_ActiveScene->OnViewportResize(400, 240);
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
-    //static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
-    //static const C3D_Material material =
-    //{
+    // static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
+    // static const C3D_Material material =
+    // {
     //    { 0.2f, 0.2f, 0.2f }, //ambient
     //    { 0.4f, 0.4f, 0.4f }, //diffuse
     //    { 0.8f, 0.8f, 0.8f }, //specular0
     //    { 0.0f, 0.0f, 0.0f }, //specular1
     //    { 0.0f, 0.0f, 0.0f }, //emission
-    //};
+    // };
 
-    //C3D_LightEnvInit(&lightEnv);
-    //C3D_LightEnvBind(&lightEnv);
-    //C3D_LightEnvMaterial(&lightEnv, material);
+    // C3D_LightEnvInit(&lightEnv);
+    // C3D_LightEnvBind(&lightEnv);
+    // C3D_LightEnvMaterial(&lightEnv, &material);
 
-    //LightLut_Phong(&lut_Phong, 30);
-    //C3D_LightEnvLut(&lightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &lut_Phong);
+    // // C3D_LightEnvAmbient(&lightEnv, 1.0f, 0.2f, 0.2f);
 
-    //lightVec = FVec4_New(0.0f, 0.0f, -0.5f, 1.0f);
+    // LightLut_Phong(&lut_Phong, 30);
+    // C3D_LightEnvLut(&lightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &lut_Phong);
 
-    //C3D_LightInit(&light, &lightEnv);
-    //C3D_LightColor(&light, 1.0, 1.0, 1.0);
-    //C3D_LightPosition(&light, &lightVec);
+    // lightVec = FVec4_New(0.0f, 0.0f, -0.5f, 1.0f);
+
+    // C3D_LightInit(&light, &lightEnv);
+    // C3D_LightColor(&light, 1.0, 1.0, 1.0);
+    // C3D_LightPosition(&light, &lightVec);
 }
 
 void Sandbox3D::OnDetach()
@@ -125,7 +127,7 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     //m_LightPosition.x = std::cos(m_Rotation) * 5;
     //m_LightPosition.y = 2.0f;
     //m_LightPosition.z = std::sin(m_Rotation) * 5;
-    //auto clip = m_CameraController.GetCamera().GetViewMatrix() * m_LightPosition;
+    // auto clip = m_CameraController.GetCamera().GetViewMatrix() * m_LightPosition;
 
     //lightVec.x = clip.x;
     //lightVec.y = clip.y;

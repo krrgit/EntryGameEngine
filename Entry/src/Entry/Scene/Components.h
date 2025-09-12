@@ -2,6 +2,7 @@
 
 #include "SceneCamera.h"
 #include "Entry/Core/Core.h"
+#include "Entry/Renderer/Light.h"
 #include "Entry/Renderer/Model.h"
 #include "Entry/Core/UUID.h"
 
@@ -96,6 +97,33 @@ namespace Entry
 		{
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
+	};
+
+	struct LightComponent
+	{
+		LightType Type = LightType::Phong;
+		float Strength = 30.0f;
+		float Angle = 90.0f;
+		glm::vec3 Color = {1.0f, 1.0f, 1.0f};
+		Ref<Light> RendererLight;
+
+		LightComponent()
+		{
+			LightProps props{
+				Type,
+				Strength,
+				Angle,
+				Color
+			};
+
+			RendererLight = Light::Create(props);
+		}
+		LightComponent(const LightComponent&) = default;
+		LightComponent(LightProps& props)
+			: Type(props.Type), Strength(props.Strength), Angle(props.Angle), Color(props.Color)
+		{
+			RendererLight = Light::Create(props);
 		}
 	};
 }
