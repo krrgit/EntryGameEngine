@@ -219,7 +219,7 @@ namespace Entry {
 
 				auto clip = viewMatrix * glm::vec4(transform.Position, 1.0f);
 				glm::vec3 clipPos{clip.x, clip.y, clip.z};
-				//light.RendererLight->SetPosition(clipPos);
+				light.RendererLight->SetPosition(clipPos);
 			}
 		}
 

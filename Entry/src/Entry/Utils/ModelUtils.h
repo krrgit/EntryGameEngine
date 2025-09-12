@@ -56,9 +56,9 @@ namespace Entry
 				outVertices->push_back(-pz);
 				outVertices->push_back(u);
 				outVertices->push_back(v);
-				outVertices->push_back(nx);
+				outVertices->push_back(-nx);
 				outVertices->push_back(ny);
-				outVertices->push_back(nz);
+				outVertices->push_back(-nz);
 
 				// Index is just the order of the vertices
 				outIndices->push_back(static_cast<uint16_t>((outVertices->size() / 8) - 1));
