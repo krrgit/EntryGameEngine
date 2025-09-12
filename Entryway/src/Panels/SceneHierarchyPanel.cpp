@@ -72,6 +72,13 @@ namespace Entry
 		m_SelectionContext = entity;
 	}
 
+	void SceneHierarchyPanel::DeleteSelectedEntity()
+	{
+		if (!m_SelectionContext) return;
+		m_Context->DestroyEntity(m_SelectionContext);
+		m_SelectionContext = {};
+	}
+
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -116,9 +123,7 @@ namespace Entry
 
 		if (entityDeleted)
 		{
-			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
+			DeleteSelectedEntity();
 		}
 	}
 

@@ -498,6 +498,9 @@ namespace Entry {
             if (ctrlPressed)
                 OnDuplicateEntity();
             break;
+        case KeyCode::Delete:
+            m_SceneHierarchyPanel.DeleteSelectedEntity();
+            break;
         default:
             break;
         }
