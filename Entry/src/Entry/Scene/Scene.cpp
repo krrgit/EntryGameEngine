@@ -99,18 +99,8 @@ namespace Entry {
 	void Scene::OnUpdateEditor(Timestep ts, uint16_t screenSide, EditorCamera& camera)
 	{
 		Renderer3D::BeginScene(camera, screenSide);
-
-		// Update Lights
-		{
-			auto view = m_Registry.view<TransformComponent, LightComponent>();
-			for (auto entity : view)
-			{
-				auto& transform = view.get<TransformComponent>(entity);
-				auto& light = view.get<LightComponent>(entity);
-
-				light.RendererLight->SetPosition(transform.Position);
-			}
-		}
+		glm::mat4 viewMatrix = camera.GetViewMatrix();
+		UpdateLights(viewMatrix);
 
 		for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
 		{
@@ -134,6 +124,7 @@ namespace Entry {
 		// Render Modeles
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
+		glm::mat4 viewMatrix;
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
@@ -145,10 +136,13 @@ namespace Entry {
 				{
 					mainCamera = &camera.Camera;
 					cameraTransform = transform.GetTransform();
+					viewMatrix = glm::inverse(cameraTransform);
 					break;
 				}
 			}
 		}
+
+		UpdateLights(viewMatrix);
 
 		if (mainCamera)
 		{
@@ -210,18 +204,7 @@ namespace Entry {
 		}
 
 		// Update Lights
-		{
-			auto view = m_Registry.view<TransformComponent, LightComponent>();
-			for (auto entity : view)
-			{
-				auto& transform = view.get<TransformComponent>(entity);
-				auto& light = view.get<LightComponent>(entity);
-
-				auto clip = viewMatrix * glm::vec4(transform.Position, 1.0f);
-				glm::vec3 clipPos{clip.x, clip.y, clip.z};
-				light.RendererLight->SetPosition(clipPos);
-			}
-		}
+		UpdateLights(viewMatrix);
 
 		if (mainCamera) 
 		{
@@ -281,6 +264,29 @@ namespace Entry {
 		}
 
 		return {};
+	}
+
+	Entity Scene::GetLightEntity()
+	{
+		auto view = m_Registry.view<LightComponent>();
+		for (auto entity : view)
+		{
+			return Entity{ entity, this };
+		}
+	}
+
+	void Scene::UpdateLights(glm::mat4& viewMatrix)
+	{
+		auto view = m_Registry.view<TransformComponent, LightComponent>();
+		for (auto entity : view)
+		{
+			auto& transform = view.get<TransformComponent>(entity);
+			auto& light = view.get<LightComponent>(entity);
+
+			auto clip = viewMatrix * glm::vec4(transform.Position, 1.0f);
+			glm::vec3 clipPos{ clip.x, clip.y, clip.z };
+			light.RendererLight->SetLight({clipPos, light.Color, light.Strength, light.Angle, light.Type});
+		}
 	}
 
 	template<typename T>

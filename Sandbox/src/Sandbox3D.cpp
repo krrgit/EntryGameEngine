@@ -83,6 +83,7 @@ void Sandbox3D::OnAttach()
     m_ActiveScene->OnViewportResize(400, 240);
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+    m_LightEntity = m_ActiveScene->GetLightEntity();
     // TO USE LIGHTS: Set Citro3D texenv to GPU_FRAGMENT_PRIMARY_COLOR
     // static C3D_Material* material = reinterpret_cast<C3D_Material*>(&m_Model->GetMaterial(0)->GetProps().Values);
     // static const C3D_Material material =
@@ -149,6 +150,12 @@ void Sandbox3D::OnImGuiRender()
     ET_PROFILE_FUNCTION();
  
     ImGui::Begin("Stats");
+
+    auto& lightTransform = m_LightEntity.GetComponent<Entry::TransformComponent>();
+    auto& light = m_LightEntity.GetComponent<Entry::LightComponent>();
+
+    ImGui::DragFloat3("Light Position", glm::value_ptr(lightTransform.Position));
+    ImGui::ColorEdit3("Light Color", glm::value_ptr(light.Color));
 
     auto stats = Entry::Renderer3D::GetStats();
     ImGui::Text("Renderer3D Stats:");

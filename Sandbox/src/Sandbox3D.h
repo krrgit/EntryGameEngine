@@ -27,6 +27,7 @@ class Sandbox3D : public Entry::Layer
     Entry::Entity m_ShieldEntity;
     Entry::Entity m_CameraEntity;
     Entry::Entity m_SecondCamera;
+    Entry::Entity m_LightEntity;
 
     bool m_PrimaryCamera = true;
 

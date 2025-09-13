@@ -13,11 +13,11 @@ namespace Entry
 
 	struct LightProps
 	{
-		LightType Type;
+		glm::vec3 Position;
+		glm::vec3 Color;
 		float Strength;
 		float Angle;
-		glm::vec3 Color;
-		glm::vec3 InitPosition;
+		LightType Type;
 	};
 
 	class Light 
@@ -25,10 +25,7 @@ namespace Entry
 	public:
 		virtual ~Light() = default;
 
-		virtual void SetStrength(float strength) = 0;
-		virtual void SetAngle(float angle) = 0;
-		virtual void SetColor(glm::vec3 color) = 0;
-		virtual void SetPosition(glm::vec3 position) = 0;
+		virtual void SetLight(LightProps props) = 0;
 
 		static Ref<Light> Create(LightProps& props);
 	};

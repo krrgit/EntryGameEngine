@@ -26,7 +26,7 @@ namespace Entry
 		LightLut_Phong(&m_Lut, m_Strength);
 		C3D_LightEnvLut(&m_LightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
 
-		m_Position = FVec4_New(props.InitPosition.x, props.InitPosition.y, props.InitPosition.z, 1.0f);
+		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, 1.0f);
 
 		C3D_LightInit(&m_Light, &m_LightEnv);
 		C3D_LightColor(&m_Light, m_Color.r, m_Color.g, m_Color.b);
@@ -37,28 +37,12 @@ namespace Entry
 	{
 	}
 
-	void Citro3DLight::SetPosition(glm::vec3 position)
+	void Citro3DLight::SetLight(LightProps props)
 	{
-		m_Position = FVec4_New(position.x, position.y, position.z, 1.0f);
+		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, 1.0f);
+		m_Color = props.Color;
 
 		C3D_LightPosition(&m_Light, &m_Position);
-	}
-
-	void Citro3DLight::UpdateLight()
-	{
-		// TODO: Implement spotlight
-		//switch (m_LightType)
-		//{
-		//case LightType::Phong:
-		//	LightLut_Phong(&m_Lut, m_Strength);
-		//	C3D_LightEnvLut(&m_LightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
-		//	break;
-		//case LightType::Spotlight:
-		//	LightLut_Spotlight(&m_Lut, m_Angle);
-		//	C3D_LightEnvLut(&m_LightEnv, GPU_LUT_SP, GPU_LUTINPUT_LN, false, &m_Lut);
-		//	break;
-		//default:
-		//break;
-		//}
+		C3D_LightColor(&m_Light, m_Color.r, m_Color.g, m_Color.b);
 	}
 }

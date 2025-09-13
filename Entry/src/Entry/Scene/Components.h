@@ -111,10 +111,11 @@ namespace Entry
 		LightComponent()
 		{
 			LightProps props{
-				Type,
+				glm::vec3(0.0f),
+				Color,
 				Strength,
 				Angle,
-				Color
+				Type,
 			};
 
 			RendererLight = Light::Create(props);

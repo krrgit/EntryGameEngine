@@ -9,8 +9,6 @@ namespace Entry
 		m_Strength = props.Strength;
 		m_Angle = props.Angle;
 		m_Color = props.Color;
-
-		UpdateLight();
 	}
 
 	OpenGLLight::~OpenGLLight()
@@ -18,20 +16,7 @@ namespace Entry
 
 	}
 
-	void OpenGLLight::SetPosition(glm::vec3 position)
+	void OpenGLLight::SetLight(LightProps props)
 	{
-	}
-
-	void OpenGLLight::UpdateLight()
-	{
-		switch (m_LightType)
-		{
-		case LightType::Phong:
-			break;
-		case LightType::Spotlight:
-			break;
-		default:
-		break;
-		}
 	}
 }

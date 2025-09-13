@@ -194,10 +194,10 @@ namespace Entry
 
 			auto& lightComponent = entity.GetComponent<LightComponent>();
 
-			out << YAML::Key << "Type" << (int)lightComponent.Type;
+			out << YAML::Key << "Color" << YAML::Value << lightComponent.Color;
 			out << YAML::Key << "Strength" << lightComponent.Strength;
 			out << YAML::Key << "Angle" << lightComponent.Angle;
-			out << YAML::Key << "Color" << YAML::Value << lightComponent.Color;
+			out << YAML::Key << "Type" << (int)lightComponent.Type;
 			out << YAML::EndMap;
 		}
 
@@ -303,11 +303,11 @@ namespace Entry
 				if (lightComponent)
 				{
 					LightProps props {
-						(LightType)lightComponent["Type"].as<int>(),
+						deserializedEntity.GetComponent<TransformComponent>().Position,
+						lightComponent["Color"].as<glm::vec3>(),
 						lightComponent["Strength"].as<float>(),
 						lightComponent["Angle"].as<float>(),
-						lightComponent["Color"].as<glm::vec3>(),
-						deserializedEntity.GetComponent<TransformComponent>().Position
+						(LightType)lightComponent["Type"].as<int>(),
 					};
 					deserializedEntity.AddComponent<LightComponent>(props);
 				}

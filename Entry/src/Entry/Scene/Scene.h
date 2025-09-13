@@ -29,7 +29,10 @@ namespace Entry {
 		Entity DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
+		Entity GetLightEntity();
 	private:
+		void UpdateLights(glm::mat4& viewMatrix);
+
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
 	private:
