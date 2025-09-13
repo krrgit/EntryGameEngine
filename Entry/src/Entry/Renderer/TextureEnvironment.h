@@ -50,6 +50,17 @@ namespace Entry
 		TexEnvSource Source1 = TexEnvSource::ET_GPU_TEXTURE0;
 		TexEnvSource Source2 = TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR;
 		TexEnvSource Source3 = TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR;
+
+		TexEnvProps() = default;
+		TexEnvProps(TexEnvChannels channels,
+			TexEnvBlendMode blendMode,
+			TexEnvSource source1,
+			TexEnvSource source2,
+			TexEnvSource source3)
+			: Channels(channels), BlendMode(blendMode),
+			Source1(source1), Source2(source2), Source3(source3)
+		{
+		}
 	};
 
 	// Preset TexEnvProps
@@ -59,7 +70,7 @@ namespace Entry
 		TexEnvBlendMode::ET_GPU_MODULATE,
 		TexEnvSource::ET_GPU_TEXTURE0,
 		TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR,
-		TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR,
+		TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR
 	};
 
 	static TexEnvProps s_TexEnvUnlitProps
@@ -68,6 +79,6 @@ namespace Entry
 		TexEnvBlendMode::ET_GPU_MODULATE,
 		TexEnvSource::ET_GPU_TEXTURE0,
 		TexEnvSource::ET_GPU_PRIMARY_COLOR,
-		TexEnvSource::ET_GPU_PRIMARY_COLOR,
+		TexEnvSource::ET_GPU_PRIMARY_COLOR
 	};
 }
