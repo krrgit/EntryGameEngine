@@ -1,4 +1,4 @@
-// Unlit Texture Shader
+// Lit Texture Shader
 
 #type vertex
 #version 330 core
@@ -15,14 +15,20 @@ uniform int  u_EntityID;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
+out vec3 v_Normal;    // in view space
+out vec3 v_FragPos;   // in view space
 flat out int v_EntityID;
 
 void main()
 {
 	gl_Position = u_Projection * u_ModelView * vec4(a_Position, 1.0);
-	
+	    
+	vec4 viewPos = u_ModelView * vec4(a_Position, 1.0);
+
 	v_Color = u_Color;
 	v_TexCoord = a_TexCoord;
+    v_Normal = normalize(mat3(u_ModelView) * a_Norm); // transform normal to view space
+    v_FragPos = viewPos.xyz;
 	v_EntityID = u_EntityID;
 }
 
@@ -32,8 +38,17 @@ void main()
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
 
+layout(std140) uniform LightData
+{
+    vec4 lightPos;   // xyz = position in view space
+    vec4 lightColor; // rgb = color, a = strength
+    vec4 params;     // x = type, y = angle, z,w unused
+};
+
 in vec4 v_Color;
 in vec2 v_TexCoord;
+in vec3 v_Normal;    // in view space
+in vec3 v_FragPos;   // in view space
 in float v_TexIndex;
 flat in int v_EntityID;
 
@@ -49,6 +64,14 @@ void main()
 		case 2: texColor *= texture(u_Textures[2], v_TexCoord); break;
 		case 3: texColor *= texture(u_Textures[3], v_TexCoord); break;
 	}
-	color = texColor;
+
+	vec3 lightDir = normalize(lightPos.xyz - v_FragPos);
+	float strength = params.x / 100.0;
+	// Diffuse
+    float diff = max(dot(v_Normal, lightDir), 0.0);
+	vec4 diffuse = diff * lightColor;
+	diffuse.w = 1.0;
+
+	color = texColor * diffuse;
 	color2 = v_EntityID; // Entity ID placeholder
 }
