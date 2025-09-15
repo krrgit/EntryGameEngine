@@ -43,6 +43,16 @@ layout(std140, binding = 0) uniform LightData
     vec4 lightPos;   // xyz = position in view space
     vec4 lightColor; // rgb = color, a = strength
     vec4 params;     // x = type, y = angle, z,w unused
+	vec4 s_Ambient; // Scene Ambient
+};
+
+layout(std140, binding = 1) uniform MaterialData
+{
+    vec4 m_Ambient;
+	vec4 m_Diffuse;
+	vec4 m_Specular0;
+	vec4 m_Specular1;
+	vec4 m_Emissive;
 };
 
 in vec4 v_Color;
@@ -72,19 +82,18 @@ void main()
 	vec4 diffuse = diff * lightColor;
 	diffuse.w = 1.0;
 
-	    float d = length(lightPos.xyz - v_FragPos.xyz);
+	float d = length(lightPos.xyz - v_FragPos.xyz);
     // Example constants � you can tweak to match PICA200:
     float attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
 
 	// Primary Color =  mat.emissive + 
 	//				    mat.ambient * scene.ambient + 
-	//					attenuation * spotlightFactor(?) * GPU_LIGHTLUTINPUT * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
+	//					attenuation * LUT_FUNCTION * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
 	//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
 
-	// float shadow_atten = 1.0;
-	// vec4 primaryColor = mtl_emissive + mtl_ambient + (shadow_atten * (texColor * mtl_diffuse * diffuse));
-	// primaryColor.a = texColor.a;
+	vec4 primaryColor = m_Emissive + (m_Ambient * s_Ambient) + ((texColor * m_Diffuse * diffuse));
+	primaryColor.a = texColor.a;
 
-	color = texColor * diffuse;
+	color = primaryColor;
 	color2 = v_EntityID; // Entity ID placeholder
 }

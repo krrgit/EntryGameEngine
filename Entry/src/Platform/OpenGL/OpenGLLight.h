@@ -11,6 +11,16 @@ namespace Entry
 		glm::vec4 position;
 		glm::vec4 color;
 		glm::vec4 params;
+		glm::vec4 sceneAmbient;
+	};
+
+	struct UBOMaterialData
+	{
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular0;
+		glm::vec4 specular1;
+		glm::vec4 emissive;
 	};
 
 	class OpenGLLight : public Light
@@ -24,9 +34,7 @@ namespace Entry
 		GLuint m_LightUBO;
 		UBOLightData m_LightData;
 
-		LightType m_LightType;
-		float m_Strength;
-		float m_Angle;
-		glm::vec3 m_Color;
+		GLuint m_MaterialUBO;
+		UBOMaterialData m_MaterialData;
 	};
 }
