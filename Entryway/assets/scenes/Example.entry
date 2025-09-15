@@ -44,11 +44,11 @@ Entities:
     TagComponent:
       Tag: Light
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, 5, -5]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
-      Type: 0
+      Color: [1, 1, 1]
       Strength: 49
       Angle: 90
-      Color: [1, 0, 0]
+      Type: 0

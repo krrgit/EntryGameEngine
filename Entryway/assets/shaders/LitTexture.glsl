@@ -1,7 +1,7 @@
-// Lit Texture Shader
+﻿// Lit Texture Shader
 
 #type vertex
-#version 330 core
+#version 420 core
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec2 a_TexCoord;
@@ -33,12 +33,12 @@ void main()
 }
 
 #type fragment
-#version 330 core
+#version 420 core
 
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
 
-layout(std140) uniform LightData
+layout(std140, binding = 0) uniform LightData
 {
     vec4 lightPos;   // xyz = position in view space
     vec4 lightColor; // rgb = color, a = strength
@@ -71,6 +71,19 @@ void main()
     float diff = max(dot(v_Normal, lightDir), 0.0);
 	vec4 diffuse = diff * lightColor;
 	diffuse.w = 1.0;
+
+	    float d = length(lightPos.xyz - v_FragPos.xyz);
+    // Example constants � you can tweak to match PICA200:
+    float attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+
+	// Primary Color =  mat.emissive + 
+	//				    mat.ambient * scene.ambient + 
+	//					attenuation * spotlightFactor(?) * GPU_LIGHTLUTINPUT * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
+	//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
+
+	// float shadow_atten = 1.0;
+	// vec4 primaryColor = mtl_emissive + mtl_ambient + (shadow_atten * (texColor * mtl_diffuse * diffuse));
+	// primaryColor.a = texColor.a;
 
 	color = texColor * diffuse;
 	color2 = v_EntityID; // Entity ID placeholder

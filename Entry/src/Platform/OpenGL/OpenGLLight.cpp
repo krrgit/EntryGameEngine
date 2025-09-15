@@ -20,7 +20,7 @@ namespace Entry
 
 	OpenGLLight::~OpenGLLight()
 	{
-
+		glDeleteBuffers(sizeof(UBOLightData), &m_LightUBO);
 	}
 
 	void OpenGLLight::SetLight(LightProps props)
