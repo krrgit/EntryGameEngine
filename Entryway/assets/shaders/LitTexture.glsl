@@ -35,14 +35,22 @@ void main()
 #type fragment
 #version 420 core
 
+// 3DS Max Light Limit
+#define MAX_LIGHTS 8
+
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
 
+struct Light 
+{
+    vec4 position;   // xyz = position in view space
+    vec4 color; // rgb = color, a = strength
+    vec4 params;     // x = type, y = angle, z,w unused
+};
+
 layout(std140, binding = 0) uniform LightData
 {
-    vec4 lightPos;   // xyz = position in view space
-    vec4 lightColor; // rgb = color, a = strength
-    vec4 params;     // x = type, y = angle, z,w unused
+    Light lights[MAX_LIGHTS];
 	vec4 s_Ambient; // Scene Ambient
 };
 
@@ -75,24 +83,29 @@ void main()
 		case 3: texColor *= texture(u_Textures[3], v_TexCoord); break;
 	}
 
-	vec3 lightDir = normalize(lightPos.xyz - v_FragPos);
-	float strength = params.x / 100.0;
-	// Diffuse
-    float diff = max(dot(v_Normal, lightDir), 0.0);
-	vec4 diffuse = diff * lightColor;
-	diffuse.w = 1.0;
+	vec4 primaryColor = m_Emissive + (m_Ambient * s_Ambient);
 
-	float d = length(lightPos.xyz - v_FragPos.xyz);
+	for(int i=0; i< int(s_Ambient.w); i++) 
+	{
+		vec3 lightDir = normalize(lights[i].position.xyz - v_FragPos);
+		float diff = max(dot(v_Normal, lightDir), 0.0);
+		vec4 diffuse = diff * lights[i].color;
+		diffuse.w = 1.0;
+
+		primaryColor += m_Emissive + (m_Ambient * s_Ambient) + ((texColor * m_Diffuse * diffuse));
+	}
+	primaryColor.a = texColor.a;
+
+	
+	// Diffuse
+	//float d = length(lights[0].position.xyz - v_FragPos.xyz);
     // Example constants � you can tweak to match PICA200:
-    float attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+    //float attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
 
 	// Primary Color =  mat.emissive + 
 	//				    mat.ambient * scene.ambient + 
 	//					attenuation * LUT_FUNCTION * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
 	//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
-
-	vec4 primaryColor = m_Emissive + (m_Ambient * s_Ambient) + ((texColor * m_Diffuse * diffuse));
-	primaryColor.a = texColor.a;
 
 	color = primaryColor;
 	color2 = v_EntityID; // Entity ID placeholder

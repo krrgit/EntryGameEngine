@@ -33,7 +33,7 @@ Entities:
     TagComponent:
       Tag: Shield
     TransformComponent:
-      Position: [0, 2, 0]
+      Position: [0, 2, 0.899999976]
       Rotation: [0, 0, 0]
       Scale: [0.0199999996, 0.0199999996, 0.0199999996]
     MeshRendererComponent:
@@ -44,11 +44,11 @@ Entities:
     TagComponent:
       Tag: Light
     TransformComponent:
-      Position: [0, 5, -5]
+      Position: [4.0999999, 1, -5]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
-      Color: [1, 0.781395316, 0]
+      Color: [0.130232692, 1, 0]
       Strength: 30
       Angle: 90
       Type: 0
@@ -96,3 +96,15 @@ Entities:
       Model: assets/models/plane.obj
       MeshID: 0
       MaterialID: 0
+  - Entity: 15474491872155378893
+    TagComponent:
+      Tag: Entity
+    TransformComponent:
+      Position: [-3.9000001, 1, -5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    LightComponent:
+      Color: [1, 0, 0]
+      Strength: 30
+      Angle: 90
+      Type: 0

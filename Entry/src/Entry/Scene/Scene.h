@@ -31,6 +31,9 @@ namespace Entry {
 		Entity GetPrimaryCameraEntity();
 		Entity GetLightEntity();
 	private:
+		//void OnLightAdded(ECS::Entity e, LightComponent& light);
+		//void OnLightDestroyed(ECS::Entity e, LightComponent& light);
+		
 		void UpdateLights(glm::mat4& viewMatrix);
 
 		template<typename T>
@@ -38,6 +41,7 @@ namespace Entry {
 	private:
 		ECS::Registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+		uint32_t m_LightCount = 0;
 
 		friend class Entity;
 		friend class SceneSerializer;

@@ -4,13 +4,21 @@
 
 #include <glad/glad.h>
 
+// 3DS Max Light Limit
+#define MAX_LIGHTS 8
+
 namespace Entry
 {
-	struct UBOLightData
+	struct OGL_Light
 	{
 		glm::vec4 position;
 		glm::vec4 color;
 		glm::vec4 params;
+	};
+
+	struct UBOLightData
+	{
+		OGL_Light lights[MAX_LIGHTS];
 		glm::vec4 sceneAmbient;
 	};
 
@@ -31,10 +39,9 @@ namespace Entry
 
 		virtual void SetLight(LightProps props) override;
 	private:
-		GLuint m_LightUBO;
+		uint16_t m_LightID;
 		UBOLightData m_LightData;
-
-		GLuint m_MaterialUBO;
+		
 		UBOMaterialData m_MaterialData;
 	};
 }

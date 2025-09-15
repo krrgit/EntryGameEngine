@@ -14,6 +14,13 @@ namespace Entry {
 
 	Scene::Scene()
 	{
+		m_Registry.on_construct<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
+			ET_CORE_INFO("Lights: {0}", ++m_LightCount);
+		});
+
+		m_Registry.on_destroy<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
+			ET_CORE_INFO("Lights: {0}", --m_LightCount);
+		});
 	}
 
 	Scene::~Scene()
