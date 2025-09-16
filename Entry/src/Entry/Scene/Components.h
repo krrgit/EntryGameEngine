@@ -120,7 +120,19 @@ namespace Entry
 
 			RendererLight = Light::Create(props);
 		}
-		LightComponent(const LightComponent&) = default;
+		LightComponent(const LightComponent& other)
+			: Type(other.Type), Strength(other.Strength), Angle(other.Angle), Color(other.Color)
+		{
+			LightProps props{
+				glm::vec3(0.0f),
+				Color,
+				Strength,
+				Angle,
+				Type,
+			};
+
+			RendererLight = Light::Create(props);
+		}
 		LightComponent(LightProps& props)
 			: Type(props.Type), Strength(props.Strength), Angle(props.Angle), Color(props.Color)
 		{

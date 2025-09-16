@@ -25,15 +25,15 @@ namespace Entry
 
 		virtual void SetLight(LightProps props) override;
 
-		virtual void SetID(uint16_t id) override { m_LightID = id; }
-		virtual uint16_t GetID() override { return m_LightID; }
+		virtual void SetID(int id) override { m_LightID = id; }
+		virtual int GetID() override { return m_LightID; }
 
 		virtual void* GetNativeLight() override { return (void*)m_LightID; }
 
 		virtual void SetParent(int parent) override { m_Parent = parent; }
 		
 	private:
-		uint16_t m_LightID;
+		int m_LightID = -1;
 		GLint m_Parent;
 		OGL_Light m_LightData;
 	};

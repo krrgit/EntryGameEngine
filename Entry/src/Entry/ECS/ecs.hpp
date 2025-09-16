@@ -239,7 +239,13 @@ namespace Entry
                 if (storage->data.find(e) != storage->data.end())
                     storage->data[e] = value;
                 else
-                    storage->data.emplace(e, value);
+                {
+                    auto res = storage->data.emplace(e, value);
+                    T& comp = res.first->second;
+
+                    EventStorage<T>* ev = static_cast<EventStorage<T>*>(events[typeId<T>()].get());
+                    if (ev) ev->onConstruct.emit(e, comp);
+                }
 
                 return storage->data[e];
             }
@@ -252,7 +258,13 @@ namespace Entry
                 if (storage->data.find(e) != storage->data.end())
                     storage->data[e] = std::move(value);
                 else
-                    storage->data.emplace(e, std::move(value));
+                {
+                    auto res = storage->data.emplace(e, std::move(value));
+                    T& comp = res.first->second;
+
+                    EventStorage<T>* ev = static_cast<EventStorage<T>*>(events[typeId<T>()].get());
+                    if (ev) ev->onConstruct.emit(e, comp);
+                }
 
                 return storage->data[e];
             }

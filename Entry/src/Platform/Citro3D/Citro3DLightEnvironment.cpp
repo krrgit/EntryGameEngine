@@ -40,13 +40,17 @@ namespace Entry
 
 	int Citro3DLightEnvironment::LightInit(Ref<Light> light)
 	{
+		int id = C3D_LightInit((C3D_Light*)light->GetNativeLight(), &m_LightEnv);
+		if (id == -1) return -1;
+
 		m_LightCount++;
-		C3D_LightInit((C3D_Light*)light->GetNativeLight(), &m_LightEnv);
 		return 1;
 	}
 
 	void Citro3DLightEnvironment::LightDestroy(Ref<Light> light)
 	{
+		if (id == -1) return;
+
 		m_LightCount--;
 	}
 

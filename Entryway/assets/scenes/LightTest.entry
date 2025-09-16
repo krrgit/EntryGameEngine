@@ -168,11 +168,11 @@ Entities:
       Strength: 30
       Angle: 90
       Type: 1
-  - Entity: 5674362160390665091
+  - Entity: 15432524374157204893
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [0, 0.5, -3]
+      Position: [0, 0.5, -4]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:

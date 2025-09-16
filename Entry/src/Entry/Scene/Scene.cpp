@@ -32,9 +32,10 @@ namespace Entry {
 		m_LightEnv->SetMaterial(sampleMat);
 
 		m_Registry.on_construct<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
-			m_LightEnv->LightInit(l.RendererLight);
-
 			ET_CORE_INFO("Lights: {0}", ++m_LightCount);
+			m_LightEnv->LightInit(l.RendererLight);
+			if (m_LightCount == MAX_LIGHTS)
+				ET_CORE_WARN("Maximum Light Limit (8) for 3DS reached.");
 		});
 
 		m_Registry.on_destroy<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
@@ -276,7 +277,14 @@ namespace Entry {
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
-		CopyComponentIfExists<LightComponent>(newEntity, entity);
+		if (!LightLimitReached())
+		{
+			CopyComponentIfExists<LightComponent>(newEntity, entity);
+		}
+		else
+		{
+			ET_CORE_WARN("Light Limit Reached: Cannot duplicate light.");
+		}
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 
 		return newEntity;

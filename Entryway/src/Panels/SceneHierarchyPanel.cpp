@@ -341,7 +341,8 @@ namespace Entry
 				m_SelectionContext.AddComponent<MeshRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::MenuItem("Light"))
+
+			if (ImGui::MenuItem("Light",nullptr, nullptr, !m_Context->LightLimitReached()))
 			{
 				m_SelectionContext.AddComponent<LightComponent>();
 				ImGui::CloseCurrentPopup();

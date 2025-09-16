@@ -89,6 +89,8 @@ namespace Entry
 	}
 	void OpenGLLightEnvironment::LightDestroy(Ref<Light> light)
 	{
+		if (light->GetID() == -1) return;
+
 		m_HasLight[light->GetID()] = false;
 		m_LightCount--;
 

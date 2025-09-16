@@ -6,6 +6,8 @@
 #include "Entry/Renderer/EditorCamera.h"
 #include "Entry/Renderer/LightEnvironment.h"
 
+#define MAX_LIGHTS 8
+
 namespace Entry {
 
 	class Entity;
@@ -31,6 +33,9 @@ namespace Entry {
 
 		Entity GetPrimaryCameraEntity();
 		Entity GetLightEntity();
+
+		int GetLightCount() { return m_LightCount; }
+		bool LightLimitReached() { return m_LightCount >= MAX_LIGHTS; }
 	private:
 		//void OnLightAdded(ECS::Entity e, LightComponent& light);
 		//void OnLightDestroyed(ECS::Entity e, LightComponent& light);

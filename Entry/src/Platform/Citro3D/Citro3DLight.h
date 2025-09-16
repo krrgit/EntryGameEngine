@@ -12,8 +12,8 @@ namespace Entry
 		Citro3DLight(LightProps& props);
 		virtual ~Citro3DLight();
 
-		virtual void SetID(uint16_t id) override {}
-		virtual uint16_t GetID() override { return 0; }
+		virtual void SetID(int id) override {}
+		virtual int GetID() override { return 0; }
 
 		virtual void SetLight(LightProps props) override;
 		virtual void* GetNativeLight() override { return (void*) & m_Light; };

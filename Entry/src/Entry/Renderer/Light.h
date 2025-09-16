@@ -30,8 +30,8 @@ namespace Entry
 
 		virtual void* GetNativeLight() = 0;
 
-		virtual void SetID(uint16_t id) = 0;
-		virtual uint16_t GetID() = 0;
+		virtual void SetID(int id) = 0;
+		virtual int GetID() = 0;
 
 		virtual void SetParent(int parent) = 0;
 
