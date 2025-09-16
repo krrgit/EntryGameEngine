@@ -59,9 +59,11 @@ namespace Entry
 		C3D_LightPosition(&m_Light, &m_Position);
 		C3D_LightColor(&m_Light, m_Color.r, m_Color.g, m_Color.b);
 
-		//C3D_LightSpotEnable(&m_Light, true);
-		C3D_LightSpotDir(&m_Light, m_Direction.x, m_Direction.y, m_Direction.z);
-		C3D_LightSpotLut(&m_Light, &m_Lut);
+		if (m_LightType == ET_Spotlight)
+		{
+			C3D_LightSpotDir(&m_Light, m_Direction.x, m_Direction.y, m_Direction.z);
+			C3D_LightSpotLut(&m_Light, &m_Lut);
+		}
 	}
 
 	void Citro3DLight::SetAsDirectionalLight(float shininess)

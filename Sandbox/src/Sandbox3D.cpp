@@ -78,7 +78,7 @@ void Sandbox3D::OnAttach()
 #endif
 
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/SpotLightTest.entry");
+    serializer.Deserialize("romfs:/assets/scenes/LightTest.entry");
 
     m_ActiveScene->OnViewportResize(400, 240);
 
