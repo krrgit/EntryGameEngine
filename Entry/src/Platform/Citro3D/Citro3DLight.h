@@ -12,8 +12,8 @@ namespace Entry
 		Citro3DLight(LightProps& props);
 		virtual ~Citro3DLight();
 
-		virtual void SetID(int id) override {}
-		virtual int GetID() override { return 0; }
+		virtual void SetID(int id) override { m_LightID = id; }
+		virtual int GetID() override { return m_LightID; }
 
 		virtual void SetLight(LightProps props) override;
 		virtual void* GetNativeLight() override { return (void*) & m_Light; };
@@ -25,6 +25,8 @@ namespace Entry
 		float m_Angle;
 		glm::vec3 m_Color;
 
+
+		int m_LightID = -1;
 		C3D_LightEnv m_LightEnv;
 		C3D_Light m_Light;
 		C3D_LightLut m_Lut;

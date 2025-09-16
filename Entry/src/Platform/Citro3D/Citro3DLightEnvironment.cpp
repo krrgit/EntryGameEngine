@@ -49,7 +49,7 @@ namespace Entry
 
 	void Citro3DLightEnvironment::LightDestroy(Ref<Light> light)
 	{
-		if (id == -1) return;
+		if (light->GetID() == -1) return;
 
 		m_LightCount--;
 	}

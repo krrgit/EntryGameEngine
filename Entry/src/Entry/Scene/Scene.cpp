@@ -20,6 +20,7 @@ namespace Entry {
 		m_LightEnv->SetSceneAmbientColor(glm::vec3(0));
 
 		MaterialProps matProps;
+
 		matProps.Values = {
 				{ 0.2f, 0.2f, 0.2f }, //ambient
 				{ 0.4f, 0.4f, 0.4f }, //diffuse
