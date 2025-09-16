@@ -404,6 +404,7 @@ namespace Entry {
         ImGui::PopStyleVar();
         
         UI_Toolbar();
+        UI_LightEnvironment();
 
         ImGui::End();
     }
@@ -459,7 +460,29 @@ namespace Entry {
 
         ImGui::PopStyleVar(4); // Toolbar Style
         ImGui::End();
+    }
 
+    void EditorLayer::UI_LightEnvironment()
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        auto boldFont = io.Fonts->Fonts[0];
+        
+        ImGui::Begin("Light Environment");
+        ImGui::PushFont(boldFont);
+        ImGui::Text("Scene");
+        ImGui::PopFont();
+        ImGui::Separator();
+        
+        static glm::vec3 ambientColor = m_ActiveScene->GetLightEnvironment()->GetSceneAmbientColor();
+        if (ImGui::ColorEdit3("Ambient Color", glm::value_ptr(ambientColor)))
+        {
+            m_ActiveScene->GetLightEnvironment()->SetSceneAmbientColor(ambientColor);
+        }
+
+        ImGui::Separator();
+        ImGui::Text("Light Count: %d", m_ActiveScene->GetLightCount());
+        ImGui::Text("Light Limit: 8");
+        ImGui::End();
     }
 
     void EditorLayer::OnEvent(Entry::Event& event) 

@@ -103,7 +103,7 @@ namespace Entry
 
 	void OpenGLLightEnvironment::SetSceneAmbientColor(glm::vec3 color)
 	{
-
+		m_SceneAmbient = color;
 		glBindBuffer(GL_UNIFORM_BUFFER, m_LightEnvUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(OGL_Light) * MAX_LIGHTS, sizeof(glm::vec3), &color);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);

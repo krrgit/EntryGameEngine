@@ -8,11 +8,11 @@
 
 #include "Entry/Scene/SceneSerializer.h"
 
-#include <citro3d.h>
-static C3D_LightEnv lightEnv;
-static C3D_Light light;
-static C3D_LightLut lut_Phong;
-static C3D_FVec lightVec;
+//#include <citro3d.h>
+//static C3D_LightEnv lightEnv;
+//static C3D_Light light;
+//static C3D_LightLut lut_Phong;
+//static C3D_FVec lightVec;
 
 Sandbox3D::Sandbox3D()
     : Layer("Sandbox3D"), m_CameraController(400.0f/ 240.0f, 80.0f)

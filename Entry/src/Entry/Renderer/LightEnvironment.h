@@ -49,6 +49,7 @@ namespace Entry
 		virtual int GetLightCount() = 0;
 
 		virtual void SetSceneAmbientColor(glm::vec3 color) = 0;
+		virtual glm::vec3 GetSceneAmbientColor() = 0;
 
 		static Ref<LightEnvironment> Create();
 	};

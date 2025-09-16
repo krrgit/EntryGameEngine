@@ -38,6 +38,7 @@ namespace Entry {
 
         // UI Panels
         void UI_Toolbar();
+        void UI_LightEnvironment();
 
         private:
             PerspectiveCameraController m_CameraController;

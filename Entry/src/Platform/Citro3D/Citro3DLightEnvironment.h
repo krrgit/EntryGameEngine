@@ -25,6 +25,7 @@ namespace Entry
 		virtual int GetLightCount() override { return m_LightCount; }
 
 		virtual void SetSceneAmbientColor(glm::vec3 color) override;
+		virtual glm::vec3 GetSceneAmbientColor() override { return glm::vec3(m_LightEnv.ambient[0], m_LightEnv.ambient[1], m_LightEnv.ambient[2]); }
 
 	private:
 		C3D_LightEnv m_LightEnv;

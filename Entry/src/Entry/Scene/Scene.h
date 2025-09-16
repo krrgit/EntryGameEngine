@@ -36,10 +36,10 @@ namespace Entry {
 
 		int GetLightCount() { return m_LightCount; }
 		bool LightLimitReached() { return m_LightCount >= MAX_LIGHTS; }
-	private:
-		//void OnLightAdded(ECS::Entity e, LightComponent& light);
-		//void OnLightDestroyed(ECS::Entity e, LightComponent& light);
-		
+
+		Ref<LightEnvironment> GetLightEnvironment() { return m_LightEnv; }
+
+	private:	
 		void UpdateLights(glm::mat4& viewMatrix);
 
 		template<typename T>
