@@ -51,26 +51,6 @@ namespace Entry
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
-	void OpenGLLightEnvironment::CreatePhongLut(float shininess)
-	{
-		// TODO
-	}
-
-	void OpenGLLightEnvironment::CreateSpotlightLut(float angle)
-	{
-		// TODO
-	}
-
-	void OpenGLLightEnvironment::CreateQuadraticLut(float from, float to, float linear, float quad)
-	{
-		// TODO
-	}
-
-	void OpenGLLightEnvironment::SetLut(ET_LIGHTLUTID id, ET_LIGHTLUTINPUT inputs, bool negative)
-	{
-		// TODO
-	}
-
 	int OpenGLLightEnvironment::LightInit(Ref<Light> light)
 	{
 		int id;

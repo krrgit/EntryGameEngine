@@ -100,6 +100,8 @@ namespace Entry {
 
 		virtual void* GetNativeWindow() const = 0;
 
+		virtual void SetTitle(std::string& title) = 0;
+
 		static Window* Create(const WindowProps& props = WindowProps());
 	};
 }

@@ -1,4 +1,6 @@
-Scene: Untitled
+Scene: LightTest
+LightEnvironment:
+  SceneAmbientColor: [0, 0, 0]
 Entities:
   - Entity: 13788627539912258494
     TagComponent:

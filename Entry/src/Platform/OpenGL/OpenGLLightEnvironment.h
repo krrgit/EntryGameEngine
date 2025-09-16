@@ -1,21 +1,12 @@
 #pragma once
 
 #include "Entry/Renderer/LightEnvironment.h"
+#include "Platform/OpenGL/OpenGLLight.h"
 
 #include <glad/glad.h>
 
-// 3DS Max Light Limit
-#define MAX_LIGHTS 8
-
 namespace Entry
 {
-	struct OGL_Light
-	{
-		glm::vec4 position;
-		glm::vec4 color;
-		glm::vec4 params;
-	};
-
 	struct UBOLightEnvData
 	{
 		OGL_Light lights[MAX_LIGHTS];
@@ -40,11 +31,6 @@ namespace Entry
 		virtual void Bind() override;
 		virtual void SetMaterial(Ref<Material> material) override;
 
-		virtual void CreatePhongLut(float shininess) override;
-		virtual void CreateSpotlightLut(float angle) override;
-		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) override;
-		virtual void SetLut(ET_LIGHTLUTID id, ET_LIGHTLUTINPUT inputs, bool negative = false) override;
-
 		virtual int LightInit(Ref<Light> light) override;
 		virtual void LightDestroy(Ref<Light> light) override;
 
@@ -52,7 +38,6 @@ namespace Entry
 
 		virtual void SetSceneAmbientColor(glm::vec3 color) override;
 		virtual glm::vec3 GetSceneAmbientColor() override { return m_SceneAmbient; }
-
 
 	private:
 		GLuint m_LightEnvUBO;

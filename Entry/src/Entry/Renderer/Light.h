@@ -15,6 +15,7 @@ namespace Entry
 	struct LightProps
 	{
 		glm::vec3 Position;
+		glm::vec3 Direction;
 		glm::vec3 Color;
 		float Strength;
 		float Angle;
@@ -33,7 +34,12 @@ namespace Entry
 		virtual void SetID(int id) = 0;
 		virtual int GetID() = 0;
 
-		virtual void SetParent(int parent) = 0;
+		virtual void SetParent(uint32_t parent) = 0;
+
+		virtual void SetAsDirectionalLight(float shininess) = 0;
+		virtual void SetAsPointLight(float shininess) = 0;
+		virtual void SetAsSpotLight(float angle) = 0;
+		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) = 0;
 
 		static Ref<Light> Create(LightProps& props);
 	};

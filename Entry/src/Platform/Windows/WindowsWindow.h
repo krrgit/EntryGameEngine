@@ -39,6 +39,8 @@ namespace Entry
 
 		inline virtual void* GetNativeWindow() const { return m_Window; }
 
+		virtual void SetTitle(std::string& title) override;
+
 		//void SetClearColor(uint32_t color);
 	private:
 		virtual void Init(const WindowProps& props);

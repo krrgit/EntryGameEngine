@@ -241,6 +241,12 @@ namespace Entry
 		}
 	}
 
+	void WindowsWindow::SetTitle(std::string& title)
+	{
+		std::string newTitle = m_Data.Title + " - " + title;
+		glfwSetWindowTitle(m_Window, newTitle.c_str());
+	}
+
 	//void WindowsWindow::SetClearColor(uint32_t color)
 	//{
 

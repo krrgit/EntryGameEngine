@@ -18,18 +18,26 @@ namespace Entry
 		virtual void SetLight(LightProps props) override;
 		virtual void* GetNativeLight() override { return (void*) & m_Light; };
 
-		virtual void SetParent(int parent) override { }
+		virtual void SetParent(uint32_t parent) override { m_Parent = (C3D_LightEnv*)parent; }
+
+		virtual void SetAsDirectionalLight(float shininess) override;
+		virtual void SetAsPointLight(float shininess) override;
+		virtual void SetAsSpotLight(float angle) override;
+		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) override;
+
 	private:
 		LightType m_LightType;
+		glm::vec3 m_Direction;
 		float m_Strength;
 		float m_Angle;
 		glm::vec3 m_Color;
 
 
 		int m_LightID = -1;
-		C3D_LightEnv m_LightEnv;
 		C3D_Light m_Light;
 		C3D_LightLut m_Lut;
+		C3D_LightLutDA m_LutDA;
 		C3D_FVec m_Position;
+		C3D_LightEnv* m_Parent;
 	};
 }

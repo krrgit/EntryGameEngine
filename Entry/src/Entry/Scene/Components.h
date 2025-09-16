@@ -111,7 +111,8 @@ namespace Entry
 		LightComponent()
 		{
 			LightProps props{
-				glm::vec3(0.0f),
+				glm::vec3(0),
+				glm::vec3(0,0,-1.0f),
 				Color,
 				Strength,
 				Angle,
@@ -125,6 +126,7 @@ namespace Entry
 		{
 			LightProps props{
 				glm::vec3(0.0f),
+				glm::vec3(0,0,-1.0f),
 				Color,
 				Strength,
 				Angle,

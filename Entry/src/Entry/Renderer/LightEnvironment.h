@@ -4,6 +4,9 @@
 #include "Material.h"
 #include "Entry/Renderer/Light.h"
 
+// 3DS Max Light Limit
+#define MAX_LIGHTS 8
+
 namespace Entry
 {
 	/// LUT IDs.
@@ -37,11 +40,6 @@ namespace Entry
 
 		virtual void Bind() = 0;
 		virtual void SetMaterial(Ref<Material> material) = 0;
-
-		virtual void CreatePhongLut(float shininess) = 0;
-		virtual void CreateSpotlightLut(float angle) = 0;
-		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) = 0;
-		virtual void SetLut(ET_LIGHTLUTID id, ET_LIGHTLUTINPUT inputs, bool negative = false) = 0;
 
 		virtual int LightInit(Ref<Light> light) = 0;
 		virtual void LightDestroy(Ref<Light> light) = 0;

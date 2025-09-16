@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Components.h"
+#include "Entry/Utils/StringUtils.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -204,11 +205,21 @@ namespace Entry
 		out << YAML::EndMap; // Entity
 	}
 
+	static void SerializeLightEnvironment(YAML::Emitter& out, Ref<LightEnvironment> lightEnv)
+	{
+		out << YAML::Key << "LightEnvironment" << YAML::Value << YAML::BeginMap;
+		out << YAML::Key << "SceneAmbientColor" << YAML::Value << lightEnv->GetSceneAmbientColor();
+		out << YAML::EndMap; // LightEnvironment
+	}
+
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << ExtractFileName(filepath);
+
+		SerializeLightEnvironment(out, m_Scene->GetLightEnvironment());
+
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](ECS::Entity entityID) 
 		{
@@ -219,12 +230,11 @@ namespace Entry
 			SerializeEntity(out, entity);
 		});
 
-		out << YAML::EndSeq;
 		out << YAML::EndMap;
+		out << YAML::EndSeq;
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -242,7 +252,16 @@ namespace Entry
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
-		ET_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+		ET_CORE_TRACE("Deserializing Scene '{0}'", sceneName);
+
+		auto scene = data["Scene"];
+		auto lightEnv = data["LightEnvironment"];
+		if (lightEnv)
+		{
+			auto ambientColor = lightEnv["SceneAmbientColor"].as<glm::vec3>();
+			m_Scene->GetLightEnvironment()->SetSceneAmbientColor(ambientColor);
+		}
+
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -302,8 +321,11 @@ namespace Entry
 				auto lightComponent = entity["LightComponent"];
 				if (lightComponent)
 				{
+					auto& transform = deserializedEntity.GetComponent<TransformComponent>();
+					glm::vec3 forward = transform.GetTransform()[2];
 					LightProps props {
-						deserializedEntity.GetComponent<TransformComponent>().Position,
+						transform.Position,
+						forward,
 						lightComponent["Color"].as<glm::vec3>(),
 						lightComponent["Strength"].as<float>(),
 						lightComponent["Angle"].as<float>(),
@@ -313,7 +335,6 @@ namespace Entry
 				}
 			}
 		}
-
 		return true;
 	}
 

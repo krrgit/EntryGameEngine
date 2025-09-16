@@ -322,8 +322,9 @@ namespace Entry {
 			auto& light = view.get<LightComponent>(entity);
 
 			auto clip = viewMatrix * glm::vec4(transform.Position, 1.0f);
+			auto viewTransform = viewMatrix * transform.GetTransform();
 			glm::vec3 clipPos{ clip.x, clip.y, clip.z };
-			light.RendererLight->SetLight({clipPos, light.Color, light.Strength, light.Angle, light.Type});
+			light.RendererLight->SetLight({ viewTransform[3], viewTransform[2], light.Color, light.Strength, light.Angle, light.Type});
 		}
 	}
 

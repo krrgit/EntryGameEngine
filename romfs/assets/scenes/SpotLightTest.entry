@@ -1,4 +1,4 @@
-Scene: Example
+Scene: SpotLightTest
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
 Entities:

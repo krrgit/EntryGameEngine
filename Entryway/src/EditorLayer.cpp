@@ -603,6 +603,10 @@ namespace Entry {
 
             m_ActiveScene = m_EditorScene;
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+            
+            // TODO: Set window title here;
+            // Maybe through event? WindowRenameEvent?
+            //  SetWindowTitle(m_ActiveScene->GetName());
         }
     }
 

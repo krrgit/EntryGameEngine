@@ -522,11 +522,31 @@ namespace Entry
 
 		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)
 		{
-			ImGui::Text("Type: %d", component.Type);
+
+			const char* lightTypeStrings[] = { "Directional", "Point", "Spot"};
+			const char* currentLightTypeString = lightTypeStrings[(int)component.Type];
+			if (ImGui::BeginCombo("Type", currentLightTypeString))
+			{
+				for (int i = 0; i < 3; ++i)
+				{
+					bool isSelected = currentLightTypeString == lightTypeStrings[i];
+					if (ImGui::Selectable(lightTypeStrings[i], isSelected))
+					{
+						currentLightTypeString = lightTypeStrings[i];
+						component.Type = (LightType)i;
+						//camera.SetProjectionType((SceneCamera::ProjectionType)i);
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+			
 			if (component.Type != LightType::ET_Spotlight)
-				ImGui::DragFloat("Strength",&component.Strength);
+				ImGui::DragFloat("Shininess",&component.Strength);
 			else
-				ImGui::DragFloat("Angle", &component.Angle);
+				ImGui::SliderFloat("Angle", &component.Angle, 1, 179);
 
 			ImGui::ColorEdit3("Color", glm::value_ptr(component.Color));
 		});
