@@ -4,6 +4,7 @@
 #include "Entry/Core/Timestep.h"
 #include "Entry/ECS/ecs.hpp"
 #include "Entry/Renderer/EditorCamera.h"
+#include "Entry/Renderer/LightEnvironment.h"
 
 namespace Entry {
 
@@ -42,6 +43,7 @@ namespace Entry {
 		ECS::Registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 		uint32_t m_LightCount = 0;
+		Ref<LightEnvironment> m_LightEnv;
 
 		friend class Entity;
 		friend class SceneSerializer;

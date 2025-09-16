@@ -7,8 +7,9 @@ namespace Entry
 {
 	enum LightType
 	{
-		Phong,
-		Spotlight
+		ET_DirectionalLight,
+		ET_PointLight,
+		ET_Spotlight
 	};
 
 	struct LightProps
@@ -26,6 +27,13 @@ namespace Entry
 		virtual ~Light() = default;
 
 		virtual void SetLight(LightProps props) = 0;
+
+		virtual void* GetNativeLight() = 0;
+
+		virtual void SetID(uint16_t id) = 0;
+		virtual uint16_t GetID() = 0;
+
+		virtual void SetParent(int parent) = 0;
 
 		static Ref<Light> Create(LightProps& props);
 	};

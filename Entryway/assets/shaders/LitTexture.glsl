@@ -85,14 +85,15 @@ void main()
 
 	vec4 primaryColor = m_Emissive + (m_Ambient * s_Ambient);
 
-	for(int i=0; i< int(s_Ambient.w); i++) 
+	for(int i=0; i < MAX_LIGHTS; i++) 
 	{
+		if (lights[i].params.x < 1.0) continue;
 		vec3 lightDir = normalize(lights[i].position.xyz - v_FragPos);
 		float diff = max(dot(v_Normal, lightDir), 0.0);
 		vec4 diffuse = diff * lights[i].color;
 		diffuse.w = 1.0;
 
-		primaryColor += m_Emissive + (m_Ambient * s_Ambient) + ((texColor * m_Diffuse * diffuse));
+		primaryColor += ((texColor * m_Diffuse * diffuse));
 	}
 	primaryColor.a = texColor.a;
 

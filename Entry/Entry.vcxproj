@@ -181,6 +181,7 @@
     <ClInclude Include="src\Entry\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Entry\Renderer\Light.h" />
+    <ClInclude Include="src\Entry\Renderer\LightEnvironment.h" />
     <ClInclude Include="src\Entry\Renderer\Material.h" />
     <ClInclude Include="src\Entry\Renderer\Model.h" />
     <ClInclude Include="src\Entry\Renderer\PerspectiveCamera.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLLight.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLLightEnvironment.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLMaterial.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLModel.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -753,6 +755,7 @@
     <ClCompile Include="src\Entry\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Light.cpp" />
+    <ClCompile Include="src\Entry\Renderer\LightEnvironment.cpp" />
     <ClCompile Include="src\Entry\Renderer\Material.cpp" />
     <ClCompile Include="src\Entry\Renderer\Model.cpp" />
     <ClCompile Include="src\Entry\Renderer\PerspectiveCamera.cpp" />
@@ -772,6 +775,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLLight.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLLightEnvironment.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLMaterial.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLModel.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />

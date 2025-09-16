@@ -31,7 +31,7 @@ include $(DEVKITARM)/3ds_rules
 #     - icon.png
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	/3ds_game/$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	$(shell find Entry/src -type d \
 		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \

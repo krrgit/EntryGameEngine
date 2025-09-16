@@ -14,13 +14,34 @@ namespace Entry {
 
 	Scene::Scene()
 	{
+		m_LightEnv = LightEnvironment::Create();
+		m_LightEnv->Bind();
+
+		m_LightEnv->SetSceneAmbientColor(glm::vec3(0));
+
+		MaterialProps matProps;
+		matProps.Values = {
+				{ 0.2f, 0.2f, 0.2f }, //ambient
+				{ 0.4f, 0.4f, 0.4f }, //diffuse
+				{ 0.8f, 0.8f, 0.8f }, //specular0
+				{ 0.0f, 0.0f, 0.0f }, //specular1
+				{ 0.0f, 0.0f, 0.0f }, //emission
+		};
+
+		Ref<Material> sampleMat = Material::Create(matProps);
+		m_LightEnv->SetMaterial(sampleMat);
+
 		m_Registry.on_construct<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
+			m_LightEnv->LightInit(l.RendererLight);
+
 			ET_CORE_INFO("Lights: {0}", ++m_LightCount);
 		});
 
 		m_Registry.on_destroy<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
+			m_LightEnv->LightDestroy(l.RendererLight);
 			ET_CORE_INFO("Lights: {0}", --m_LightCount);
 		});
+
 	}
 
 	Scene::~Scene()
@@ -255,6 +276,7 @@ namespace Entry {
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<LightComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 
 		return newEntity;

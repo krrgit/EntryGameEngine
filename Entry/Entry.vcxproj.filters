@@ -1862,6 +1862,8 @@
     <ClInclude Include="src\Entry\Renderer\Light.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLLight.h" />
     <ClInclude Include="src\Entry\Renderer\TextureEnvironment.h" />
+    <ClInclude Include="src\Entry\Renderer\LightEnvironment.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLLightEnvironment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Entry\Core\Application.cpp">
@@ -1993,5 +1995,7 @@
     <ClCompile Include="src\Entry\Core\UUID.cpp" />
     <ClCompile Include="src\Entry\Renderer\Light.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLLight.cpp" />
+    <ClCompile Include="src\Entry\Renderer\LightEnvironment.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLLightEnvironment.cpp" />
   </ItemGroup>
 </Project>

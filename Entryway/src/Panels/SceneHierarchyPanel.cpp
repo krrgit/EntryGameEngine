@@ -470,7 +470,7 @@ namespace Entry
 			ImGui::Separator();
 
 			const char* shaderProgramStrings[] = { "Lit", "Unlit" }; // TODO: Fix to accomodate more shaders
-			const char* currentShaderProgramString = shaderProgramStrings[(int)component.material->GetShader()];
+			const char* currentShaderProgramString = component.material ? shaderProgramStrings[(int)component.material->GetShader()] : "None";
 			if (ImGui::BeginCombo("Shader", currentShaderProgramString))
 			{
 				for (int i = 0; i < 2; ++i)
@@ -522,7 +522,7 @@ namespace Entry
 		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)
 		{
 			ImGui::Text("Type: %d", component.Type);
-			if (component.Type == LightType::Phong)
+			if (component.Type != LightType::ET_Spotlight)
 				ImGui::DragFloat("Strength",&component.Strength);
 			else
 				ImGui::DragFloat("Angle", &component.Angle);
