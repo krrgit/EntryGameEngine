@@ -53,6 +53,7 @@ namespace Entry
 
 	void Citro3DLight::SetAsPointLight(float shininess)
 	{
+		// TODO: Setup customization for quadratic in LightEnv
 		LightLutDA_Quadratic(&m_LutDA, 0.0f, 75.0f, 0.1f, 0.01f);
 		C3D_LightDistAttn(&m_Light, &m_LutDA);
 

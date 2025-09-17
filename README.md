@@ -46,11 +46,13 @@ Sandbox()
 [x] Implement .obj rendering support. (fastObjMesh)
 [x] Implement Materials.
 [x] Load .mtl files into materials.
-[x] Support other model files (.fbx)
-[ ] Implement Lighting.
-[ ] Shaders for certain art styles (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
-[ ] "Bind" shaders to materials.
+[-] Support other model files (Assimp in editor, need to create custom .bin format to load at runtime.)
+[x] Implement Fragment Lighting (Directional, Point, Spotlight)
+[ ] Use assigned materials of objects when rendering with lights.
 [ ] Implement Shadows. (Realtime(?), Projection, faded circle fake shadow thing)
+[ ] Shaders for certain art styles (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
+[ ] Implement Vertex Lighting (Vertex Painting + Vertex Lights)
+[ ] "Bind" shaders to materials.
 [ ] Implement Effects (built-in to the GPU.)
 [ ] Implement Animations.
 [ ] (Refactor for Meshes) Simple Batch Rendering (works for quads/cubes only (useless.))
@@ -59,8 +61,9 @@ Sandbox()
 ## Game Systems (the big ones)
 [x] Entity Component System (Custom ECS system)
 [x] Scene Management System
-[-] Native Scripting/C# Scripting (C# not implemented)
 [ ] Physics Engine + Collision System/Components (Bullet? Newton Dynamics? PhysX? Jolt?)
+[ ] Figure out how the hell to handle/arcitect using the bottom screen (has own scene?, camera inside top screen's scene? other??)
+[-] Native Scripting/C# Scripting (C# not implemented)
 [ ] Asset Management System
 [ ] Audio
 [ ] Networking (?)
