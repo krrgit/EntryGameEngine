@@ -94,8 +94,12 @@ void main()
 		float shininess = lights[i].params.y;
 		float angle = lights[i].params.z;
 
-		// if (lights[i].params.x < 1.0) continue;
-		vec3 lightDir = normalize(lights[i].position.xyz - v_FragPos);
+		vec3 lightDir;
+		if (lights[i].position.w == 0.0) // Directional
+			lightDir = normalize(lights[i].position.xyz);
+		else 
+			lightDir = normalize(lights[i].position.xyz - v_FragPos);
+
 		float diff = max(dot(v_Normal, lightDir), 0.0);
 		vec4 diffuse = diff * lights[i].color;
 		diffuse.w = 1.0;

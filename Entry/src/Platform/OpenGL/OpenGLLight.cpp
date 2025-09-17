@@ -6,7 +6,8 @@ namespace Entry
 
 	OpenGLLight::OpenGLLight(LightProps& props)
 	{ 
-		m_LightData.position = glm::vec4(props.Position, 1.0f);
+		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0;
+		m_LightData.position = glm::vec4(props.Position, m_PositionalLight);
 		m_LightData.color = glm::vec4(props.Color, 1.0f);
 		m_LightData.params.x = 1.0f;
 		m_LightData.params.y = props.Strength;
@@ -31,7 +32,8 @@ namespace Entry
 
 	void OpenGLLight::SetLight(LightProps props)
 	{
-		m_LightData.position  = glm::vec4(props.Position, 1.0f);
+		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0;
+		m_LightData.position  = glm::vec4(props.Position, m_PositionalLight);
 		m_LightData.direction = glm::vec4(props.Direction, 1.0f);
 		m_LightData.color     = glm::vec4(props.Color, 1.0f);
 		m_LightData.params.x = (float)props.Type;

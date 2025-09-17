@@ -10,8 +10,9 @@ namespace Entry
 		m_Strength = props.Strength;
 		m_Angle = props.Angle;
 		m_Color = props.Color;
+		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0f;
 
-		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, 1.0f);
+		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, m_PositionalLight);
 		
 		// We need to setup the light AFTER adding it to the light environment
 	}
@@ -22,7 +23,7 @@ namespace Entry
 
 	void Citro3DLight::SetLight(LightProps props)
 	{
-		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, 1.0f);
+		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, m_PositionalLight);
 		m_Color = props.Color;
 
 		if (m_LightType != props.Type)
@@ -42,13 +43,12 @@ namespace Entry
 
 	void Citro3DLight::SetAsDirectionalLight(float shininess)
 	{
-		//LightLut_Phong(&m_Lut, shininess);
-		//C3D_LightEnvLut(m_Parent, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
-
 		C3D_LightSpotEnable(&m_Light, false);
 		C3D_LightDistAttnEnable(&m_Light, false);
-
-		// Either all of them have DistAtten or none?
+	
+		// Old Code: no attenuation
+		//LightLut_Phong(&m_Lut, shininess);
+		//C3D_LightEnvLut(m_Parent, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
 	}
 
 	void Citro3DLight::SetAsPointLight(float shininess)
@@ -65,7 +65,6 @@ namespace Entry
 		LightLut_Spotlight(&m_Lut, realAngle);
 		C3D_LightEnvLut(m_Parent, GPU_LUT_SP, GPU_LUTINPUT_LN, true, &m_Lut);
 
-		C3D_LightSpotEnable(&m_Light, true);
 		C3D_LightSpotDir(&m_Light, m_Direction.x, m_Direction.y, m_Direction.z);
 		C3D_LightSpotLut(&m_Light, &m_Lut);
 
@@ -78,12 +77,15 @@ namespace Entry
 		{
 		case ET_DirectionalLight:
 			SetAsDirectionalLight(m_Strength);
+			m_PositionalLight = 0.0f;
 			break;
 		case ET_PointLight:
 			SetAsPointLight(m_Strength);
+			m_PositionalLight = 1.0f;
 			break;
 		case ET_Spotlight:
 			SetAsSpotLight(m_Angle);
+			m_PositionalLight = 1.0f;
 			break;
 		default:
 		break;

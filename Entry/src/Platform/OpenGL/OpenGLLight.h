@@ -39,5 +39,7 @@ namespace Entry
 		int m_LightID = -1;
 		GLint m_Parent;
 		OGL_Light m_LightData;
+		float m_PositionalLight = 0.0f; // Really, is just a bool
+
 	};
 }

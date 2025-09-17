@@ -32,6 +32,7 @@ namespace Entry
 		float m_Strength;
 		float m_Angle;
 		glm::vec3 m_Color;
+		float m_PositionalLight = 0.0f; // Really, is just a bool
 
 
 		int m_LightID = -1;

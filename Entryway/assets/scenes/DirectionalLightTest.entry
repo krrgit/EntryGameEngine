@@ -1,4 +1,4 @@
-Scene: MaxLightsTest
+Scene: DirectionalLightTest
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
 Entities:
