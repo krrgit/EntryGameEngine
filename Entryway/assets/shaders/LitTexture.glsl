@@ -97,15 +97,15 @@ void main()
 		float angle = lights[i].params.z;
 
 		vec3 lightDir = (lights[i].position.w == 0.0) ?
-						normalize(lights[i].position.xyz) :							// Directional
-						lightDir = normalize(lights[i].position.xyz - v_FragPos);	// PointLight/Spotlight
+						normalize(lights[i].position.xyz) :				// Directional
+						normalize(lights[i].position.xyz - v_FragPos);	// PointLight/Spotlight
 
 		float diff = max(dot(v_Normal, lightDir), 0.0);
 		vec4 diffuse = diff * lights[i].color;
 		diffuse.w = 1.0;
 
 		float spotLightFactor = 1.0;
-		float atteunuation = 1.0;
+		float attenuation = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
 			float spotLightCutoff = (90.0 - lights[i].params.z * 0.5) / 90.0;
 			float outerCutoff = (90.0 - (lights[i].params.z + 2)* 0.5) / 90.0; // + 2 degrees of soft edge
