@@ -1,4 +1,4 @@
-Scene: LightTest
+Scene: MaxPointLights
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
 Entities:
@@ -53,7 +53,7 @@ Entities:
       Color: [0.130232692, 1, 0]
       Strength: 30
       Angle: 90
-      Type: 0
+      Type: 1
   - Entity: 15255254070688434474
     TagComponent:
       Tag: Plane
@@ -109,7 +109,7 @@ Entities:
       Color: [1, 0, 0]
       Strength: 30
       Angle: 90
-      Type: 0
+      Type: 1
   - Entity: 10778960372014692739
     TagComponent:
       Tag: Entity
@@ -134,51 +134,27 @@ Entities:
       Strength: 30
       Angle: 90
       Type: 1
-  - Entity: 16447241941798903333
+  - Entity: 2525961996781667810
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [3, 0.5, 0]
+      Position: [0, -68.8000031, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 1, 1]
       Strength: 30
       Angle: 90
-      Type: 1
-  - Entity: 3737203229486509304
+      Type: 0
+  - Entity: 7863021752631408966
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [-3, 0.5, 0]
+      Position: [0, 5, 2.5999999]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
-      Color: [0, 1, 0.399999857]
+      Color: [1, 1, 1]
       Strength: 30
       Angle: 90
-      Type: 1
-  - Entity: 13943556969015190451
-    TagComponent:
-      Tag: Entity
-    TransformComponent:
-      Position: [0, 0.5, 3]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [0.967441559, 0, 1]
-      Strength: 30
-      Angle: 90
-      Type: 1
-  - Entity: 15432524374157204893
-    TagComponent:
-      Tag: Entity
-    TransformComponent:
-      Position: [0, 0.5, -4]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 0, 0]
-      Strength: 30
-      Angle: 90
-      Type: 1
+      Type: 2

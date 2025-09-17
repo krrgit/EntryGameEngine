@@ -39,7 +39,8 @@ namespace Entry
 		virtual void SetAsDirectionalLight(float shininess) = 0;
 		virtual void SetAsPointLight(float shininess) = 0;
 		virtual void SetAsSpotLight(float angle) = 0;
-		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) = 0;
+
+		virtual void SetupLight() = 0;
 
 		static Ref<Light> Create(LightProps& props);
 	};

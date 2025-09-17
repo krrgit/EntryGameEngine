@@ -103,10 +103,11 @@ void main()
 		float spotLightFactor = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
 			float spotLightCutoff = (90.0 - lights[i].params.z * 0.5) / 90.0;
-			float outerCutoff = (90.0 - (lights[i].params.z + 10)* 0.5) / 90.0;
+			float outerCutoff = (90.0 - (lights[i].params.z + 2)* 0.5) / 90.0;
 			float theta = dot(lightDir, normalize(-lights[i].direction.xyz));
 			float epsilon = spotLightCutoff - outerCutoff;
-			spotLightFactor = clamp((theta - outerCutoff) / epsilon, 0.0, 1.0);
+			spotLightFactor = clamp((theta - outerCutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
+			// spotLightFactor = theta > spotLightCutoff ? 1.0 : 0.0; // Hard Edge Spotlight
 		}
 
 		float d = length(lights[i].position.xyz - v_FragPos.xyz) * (lightType == 1 ? 1.0 : 0.0);

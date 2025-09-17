@@ -26,6 +26,9 @@ namespace Entry
 		light->SetID(id);
 		light->SetParent((uint32_t)this);
 
+		//light->SetAsPointLight(30);
+		light->SetupLight();
+
 		m_LightCount++;
 		return 1;
 	}

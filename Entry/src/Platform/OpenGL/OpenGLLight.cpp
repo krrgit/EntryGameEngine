@@ -56,7 +56,7 @@ namespace Entry
 	{
 	}
 
-	void OpenGLLight::CreateQuadraticLut(float from, float to, float linear, float quad)
+	void OpenGLLight::SetupLight()
 	{
 	}
 }

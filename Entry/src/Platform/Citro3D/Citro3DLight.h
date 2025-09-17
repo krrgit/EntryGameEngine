@@ -23,7 +23,8 @@ namespace Entry
 		virtual void SetAsDirectionalLight(float shininess) override;
 		virtual void SetAsPointLight(float shininess) override;
 		virtual void SetAsSpotLight(float angle) override;
-		virtual void CreateQuadraticLut(float from, float to, float linear, float quad) override;
+
+		virtual void SetupLight() override;
 
 	private:
 		LightType m_LightType;
