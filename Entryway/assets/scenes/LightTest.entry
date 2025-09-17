@@ -1,4 +1,6 @@
-Scene: Untitled
+Scene: LightTest
+LightEnvironment:
+  SceneAmbientColor: [0, 0, 0]
 Entities:
   - Entity: 13788627539912258494
     TagComponent:
@@ -51,7 +53,7 @@ Entities:
       Color: [0.130232692, 1, 0]
       Strength: 30
       Angle: 90
-      Type: 0
+      Type: 1
   - Entity: 15255254070688434474
     TagComponent:
       Tag: Plane
@@ -107,7 +109,7 @@ Entities:
       Color: [1, 0, 0]
       Strength: 30
       Angle: 90
-      Type: 0
+      Type: 1
   - Entity: 10778960372014692739
     TagComponent:
       Tag: Entity

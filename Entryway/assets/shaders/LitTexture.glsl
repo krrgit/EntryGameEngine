@@ -38,6 +38,8 @@ void main()
 // 3DS Max Light Limit
 #define MAX_LIGHTS 8
 
+#define TYPE_DIRECTIONALLIGHT 0
+#define TYPE_POINTLIGHT 1
 #define TYPE_SPOTLIGHT 2
 
 layout(location = 0) out vec4 color;
@@ -94,28 +96,31 @@ void main()
 		float shininess = lights[i].params.y;
 		float angle = lights[i].params.z;
 
-		vec3 lightDir;
-		if (lights[i].position.w == 0.0) // Directional
-			lightDir = normalize(lights[i].position.xyz);
-		else 
-			lightDir = normalize(lights[i].position.xyz - v_FragPos);
+		vec3 lightDir = (lights[i].position.w == 0.0) ?
+						normalize(lights[i].position.xyz) :							// Directional
+						lightDir = normalize(lights[i].position.xyz - v_FragPos);	// PointLight/Spotlight
 
 		float diff = max(dot(v_Normal, lightDir), 0.0);
 		vec4 diffuse = diff * lights[i].color;
 		diffuse.w = 1.0;
 
 		float spotLightFactor = 1.0;
+		float atteunuation = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
 			float spotLightCutoff = (90.0 - lights[i].params.z * 0.5) / 90.0;
-			float outerCutoff = (90.0 - (lights[i].params.z + 2)* 0.5) / 90.0;
+			float outerCutoff = (90.0 - (lights[i].params.z + 2)* 0.5) / 90.0; // + 2 degrees of soft edge
 			float theta = dot(lightDir, normalize(-lights[i].direction.xyz));
 			float epsilon = spotLightCutoff - outerCutoff;
 			spotLightFactor = clamp((theta - outerCutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
 			// spotLightFactor = theta > spotLightCutoff ? 1.0 : 0.0; // Hard Edge Spotlight
-		}
 
-		float d = length(lights[i].position.xyz - v_FragPos.xyz) * (lightType == 1 ? 1.0 : 0.0);
-		float attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+			float d = length(lights[i].position.xyz - v_FragPos.xyz);
+			attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+		} else if (lightType == TYPE_POINTLIGHT) 
+		{
+			float d = length(lights[i].position.xyz - v_FragPos.xyz);
+			attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+		}
 
 		primaryColor += attenuation * spotLightFactor * ((texColor * m_Diffuse * diffuse));
 	}
