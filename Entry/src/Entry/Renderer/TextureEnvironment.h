@@ -46,7 +46,7 @@ namespace Entry
 	struct TexEnvProps
 	{
 		TexEnvChannels Channels   = TexEnvChannels::ET_RGBA;
-		TexEnvBlendMode BlendMode = TexEnvBlendMode::ET_GPU_MODULATE;
+		TexEnvBlendMode BlendMode = TexEnvBlendMode::ET_GPU_ADD;
 		TexEnvSource Source1 = TexEnvSource::ET_GPU_TEXTURE0;
 		TexEnvSource Source2 = TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR;
 		TexEnvSource Source3 = TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR;

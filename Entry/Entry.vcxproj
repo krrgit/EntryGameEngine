@@ -182,6 +182,7 @@
     <ClInclude Include="src\Entry\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Entry\Renderer\Light.h" />
     <ClInclude Include="src\Entry\Renderer\LightEnvironment.h" />
+    <ClInclude Include="src\Entry\Renderer\LightLut.h" />
     <ClInclude Include="src\Entry\Renderer\Material.h" />
     <ClInclude Include="src\Entry\Renderer\Model.h" />
     <ClInclude Include="src\Entry\Renderer\PerspectiveCamera.h" />
@@ -756,6 +757,7 @@
     <ClCompile Include="src\Entry\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Entry\Renderer\Light.cpp" />
     <ClCompile Include="src\Entry\Renderer\LightEnvironment.cpp" />
+    <ClCompile Include="src\Entry\Renderer\LightLut.cpp" />
     <ClCompile Include="src\Entry\Renderer\Material.cpp" />
     <ClCompile Include="src\Entry\Renderer\Model.cpp" />
     <ClCompile Include="src\Entry\Renderer\PerspectiveCamera.cpp" />

@@ -3,9 +3,11 @@
 #include "Entry/Core/Core.h"
 #include "Material.h"
 #include "Entry/Renderer/Light.h"
+#include "Entry/Renderer/LightLut.h"
 
 // 3DS Max Light Limit
 #define MAX_LIGHTS 8
+#define MAX_LUTS 6
 
 namespace Entry
 {
@@ -33,6 +35,49 @@ namespace Entry
 		ET_LUTINPUT_CP = 5, ///< cosine of phi
 	} ET_LIGHTLUTINPUT;
 
+	enum class LutFuncType
+	{
+		None,
+		Pow,			// val = pow(x, arg0)
+		Spotlight,		// hardEdge ? (angle >= cutoff ? 1.0f : 0.0f) : (clamp((theta - cutoff) / epsilon, 0.0, 1.0))
+		Quadratic,		// val = 1 / (1 + arg0*x + arg1*x*x)
+		ToonDiffuse,    // val = step(arg0, x)
+		ToonSpecular,   // val = step(arg0, x)
+		Custom			// user-defined callback
+	};
+
+	struct LutFuncArgs
+	{
+		float powExponent = 30.0f;
+		float quadraticLin = 0.1f;
+		float quadraticQuad = 0.01f;
+		float spotlightCutoff = 90.0f;
+		float toonShininess = 0.5f;
+	};
+
+	struct LutConfig
+	{
+		ET_LIGHTLUTID id;
+		ET_LIGHTLUTINPUT input = ET_LIGHTLUTINPUT::ET_LUTINPUT_NV;
+		bool negative = false;
+
+		LutFuncType funcType = LutFuncType::None;
+		LutFuncArgs funcArgs;
+	};
+
+	struct DistanceAttenuationParams
+	{
+		float linear = 0.1f;
+		float quad = 0.01f;
+	};
+
+	struct SpotlightParams
+	{
+		bool useSoftEdge = true;
+		float angle = 90.0f;
+		float softEdge = 0.01f;
+	};
+
 	class LightEnvironment
 	{
 	public:
@@ -48,6 +93,9 @@ namespace Entry
 
 		virtual void SetSceneAmbientColor(glm::vec3 color) = 0;
 		virtual glm::vec3 GetSceneAmbientColor() = 0;
+
+		virtual void ConfigureLut(LutConfig& config) = 0;
+		virtual LutConfig& GetLutConfig(ET_LIGHTLUTID id) = 0;
 
 		static Ref<LightEnvironment> Create();
 	};

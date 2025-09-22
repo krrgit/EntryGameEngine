@@ -275,7 +275,7 @@ namespace Entry
 				if (tagComponent)
 					name = tagComponent["Tag"].as<std::string>();
 				
-				ET_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+				//ET_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 

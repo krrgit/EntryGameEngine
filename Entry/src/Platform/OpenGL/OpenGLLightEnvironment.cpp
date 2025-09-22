@@ -3,6 +3,62 @@
 
 namespace Entry
 {
+	void LightLut_FromArray(LightLut* lut, float* data)
+	{
+		int i;
+		for (i = 0; i < 256; i++)
+		{
+			float in = data[i], diff = data[i + 256];
+
+			uint32_t val = 0;
+			if (in > 0.0f)
+			{
+				in *= 0x1000;
+				val = (in < 0x1000) ? (uint32_t)in : 0xFFF;
+			}
+
+			uint32_t val2 = 0;
+			if (diff != 0.0f)
+			{
+				if (diff < 0)
+				{
+					diff = -diff;
+					val2 = 0x800;
+				}
+				diff *= 0x800;
+				val2 |= (diff < 0x800) ? (uint32_t)diff : 0x7FF;
+			}
+
+			lut->data[i] = val | (val2 << 12);
+
+			printf("%u ", lut->data[i]);
+		}
+		printf("\n");
+	}
+
+	void LightLut_FromFunc(LightLut* lut, LightLutFunc func, float param, bool negative)
+	{
+		int i;
+		float data[512];
+		memset(data, 0, sizeof(data));
+		int min = negative ? (-128) : 0;
+		int max = negative ? 128 : 256;
+		for (i = min; i <= max; i++)
+		{
+			float x = (float)i / max;
+			float val = func(x, param);
+			int   idx = negative ? (i & 0xFF) : i;
+			if (i < max)
+				data[idx] = val;
+			if (i > min)
+				data[idx + 255] = val - data[idx - 1];
+
+			printf("%.3f ", val);
+		}
+		printf("\n\n");
+		LightLut_FromArray(lut, data);
+	}
+
 	OpenGLLightEnvironment::OpenGLLightEnvironment()
 	{
 		glGenBuffers(1, &m_LightEnvUBO);
@@ -11,6 +67,7 @@ namespace Entry
 
 		UBOLightEnvData defaultValues = {};
 		defaultValues.sceneAmbient = glm::vec4(1.0f); // default scene ambient = white
+		defaultValues.params = { 0.1f, 0.01f, 90.0f, 0.01f };
 
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UBOLightEnvData), &defaultValues); // Set to 0
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_LightEnvUBO); // binding = 0 matches shader
@@ -30,6 +87,13 @@ namespace Entry
 		glBufferData(GL_UNIFORM_BUFFER, sizeof(UBOMaterialData), &m_MaterialData, GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_MaterialUBO); // binding = 1 matches shader
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
+
+		for (int i = 0; i < 6; i++)
+		{
+			m_LutConfigs[i].id = ids[i];
+		}
 	}
 
 	void OpenGLLightEnvironment::Bind()
@@ -87,5 +151,63 @@ namespace Entry
 		glBindBuffer(GL_UNIFORM_BUFFER, m_LightEnvUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(OGL_Light) * MAX_LIGHTS, sizeof(glm::vec3), &color);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+
+	void IntArrayToIvec4Array(uint32_t* in, glm::ivec4* out)
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			int group = i / 4;
+			int comp = i % 4;
+			out[group][comp] = in[i];
+		}
+	}
+
+	void OpenGLLightEnvironment::ConfigureLut(LutConfig& config)
+	{
+		int ids[] = { 0, 1, -1, 2, 3, 4, 5,-1 };
+		int id = ids[config.id];
+		if (id >= 0)
+		{
+			LightLut lut;
+
+			switch (config.funcType)
+			{
+			case LutFuncType::Pow:
+				ET_LightLut_Phong(&lut, config.funcArgs.powExponent);
+				break;
+			case LutFuncType::Spotlight:
+				ET_LightLut_Spotlight(&lut, config.funcArgs.spotlightCutoff);
+				break;
+			case LutFuncType::Quadratic:
+				//LightLutDA_Quadratic(&lut,)
+				break;
+			case LutFuncType::ToonDiffuse:
+				ET_LightLut_ToonDiffuse(&lut, 0.0f);
+				break;
+			case LutFuncType::ToonSpecular:
+				ET_LightLut_ToonDiffuse(&lut, config.funcArgs.toonShininess);
+				break;
+			case LutFuncType::Custom:
+				break;
+			default:
+				ET_LightLut_Zeroes(&lut, 0.0f);
+			break;
+			}
+
+			m_Luts[id] = lut;
+
+			// Prepare for Shader
+			glm::ivec4 uboLut[64]; // 256 ints
+			IntArrayToIvec4Array(&lut.data[0], &uboLut[0]);
+			m_LutConfigs[id] = config;
+			size_t lutSize = sizeof(glm::ivec4) * 64;
+
+			// Upload
+			glBindBuffer(GL_UNIFORM_BUFFER, m_LightEnvUBO);
+			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(OGL_Light) * MAX_LIGHTS) + (sizeof(glm::vec4) * 2) + (lutSize * id), lutSize, &uboLut);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		}
 	}
 }

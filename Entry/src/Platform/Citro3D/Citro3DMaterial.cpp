@@ -18,19 +18,28 @@ namespace Entry {
 	{
 		// TODO: add support to set multiple channels
 		C3D_TexEnv* env = C3D_GetTexEnv(0);
+		C3D_TexEnv* env_tex = C3D_GetTexEnv(1);
 
-		C3D_TexEnvSrc(
-			env, 
-			(C3D_TexEnvMode) m_TexEnvProps.Channels, 
-			(GPU_TEVSRC) m_TexEnvProps.Source1, 
-			(GPU_TEVSRC)m_TexEnvProps.Source2,
-			(GPU_TEVSRC)m_TexEnvProps.Source3
-		);
-		C3D_TexEnvFunc(
-			env, 
-			(C3D_TexEnvMode)m_TexEnvProps.Channels,
-			(GPU_COMBINEFUNC)m_TexEnvProps.BlendMode
-		);
+		C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_FRAGMENT_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+		C3D_TexEnvSrc(env, C3D_Alpha, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+		C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
+		C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+
+		C3D_TexEnvSrc(env_tex, C3D_RGB, GPU_PREVIOUS, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
+		C3D_TexEnvFunc(env_tex, C3D_RGB, GPU_ADD);
+
+		//C3D_TexEnvSrc(
+		//	env, 
+		//	(C3D_TexEnvMode) m_TexEnvProps.Channels, 
+		//	(GPU_TEVSRC) m_TexEnvProps.Source1, 
+		//	(GPU_TEVSRC)m_TexEnvProps.Source2,
+		//	(GPU_TEVSRC)m_TexEnvProps.Source3
+		//);
+		//C3D_TexEnvFunc(
+		//	env, 
+		//	(C3D_TexEnvMode)m_TexEnvProps.Channels,
+		//	(GPU_COMBINEFUNC)m_TexEnvProps.BlendMode
+		//);
 	}
 
 	void Citro3DMaterial::OnShaderChange()

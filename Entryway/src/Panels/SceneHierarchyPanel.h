@@ -14,6 +14,8 @@ namespace Entry
 		SceneHierarchyPanel() = default;
 		SceneHierarchyPanel(const Ref<Scene>& context);
 
+		~SceneHierarchyPanel() = default;
+
 		void SetContext(const Ref<Scene>& context);
 
 		void OnImGuiRender();

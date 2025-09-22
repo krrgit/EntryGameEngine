@@ -65,10 +65,10 @@ namespace Entry
 		float realAngle = angle / 90.0f;
 		LightLut_Spotlight(&m_Lut, realAngle);
 		C3D_LightEnvLut(m_Parent, GPU_LUT_SP, GPU_LUTINPUT_LN, true, &m_Lut);
-
+		
 		C3D_LightSpotDir(&m_Light, m_Direction.x, m_Direction.y, m_Direction.z);
 		C3D_LightSpotLut(&m_Light, &m_Lut);
-
+		
 		C3D_LightDistAttnEnable(&m_Light, false);
 	}
 

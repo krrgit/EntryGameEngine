@@ -91,7 +91,7 @@ namespace Entry {
 
 		m_Name = ExtractFileName(path);
 
-		ET_CORE_INFO("Texture: {0}", gfxPath.c_str());
+		//ET_CORE_INFO("Texture: {0}", gfxPath.c_str());
 
 		if (!correctFormat) return;
 

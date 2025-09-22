@@ -16,7 +16,7 @@ namespace Entry {
 		m_FileName = ExtractFileName(path);
 		m_FilePath = "romfs:/" + path;
 
-		ET_CORE_INFO("Model: {0}", m_FilePath.c_str());
+		//ET_CORE_INFO("Model: {0}", m_FilePath.c_str());
 		
 		std::vector<float> vertices;
 		std::vector<uint16_t> indices;

@@ -11,7 +11,10 @@ namespace Entry
 	{
 		OGL_Light lights[MAX_LIGHTS];
 		glm::vec4 sceneAmbient;
+		glm::vec4 params; // x = DA linear; y = DA quad; z = SP cutoff; w = SP softEdgeDegrees
+		glm::ivec4 luts[MAX_LUTS * 64];
 	};
+
 
 	struct UBOMaterialData
 	{
@@ -39,6 +42,15 @@ namespace Entry
 		virtual void SetSceneAmbientColor(glm::vec3 color) override;
 		virtual glm::vec3 GetSceneAmbientColor() override { return m_SceneAmbient; }
 
+		virtual void ConfigureLut(LutConfig& config) override;
+		virtual LutConfig& GetLutConfig(ET_LIGHTLUTID id) override 
+		{
+			static int ids[] = { 0, 1, -1, 2, 3, 4, 5,-1 };
+			return m_LutConfigs[ids[id]];
+		}
+
+	private:
+
 	private:
 		GLuint m_LightEnvUBO;
 
@@ -52,5 +64,8 @@ namespace Entry
 
 		uint16_t m_LightCount = 0;
 		bool m_HasLight[MAX_LIGHTS] = {0,0,0,0,0,0,0,0};
+
+		LightLut m_Luts[6];
+		LutConfig m_LutConfigs[6];
 	};
 }

@@ -23,7 +23,7 @@ namespace Entry {
 
 		matProps.Values = {
 				{ 0.2f, 0.2f, 0.2f }, //ambient
-				{ 0.4f, 0.4f, 0.4f }, //diffuse
+				{ 0.5f, 0.5f, 0.5f }, //diffuse
 				{ 0.8f, 0.8f, 0.8f }, //specular0
 				{ 0.0f, 0.0f, 0.0f }, //specular1
 				{ 0.0f, 0.0f, 0.0f }, //emission
@@ -31,6 +31,12 @@ namespace Entry {
 
 		Ref<Material> sampleMat = Material::Create(matProps);
 		m_LightEnv->SetMaterial(sampleMat);
+
+		auto& lutconfig = GetLightEnvironment()->GetLutConfig(ET_LIGHTLUTID::ET_LUT_D0);
+		lutconfig.input = ET_LIGHTLUTINPUT::ET_LUTINPUT_NH;
+		lutconfig.funcType = LutFuncType::Pow;
+		lutconfig.funcArgs.powExponent = 1000.0f;
+		GetLightEnvironment()->ConfigureLut(lutconfig);
 
 		m_Registry.on_construct<LightComponent>().connect([&](ECS::Entity e, LightComponent& l) {
 			ET_CORE_INFO("Lights: {0}", ++m_LightCount);

@@ -99,7 +99,7 @@ namespace Entry {
         m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 #endif
 
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SetPanelContexts(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -273,6 +273,7 @@ namespace Entry {
 
         m_SceneHierarchyPanel.OnImGuiRender();
         m_ContentBrowserPanel.OnImGuiRender();
+        m_LightEnvironmentPanel.OnImGuiRender();
 
         ImGui::Begin("Stats"); // BEGIN: Stats Panel
 
@@ -404,7 +405,6 @@ namespace Entry {
         ImGui::PopStyleVar();
         
         UI_Toolbar();
-        UI_LightEnvironment();
 
         ImGui::End();
     }
@@ -459,29 +459,6 @@ namespace Entry {
         ImGui::PopStyleColor(3); // Button Color
 
         ImGui::PopStyleVar(4); // Toolbar Style
-        ImGui::End();
-    }
-
-    void EditorLayer::UI_LightEnvironment()
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        auto boldFont = io.Fonts->Fonts[0];
-        
-        ImGui::Begin("Light Environment");
-        ImGui::PushFont(boldFont);
-        ImGui::Text("Scene");
-        ImGui::PopFont();
-        ImGui::Separator();
-        
-        static glm::vec3 ambientColor = m_ActiveScene->GetLightEnvironment()->GetSceneAmbientColor();
-        if (ImGui::ColorEdit3("Ambient Color", glm::value_ptr(ambientColor)))
-        {
-            m_ActiveScene->GetLightEnvironment()->SetSceneAmbientColor(ambientColor);
-        }
-
-        ImGui::Separator();
-        ImGui::Text("Light Count: %d", m_ActiveScene->GetLightCount());
-        ImGui::Text("Light Limit: 8");
         ImGui::End();
     }
 
@@ -573,7 +550,7 @@ namespace Entry {
         m_ActiveScene.reset(new Scene());
         m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SetPanelContexts(m_ActiveScene);
 
         m_EditorScenePath = std::filesystem::path();
     }
@@ -602,7 +579,7 @@ namespace Entry {
             m_EditorScenePath = path;
 
             m_ActiveScene = m_EditorScene;
-            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+            SetPanelContexts(m_ActiveScene);
             
             // TODO: Set window title here;
             // Maybe through event? WindowRenameEvent?
@@ -640,7 +617,7 @@ namespace Entry {
         m_SceneState = SceneState::Play;
         m_ActiveScene = Scene::Copy(m_EditorScene);
         //m_RuntimeScene->OnRuntimeStart(); // TODO
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SetPanelContexts(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
@@ -648,7 +625,7 @@ namespace Entry {
         m_SceneState = SceneState::Edit;
         //m_ActiveScene->OnRuntimeStop(); // TODO
         m_ActiveScene = m_EditorScene;
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+        SetPanelContexts(m_ActiveScene);
     }
 
     void EditorLayer::OnDuplicateEntity()
@@ -662,5 +639,11 @@ namespace Entry {
             auto newEntity = m_ActiveScene->DuplicateEntity(selectedEntity);
             m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
         }
+    }
+
+    void EditorLayer::SetPanelContexts(Ref<Scene> context)
+    {
+        m_SceneHierarchyPanel.SetContext(context);
+        m_LightEnvironmentPanel.SetContext(context);
     }
 }

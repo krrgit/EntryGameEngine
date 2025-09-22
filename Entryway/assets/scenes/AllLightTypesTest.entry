@@ -46,7 +46,7 @@ Entities:
     TagComponent:
       Tag: Light
     TransformComponent:
-      Position: [4, 0.5, 4]
+      Position: [0, 0.5, -4]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
@@ -98,63 +98,3 @@ Entities:
       Model: assets/models/plane.obj
       MeshID: 0
       MaterialID: 0
-  - Entity: 15474491872155378893
-    TagComponent:
-      Tag: Light
-    TransformComponent:
-      Position: [-4, 0.5, 4]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 0, 0]
-      Strength: 30
-      Angle: 90
-      Type: 1
-  - Entity: 10778960372014692739
-    TagComponent:
-      Tag: Light
-    TransformComponent:
-      Position: [-4, 0.5, -5.19999981]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [0, 0.0651164055, 1]
-      Strength: 30
-      Angle: 90
-      Type: 1
-  - Entity: 15601254230699104759
-    TagComponent:
-      Tag: Light
-    TransformComponent:
-      Position: [4, 0.5, -5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 0.865116298, 0]
-      Strength: 30
-      Angle: 90
-      Type: 1
-  - Entity: 2525961996781667810
-    TagComponent:
-      Tag: Directional Light
-    TransformComponent:
-      Position: [0, -68.8000031, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 1, 1]
-      Strength: 30
-      Angle: 90
-      Type: 0
-  - Entity: 7863021752631408966
-    TagComponent:
-      Tag: Spotlight
-    TransformComponent:
-      Position: [0, 5, 2.5999999]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 1, 1]
-      Strength: 30
-      Angle: 90
-      Type: 2

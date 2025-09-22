@@ -37,10 +37,12 @@ void main()
 
 // 3DS Max Light Limit
 #define MAX_LIGHTS 8
+#define MAX_LUTS 6
 
 #define TYPE_DIRECTIONALLIGHT 0
 #define TYPE_POINTLIGHT 1
 #define TYPE_SPOTLIGHT 2
+
 
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
@@ -57,6 +59,8 @@ layout(std140, binding = 0) uniform LightData
 {
     Light lights[MAX_LIGHTS];
 	vec4 s_Ambient; // Scene Ambient
+	vec4 lightEnv_Params; // x = DA linear; y = DA quad; z = SP cutoff; w = SP softEdgeDegrees
+	ivec4 luts[MAX_LUTS * 64];
 };
 
 layout(std140, binding = 1) uniform MaterialData
@@ -77,6 +81,31 @@ flat in int v_EntityID;
 
 uniform sampler2D u_Textures[4];
 
+int fetchLUT(int lutIndex, int entryIndex)
+{
+    int group = entryIndex / 4;
+    int comp  = entryIndex % 4;
+    return luts[lutIndex * 256 + group][comp];
+}
+
+float sampleLUTLinear(int lutId, float input, bool negative)
+{
+	// Emulating how the 3DS samples and interpolates luts.
+    float u = negative ? (input * 0.5 + 0.5) : input;
+    u = clamp(u, 0.0, 1.0);
+
+    float fIdx = u * 255.0;
+    int i0 = int(floor(fIdx));
+    int i1 = min(i0 + 1, 255);
+    float t = fIdx - float(i0);
+
+    int v0 = fetchLUT(lutId, i0);
+    int v1 = fetchLUT(lutId, i1);
+	int denom = fetchLUT(lutId, 255); // divide by max value to map from [0,1]
+
+    return mix(float(v0), float(v1), t) / float(denom);
+}
+
 void main()
 {
 	vec4 texColor = v_Color;
@@ -88,48 +117,78 @@ void main()
 		case 3: texColor *= texture(u_Textures[3], v_TexCoord); break;
 	}
 
+	// Initialize Colors
 	vec4 primaryColor = m_Emissive + (m_Ambient * s_Ambient);
+	vec4 secondaryColor = vec4(0);
+
+	// Define light variables (REMOVE)
+	float da_linear =  0.1;
+	float da_quad = 0.01;
+
+	vec3 viewVec = normalize(-v_FragPos.xyz);
 
 	for(int i=0; i < MAX_LIGHTS; i++) 
 	{
+		// Per Light Variables
 		int lightType = int(lights[i].params.x);
 		float shininess = lights[i].params.y;
-		float angle = lights[i].params.z;
+		float sp_cutoff = lights[i].params.z;
 
+		//Per Light Vectors
 		vec3 lightDir = (lights[i].position.w == 0.0) ?
 						normalize(lights[i].position.xyz) :				// Directional
 						normalize(lights[i].position.xyz - v_FragPos);	// PointLight/Spotlight
+		vec3 halfVec = normalize(lightDir + viewVec);
+		vec3 spotlightVec = normalize(-lights[i].direction.xyz);
 
+		// Diffuse
 		float diff = max(dot(v_Normal, lightDir), 0.0);
 		vec4 diffuse = diff * lights[i].color;
 		diffuse.w = 1.0;
 
+		// Spotlight Factor
 		float spotLightFactor = 1.0;
 		float attenuation = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
-			float spotLightCutoff = (90.0 - lights[i].params.z * 0.5) / 90.0;
-			float outerCutoff = (90.0 - (lights[i].params.z + 2)* 0.5) / 90.0; // + 2 degrees of soft edge
-			float theta = dot(lightDir, normalize(-lights[i].direction.xyz));
-			float epsilon = spotLightCutoff - outerCutoff;
-			spotLightFactor = clamp((theta - outerCutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
-			// spotLightFactor = theta > spotLightCutoff ? 1.0 : 0.0; // Hard Edge Spotlight
+			float cutoff = (180.0 - sp_cutoff) / 180.0;
+			float theta = dot(lightDir, spotlightVec);
+			float epsilon = 0;
+			// spotLightFactor = clamp((theta - cutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
+			spotLightFactor = theta >= cutoff ? 1.0 : 0.0; // Hard Edge Spotlight
 
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
-			attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
 		} else if (lightType == TYPE_POINTLIGHT) 
 		{
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
-			attenuation = 1.0 / (1.0 + 0.1 * d + 0.01 * d * d);
+			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
 		}
 
-		primaryColor += attenuation * spotLightFactor * ((texColor * m_Diffuse * diffuse));
+		primaryColor += attenuation * spotLightFactor * ((m_Diffuse * diffuse));
+
+		// LUT Inputs
+		float nh = clamp(dot(v_Normal, halfVec), 0.0, 1.0); ///< Normal*HalfVector
+		float vh = dot(viewVec, halfVec); ///< View*HalfVector
+		float nv = dot(v_Normal, viewVec); ///< Normal*View
+		float ln = dot(lightDir, v_Normal); ///< LightVector*Normal
+		float sp = dot(-lightDir, spotlightVec); ///< -LightVector*SpotlightVector
+		float cp; ///< cosine of phi
+
+		// Specular 0 (Blinn–Phong)
+		float spec0 = clamp(sampleLUTLinear(0, nh, false), 0.0, 1.0);
+		secondaryColor += attenuation * spotLightFactor * (m_Specular0 * spec0) * lights[i].color;
 	}
+	primaryColor *= texColor;
+	primaryColor += secondaryColor;
 	primaryColor.a = texColor.a;
 
 	// Primary Color =  mat.emissive + 
 	//				    mat.ambient * scene.ambient + 
 	//					attenuation * LUT_FUNCTION * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
 	//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
+
+	// Secondary Color = attenuation * spotlightFactor * ((mat.specular1 * (N*H ?) * geometric_factor0) + ((N*V?)(L*N?) *geometric_factor1)) * light.specular
+	//  Color = attenuation * spotlightFactor * ((mat.specular1 * (N*H ?)) + ((N*V?) * (L*N?)) ) * light.specular
 
 	color = primaryColor;
 	color2 = v_EntityID; // Entity ID placeholder

@@ -3,6 +3,7 @@
 #include "Entry.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/LightEnvironmentPanel.h"
 
 #include "Entry/Renderer/EditorCamera.h"
 
@@ -38,7 +39,8 @@ namespace Entry {
 
         // UI Panels
         void UI_Toolbar();
-        void UI_LightEnvironment();
+
+        void SetPanelContexts(Ref<Scene> context);
 
         private:
             PerspectiveCameraController m_CameraController;
@@ -77,6 +79,7 @@ namespace Entry {
             // Panels
             SceneHierarchyPanel m_SceneHierarchyPanel;
             ContentBrowserPanel m_ContentBrowserPanel;
+            LightEnvironmentPanel m_LightEnvironmentPanel;
 
             Ref<Texture2D> m_IconPlay, m_IconPause, m_IconAdvance;
 
