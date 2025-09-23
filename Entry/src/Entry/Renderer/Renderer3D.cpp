@@ -120,6 +120,7 @@ namespace Entry {
         defMatProps.DiffuseMap = s_Data.WhiteTexture;
         defMatProps.shader = s_Data.DefaultShader;
 
+        // Default Material is Lit
         TexEnvProps texEnv0
         {
             // RGB
