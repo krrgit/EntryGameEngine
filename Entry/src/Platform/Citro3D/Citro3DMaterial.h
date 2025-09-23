@@ -16,13 +16,16 @@ namespace Entry {
         virtual ShaderProgram GetShader() override { return m_Props.shader; }
         virtual void SetShader(ShaderProgram program) { m_Props.shader = program; OnShaderChange(); }
 
-        virtual void SetTexEnvProps(TexEnvProps& props) { m_TexEnvProps = props; }
-        virtual const TexEnvProps& GetTexEnvProps() { return m_TexEnvProps; }
+        virtual void SetTexEnvProps(TexEnvProps& props, int id = 0) override;
+        virtual const TexEnvProps& GetTexEnvProps(int id = 0) { return m_TexEnvProps[id]; }
     private:
         void OnShaderChange();
         void SetTexEnvs();
+        void SetTexEnv(int id = 0);
+
     private:
         MaterialProps m_Props;
-        TexEnvProps m_TexEnvProps;
+        TexEnvProps m_TexEnvProps[6];
+        int m_TexEnvSize = 0;
     };
 }

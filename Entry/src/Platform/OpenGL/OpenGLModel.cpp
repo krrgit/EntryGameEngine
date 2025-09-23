@@ -120,7 +120,6 @@ namespace Entry {
 				Renderer3D::GetDefaultShader()
 			};
 
-
 			materials.push_back(Material::Create(props));
 		}
 

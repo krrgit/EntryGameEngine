@@ -7,8 +7,8 @@
 
 namespace Entry
 {
-	void LightEnvironmentPanel::OnImGuiRender()
-	{
+    void LightEnvironmentPanel::OnImGuiRender()
+    {
         ImGuiIO& io = ImGui::GetIO();
         auto boldFont = io.Fonts->Fonts[0];
 
@@ -30,10 +30,10 @@ namespace Entry
         ImGui::PopFont();
         ImGui::Separator();
 
-
-        for (int i = 0; i < 7; i++)
+        static ET_LIGHTLUTID lutIDs[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
+        for (int i = 0; i < 6; i++)
         {
-            RenderLut((ET_LIGHTLUTID)i);
+            RenderLut(lutIDs[i]);
         }
 
         ImGui::Separator();
@@ -72,10 +72,11 @@ namespace Entry
             //if (opened)
             //    ImGui::TreePop();
 
+            ImGui::Text(std::to_string(id).c_str());
              auto& lutconfig = m_Context->GetLightEnvironment()->GetLutConfig(lutID);
 
             int funcSelection = (int)lutconfig.funcType;
-            const char* functionStrings[] = { "None", "Pow", "Spotlight", "Quadratic", "Toon Diffuse", "Toon Specular", "Custom"};
+            const char* functionStrings[] = { "None", "Pow", "Spotlight", "Toon Diffuse", "Toon Specular", "Custom"};
             const char* currentFunctionString = functionStrings[funcSelection];
             if (ImGui::BeginCombo("LUT Function", currentFunctionString))
             {
@@ -135,16 +136,6 @@ namespace Entry
             {
                 ImGui::Separator();
                 if (ImGui::DragFloat("Spot Angle", &lutconfig.funcArgs.spotlightCutoff, 1, 1, 179, "%.0f"))
-                    m_Context->GetLightEnvironment()->ConfigureLut(lutconfig);
-            }
-                break;
-            case LutFuncType::Quadratic:
-            {
-                ImGui::Separator();
-                ImGui::Text("Attenuation = 1.0 / ( 1.0 + x*d + y*d^2 )");
-                if (ImGui::InputFloat("Linear (x)", &lutconfig.funcArgs.quadraticLin))
-                    m_Context->GetLightEnvironment()->ConfigureLut(lutconfig);
-                if (ImGui::InputFloat("Quad (y)", &lutconfig.funcArgs.quadraticQuad))
                     m_Context->GetLightEnvironment()->ConfigureLut(lutconfig);
             }
                 break;

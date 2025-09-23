@@ -119,7 +119,23 @@ namespace Entry {
         defMatProps.Name = "Default Material";
         defMatProps.DiffuseMap = s_Data.WhiteTexture;
         defMatProps.shader = s_Data.DefaultShader;
+
+        TexEnvProps texEnv0
+        {
+            // RGB
+            ET_RGBA_Separate, ET_GPU_MODULATE, ET_GPU_TEXTURE0, ET_GPU_FRAGMENT_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR,
+            // Alpha
+            ET_GPU_REPLACE, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR
+        };
+
+        TexEnvProps texEnv1
+        {
+            ET_RGBA_Separate, ET_GPU_ADD, ET_GPU_PREVIOUS, ET_GPU_FRAGMENT_SECONDARY_COLOR, ET_GPU_PRIMARY_COLOR
+        };
+
         s_Data.DefaultMaterial = Material::Create(defMatProps);
+        s_Data.DefaultMaterial->SetTexEnvProps(texEnv0, 0);
+        s_Data.DefaultMaterial->SetTexEnvProps(texEnv1, 1);
 	}
 
 	void Renderer3D::Shutdown()

@@ -285,6 +285,122 @@ namespace Entry
 		}
 	}
 
+	template<typename T, typename UIFunction>
+	static void DrawCombo(const char* label, const char* strOptions[], int selection, int optionCount, T& obj, UIFunction uiFunction) 
+	{
+		const char* currentSelectionString = strOptions[selection];
+		if (ImGui::BeginCombo(label, currentSelectionString))
+		{
+			for (int i = 0; i < optionCount; ++i)
+			{
+				bool isSelected = currentSelectionString == strOptions[i];
+				if (ImGui::Selectable(strOptions[i], isSelected))
+				{
+					currentSelectionString = strOptions[i];
+					uiFunction(obj, i);
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+	static void DrawTexEnv(Ref<Material> material, int id = 0)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+		 
+		TexEnvProps te = material->GetTexEnvProps(); // TODO: PASS ID HERE
+
+		const char* channels[2] = {"RGBA", "RGB + Alpha" };
+		const char* blendModes[10] = { "Replace", "Modulate", "Add", "Signed Add", "Interpolate", "Subtract", "Dot3 RGB", "Dot3 RGBA", "Multiply Add", "Add Multiply" };
+		const char* sources[10] = { "Primary Color", "Fragment Primary Color", "Fragment Secondary Color", "Texture0", "Texture1", "Texture2", "Texture3", "Previous Buffer", "Constant", "Previous"};
+
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		std::string label = "Tex Env " + std::to_string(id);
+		bool opened = ImGui::TreeNodeEx(label.c_str(), flags);
+
+		if (opened)
+		{
+			DrawCombo("Channels", channels, (int)te.Channels - 3, 2, material, [&](Ref<Material> mat, int newSelection) {
+
+				te.Channels = (TexEnvChannels)(newSelection + 3);
+				mat->SetTexEnvProps(te);
+				printf("Channels Changed: %d\n", (int)te.Channels);
+			});
+
+			// RGB/RGBA
+			{
+				ImGui::PushFont(boldFont);
+				ImGui::Text(te.Channels == TexEnvChannels::ET_RGBA? "RGBA" : "RGB");
+				ImGui::PopFont();
+
+				DrawCombo("Blend Mode", blendModes, (int)te.BlendMode, 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Blend Mode Changed\n");
+
+					te.BlendMode = (TexEnvBlendMode)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 1", sources, (int)te.Source1 - (te.Source1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 1 Changed\n");
+
+					te.Source1 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 2", sources, (int)te.Source2 - (te.Source2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 2 Changed\n");
+
+					te.Source2 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 3", sources, (int)te.Source3 - (te.Source3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 3 Changed\n");
+
+					te.Source3 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+			}
+
+			// Alpha
+			if (te.Channels == TexEnvChannels::ET_RGBA_Separate)
+			{
+				ImGui::PushFont(boldFont);
+				ImGui::Text("Alpha");
+				ImGui::PopFont();
+
+				DrawCombo("Blend Mode##Alpha", blendModes, (int)te.AlphaBlendMode, 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Blend Mode Changed\n");
+
+					te.AlphaBlendMode = (TexEnvBlendMode)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 1##Alpha", sources, (int)te.AlphaSource1 - (te.AlphaSource1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 1 Changed\n");
+
+					te.AlphaSource1 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 2##Alpha", sources, (int)te.AlphaSource2 - (te.AlphaSource2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 2 Changed\n");
+
+					te.AlphaSource2 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+				DrawCombo("Source 3##Alpha", sources, (int)te.AlphaSource3 - (te.AlphaSource3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+					printf("Source 3 Changed\n");
+
+					te.AlphaSource3 = (TexEnvSource)newSelection;
+					mat->SetTexEnvProps(te);
+				});
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -493,31 +609,19 @@ namespace Entry
 			DrawDragnDropField("Diffuse Map", texName, columnWidth);
 			ImGui::Columns(1); // Reset after DrawDragnDropField()
 			
+			// ------ Texture Environment -----
 			ImGui::Separator();
 			ImGui::PushFont(boldFont);
-			ImGui::Text("Texture Environment");
+			ImGui::Text("Texture Environments");
 			ImGui::PopFont();
 			if (component.material)
 			{
-				auto& te = component.material->GetTexEnvProps();
-
-				const char* channels[] = {"RGB", "Alpha", "", "RGBA"};
-				const char* blendModes[] = { "Replace", "Modulate", "Add", "Signed Add", "Interpolat", "Subtract", "Dot3 RGB", "Dot3 RGBA", "Multiply Add", "Add Multiply"};
-				const char* sources[] = {"Primary Color", "Fragment Primary Color", "Fragment Seocndary Color", "Texture0", "Texture1", "Texture2", "Texture3", "Previous Buffer", "Constant", "Previous"};
-
-				const char* c = channels[(int)te.Channels];
-				const char* bm = blendModes[(int)te.BlendMode];
-				const char* s1 = sources[(int)te.Source1];
-				const char* s2 = sources[(int)te.Source2];
-				const char* s3 = sources[(int)te.Source3];
-				ImGui::Text("Channels: %s", c);
-				ImGui::Text("Blend Mode: %s", bm);
-				ImGui::Text("Source 1: %s", s1);
-				ImGui::Text("Source 2: %s", s2);
-				ImGui::Text("Source 3: %s", s3);
+				int teCount = 6;
+				for (int i = 0; i < teCount; i++)
+				{
+					DrawTexEnv(component.material, i);
+				}
 			}
-
-
 		});
 
 		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)

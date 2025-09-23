@@ -16,30 +16,146 @@ namespace Entry {
 
 	void Citro3DMaterial::SetTexEnvs() 
 	{
-		// TODO: add support to set multiple channels
-		C3D_TexEnv* env = C3D_GetTexEnv(0);
-		C3D_TexEnv* env_tex = C3D_GetTexEnv(1);
+		// Set Used TexEnv
+		int i = 0;
+		for (; i < m_TexEnvSize; i++)
+		{
+			SetTexEnv(i);
+		}
 
-		C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_FRAGMENT_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvSrc(env, C3D_Alpha, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
-		C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+		// Reset Unused TexEnvs
+		for (; i < 6; i++)
+		{
+			C3D_TexEnvInit(C3D_GetTexEnv(i));
+		}
+	}
 
-		C3D_TexEnvSrc(env_tex, C3D_RGB, GPU_PREVIOUS, GPU_FRAGMENT_SECONDARY_COLOR, GPU_PRIMARY_COLOR);
-		C3D_TexEnvFunc(env_tex, C3D_RGB, GPU_ADD);
+	void Citro3DMaterial::SetTexEnv(int id) 
+	{
+		C3D_TexEnv* env = C3D_GetTexEnv(id);
 
-		//C3D_TexEnvSrc(
-		//	env, 
-		//	(C3D_TexEnvMode) m_TexEnvProps.Channels, 
-		//	(GPU_TEVSRC) m_TexEnvProps.Source1, 
-		//	(GPU_TEVSRC)m_TexEnvProps.Source2,
-		//	(GPU_TEVSRC)m_TexEnvProps.Source3
-		//);
-		//C3D_TexEnvFunc(
-		//	env, 
-		//	(C3D_TexEnvMode)m_TexEnvProps.Channels,
-		//	(GPU_COMBINEFUNC)m_TexEnvProps.BlendMode
-		//);
+		TexEnvProps& texEnvProps = m_TexEnvProps[id];
+
+		switch (texEnvProps.Channels)
+		{
+		case TexEnvChannels::ET_RGBA:
+		{
+			C3D_TexEnvSrc(
+				env,
+				(C3D_TexEnvMode)texEnvProps.Channels,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				(C3D_TexEnvMode)texEnvProps.Channels,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+		}
+		break;
+		case TexEnvChannels::ET_Alpha:
+		{
+			// Reset RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				GPU_PREVIOUS,
+				GPU_PRIMARY_COLOR,
+				GPU_PRIMARY_COLOR
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				GPU_REPLACE
+			);
+
+			// Set Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				(GPU_TEVSRC)texEnvProps.AlphaSource1,
+				(GPU_TEVSRC)texEnvProps.AlphaSource2,
+				(GPU_TEVSRC)texEnvProps.AlphaSource3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				(GPU_COMBINEFUNC)texEnvProps.AlphaBlendMode
+			);
+		}
+		break;
+		case TexEnvChannels::ET_RGB:
+		{
+			// Set RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+
+			// Reset Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				GPU_PREVIOUS,
+				GPU_PRIMARY_COLOR,
+				GPU_PRIMARY_COLOR
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				GPU_REPLACE
+			);
+		}
+		break;
+		case TexEnvChannels::ET_RGBA_Separate:
+		{
+			// Set RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+
+			// Set Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				(GPU_TEVSRC)texEnvProps.AlphaSource1,
+				(GPU_TEVSRC)texEnvProps.AlphaSource2,
+				(GPU_TEVSRC)texEnvProps.AlphaSource3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				(GPU_COMBINEFUNC)texEnvProps.AlphaBlendMode
+			);
+		}
+		break;
+		default:
+		break;
+		}
+	}
+
+
+	void Citro3DMaterial::SetTexEnvProps(TexEnvProps& props, int id)
+	{
+		m_TexEnvProps[id] = props;
 	}
 
 	void Citro3DMaterial::OnShaderChange()
@@ -47,10 +163,16 @@ namespace Entry {
 		switch (m_Props.shader)
 		{
 		case ShaderProgramEnum::Lit:
-			m_TexEnvProps = s_TexEnvLitProps;
+			for (int i = 0; i < 6; i++)
+				m_TexEnvProps[i] = s_TexEnvLitProps[i];
+
+			m_TexEnvSize = 2;
 			break;
 		case ShaderProgramEnum::Unlit:
-			m_TexEnvProps = s_TexEnvUnlitProps;
+			for (int i = 0; i < 6; i++)
+				m_TexEnvProps[i] = s_TexEnvUnlitProps[i];
+
+			m_TexEnvSize = 1;
 			break;
 		default:
 			break;

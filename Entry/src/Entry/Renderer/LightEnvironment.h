@@ -40,7 +40,6 @@ namespace Entry
 		None,
 		Pow,			// val = pow(x, arg0)
 		Spotlight,		// hardEdge ? (angle >= cutoff ? 1.0f : 0.0f) : (clamp((theta - cutoff) / epsilon, 0.0, 1.0))
-		Quadratic,		// val = 1 / (1 + arg0*x + arg1*x*x)
 		ToonDiffuse,    // val = step(arg0, x)
 		ToonSpecular,   // val = step(arg0, x)
 		Custom			// user-defined callback
@@ -49,8 +48,6 @@ namespace Entry
 	struct LutFuncArgs
 	{
 		float powExponent = 30.0f;
-		float quadraticLin = 0.1f;
-		float quadraticQuad = 0.01f;
 		float spotlightCutoff = 90.0f;
 		float toonShininess = 0.5f;
 	};

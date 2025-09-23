@@ -32,8 +32,8 @@ namespace Entry {
 		virtual ShaderProgram GetShader() = 0;
 		virtual void SetShader(ShaderProgram program) = 0;
 
-		virtual void SetTexEnvProps(TexEnvProps& props) = 0;
-		virtual const TexEnvProps& GetTexEnvProps() = 0;
+		virtual void SetTexEnvProps(TexEnvProps& props, int id = 0) = 0;
+		virtual const TexEnvProps& GetTexEnvProps(int id = 0) = 0;
 
 		static Ref<Material> Create(const MaterialProps& props);
 	};

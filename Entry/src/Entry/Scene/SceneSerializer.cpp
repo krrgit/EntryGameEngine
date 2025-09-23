@@ -209,6 +209,23 @@ namespace Entry
 	{
 		out << YAML::Key << "LightEnvironment" << YAML::Value << YAML::BeginMap;
 		out << YAML::Key << "SceneAmbientColor" << YAML::Value << lightEnv->GetSceneAmbientColor();
+
+		static ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
+		std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+		for (int i = 0; i < 6; ++i)
+		{
+			out << YAML::Key << texEnvLabels[i];
+			auto& lutConfig = lightEnv->GetLutConfig(ids[i]);
+			out << YAML::BeginMap;
+			out << YAML::Key << "LUTID" << (int)lutConfig.id;
+			out << YAML::Key << "LUTFunction" << (int)lutConfig.funcType;
+			out << YAML::Key << "LUTInput" << (int)lutConfig.input;
+			out << YAML::Key << "Negative" << lutConfig.negative;
+			out << YAML::Key << "Pow" << lutConfig.funcArgs.powExponent;
+			out << YAML::Key << "SpotlightCutoff" << lutConfig.funcArgs.spotlightCutoff;
+			out << YAML::Key << "toonShininess" << lutConfig.funcArgs.toonShininess;
+			out << YAML::EndMap;
+		}
 		out << YAML::EndMap; // LightEnvironment
 	}
 
@@ -255,11 +272,34 @@ namespace Entry
 		ET_CORE_TRACE("Deserializing Scene '{0}'", sceneName);
 
 		auto scene = data["Scene"];
+
+		// Light Environment
 		auto lightEnv = data["LightEnvironment"];
 		if (lightEnv)
 		{
 			auto ambientColor = lightEnv["SceneAmbientColor"].as<glm::vec3>();
-			m_Scene->GetLightEnvironment()->SetSceneAmbientColor(ambientColor);
+			Ref<LightEnvironment> sceneLightEnv = m_Scene->GetLightEnvironment();
+			sceneLightEnv->SetSceneAmbientColor(ambientColor);
+			
+			std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+
+			for (int i = 0; i < 6; i++) 
+			{
+				auto lutConfigData = lightEnv[texEnvLabels[i]];
+				if (!lutConfigData) break;
+
+				LutConfig lutconfig;
+				lutconfig.id = (ET_LIGHTLUTID)lutConfigData["LUTID"].as<int>();
+				lutconfig.funcType = (LutFuncType)lutConfigData["LUTFunction"].as<int>();
+				lutconfig.input = (ET_LIGHTLUTINPUT)lutConfigData["LUTInput"].as<int>();
+				lutconfig.negative = lutConfigData["Negative"].as<bool>();
+				
+				lutconfig.funcArgs.powExponent = lutConfigData["Pow"].as<float>();
+				lutconfig.funcArgs.spotlightCutoff = lutConfigData["SpotlightCutoff"].as<float>();
+				lutconfig.funcArgs.toonShininess = lutConfigData["toonShininess"].as<float>();
+
+				sceneLightEnv->ConfigureLut(lutconfig);
+			}
 		}
 
 

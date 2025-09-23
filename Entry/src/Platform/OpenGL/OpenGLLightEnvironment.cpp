@@ -88,7 +88,7 @@ namespace Entry
 		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_MaterialUBO); // binding = 1 matches shader
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
+		static ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
 
 		for (int i = 0; i < 6; i++)
 		{
@@ -179,9 +179,6 @@ namespace Entry
 				break;
 			case LutFuncType::Spotlight:
 				ET_LightLut_Spotlight(&lut, config.funcArgs.spotlightCutoff);
-				break;
-			case LutFuncType::Quadratic:
-				//LightLutDA_Quadratic(&lut,)
 				break;
 			case LutFuncType::ToonDiffuse:
 				ET_LightLut_ToonDiffuse(&lut, 0.0f);

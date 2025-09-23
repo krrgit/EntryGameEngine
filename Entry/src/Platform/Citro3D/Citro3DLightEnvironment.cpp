@@ -53,15 +53,6 @@ namespace Entry
 
 	void Citro3DLightEnvironment::ConfigureLut(LutConfig& config)
 	{
-		printf("CONFIGURE LUT\n");
-
-		//static C3D_LightLut lut_Phong;
-		//LightLut_Phong(&lut_Phong, 1000.0f);
-		//LightLut_Phong(&m_Luts[0], 1000.0f);
-
-		//m_Luts[0] = lut_Phong;
-		//ET_LightLut_Phong((LightLut*) & m_Luts[0], 1000.0f);
-		//C3D_LightEnvLut(&m_LightEnv, GPU_LUT_D0, GPU_LUTINPUT_NH, false, &m_Luts[0]);
 		int ids[] = { 0, 1, -1, 2, 3, 4, 5,-1 };
 		int id = ids[config.id];
 		if (id > -1)
@@ -72,13 +63,9 @@ namespace Entry
 			{
 			case LutFuncType::Pow:
 			ET_LightLut_Phong((LightLut*) & m_Luts[id], config.funcArgs.powExponent);
-			printf("config pow");
 			break;
 			case LutFuncType::Spotlight:
 			LightLut_Spotlight(&m_Luts[id], config.funcArgs.spotlightCutoff);
-			break;
-			case LutFuncType::Quadratic:
-			//LightLutDA_Quadratic(&lut,)
 			break;
 			case LutFuncType::ToonDiffuse:
 			ET_LightLut_ToonDiffuse((LightLut*) & m_Luts[id], 0.0f);
@@ -89,7 +76,8 @@ namespace Entry
 			case LutFuncType::Custom:
 			break;
 			default:
-			ET_LightLut_Zeroes((LightLut*)&m_Luts[id], 0.0f);
+			return; // Do Nothing
+			//ET_LightLut_Zeroes((LightLut*)&m_Luts[id], 0.0f);
 			break;
 			}
 
@@ -97,8 +85,6 @@ namespace Entry
 
 			// Upload
 			C3D_LightEnvLut(&m_LightEnv, (GPU_LIGHTLUTID)config.id, (GPU_LIGHTLUTINPUT)config.input, config.negative, &m_Luts[id]);
-			//C3D_LightEnvLut(&m_LightEnv, (GPU_LIGHTLUTID)config.id, (GPU_LIGHTLUTINPUT)config.input, config.negative, &m_Luts[id]);
-
 		}
 
 	}

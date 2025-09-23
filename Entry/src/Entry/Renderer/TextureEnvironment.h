@@ -4,6 +4,8 @@
 #define BIT(n) (1U<<(n))
 #endif
 
+#include <vector>
+
 namespace Entry
 {
 	// from citro3d (enums.h)
@@ -12,6 +14,7 @@ namespace Entry
 		ET_RGB = BIT(0),
 		ET_Alpha = BIT(1),
 		ET_RGBA = ET_RGB | ET_Alpha,
+		ET_RGBA_Separate = 4,
 	} TexEnvChannels;
 
 	/// Texture combiner functions.
@@ -51,6 +54,11 @@ namespace Entry
 		TexEnvSource Source2 = TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR;
 		TexEnvSource Source3 = TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR;
 
+		TexEnvBlendMode AlphaBlendMode = TexEnvBlendMode::ET_GPU_MODULATE;
+		TexEnvSource AlphaSource1 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+		TexEnvSource AlphaSource2 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+		TexEnvSource AlphaSource3 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+
 		TexEnvProps() = default;
 		TexEnvProps(TexEnvChannels channels,
 			TexEnvBlendMode blendMode,
@@ -61,24 +69,76 @@ namespace Entry
 			Source1(source1), Source2(source2), Source3(source3)
 		{
 		}
+
+		TexEnvProps(
+			TexEnvChannels channels,
+			TexEnvBlendMode blendMode,
+			TexEnvSource source1,
+			TexEnvSource source2,
+			TexEnvSource source3,
+			TexEnvBlendMode alphaBlendMode,
+			TexEnvSource alphaSource1,
+			TexEnvSource alphaSource2,
+			TexEnvSource alphaSource3)
+			: Channels(channels), BlendMode(blendMode),
+			Source1(source1), Source2(source2), Source3(source3),
+			AlphaBlendMode(alphaBlendMode), AlphaSource1(alphaSource1), 
+			AlphaSource2(alphaSource2), AlphaSource3(alphaSource3)
+		{
+		}
+	};
+
+	struct TexEnvsSetup
+	{
+		std::vector<TexEnvProps> texEnvs;
+
+		void Add(TexEnvProps& newTexEnv)
+		{
+			if (texEnvs.size() >= 6)
+				ET_CORE_ASSERT("Tex Env Limit Reached.");
+
+			texEnvs.push_back(newTexEnv);
+		}
+
+		void Remove()
+		{
+			texEnvs.pop_back();
+		}
+
+		void Set(TexEnvProps& props, int id)
+		{
+			texEnvs[id] = props;
+		}
+
+		TexEnvsSetup(const std::initializer_list<TexEnvProps>& _texEnvs)
+			: texEnvs(_texEnvs)
+		{
+		}
 	};
 
 	// Preset TexEnvProps
-	static TexEnvProps s_TexEnvLitProps
+	static TexEnvProps s_TexEnvLitProps[6]
 	{
-		TexEnvChannels::ET_RGBA,
-		TexEnvBlendMode::ET_GPU_MODULATE,
-		TexEnvSource::ET_GPU_TEXTURE0,
-		TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR,
-		TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR
+		{
+			// RGB
+			ET_RGBA_Separate, ET_GPU_MODULATE, ET_GPU_TEXTURE0, ET_GPU_FRAGMENT_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR,
+			// Alpha
+			ET_GPU_REPLACE, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR
+		},
+		{
+			ET_RGBA_Separate, ET_GPU_ADD, ET_GPU_PREVIOUS, ET_GPU_FRAGMENT_SECONDARY_COLOR, ET_GPU_PRIMARY_COLOR
+		}
 	};
 
-	static TexEnvProps s_TexEnvUnlitProps
+
+	static TexEnvProps s_TexEnvUnlitProps[6]
 	{
-		TexEnvChannels::ET_RGBA,
-		TexEnvBlendMode::ET_GPU_MODULATE,
-		TexEnvSource::ET_GPU_TEXTURE0,
-		TexEnvSource::ET_GPU_PRIMARY_COLOR,
-		TexEnvSource::ET_GPU_PRIMARY_COLOR
+		{
+			TexEnvChannels::ET_RGBA,
+			TexEnvBlendMode::ET_GPU_MODULATE,
+			TexEnvSource::ET_GPU_TEXTURE0,
+			TexEnvSource::ET_GPU_PRIMARY_COLOR,
+			TexEnvSource::ET_GPU_PRIMARY_COLOR
+		}
 	};
 }
