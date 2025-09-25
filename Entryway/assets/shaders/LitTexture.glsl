@@ -1,12 +1,20 @@
 ﻿// Lit Texture Shader
 
+// FORMULAS
+// Primary Color =  mat.emissive + 
+//				    mat.ambient * scene.ambient + 
+//					attenuation * LUT_FUNCTION * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
+//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
+
+// Secondary Color = attenuation * spotlightFactor * ((mat.specular1 * (N*H ?) * geometric_factor0) + ((N*V?)(L*N?) *geometric_factor1)) * light.specular
+
 #type vertex
 #version 420 core
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec2 a_TexCoord;
 layout(location = 2) in vec3 a_Norm;
-// layout(location = 3) in int a_EntityID; TOOD: use when render batches are implemented
+// layout(location = 3) in int a_EntityID; TODO: use when render batches are implemented
 
 uniform mat4 u_Projection;
 uniform vec4 u_Color;
@@ -53,10 +61,12 @@ layout(location = 1) out int color2;
 
 struct Light 
 {
-    vec4 position;   // xyz = position in view space
+    vec4 position;  // xyz = position in view space
 	vec4 direction; // direction in view space
-    vec4 color; // rgb = color, a = strength
-    vec4 params;     // x = type, y = shininess, z = angle, w = unused
+    vec4 color;		// rgb = color, a = strength
+    vec4 params;    // x = type, y = shininess, z = angle, w = unused
+	ivec4 daLut[64];
+	ivec4 spLut[64];
 };
 
 layout(std140, binding = 0) uniform LightData
@@ -98,19 +108,33 @@ vec4 primaryColor;
 vec4 secondaryColor;
 vec4 previous = vec4(0);
 
-// LUT Inputs
-float nh; ///< Normal*HalfVector
-float vh = 0; ///< View*HalfVector
-float nv = 0; ///< Normal*View
-float ln = 0; ///< LightVector*Normal
-float sp = 0; ///< -LightVector*SpotlightVector
-float cp = 0; ///< cosine of phi
+// LUT Vectors
+vec3 lut_Normal;
+vec3 lut_HalfVec;
+vec3 lut_SpotlightVec;
+vec3 lut_LightDir;
+vec3 lut_ViewVec;
 
 int fetchLUT(int lutIndex, int entryIndex)
 {
     int group = entryIndex / 4;
     int comp  = entryIndex % 4;
     return luts[lutIndex * 256 + group][comp];
+}
+
+int fetchLocalLUT(int lightIndex, int lutIndex, int entryIndex)
+{
+    int group = entryIndex / 4;
+    int comp  = entryIndex % 4;
+    return lutIndex == 0 ? lights[lightIndex].daLut[group][comp] : lights[lightIndex].spLut[group][comp];
+}
+
+vec2 unpackLUT(int raw) {
+    int val  = raw & 0xFFF;       // low 12 bits
+    int slope = (raw >> 12) & 0xFFF;
+    // handle sign: slope is signed 12-bit (range –2048..2047)
+    if ((slope & 0x800) != 0) slope |= ~0xFFF;
+    return vec2(float(val), float(slope));
 }
 
 float sampleLUTLinear(int lutId, float input, bool negative)
@@ -123,23 +147,46 @@ float sampleLUTLinear(int lutId, float input, bool negative)
     int i0 = int(floor(fIdx));
     int i1 = min(i0 + 1, 255);
     float t = fIdx - float(i0);
+	
+	int raw = fetchLUT(lutId, i0);
+	vec2 unpacked = unpackLUT(raw);
+	float val = unpacked.x;
+	float slope = unpacked.y;
+	int raw_denom = fetchLUT(lutId, 255);
+	float denom = unpackLUT(raw_denom).x;
+	
+	return (val + slope * t) / denom;
+}
 
-    int v0 = fetchLUT(lutId, i0);
-    int v1 = fetchLUT(lutId, i1);
-	int denom = fetchLUT(lutId, 255); // divide by max value to map from [0,1]
+// Spotlight Lut
+float sampleSPLutLinear(int lightIndex, int lutIndex, float input) 
+{
+    float u = (input * 0.5 + 0.5);
+    u = clamp(u, 0.0, 1.0);
 
-    return mix(float(v0), float(v1), t) / float(denom);
+	float fIdx = u * 255.0;
+    int i0 = int(floor(fIdx));
+    float t = fIdx - float(i0);
+
+    int raw = fetchLocalLUT(lightIndex, lutIndex, i0);
+	int val  = ~raw & 0xFFF;       // low 12 bits
+    int slope = (~raw >> 12) & 0xFFF;
+    // handle sign: slope is signed 12-bit (range –2048..2047)
+    if ((slope & 0x800) != 0) slope |= ~0xFFF;
+
+    return (i0 >= 128) ? 0 : (float(val) + float(slope) * t) / 4095.0;
 }
 
 float GetInput(int inputID) 
 {
-	switch(inputID) {
-	case 0: return nh;
-	case 1: return vh;
-	case 2: return nv;
-	case 3: return ln;
-	case 4: return sp;
-	case 5: return 0; // cosine of phi
+	switch(inputID) 
+	{
+	case 0: return clamp(dot(lut_Normal, lut_HalfVec), 0.0, 1.0);	///< Normal*HalfVector
+	case 1: return dot(lut_ViewVec, lut_HalfVec);					///< View*HalfVector
+	case 2: return dot(lut_Normal, lut_ViewVec);					///< Normal*View
+	case 3: return dot(lut_LightDir, lut_Normal);					///< LightVector*Normal
+	case 4: return dot(-lut_LightDir, lut_SpotlightVec);			///< -LightVector*SpotlightVector
+	case 5: return 0; // TODO										///< cosine of phi
 	}
 	return 0;
 }
@@ -148,7 +195,7 @@ vec4 GetSource(int sourceID)
 {
 	switch(sourceID) 
 	{
-	case 0: return vec4(1.0); // What is primary color?
+	case 0: return vec4(1.0); // What is primary color? white for now
 	case 1: return primaryColor;
 	case 2: return secondaryColor;
 	case 3: return texture(u_Textures[0], v_TexCoord);
@@ -192,16 +239,16 @@ vec4 CombineSources(int combineFunc, vec4 s1, vec4 s2, vec4 s3) {
 
 float CombineAlpha(int combineFunc, float s1, float s2, float s3) {
     switch(combineFunc) {
-    case 0: return s1;                   // REPLACE
-    case 1: return s1 * s2;              // MODULATE
-    case 2: return s1 + s2;              // ADD
-    case 3: return s1 + s2 - 0.5;        // ADD_SIGNED
-    case 4: return mix(s1, s2, s3);      // INTERPOLATE
-    case 5: return s1 - s2;              // SUBTRACT
-    case 6: return s1 * s2;              // DOT3_RGB makes no sense here → usually MODULATE
-    case 7: return s1 * s2;              // DOT3_RGBA also doesn’t apply → clamp or fallback
-    case 8: return s1 * s2 + s3;         // MULTIPLY_ADD
-    case 9: return (s1 + s2) * s3;       // ADD_MULTIPLY
+    case 0: return s1;				// REPLACE
+    case 1: return s1 * s2;			// MODULATE
+    case 2: return s1 + s2;			// ADD
+    case 3: return s1 + s2 - 0.5;	// ADD_SIGNED
+    case 4: return mix(s1, s2, s3);	// INTERPOLATE
+    case 5: return s1 - s2;			// SUBTRACT
+    case 6: return s1 * s2;			// DOT3_RGB makes no sense here → usually MODULATE
+    case 7: return s1 * s2;			// DOT3_RGBA also doesn’t apply → clamp or fallback
+    case 8: return s1 * s2 + s3;	// MULTIPLY_ADD
+    case 9: return (s1 + s2) * s3;	// ADD_MULTIPLY
     }
     return s1;
 }
@@ -243,13 +290,15 @@ void main()
 
 	// Initialize Colors
 	primaryColor = m_Emissive + (m_Ambient * s_Ambient);
-	secondaryColor = vec4(0);
+	secondaryColor = vec4(0,0,0,1);
 
 	// Define light variables (REMOVE)
 	float da_linear =  0.1;
 	float da_quad = 0.01;
-
-	vec3 viewVec = normalize(-v_FragPos.xyz);
+	
+	// Per Fragment Vectors
+	lut_ViewVec = normalize(-v_FragPos.xyz);
+	lut_Normal = v_Normal;
 
 	for(int i=0; i < MAX_LIGHTS; i++) 
 	{
@@ -259,26 +308,27 @@ void main()
 		float sp_cutoff = lights[i].params.z;
 
 		//Per Light Vectors
-		vec3 lightDir = (lights[i].position.w == 0.0) ?
+		lut_LightDir = (lights[i].position.w == 0.0) ?
 						normalize(lights[i].position.xyz) :				// Directional
 						normalize(lights[i].position.xyz - v_FragPos);	// PointLight/Spotlight
-		vec3 halfVec = normalize(lightDir + viewVec);
-		vec3 spotlightVec = normalize(-lights[i].direction.xyz);
+		lut_HalfVec = normalize(lut_LightDir + lut_ViewVec);
+		lut_SpotlightVec = normalize(-lights[i].direction.xyz);
 
 		// Diffuse
-		float diff = max(dot(v_Normal, lightDir), 0.0);
-		vec4 diffuse = diff * lights[i].color;
+		float diff = max(dot(lut_Normal, lut_LightDir), 0.0);
+		vec4 diffuse = diff * lights[i].color * lights[i].color.w;
 		diffuse.w = 1.0;
 
 		// Spotlight Factor
 		float spotLightFactor = 1.0;
 		float attenuation = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
-			float cutoff = (180.0 - sp_cutoff) / 180.0;
-			float theta = dot(lightDir, spotlightVec);
-			float epsilon = 0;
+			// float cutoff = (180.0 - sp_cutoff) / 180.0;
+			// float epsilon = 0;
+			float theta = dot(lut_LightDir, lut_SpotlightVec);
 			// spotLightFactor = clamp((theta - cutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
-			spotLightFactor = theta >= cutoff ? 1.0 : 0.0; // Hard Edge Spotlight
+			//spotLightFactor = theta >= cutoff ? 1.0 : 0.0; // Hard Edge Spotlight
+			spotLightFactor = sampleSPLutLinear(i, 1, GetInput(4));
 
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
 			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
@@ -291,13 +341,6 @@ void main()
 		primaryColor += attenuation * spotLightFactor * ((m_Diffuse * diffuse));
 
 		// LUT Inputs
-		nh = clamp(dot(v_Normal, halfVec), 0.0, 1.0); ///< Normal*HalfVector
-		vh = dot(viewVec, halfVec); ///< View*HalfVector
-		nv = dot(v_Normal, viewVec); ///< Normal*View
-		ln = dot(lightDir, v_Normal); ///< LightVector*Normal
-		sp = dot(-lightDir, spotlightVec); ///< -LightVector*SpotlightVector
-		cp = 0; ///< cosine of phi
-
 		float spec0LutInput =  GetInput(lightEnv_Params[0].x);
 
 		// Specular 0 (Blinn–Phong)
@@ -308,15 +351,6 @@ void main()
 	vec4 outputColor = vec4(0);
 	outputColor = ComputeTexEnvOutput(0);
 
-	// FORMULAS
-	// Primary Color =  mat.emissive + 
-	//				    mat.ambient * scene.ambient + 
-	//					attenuation * LUT_FUNCTION * (L*N < 0 ? 0 : 1) * ShadowAttenuation * 
-	//					(mat.ambient * light.ambient + mat.diffuse * light.diffuse * dot(LightDir, Normal))
-
-	// Secondary Color = attenuation * spotlightFactor * ((mat.specular1 * (N*H ?) * geometric_factor0) + ((N*V?)(L*N?) *geometric_factor1)) * light.specular
-	//  Color = attenuation * spotlightFactor * ((mat.specular1 * (N*H ?)) + ((N*V?) * (L*N?)) ) * light.specular
-
 	color = outputColor;
-	color2 = v_EntityID; // Entity ID placeholder
+	color2 = v_EntityID; // Entity ID (Viewport Selection)
 }

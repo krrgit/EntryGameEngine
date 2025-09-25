@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <glm/glm.hpp>
 
 namespace Entry
 {
@@ -51,9 +52,10 @@ namespace Entry
 	void ET_LightLut_FromArray(LightLut* lut, float* data);
 	void ET_LightLut_FromFunc(LightLut* lut, LightLutFunc func, float param, bool negative);
 	void ET_LightLutDA_Create(LightLutDA* lut, LightLutFuncDA func, float from, float to, float arg0, float arg1);
+	void IntArrayToIvec4Array(uint32_t* in, glm::ivec4* out);
 
 #define ET_LightLut_Phong(lut, shininess)		ET_LightLut_FromFunc((lut), powf, (shininess), false)
-#define ET_LightLut_Spotlight(lut, angle)		ET_LightLut_FromFunc((lut), ET_spot_step, std::cos(angle), true)
+#define ET_LightLut_Spotlight(lut, angle)		ET_LightLut_FromFunc((lut), ET_spot_step, cosf(angle), true)
 #define ET_LightLut_ToonDiffuse(lut, arg)		ET_LightLut_FromFunc((lut), ET_toon_diffuse, arg, false)
 #define ET_LightLut_ToonSpecular(lut, angle)	ET_LightLut_FromFunc((lut), ET_toon_specular, arg, false)
 #define ET_LightLut_Zeroes(lut, arg)			ET_LightLut_FromFunc((lut), ET_zeroes, arg, false)

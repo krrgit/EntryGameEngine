@@ -36,8 +36,8 @@ namespace Entry
 
 		virtual void SetParent(uint32_t parent) = 0;
 
-		virtual void SetAsDirectionalLight(float shininess) = 0;
-		virtual void SetAsPointLight(float shininess) = 0;
+		virtual void SetAsDirectionalLight() = 0;
+		virtual void SetAsPointLight(float linear, float quad) = 0;
 		virtual void SetAsSpotLight(float angle) = 0;
 
 		virtual void SetupLight() = 0;

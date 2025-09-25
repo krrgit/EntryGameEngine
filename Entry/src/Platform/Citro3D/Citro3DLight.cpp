@@ -41,7 +41,7 @@ namespace Entry
 		}
 	}
 
-	void Citro3DLight::SetAsDirectionalLight(float shininess)
+	void Citro3DLight::SetAsDirectionalLight()
 	{
 		C3D_LightSpotEnable(&m_Light, false);
 		C3D_LightDistAttnEnable(&m_Light, false);
@@ -51,10 +51,10 @@ namespace Entry
 		//C3D_LightEnvLut(m_Parent, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
 	}
 
-	void Citro3DLight::SetAsPointLight(float shininess)
+	void Citro3DLight::SetAsPointLight(float linear, float quad)
 	{
 		// TODO: Setup customization for quadratic in LightEnv
-		LightLutDA_Quadratic(&m_LutDA, 0.0f, 75.0f, 0.1f, 0.01f);
+		LightLutDA_Quadratic(&m_LutDA, 0.0f, 75.0f, linear, quad);
 		C3D_LightDistAttn(&m_Light, &m_LutDA);
 
 		C3D_LightSpotEnable(&m_Light, false);
@@ -77,11 +77,11 @@ namespace Entry
 		switch (m_LightType)
 		{
 		case ET_DirectionalLight:
-			SetAsDirectionalLight(m_Strength);
+			SetAsDirectionalLight();
 			m_PositionalLight = 0.0f;
 			break;
 		case ET_PointLight:
-			SetAsPointLight(m_Strength);
+			SetAsPointLight(0.1f, 0.01f);
 			m_PositionalLight = 1.0f;
 			break;
 		case ET_Spotlight:

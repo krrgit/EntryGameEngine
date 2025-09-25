@@ -103,7 +103,7 @@ namespace Entry
 	struct LightComponent
 	{
 		LightType Type = LightType::ET_PointLight;
-		float Strength = 30.0f;
+		float Strength = 1.0f;
 		float Angle = 90.0f;
 		glm::vec3 Color = {1.0f, 1.0f, 1.0f};
 		Ref<Light> RendererLight;

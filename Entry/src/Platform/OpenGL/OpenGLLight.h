@@ -12,6 +12,8 @@ namespace Entry
 		glm::vec4 direction;
 		glm::vec4 color;
 		glm::vec4 params;
+		glm::ivec4 daLut[64];
+		glm::ivec4 spLut[64];
 	};
 
 	class OpenGLLight : public Light
@@ -29,8 +31,8 @@ namespace Entry
 
 		virtual void SetParent(uint32_t parent) override { m_Parent = parent; }
 
-		virtual void SetAsDirectionalLight(float shininess) override;
-		virtual void SetAsPointLight(float shininess) override;
+		virtual void SetAsDirectionalLight() override;
+		virtual void SetAsPointLight(float linear, float quad) override;
 		virtual void SetAsSpotLight(float angle) override;
 
 		virtual void SetupLight() override;

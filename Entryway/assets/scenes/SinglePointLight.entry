@@ -1,6 +1,54 @@
 Scene: SinglePointLight
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
+  TexEnv0:
+    LUTID: 0
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  TexEnv1:
+    LUTID: 1
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  TexEnv2:
+    LUTID: 3
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  TexEnv3:
+    LUTID: 4
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  TexEnv4:
+    LUTID: 5
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  TexEnv5:
+    LUTID: 6
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
 Entities:
   - Entity: 13788627539912258494
     TagComponent:
@@ -51,7 +99,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 1, 1]
-      Strength: 30
+      Strength: 1
       Angle: 90
       Type: 1
   - Entity: 15255254070688434474

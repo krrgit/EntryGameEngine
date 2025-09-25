@@ -6,7 +6,7 @@ LightEnvironment:
     LUTFunction: 1
     LUTInput: 0
     Negative: false
-    Pow: 100
+    Pow: 1000
     SpotlightCutoff: 90
     toonShininess: 0.5
   TexEnv1:
@@ -99,7 +99,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0.130232692, 1, 0]
-      Strength: 30
+      Strength: 1
       Angle: 90
       Type: 1
   - Entity: 15255254070688434474
@@ -155,7 +155,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0, 0]
-      Strength: 30
+      Strength: 1
       Angle: 90
       Type: 1
   - Entity: 10778960372014692739
@@ -167,7 +167,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0, 0.0651164055, 1]
-      Strength: 30
+      Strength: 1
       Angle: 90
       Type: 1
   - Entity: 15601254230699104759
@@ -179,7 +179,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0.865116298, 0]
-      Strength: 30
+      Strength: 1
       Angle: 90
       Type: 1
   - Entity: 13943556969015190451
@@ -190,8 +190,8 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
-      Color: [0.413953483, 0.877339065, 1]
-      Strength: 23
+      Color: [1, 1, 1]
+      Strength: 1
       Angle: 90
       Type: 0
   - Entity: 5674362160390665091
@@ -203,6 +203,6 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 1, 1]
-      Strength: 30
-      Angle: 14.3839998
+      Strength: 2
+      Angle: 15
       Type: 2
