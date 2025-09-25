@@ -21,6 +21,7 @@ namespace Entry {
 		std::string Name;
 		Ref<Texture2D> DiffuseMap;
 		ShaderProgram shader;
+		//bool ColorValues = true;
 	};
 
 	class Material {
@@ -34,6 +35,7 @@ namespace Entry {
 
 		virtual void SetTexEnvProps(TexEnvProps& props, int id = 0) = 0;
 		virtual const TexEnvProps& GetTexEnvProps(int id = 0) = 0;
+		virtual const int TexEnvCount() = 0;
 
 		static Ref<Material> Create(const MaterialProps& props);
 	};

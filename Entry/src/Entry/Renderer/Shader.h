@@ -13,6 +13,7 @@ namespace Entry {
 		// VertexLit,	// TODO 
 		NoShader = -1,
 	};
+
 	struct ShaderProgram
 	{
 		ShaderProgramEnum value = ShaderProgramEnum::Lit;

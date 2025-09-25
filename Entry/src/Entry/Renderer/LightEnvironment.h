@@ -8,6 +8,7 @@
 // 3DS Max Light Limit
 #define MAX_LIGHTS 8
 #define MAX_LUTS 6
+#define MAX_TEXENV 6
 
 namespace Entry
 {
@@ -81,7 +82,7 @@ namespace Entry
 		virtual ~LightEnvironment() = default;
 
 		virtual void Bind() = 0;
-		virtual void SetMaterial(Ref<Material> material) = 0;
+		virtual void BindMaterial(Material* material) = 0;
 
 		virtual int LightInit(Ref<Light> light) = 0;
 		virtual void LightDestroy(Ref<Light> light) = 0;

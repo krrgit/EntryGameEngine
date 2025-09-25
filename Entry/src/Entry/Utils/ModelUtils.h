@@ -88,16 +88,26 @@ namespace Entry
 		for (uint32_t i = 0; i < obj_mesh->material_count; ++i)
 		{
 			//Material mat = { obj_mesh->materials[i].name, obj_mesh->materials[i].map_Kd-1};
+            fastObjMaterial& srcMat = obj_mesh->materials[i];
+
+            // Normalize Diffuse Checks
+            bool hasDiffuseTexture = (srcMat.map_Kd > 0);
+            bool hasDiffuseColor = (srcMat.Kd[0] != 1.0f && srcMat.Kd[1] != 1.0f && srcMat.Kd[2] != 1.0f);
+
+            glm::vec3 diffuseColor = { srcMat.Kd[0], srcMat.Kd[1], srcMat.Kd[2] };
+            // Normalize to 0.6 if it has texture but no color, or 0.8 if it has no texture (similar to assimp)
+            diffuseColor = hasDiffuseColor ? diffuseColor : (hasDiffuseTexture ? glm::vec3(0.6f) : glm::vec3(0.8f));
+ 
 			MaterialProps props = {
 				{	// Material Values
-					obj_mesh->materials[i].Ka[0], obj_mesh->materials[i].Ka[1], obj_mesh->materials[i].Ka[2],
-					obj_mesh->materials[i].Kd[0], obj_mesh->materials[i].Kd[1], obj_mesh->materials[i].Kd[2],
-					obj_mesh->materials[i].Ks[0], obj_mesh->materials[i].Ks[1], obj_mesh->materials[i].Ks[2],
-					obj_mesh->materials[i].Ks[0], obj_mesh->materials[i].Ks[1], obj_mesh->materials[i].Ks[2], // TODO: Double check
-					obj_mesh->materials[i].Ke[0], obj_mesh->materials[i].Ke[1], obj_mesh->materials[i].Ke[2]
+					srcMat.Ka[0], srcMat.Ka[1], srcMat.Ka[2],
+                    diffuseColor.r, diffuseColor.g, diffuseColor.b,
+                    srcMat.Ks[0], srcMat.Ks[1], srcMat.Ks[2], // Specular 0
+                    0,0,0, //obj_mesh->materials[i].Ks[0], obj_mesh->materials[i].Ks[1], obj_mesh->materials[i].Ks[2], // Specular 1
+                    srcMat.Ke[0], srcMat.Ke[1], srcMat.Ke[2]
 				},
-				obj_mesh->materials[i].name,
-				textures[obj_mesh->materials[i].map_Kd - 1],
+                srcMat.name,
+				textures[srcMat.map_Kd - 1],
                 Renderer3D::GetDefaultShader()
 			};
 

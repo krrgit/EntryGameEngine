@@ -67,7 +67,8 @@ namespace Entry
 
 		UBOLightEnvData defaultValues = {};
 		defaultValues.sceneAmbient = glm::vec4(1.0f); // default scene ambient = white
-		defaultValues.params = { 0.1f, 0.01f, 90.0f, 0.01f };
+		for(int i =0; i< MAX_LUTS; ++i)
+			defaultValues.params[i] = {0,0,90,0};
 
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UBOLightEnvData), &defaultValues); // Set to 0
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_LightEnvUBO); // binding = 0 matches shader
@@ -94,15 +95,23 @@ namespace Entry
 		{
 			m_LutConfigs[i].id = ids[i];
 		}
+
+		glGenBuffers(1, &m_TexEnvUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_TexEnvUBO);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(UBOTexEnvData), &m_TexEnvData, GL_DYNAMIC_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 2, m_TexEnvUBO); // binding = 2 matches shader
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		
 	}
 
 	void OpenGLLightEnvironment::Bind()
 	{
-		// Do nothing
+		// Do nothing ?
 	}
 
-	void OpenGLLightEnvironment::SetMaterial(Ref<Material> material)
+	void OpenGLLightEnvironment::BindMaterial(Material* material)
 	{
+		// Bind Material Values
 		MaterialValues& values   = material->GetProps().Values;
 		m_MaterialData.ambient   = { values.Ambient[0],   values.Ambient[1],   values.Ambient[2],   1.0f };
 		m_MaterialData.diffuse   = { values.Diffuse[0],   values.Diffuse[1],   values.Diffuse[2],   1.0f };
@@ -112,6 +121,30 @@ namespace Entry
 
 		glBindBuffer(GL_UNIFORM_BUFFER, m_MaterialUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UBOMaterialData), &m_MaterialData);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		// Bind TexEnvs
+		int texEnvCount = material->TexEnvCount();
+		UBOTexEnvData uboTexEnvData;
+		for (int i = 0; i < texEnvCount; i++)
+		{
+			const TexEnvProps& tep = material->GetTexEnvProps(i);
+
+			uboTexEnvData.texEnvConfig[i].x = tep.Channels;
+
+			uboTexEnvData.texEnvRGBInputs[i].x = tep.BlendMode;
+			uboTexEnvData.texEnvRGBInputs[i].y = tep.Source1;
+			uboTexEnvData.texEnvRGBInputs[i].z = tep.Source2;
+			uboTexEnvData.texEnvRGBInputs[i].w = tep.Source3;
+			
+			uboTexEnvData.texEnvAlphaInputs[i].x = tep.AlphaBlendMode;
+			uboTexEnvData.texEnvAlphaInputs[i].y = tep.AlphaSource1;
+			uboTexEnvData.texEnvAlphaInputs[i].z = tep.AlphaSource2;
+			uboTexEnvData.texEnvAlphaInputs[i].w = tep.AlphaSource3;
+		}
+
+		glBindBuffer(GL_UNIFORM_BUFFER, m_TexEnvUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UBOTexEnvData), &uboTexEnvData);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
@@ -196,14 +229,21 @@ namespace Entry
 			m_Luts[id] = lut;
 
 			// Prepare for Shader
+			glm::ivec4 lutParams;
 			glm::ivec4 uboLut[64]; // 256 ints
-			IntArrayToIvec4Array(&lut.data[0], &uboLut[0]);
+			
 			m_LutConfigs[id] = config;
+			lutParams.x = config.input;
+			
+			IntArrayToIvec4Array(&lut.data[0], &uboLut[0]);
 			size_t lutSize = sizeof(glm::ivec4) * 64;
 
 			// Upload
 			glBindBuffer(GL_UNIFORM_BUFFER, m_LightEnvUBO);
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(OGL_Light) * MAX_LIGHTS) + (sizeof(glm::vec4) * 2) + (lutSize * id), lutSize, &uboLut);
+			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(OGL_Light) * MAX_LIGHTS) + sizeof(glm::vec4) + (sizeof(glm::ivec4) * id), sizeof(glm::ivec4), &lutParams);
+			glBindBuffer(GL_UNIFORM_BUFFER, 0);
+			glBindBuffer(GL_UNIFORM_BUFFER, m_LightEnvUBO);
+			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(OGL_Light) * MAX_LIGHTS) + sizeof(glm::vec4) + (sizeof(glm::ivec4) * MAX_LUTS) + (lutSize * id), lutSize, &uboLut);
 			glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		}
 	}

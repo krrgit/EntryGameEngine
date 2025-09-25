@@ -71,9 +71,7 @@ namespace Entry
             //bool opened = ImGui::TreeNodeEx((void*)(uint64_t)((uint32_t)entity + 1000), flags, tag.c_str());
             //if (opened)
             //    ImGui::TreePop();
-
-            ImGui::Text(std::to_string(id).c_str());
-             auto& lutconfig = m_Context->GetLightEnvironment()->GetLutConfig(lutID);
+            auto& lutconfig = m_Context->GetLightEnvironment()->GetLutConfig(lutID);
 
             int funcSelection = (int)lutconfig.funcType;
             const char* functionStrings[] = { "None", "Pow", "Spotlight", "Toon Diffuse", "Toon Specular", "Custom"};
@@ -96,7 +94,7 @@ namespace Entry
                 ImGui::EndCombo();
             }
 
-            static int inputSelection = (int)lutconfig.input;
+            int inputSelection = (int)lutconfig.input;
             const char* inputStrings[] = { 
                 "Normal * Half-Vector", 
                 "View * Half-Vector", 
@@ -114,6 +112,7 @@ namespace Entry
                     {
                         inputSelection = i;
                         lutconfig.input = (ET_LIGHTLUTINPUT)i;
+                        m_Context->GetLightEnvironment()->ConfigureLut(lutconfig);
                     }
 
                     if (isSelected)

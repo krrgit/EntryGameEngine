@@ -592,7 +592,7 @@ namespace Entry {
         std::string filepath = FileDialogs::SaveFile("Entry Scene (*.entry)\0*.entry\0");
         if (!filepath.empty())
         {
-            SerializeScene(m_ActiveScene, m_EditorScenePath);
+            SerializeScene(m_ActiveScene, filepath);
             m_EditorScenePath = filepath;
         }
 

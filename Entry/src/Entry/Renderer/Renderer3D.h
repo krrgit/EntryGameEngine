@@ -5,12 +5,14 @@
 #include "Model.h"
 #include "Entry/Core/Timestep.h"
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/quaternion.hpp>
-
 #include "Entry/Renderer/Camera.h"
 #include "Entry/Renderer/EditorCamera.h"
 #include "Entry/Scene/Components.h"
+#include "Entry/Renderer/LightEnvironment.h"
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 
 namespace Entry {
 	
@@ -46,6 +48,8 @@ namespace Entry {
 
 			static Ref<Material> GetDefaultMaterial();
 			static ShaderProgram GetDefaultShader();
+
+			static void BindLightEnv(Ref<LightEnvironment> lightEnv);
 	private:
 	};
 

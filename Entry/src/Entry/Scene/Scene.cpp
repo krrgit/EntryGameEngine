@@ -23,14 +23,14 @@ namespace Entry {
 
 		matProps.Values = {
 				{ 0.2f, 0.2f, 0.2f }, //ambient
-				{ 0.5f, 0.5f, 0.5f }, //diffuse
-				{ 0.8f, 0.8f, 0.8f }, //specular0
+				{ 0.8f, 0.8f, 0.8f }, //diffuse
+				{ 1.0f, 1.0f, 1.0f }, //specular0
 				{ 0.0f, 0.0f, 0.0f }, //specular1
 				{ 0.0f, 0.0f, 0.0f }, //emission
 		};
 
 		Ref<Material> sampleMat = Material::Create(matProps);
-		m_LightEnv->SetMaterial(sampleMat);
+		m_LightEnv->BindMaterial(sampleMat.get());
 
 		//auto& lutconfig = GetLightEnvironment()->GetLutConfig(ET_LIGHTLUTID::ET_LUT_D0);
 		//lutconfig.input = ET_LIGHTLUTINPUT::ET_LUTINPUT_NH;
@@ -50,6 +50,7 @@ namespace Entry {
 			ET_CORE_INFO("Lights: {0}", --m_LightCount);
 		});
 
+		Renderer3D::BindLightEnv(m_LightEnv);
 	}
 
 	Scene::~Scene()

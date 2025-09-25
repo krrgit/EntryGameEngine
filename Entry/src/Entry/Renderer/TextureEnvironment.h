@@ -28,8 +28,8 @@ namespace Entry
 		ET_GPU_SUBTRACT = 0x05, ///< Subtract.
 		ET_GPU_DOT3_RGB = 0x06, ///< Dot3. Scalar result is written to RGB only.
 		ET_GPU_DOT3_RGBA = 0x07, ///< Dot3. Scalar result is written to RGBA.
-		ET_GPU_MULTIPLY_ADD = 0x08, ///< Multiply then add.
-		ET_GPU_ADD_MULTIPLY = 0x09, ///< Add then multiply.
+		ET_GPU_MULTIPLY_ADD = 0x08, ///< Multiply then add. ((s1 * s2) + s3)
+		ET_GPU_ADD_MULTIPLY = 0x09, ///< Add then multiply. ((s1 + s2) * s3)
 	} TexEnvBlendMode;
 
 	typedef enum
@@ -49,13 +49,13 @@ namespace Entry
 	struct TexEnvProps
 	{
 		TexEnvChannels Channels   = TexEnvChannels::ET_RGBA;
-		TexEnvBlendMode BlendMode = TexEnvBlendMode::ET_GPU_ADD;
-		TexEnvSource Source1 = TexEnvSource::ET_GPU_TEXTURE0;
-		TexEnvSource Source2 = TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR;
-		TexEnvSource Source3 = TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR;
+		TexEnvBlendMode BlendMode = TexEnvBlendMode::ET_GPU_REPLACE;
+		TexEnvSource Source1 = TexEnvSource::ET_GPU_PREVIOUS;
+		TexEnvSource Source2 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+		TexEnvSource Source3 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
 
-		TexEnvBlendMode AlphaBlendMode = TexEnvBlendMode::ET_GPU_MODULATE;
-		TexEnvSource AlphaSource1 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+		TexEnvBlendMode AlphaBlendMode = TexEnvBlendMode::ET_GPU_REPLACE;
+		TexEnvSource AlphaSource1 = TexEnvSource::ET_GPU_PREVIOUS;
 		TexEnvSource AlphaSource2 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
 		TexEnvSource AlphaSource3 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
 
@@ -121,12 +121,9 @@ namespace Entry
 	{
 		{
 			// RGB
-			ET_RGBA_Separate, ET_GPU_MODULATE, ET_GPU_TEXTURE0, ET_GPU_FRAGMENT_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR,
+			ET_RGBA_Separate, ET_GPU_MULTIPLY_ADD, ET_GPU_TEXTURE0, ET_GPU_FRAGMENT_PRIMARY_COLOR, ET_GPU_FRAGMENT_SECONDARY_COLOR,
 			// Alpha
-			ET_GPU_REPLACE, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR
-		},
-		{
-			ET_RGBA_Separate, ET_GPU_ADD, ET_GPU_PREVIOUS, ET_GPU_FRAGMENT_SECONDARY_COLOR, ET_GPU_PRIMARY_COLOR
+			ET_GPU_REPLACE, ET_GPU_TEXTURE0, ET_GPU_PRIMARY_COLOR, ET_GPU_PRIMARY_COLOR
 		}
 	};
 

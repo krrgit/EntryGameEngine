@@ -19,10 +19,144 @@ namespace Entry
 		C3D_LightEnvBind(&m_LightEnv);
 	}
 
-	void Citro3DLightEnvironment::SetMaterial(Ref<Material> material)
+	void Citro3DLightEnvironment::BindMaterial(Material* material)
 	{
 		C3D_Material* mat = reinterpret_cast<C3D_Material*>(&material->GetProps().Values);
 		C3D_LightEnvMaterial(&m_LightEnv, mat);
+
+		// Set Used TexEnv
+		int i = 0;
+		int texEnvCount = 6;// material->TexEnvCount();
+		for (; i < texEnvCount; i++)
+		{
+			SetTexEnv(i, material->GetTexEnvProps(i));
+		}
+
+		// Reset Unused TexEnvs
+		for (; i < 6; i++)
+		{
+			C3D_TexEnvInit(C3D_GetTexEnv(i));
+		}
+	}
+
+	void Citro3DLightEnvironment::SetTexEnv(int id, const TexEnvProps& texEnvProps)
+	{
+		C3D_TexEnv* env = C3D_GetTexEnv(id);
+
+		switch (texEnvProps.Channels)
+		{
+		case TexEnvChannels::ET_RGBA:
+		{
+			C3D_TexEnvSrc(
+				env,
+				(C3D_TexEnvMode)texEnvProps.Channels,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				(C3D_TexEnvMode)texEnvProps.Channels,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+		}
+		break;
+		case TexEnvChannels::ET_Alpha:
+		{
+			// Reset RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				GPU_PREVIOUS,
+				GPU_PRIMARY_COLOR,
+				GPU_PRIMARY_COLOR
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				GPU_REPLACE
+			);
+
+			// Set Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				(GPU_TEVSRC)texEnvProps.AlphaSource1,
+				(GPU_TEVSRC)texEnvProps.AlphaSource2,
+				(GPU_TEVSRC)texEnvProps.AlphaSource3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				(GPU_COMBINEFUNC)texEnvProps.AlphaBlendMode
+			);
+		}
+		break;
+		case TexEnvChannels::ET_RGB:
+		{
+			// Set RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+
+			// Reset Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				GPU_PREVIOUS,
+				GPU_PRIMARY_COLOR,
+				GPU_PRIMARY_COLOR
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				GPU_REPLACE
+			);
+		}
+		break;
+		case TexEnvChannels::ET_RGBA_Separate:
+		{
+			// Set RGB
+			C3D_TexEnvSrc(
+				env,
+				C3D_RGB,
+				(GPU_TEVSRC)texEnvProps.Source1,
+				(GPU_TEVSRC)texEnvProps.Source2,
+				(GPU_TEVSRC)texEnvProps.Source3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_RGB,
+				(GPU_COMBINEFUNC)texEnvProps.BlendMode
+			);
+
+			// Set Alpha
+			C3D_TexEnvSrc(
+				env,
+				C3D_Alpha,
+				(GPU_TEVSRC)texEnvProps.AlphaSource1,
+				(GPU_TEVSRC)texEnvProps.AlphaSource2,
+				(GPU_TEVSRC)texEnvProps.AlphaSource3
+			);
+			C3D_TexEnvFunc(
+				env,
+				C3D_Alpha,
+				(GPU_COMBINEFUNC)texEnvProps.AlphaBlendMode
+			);
+		}
+		break;
+		default:
+		break;
+		}
 	}
 
 	int Citro3DLightEnvironment::LightInit(Ref<Light> light)
@@ -53,6 +187,8 @@ namespace Entry
 
 	void Citro3DLightEnvironment::ConfigureLut(LutConfig& config)
 	{
+		if (config.funcType == LutFuncType::None) return;
+
 		int ids[] = { 0, 1, -1, 2, 3, 4, 5,-1 };
 		int id = ids[config.id];
 		if (id > -1)

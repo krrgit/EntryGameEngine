@@ -112,13 +112,16 @@ namespace Entry {
 					ambient.r,  ambient.g,  ambient.b,
 					diffuse.r,  diffuse.g,  diffuse.b,
 					specular.r, specular.g, specular.b,
-					specular.r, specular.g, specular.b,
+					0,			0,			0,
 					emissive.r, emissive.g, emissive.b,
 				},
 				g_scene->mMaterials[i]->GetName().C_Str(),
 				texCount > 0 ? diffuseMap : nullptr,
 				Renderer3D::GetDefaultShader()
 			};
+			printf(g_scene->mName.C_Str());
+			printf(" Mat Values: ambient: %.1f|diffuse: %.1f|specular: %.1f|emissive: %.1f\n",
+				ambient.r, diffuse.r, specular.r, emissive.r);
 
 			materials.push_back(Material::Create(props));
 		}

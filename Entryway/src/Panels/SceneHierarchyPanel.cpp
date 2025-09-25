@@ -31,6 +31,9 @@ namespace Entry
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		//bool show = true;
+		//ImGui::ShowDemoWindow(&show);
+
 		ImGui::Begin("Hierarchy");
 
 		m_Context->m_Registry.each([&](ECS::Entity entityID)
@@ -401,6 +404,113 @@ namespace Entry
 		}
 	}
 
+	static void DrawMaterialProperties(Ref<Material> material, float columnWidth)
+	{
+		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
+			| ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_FramePadding;
+
+		if (material)
+		{
+			ImVec2 contenRegionAvailable = ImGui::GetContentRegionAvail();
+
+			ImGuiIO& io = ImGui::GetIO();
+			auto boldFont = io.Fonts->Fonts[0];
+			ImGui::PushFont(boldFont);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			float lineHeight = GImGui->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			ImGui::Separator();
+			std::string label = "Material (" + material->GetProps().Name + ")";
+			bool open = ImGui::TreeNodeEx((void*)material.get(), treeNodeFlags, label.c_str());
+			ImGui::PopStyleVar();
+			ImGui::PopFont();
+
+
+			if (open)
+			{
+				const char* shaderProgramStrings[] = { "Lit", "Unlit" }; // TODO: Fix to accomodate more shaders
+				const char* currentShaderProgramString = shaderProgramStrings[(int)material->GetShader()];
+				if (ImGui::BeginCombo("Shader", currentShaderProgramString))
+				{
+					for (int i = 0; i < 2; ++i)
+					{
+						bool isSelected = currentShaderProgramString == shaderProgramStrings[i];
+						if (ImGui::Selectable(shaderProgramStrings[i], isSelected))
+						{
+							currentShaderProgramString = shaderProgramStrings[i];
+							material->SetShader((ShaderProgramEnum)i);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+
+				std::string texName = material ? material->GetProps().DiffuseMap->GetName() : "None";
+				DrawDragnDropField("Diffuse Map", texName, columnWidth);
+				ImGui::Columns(1); // Reset after DrawDragnDropField()
+
+				// ------ Material Values -----
+				ImGui::Separator();
+				ImGui::PushFont(boldFont);
+				ImGui::Text("Material Values");
+				ImGui::PopFont();
+				
+				ImGui::SetItemTooltip("These values determine how much influence a property has on this material. They do not directly set their colors.");
+
+				std::string matValueLabels[] = { "Ambient","Diffuse", "Specular0", "Specular1", "Emission" };
+
+				auto& props = material->GetProps();
+
+				//ImGui::Checkbox("Use Color", &props.ColorValues);
+
+
+				float* matValues[5] = {
+					props.Values.Ambient, 
+					props.Values.Diffuse,
+					props.Values.Specular0,
+					props.Values.Specular1,
+					props.Values.Emission,
+				};
+
+				if (true) // TODO: fix switching between color and black & white
+				{
+					// Color
+					for(int i=0; i < 5; i++) 
+						ImGui::ColorEdit3(matValueLabels[i].c_str(), matValues[i]);
+				}
+				else
+				{
+					// Black & White
+					for (int v = 0; v < 5; v++)
+					{
+
+						float value = (matValues[v][0] + matValues[v][1] + matValues[v][2]) / 3.0f;
+						if (ImGui::SliderFloat(matValueLabels[v].c_str(), &value, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput))
+						{
+							for (int i = 0; i < 3; i++)
+								matValues[v][i] = value;
+						}
+					}
+				}
+
+				// ------ Texture Environments -----
+				ImGui::Separator();
+				ImGui::PushFont(boldFont);
+				ImGui::Text("Texture Environments");
+				ImGui::PopFont();
+
+				int teCount = 6;
+				for (int i = 0; i < teCount; i++)
+				{
+					DrawTexEnv(material, i);
+				}
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -409,6 +519,7 @@ namespace Entry
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
+		Ref<Material> entityMaterial = nullptr;
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -584,44 +695,7 @@ namespace Entry
 			DrawDragnDropField(label, mtlName, columnWidth);
 			ImGui::Columns(1);
 
-			ImGui::Separator();
-
-			const char* shaderProgramStrings[] = { "Lit", "Unlit" }; // TODO: Fix to accomodate more shaders
-			const char* currentShaderProgramString = component.material ? shaderProgramStrings[(int)component.material->GetShader()] : "None";
-			if (ImGui::BeginCombo("Shader", currentShaderProgramString))
-			{
-				for (int i = 0; i < 2; ++i)
-				{
-					bool isSelected = currentShaderProgramString == shaderProgramStrings[i];
-					if (ImGui::Selectable(shaderProgramStrings[i], isSelected))
-					{
-						currentShaderProgramString = shaderProgramStrings[i];
-						component.material->SetShader((ShaderProgramEnum)i);
-					}
-
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-			}
-
-			std::string texName = component.material ? component.material->GetProps().DiffuseMap->GetName() : "None";
-			DrawDragnDropField("Diffuse Map", texName, columnWidth);
-			ImGui::Columns(1); // Reset after DrawDragnDropField()
-			
-			// ------ Texture Environment -----
-			ImGui::Separator();
-			ImGui::PushFont(boldFont);
-			ImGui::Text("Texture Environments");
-			ImGui::PopFont();
-			if (component.material)
-			{
-				int teCount = 6;
-				for (int i = 0; i < teCount; i++)
-				{
-					DrawTexEnv(component.material, i);
-				}
-			}
+			entityMaterial = component.material;
 		});
 
 		DrawComponent<LightComponent>("Light", entity, [&](LightComponent& component)
@@ -654,7 +728,10 @@ namespace Entry
 
 			ImGui::ColorEdit3("Color", glm::value_ptr(component.Color));
 		});
+
+		DrawMaterialProperties(entityMaterial, columnWidth);
 	}
+
 	void SceneHierarchyPanel::LoadMeshInMRC(std::string& filepath, int meshID, MeshRendererComponent& component)
 	{
 		std::ifstream file(filepath.c_str());

@@ -18,14 +18,17 @@ namespace Entry {
 
         virtual void SetTexEnvProps(TexEnvProps& props, int id = 0) override;
         virtual const TexEnvProps& GetTexEnvProps(int id = 0) { return m_TexEnvProps[id]; }
+
+        virtual const int TexEnvCount() override { return m_TexEnvCount; }
+
     private:
         void OnShaderChange();
-        void SetTexEnvs();
+        //void BindTexEnvs();
         void SetTexEnv(int id = 0);
 
     private:
         MaterialProps m_Props;
         TexEnvProps m_TexEnvProps[6];
-        int m_TexEnvSize = 0;
+        int m_TexEnvCount = 0;
     };
 }

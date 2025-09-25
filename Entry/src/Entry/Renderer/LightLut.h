@@ -54,8 +54,8 @@ namespace Entry
 
 #define ET_LightLut_Phong(lut, shininess)		ET_LightLut_FromFunc((lut), powf, (shininess), false)
 #define ET_LightLut_Spotlight(lut, angle)		ET_LightLut_FromFunc((lut), ET_spot_step, std::cos(angle), true)
-#define ET_LightLut_ToonDiffuse(lut, arg)		ET_LightLut_FromFunc((lut), ET_toon_diffuse, arg, true)
-#define ET_LightLut_ToonSpecular(lut, angle)	ET_LightLut_FromFunc((lut), ET_toon_specular, arg, true)
+#define ET_LightLut_ToonDiffuse(lut, arg)		ET_LightLut_FromFunc((lut), ET_toon_diffuse, arg, false)
+#define ET_LightLut_ToonSpecular(lut, angle)	ET_LightLut_FromFunc((lut), ET_toon_specular, arg, false)
 #define ET_LightLut_Zeroes(lut, arg)			ET_LightLut_FromFunc((lut), ET_zeroes, arg, false)
 #define ET_LightLutDA_Quadratic(lut, from, to, linear, quad) ET_LightLutDA_Create((lut), ET_quadratic_dist_attn, (from), (to), (linear), (quad))
 

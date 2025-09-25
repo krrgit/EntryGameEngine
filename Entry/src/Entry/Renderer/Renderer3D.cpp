@@ -68,6 +68,8 @@ namespace Entry {
         Ref<Material> DefaultMaterial;
         ShaderProgram DefaultShader;
         ShaderProgram BindedShader;
+
+        Ref<LightEnvironment> BindedLightEnv;
     };
 
     static Renderer3DData s_Data;
@@ -249,6 +251,7 @@ namespace Entry {
         }
 
         meshMtl->Bind();
+        s_Data.BindedLightEnv->BindMaterial(meshMtl);
         mrc.model->GetVertexArray()->Bind();
 
         glm::mat4 modelView = s_Data.m_ViewMatrix * transform;
@@ -297,6 +300,11 @@ namespace Entry {
     ShaderProgram Renderer3D::GetDefaultShader()
     {
         return s_Data.DefaultShader;
+    }
+
+    void Renderer3D::BindLightEnv(Ref<LightEnvironment> lightEnv)
+    {
+        s_Data.BindedLightEnv = lightEnv;
     }
 
 }

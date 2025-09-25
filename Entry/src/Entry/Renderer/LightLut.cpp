@@ -49,7 +49,10 @@ namespace Entry
 				data[idx] = val;
 			if (i > min)
 				data[idx + 255] = val - data[idx - 1];
+
+			printf("%.3f ", val);
 		}
+		printf("\n");
 		ET_LightLut_FromArray(lut, data);
 	}
 

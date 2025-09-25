@@ -12,7 +12,7 @@ namespace Entry
 		Citro3DLightEnvironment();
 		~Citro3DLightEnvironment() = default;
 		virtual void Bind() override;
-		virtual void SetMaterial(Ref<Material> material) override;
+		virtual void BindMaterial(Material* material) override;
 
 		virtual int LightInit(Ref<Light> light) override;
 		virtual void LightDestroy(Ref<Light> light) override;
@@ -28,7 +28,9 @@ namespace Entry
 			static int ids[] = { 0, 1, -1, 2, 3, 4, 5,-1 };
 			return m_LutConfigs[ids[id]];
 		}
-
+	
+	private:
+		void SetTexEnv(int id, const TexEnvProps& texEnvProps);
 	private:
 		C3D_LightEnv m_LightEnv;
 		Ref<Material> m_Material;

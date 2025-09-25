@@ -11,7 +11,7 @@ namespace Entry
 	{
 		OGL_Light lights[MAX_LIGHTS];
 		glm::vec4 sceneAmbient;
-		glm::vec4 params; // x = DA linear; y = DA quad; z = SP cutoff; w = SP softEdgeDegrees
+		glm::ivec4 params[MAX_LUTS]; // See shader for details
 		glm::ivec4 luts[MAX_LUTS * 64];
 	};
 
@@ -25,6 +25,13 @@ namespace Entry
 		glm::vec4 emissive;
 	};
 
+	struct UBOTexEnvData
+	{
+		glm::ivec4 texEnvConfig[MAX_TEXENV];
+		glm::ivec4 texEnvRGBInputs[MAX_TEXENV];
+		glm::ivec4 texEnvAlphaInputs[MAX_TEXENV];
+	};
+
 	class OpenGLLightEnvironment : public LightEnvironment
 	{
 	public:
@@ -32,7 +39,7 @@ namespace Entry
 		~OpenGLLightEnvironment() = default;
 		
 		virtual void Bind() override;
-		virtual void SetMaterial(Ref<Material> material) override;
+		virtual void BindMaterial(Material* material) override;
 
 		virtual int LightInit(Ref<Light> light) override;
 		virtual void LightDestroy(Ref<Light> light) override;
@@ -57,10 +64,12 @@ namespace Entry
 		GLuint m_MaterialUBO;
 		UBOMaterialData m_MaterialData;
 
-		glm::vec3 m_SceneAmbient;
-		Ref<Material> m_Material;
+		GLuint m_TexEnvUBO;
+		UBOTexEnvData m_TexEnvData;
 
 		OGL_Light* m_Lights[MAX_LIGHTS];
+
+		glm::vec3 m_SceneAmbient;
 
 		uint16_t m_LightCount = 0;
 		bool m_HasLight[MAX_LIGHTS] = {0,0,0,0,0,0,0,0};
