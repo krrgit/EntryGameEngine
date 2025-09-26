@@ -63,19 +63,6 @@ namespace Entry
 		LutFuncArgs funcArgs;
 	};
 
-	struct DistanceAttenuationParams
-	{
-		float linear = 0.1f;
-		float quad = 0.01f;
-	};
-
-	struct SpotlightParams
-	{
-		bool useSoftEdge = true;
-		float angle = 90.0f;
-		float softEdge = 0.01f;
-	};
-
 	class LightEnvironment
 	{
 	public:

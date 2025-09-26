@@ -1,4 +1,4 @@
-Scene: LightTest
+Scene: MaxLightTest
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
   TexEnv0:
@@ -99,7 +99,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0.130232692, 1, 0]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 15255254070688434474
@@ -155,7 +156,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0, 0]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 10778960372014692739
@@ -167,7 +169,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0, 0.0651164055, 1]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 15601254230699104759
@@ -179,7 +182,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0.865116298, 0]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 16447241941798903333
@@ -191,7 +195,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 1, 1]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 3737203229486509304
@@ -203,7 +208,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0, 1, 0.399999857]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 13943556969015190451
@@ -215,7 +221,8 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0.967441559, 0, 1]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1
   - Entity: 5674362160390665091
@@ -227,6 +234,7 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0, 0]
-      Strength: 30
+      Intensity: 1
+      Range: 75
       Angle: 90
       Type: 1

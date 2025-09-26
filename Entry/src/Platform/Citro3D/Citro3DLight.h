@@ -21,7 +21,7 @@ namespace Entry
 		virtual void SetParent(uint32_t parent) override { m_Parent = (C3D_LightEnv*)parent; }
 
 		virtual void SetAsDirectionalLight() override;
-		virtual void SetAsPointLight(float linear, float quad) override;
+		virtual void SetAsPointLight(float range) override;
 		virtual void SetAsSpotLight(float angle) override;
 
 		virtual void SetupLight() override;
@@ -29,7 +29,8 @@ namespace Entry
 	private:
 		LightType m_LightType;
 		glm::vec3 m_Direction;
-		float m_Strength;
+		float m_Intensity;
+		float m_Range;
 		float m_Angle;
 		glm::vec3 m_Color;
 		float m_PositionalLight = 0.0f; // Really, is just a bool

@@ -73,6 +73,7 @@ namespace Entry
 
 	void ET_LightLutDA_Create(LightLutDA* lut, LightLutFuncDA func, float from, float to, float arg0, float arg1)
 	{
+		printf("DA float array:\n");
 		int i;
 		float data[512];
 
@@ -88,9 +89,9 @@ namespace Entry
 				data[i] = val;
 			if (i > 0)
 				data[i + 255] = val - data[i - 1];
-
+			printf("%.2f ", val);
 		}
-
+		printf("\n");
 		ET_LightLut_FromArray(&lut->lut, data);
 	}
 }

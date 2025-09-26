@@ -32,7 +32,7 @@ namespace Entry
 		virtual void SetParent(uint32_t parent) override { m_Parent = parent; }
 
 		virtual void SetAsDirectionalLight() override;
-		virtual void SetAsPointLight(float linear, float quad) override;
+		virtual void SetAsPointLight(float range) override;
 		virtual void SetAsSpotLight(float angle) override;
 
 		virtual void SetupLight() override;

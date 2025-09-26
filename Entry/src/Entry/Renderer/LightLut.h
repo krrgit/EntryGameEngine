@@ -25,6 +25,13 @@ namespace Entry
 		return 1.0f / (1.0f + linear * dist + quad * dist * dist);
 	}
 
+	static inline float ET_quadratic_dist_attn_falloff(float dist, float range, float arg)
+	{
+		float falloff = range * 0.2f;
+		float fadeMult = dist < range - falloff ? 1.0f : std::max(range - dist, 0.0f) / falloff;
+		return fadeMult / (1.0f + 0.1f * dist + 0.01 * dist * dist);
+	}
+
 	static inline float ET_spot_step(float angle, float cutoff)
 	{
 		return angle >= cutoff ? 1.0f : 0.0f;
@@ -60,5 +67,5 @@ namespace Entry
 #define ET_LightLut_ToonSpecular(lut, angle)	ET_LightLut_FromFunc((lut), ET_toon_specular, arg, false)
 #define ET_LightLut_Zeroes(lut, arg)			ET_LightLut_FromFunc((lut), ET_zeroes, arg, false)
 #define ET_LightLutDA_Quadratic(lut, from, to, linear, quad) ET_LightLutDA_Create((lut), ET_quadratic_dist_attn, (from), (to), (linear), (quad))
-
+#define ET_LightLutDA_Quadratic_Falloff(lut, from, to, range, arg) ET_LightLutDA_Create((lut), ET_quadratic_dist_attn_falloff, (from), (to), (range), (arg))
 }

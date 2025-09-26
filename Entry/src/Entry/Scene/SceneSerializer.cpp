@@ -196,7 +196,8 @@ namespace Entry
 			auto& lightComponent = entity.GetComponent<LightComponent>();
 
 			out << YAML::Key << "Color" << YAML::Value << lightComponent.Color;
-			out << YAML::Key << "Strength" << lightComponent.Strength;
+			out << YAML::Key << "Intensity" << lightComponent.Intensity;
+			out << YAML::Key << "Range" << lightComponent.Range;
 			out << YAML::Key << "Angle" << lightComponent.Angle;
 			out << YAML::Key << "Type" << (int)lightComponent.Type;
 			out << YAML::EndMap;
@@ -367,7 +368,8 @@ namespace Entry
 						transform.Position,
 						forward,
 						lightComponent["Color"].as<glm::vec3>(),
-						lightComponent["Strength"].as<float>(),
+						lightComponent["Intensity"].as<float>(),
+						lightComponent["Range"].as<float>(),
 						lightComponent["Angle"].as<float>(),
 						(LightType)lightComponent["Type"].as<int>(),
 					};

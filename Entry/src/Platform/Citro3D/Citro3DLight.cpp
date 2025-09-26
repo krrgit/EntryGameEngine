@@ -1,5 +1,6 @@
 #include "etpch.h"
 #include "Citro3DLight.h"
+#include "Entry/Renderer/LightLut.h"
 
 namespace Entry
 {
@@ -7,14 +8,15 @@ namespace Entry
 	{
 		m_LightType = props.Type;
 		m_Direction = props.Direction;
-		m_Strength = props.Strength;
+		m_Intensity = props.Intensity;
+		m_Range = props.Range;
 		m_Angle = props.Angle;
 		m_Color = props.Color;
 		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0f;
 
 		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, m_PositionalLight);
 		
-		// We need to setup the light AFTER adding it to the light environment
+		// Continued in LightEnvironment::LightInit()
 	}
 
 	Citro3DLight::~Citro3DLight()
@@ -25,6 +27,7 @@ namespace Entry
 	{
 		m_Position = FVec4_New(props.Position.x, props.Position.y, props.Position.z, m_PositionalLight);
 		m_Color = props.Color;
+		m_Range = props.Range;
 
 		if (m_LightType != props.Type)
 		{
@@ -45,16 +48,11 @@ namespace Entry
 	{
 		C3D_LightSpotEnable(&m_Light, false);
 		C3D_LightDistAttnEnable(&m_Light, false);
-	
-		// Old Code: no attenuation
-		//LightLut_Phong(&m_Lut, shininess);
-		//C3D_LightEnvLut(m_Parent, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &m_Lut);
 	}
 
-	void Citro3DLight::SetAsPointLight(float linear, float quad)
+	void Citro3DLight::SetAsPointLight(float range)
 	{
-		// TODO: Setup customization for quadratic in LightEnv
-		LightLutDA_Quadratic(&m_LutDA, 0.0f, 75.0f, linear, quad);
+		ET_LightLutDA_Quadratic_Falloff((LightLutDA*) & m_LutDA, 0.0f, range, range, 0);
 		C3D_LightDistAttn(&m_Light, &m_LutDA);
 
 		C3D_LightSpotEnable(&m_Light, false);
@@ -81,7 +79,7 @@ namespace Entry
 			m_PositionalLight = 0.0f;
 			break;
 		case ET_PointLight:
-			SetAsPointLight(0.1f, 0.01f);
+			SetAsPointLight(m_Range);
 			m_PositionalLight = 1.0f;
 			break;
 		case ET_Spotlight:

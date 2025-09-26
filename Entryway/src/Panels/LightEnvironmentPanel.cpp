@@ -127,7 +127,7 @@ namespace Entry
             case LutFuncType::Pow:
             {
                 ImGui::Separator();
-                if (ImGui::InputFloat("Shininess", &lutconfig.funcArgs.powExponent))
+                if (ImGui::InputFloat("Shininess", &lutconfig.funcArgs.powExponent,0.0f,0.0f,"%.1f"))
                     m_Context->GetLightEnvironment()->ConfigureLut(lutconfig);
             }
              break;

@@ -9,9 +9,9 @@ namespace Entry
 	{ 
 		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0;
 		m_LightData.position = glm::vec4(props.Position, m_PositionalLight);
-		m_LightData.color = glm::vec4(props.Color, props.Strength);
+		m_LightData.color = glm::vec4(props.Color, props.Intensity);
 		m_LightData.params.x = (float)props.Type;
-		//m_LightData.params.y = props.Strength;
+		m_LightData.params.y = props.Range;
 		m_LightData.params.z = props.Angle;
 
 		switch (props.Type)
@@ -19,6 +19,7 @@ namespace Entry
 		case ET_DirectionalLight:
 		break;
 		case ET_PointLight:
+			SetAsPointLight(props.Range);
 		break;
 		case ET_Spotlight:
 			SetAsSpotLight(props.Angle);
@@ -37,11 +38,10 @@ namespace Entry
 		m_PositionalLight = props.Type == ET_DirectionalLight ? 0.0f : 1.0f;
 		m_LightData.position  = glm::vec4(props.Position, m_PositionalLight);
 		m_LightData.direction = glm::vec4(props.Direction, 1.0f);
-		m_LightData.color     = glm::vec4(props.Color, props.Strength);
+		m_LightData.color     = glm::vec4(props.Color, props.Intensity);
 		m_LightData.params.x = (float)props.Type;
-		//m_LightData.params.y = props.Strength;
+		m_LightData.params.y = props.Range;
 		m_LightData.params.z = props.Angle;
-
 
 		glBindBuffer(GL_UNIFORM_BUFFER, m_Parent);
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(OGL_Light) * m_LightID, sizeof(OGL_Light), &m_LightData);
@@ -52,11 +52,10 @@ namespace Entry
 	{
 	}
 
-	void OpenGLLight::SetAsPointLight(float linear, float quad)
+	void OpenGLLight::SetAsPointLight(float range)
 	{
-		// Set DA Lut
 		LightLutDA daLut;
-		ET_LightLutDA_Quadratic(&daLut, 0.0f, 75.0f, linear, quad);
+		ET_LightLutDA_Quadratic_Falloff(&daLut, 0.0f, range, range, 0);
 		IntArrayToIvec4Array(&daLut.lut.data[0], &m_LightData.daLut[0]);
 	}
 

@@ -103,7 +103,8 @@ namespace Entry
 	struct LightComponent
 	{
 		LightType Type = LightType::ET_PointLight;
-		float Strength = 1.0f;
+		float Intensity = 1.0f;
+		float Range = 75.0f;
 		float Angle = 90.0f;
 		glm::vec3 Color = {1.0f, 1.0f, 1.0f};
 		Ref<Light> RendererLight;
@@ -114,7 +115,8 @@ namespace Entry
 				glm::vec3(0),
 				glm::vec3(0,0,-1.0f),
 				Color,
-				Strength,
+				Intensity,
+				Range,
 				Angle,
 				Type,
 			};
@@ -122,13 +124,14 @@ namespace Entry
 			RendererLight = Light::Create(props);
 		}
 		LightComponent(const LightComponent& other)
-			: Type(other.Type), Strength(other.Strength), Angle(other.Angle), Color(other.Color)
+			: Type(other.Type), Intensity(other.Intensity), Angle(other.Angle), Color(other.Color)
 		{
 			LightProps props{
 				glm::vec3(0.0f),
 				glm::vec3(0,0,-1.0f),
 				Color,
-				Strength,
+				Intensity,
+				Range,
 				Angle,
 				Type,
 			};
@@ -136,7 +139,7 @@ namespace Entry
 			RendererLight = Light::Create(props);
 		}
 		LightComponent(LightProps& props)
-			: Type(props.Type), Strength(props.Strength), Angle(props.Angle), Color(props.Color)
+			: Type(props.Type), Intensity(props.Intensity), Range(props.Range), Angle(props.Angle), Color(props.Color)
 		{
 			RendererLight = Light::Create(props);
 		}

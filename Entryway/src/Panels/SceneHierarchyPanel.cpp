@@ -721,14 +721,16 @@ namespace Entry
 				ImGui::EndCombo();
 			}
 			
-			ImGui::DragFloat("Strength", &component.Strength, 0.1f, 0.001f, 10.0f, "%.1f");
+			ImGui::DragFloat("Intensity", &component.Intensity, 0.1f, 0.001f, 10000.0f, "%.1f");
+			if (component.Type == LightType::ET_PointLight)
+			{
+				if (ImGui::DragFloat("Range", &component.Range, 0.1f, 0.01f, 10000.0f, "%.1f"))
+					component.RendererLight->SetAsPointLight(component.Range);
 
-			if (component.Type == LightType::ET_Spotlight)
+			} else if (component.Type == LightType::ET_Spotlight)
 			{
 				if (ImGui::SliderFloat("Angle", &component.Angle, 1, 179, "%.1f"))
-				{
 					component.RendererLight->SetAsSpotLight(component.Angle);
-				}
 
 			}
 

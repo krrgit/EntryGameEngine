@@ -203,6 +203,6 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 1, 1]
-      Strength: 2
-      Angle: 15
+      Strength: 1
+      Angle: 44.5
       Type: 2

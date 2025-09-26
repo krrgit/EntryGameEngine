@@ -17,7 +17,8 @@ namespace Entry
 		glm::vec3 Position;
 		glm::vec3 Direction;
 		glm::vec3 Color;
-		float Strength;
+		float Intensity;
+		float Range;
 		float Angle;
 		LightType Type;
 	};
@@ -37,7 +38,7 @@ namespace Entry
 		virtual void SetParent(uint32_t parent) = 0;
 
 		virtual void SetAsDirectionalLight() = 0;
-		virtual void SetAsPointLight(float linear, float quad) = 0;
+		virtual void SetAsPointLight(float range) = 0;
 		virtual void SetAsSpotLight(float angle) = 0;
 
 		virtual void SetupLight() = 0;

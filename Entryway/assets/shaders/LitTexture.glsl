@@ -63,7 +63,7 @@ struct Light
 {
     vec4 position;  // xyz = position in view space
 	vec4 direction; // direction in view space
-    vec4 color;		// rgb = color, a = strength
+    vec4 color;		// rgb = color, a = intensity
     vec4 params;    // x = type, y = shininess, z = angle, w = unused
 	ivec4 daLut[64];
 	ivec4 spLut[64];
@@ -159,7 +159,7 @@ float sampleLUTLinear(int lutId, float input, bool negative)
 }
 
 // Spotlight Lut
-float sampleSPLutLinear(int lightIndex, int lutIndex, float input) 
+float sampleSPLutLinear(int lightIndex, float input) 
 {
     float u = (input * 0.5 + 0.5);
     u = clamp(u, 0.0, 1.0);
@@ -168,13 +168,27 @@ float sampleSPLutLinear(int lightIndex, int lutIndex, float input)
     int i0 = int(floor(fIdx));
     float t = fIdx - float(i0);
 
-    int raw = fetchLocalLUT(lightIndex, lutIndex, i0);
+    int raw = fetchLocalLUT(lightIndex, 1, i0); // 1 = SP Lut
 	int val  = ~raw & 0xFFF;       // low 12 bits
     int slope = (~raw >> 12) & 0xFFF;
     // handle sign: slope is signed 12-bit (range –2048..2047)
     if ((slope & 0x800) != 0) slope |= ~0xFFF;
 
     return (i0 >= 128) ? 0 : (float(val) + float(slope) * t) / 4095.0;
+}
+
+float sampleDALutLinear(int lightIndex, float input) 
+{
+	float u = clamp(input, 0.0, 1.0);
+	float fIdx = u * 255.0;
+    int i0 = int(floor(fIdx));
+    float t = fIdx - float(i0);
+
+    int raw = fetchLocalLUT(lightIndex, 0, i0); // 0 = DA Lut
+	int val  = raw & 0xFFF;       // low 12 bits
+    int slope = (raw >> 12) & 0xFFF;
+
+    return fIdx < 255 ?(float(val) + float(1.0/slope) * t) / 2048.0 : 0.0;
 }
 
 float GetInput(int inputID) 
@@ -304,7 +318,7 @@ void main()
 	{
 		// Per Light Variables
 		int lightType = int(lights[i].params.x);
-		float shininess = lights[i].params.y;
+		float strength = lights[i].color.a;
 		float sp_cutoff = lights[i].params.z;
 
 		//Per Light Vectors
@@ -316,32 +330,36 @@ void main()
 
 		// Diffuse
 		float diff = max(dot(lut_Normal, lut_LightDir), 0.0);
-		vec4 diffuse = diff * lights[i].color * lights[i].color.w;
+		vec4 diffuse = diff * lights[i].color * strength;
 		diffuse.w = 1.0;
 
 		// Spotlight Factor
 		float spotLightFactor = 1.0;
 		float attenuation = 1.0;
 		if (lightType == TYPE_SPOTLIGHT) {
-			// float cutoff = (180.0 - sp_cutoff) / 180.0;
-			// float epsilon = 0;
+
 			float theta = dot(lut_LightDir, lut_SpotlightVec);
-			// spotLightFactor = clamp((theta - cutoff) / epsilon, 0.0, 1.0); // Soft Edge Spotlight
-			//spotLightFactor = theta >= cutoff ? 1.0 : 0.0; // Hard Edge Spotlight
-			spotLightFactor = sampleSPLutLinear(i, 1, GetInput(4));
+			spotLightFactor = sampleSPLutLinear(i, GetInput(4));
 
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
 			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
+			float r = lights[i].params.y;
+			float falloff = r * 0.2; // Fade 20% of radius
+			attenuation *= d <= r-falloff ? 1.0 : max(r-d, 0.0) / falloff;
 		} else if (lightType == TYPE_POINTLIGHT) 
 		{
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
-			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
+			//attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
+			float r = lights[i].params.y;
+			//float falloff = r * 0.2; // Fade 20% of radius
+			//attenuation *= d <= r-falloff ? 1.0 : max(r-d, 0.0) / falloff;
+			attenuation = sampleDALutLinear(i,d / r);
 		}
 
 		primaryColor += attenuation * spotLightFactor * ((m_Diffuse * diffuse));
 
 		// LUT Inputs
-		float spec0LutInput =  GetInput(lightEnv_Params[0].x);
+		float spec0LutInput = GetInput(lightEnv_Params[0].x);
 
 		// Specular 0 (Blinn–Phong)
 		float spec0 = clamp(sampleLUTLinear(0, spec0LutInput, false), 0.0, 1.0);
