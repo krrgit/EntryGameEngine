@@ -5,15 +5,15 @@ namespace Entry
 {
 	void IntArrayToIvec4Array(uint32_t* in, glm::ivec4* out)
 	{
-		printf("int array: \n");
+		//printf("int array: \n");
 		for (int i = 0; i < 256; i++)
 		{
 			int group = i / 4;
 			int comp = i % 4;
 			out[group][comp] = in[i];
-			printf("%d ", in[i]);
+			//printf("%d ", in[i]);
 		}
-		printf("\n");
+		//printf("\n");
 
 	}
 
@@ -49,7 +49,7 @@ namespace Entry
 
 	void ET_LightLut_FromFunc(LightLut* lut, LightLutFunc func, float param, bool negative)
 	{
-		printf("float array:\n");
+		//printf("float array:\n");
 		int i;
 		float data[512];
 		memset(data, 0, sizeof(data));
@@ -65,15 +65,15 @@ namespace Entry
 			if (i > min)
 				data[idx + 255] = val - data[idx - 1];
 
-			printf("%.2f ", val);
+			//printf("%.2f ", val);
 		}
-		printf("\n");
+		//printf("\n");
 		ET_LightLut_FromArray(lut, data);
 	}
 
 	void ET_LightLutDA_Create(LightLutDA* lut, LightLutFuncDA func, float from, float to, float arg0, float arg1)
 	{
-		printf("DA float array:\n");
+		//printf("DA float array:\n");
 		int i;
 		float data[512];
 
@@ -89,9 +89,9 @@ namespace Entry
 				data[i] = val;
 			if (i > 0)
 				data[i + 255] = val - data[i - 1];
-			printf("%.2f ", val);
+			//printf("%.2f ", val);
 		}
-		printf("\n");
+		//printf("\n");
 		ET_LightLut_FromArray(&lut->lut, data);
 	}
 }

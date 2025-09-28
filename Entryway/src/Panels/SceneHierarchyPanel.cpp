@@ -446,7 +446,7 @@ namespace Entry
 					ImGui::EndCombo();
 				}
 
-				std::string texName = material ? material->GetProps().DiffuseMap->GetName() : "None";
+				std::string texName = material && material->GetProps().DiffuseMap ? material->GetProps().DiffuseMap->GetName() : "None";
 				DrawDragnDropField("Diffuse Map", texName, columnWidth);
 				ImGui::Columns(1); // Reset after DrawDragnDropField()
 
@@ -558,20 +558,32 @@ namespace Entry
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			if (ImGui::MenuItem("Camera"))
+			if (ImGui::MenuItem("Camera", nullptr, nullptr, !entity.HasComponent<CameraComponent>()))
 			{
 				m_SelectionContext.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::MenuItem("Mesh Renderer"))
+			if (ImGui::MenuItem("Mesh Renderer", nullptr, nullptr, !entity.HasComponent<MeshRendererComponent>()))
 			{
 				m_SelectionContext.AddComponent<MeshRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
-			if (ImGui::MenuItem("Light",nullptr, nullptr, !m_Context->LightLimitReached()))
+			if (ImGui::MenuItem("Light",nullptr, nullptr, !m_Context->LightLimitReached() || !entity.HasComponent<LightComponent>()))
 			{
 				m_SelectionContext.AddComponent<LightComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Rigidbody", nullptr, nullptr, !entity.HasComponent<RigidbodyComponent>()))
+			{
+				m_SelectionContext.AddComponent<RigidbodyComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Box Collider", nullptr, nullptr, !entity.HasComponent<BoxColliderComponent>()))
+			{
+				m_SelectionContext.AddComponent<BoxColliderComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -735,6 +747,41 @@ namespace Entry
 			}
 
 			ImGui::ColorEdit3("Color", glm::value_ptr(component.Color));
+		});
+
+		DrawComponent<RigidbodyComponent>("Rigidbody", entity, [&](RigidbodyComponent& component)
+		{
+			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic"};
+			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
+			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+			{
+				for (int i = 0; i < 3; ++i)
+				{
+					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					{
+						currentBodyTypeString = bodyTypeStrings[i];
+						component.Type = (RigidbodyComponent::BodyType)i;
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+			ImGui::Checkbox("Fixed Rotation X", &component.FixedRotation.x);
+			ImGui::Checkbox("Fixed Rotation Y", &component.FixedRotation.y);
+			ImGui::Checkbox("Fixed Rotation Z", &component.FixedRotation.z);
+		});
+
+		DrawComponent<BoxColliderComponent>("Box Collider", entity, [&](BoxColliderComponent& component)
+		{
+			ImGui::DragFloat3("Offset", glm::value_ptr(component.Offset));
+			ImGui::DragFloat3("Size", glm::value_ptr(component.Size));
+			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
+			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
+			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 		});
 
 		DrawMaterialProperties(entityMaterial, columnWidth);

@@ -614,17 +614,20 @@ namespace Entry {
 
     void EditorLayer::OnScenePlay()
     {
+        ET_CORE_INFO("Play");
         m_SceneState = SceneState::Play;
         m_ActiveScene = Scene::Copy(m_EditorScene);
-        //m_RuntimeScene->OnRuntimeStart(); // TODO
+        m_ActiveScene->OnRuntimeStart();
         SetPanelContexts(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
+        ET_CORE_INFO("Stop");
         m_SceneState = SceneState::Edit;
-        //m_ActiveScene->OnRuntimeStop(); // TODO
+        m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
+
         SetPanelContexts(m_ActiveScene);
     }
 

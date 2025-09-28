@@ -9,8 +9,21 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+#include <q3.h>
 
 namespace Entry {
+
+	static q3BodyType RigidbodyTypeToQu3eBody(RigidbodyComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+			case RigidbodyComponent::BodyType::Static:		return q3BodyType::eStaticBody;
+			case RigidbodyComponent::BodyType::Dynamic:		return q3BodyType::eDynamicBody;
+			case RigidbodyComponent::BodyType::Kinematic:	return q3BodyType::eKinematicBody;
+		}
+		ET_CORE_ASSERT(false, "Unknown body type");
+		return q3BodyType::eStaticBody;
+	}
 
 	Scene::Scene()
 	{
@@ -107,7 +120,10 @@ namespace Entry {
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<LightComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<RigidbodyComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<BoxColliderComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 
 		return newScene;
 	}
@@ -133,10 +149,62 @@ namespace Entry {
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::OnRuntimeStart()
+	{
+		m_PhysicsWorld = new q3Scene(1.0f / 60.0f);
+
+		auto view = m_Registry.view<RigidbodyComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& rb = entity.GetComponent<RigidbodyComponent>();
+
+			q3BodyDef bodyDef;
+			bodyDef.bodyType = RigidbodyTypeToQu3eBody(rb.Type);
+			bodyDef.position = { transform.Position.x, transform.Position.y, transform.Position.z };
+			// TODO: rotation 
+			bodyDef.angle = transform.Rotation.z;
+			bodyDef.lockAxisX = rb.FixedRotation.x;
+			bodyDef.lockAxisY = rb.FixedRotation.y;
+			bodyDef.lockAxisZ = rb.FixedRotation.z;
+
+			q3Body* body = m_PhysicsWorld->CreateBody(bodyDef);
+			rb.RuntimeBody = body;
+
+			if (entity.HasComponent<BoxColliderComponent>()) 
+			{
+				auto& bc = entity.GetComponent<BoxColliderComponent>();
+
+				q3BoxDef boxDef;
+				q3Transform localSpace;
+				q3Identity(localSpace);
+
+				boxDef.SetDensity(bc.Density);
+				boxDef.SetFriction(bc.Friction);
+				boxDef.SetRestitution(bc.Restitution);
+				localSpace.position.x = bc.Offset.x;
+				localSpace.position.y = bc.Offset.y;
+				localSpace.position.z = bc.Offset.z;
+
+				boxDef.Set(localSpace, q3Vec3(bc.Size.x * 2.0f * transform.Scale.x, bc.Size.y * 2.0f * transform.Scale.y, bc.Size.z * 2.0f * transform.Scale.z));
+				body->AddBox(boxDef);
+			}
+		}
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
+	}
+
+
 	void Scene::OnUpdateEditor(Timestep ts, uint16_t screenSide, EditorCamera& camera)
 	{
 		Renderer3D::BeginScene(camera, screenSide);
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
+
 		UpdateLights(viewMatrix);
 
 		for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
@@ -158,7 +226,7 @@ namespace Entry {
 	/// <param name="screenSide"></param>
 	void Scene::OnUpdateEditorInGame(Timestep ts, uint16_t screenSide)
 	{
-		// Render Modeles
+		// Render Meshes
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		glm::mat4 viewMatrix;
@@ -214,6 +282,52 @@ namespace Entry {
 
 				nsc.Instance->OnUpdate(ts);
 			});
+		}
+
+		// Physics
+		{
+			m_PhysicsWorld->Step();
+			
+			// Retrieve transform form qu3e
+			auto view = m_Registry.view<RigidbodyComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb = entity.GetComponent<RigidbodyComponent>();
+
+				q3Body* body = (q3Body*)rb.RuntimeBody;
+				const auto& q3transform = body->GetTransform();
+				transform.Position.x = q3transform.position.x;
+				transform.Position.y = q3transform.position.y;
+				transform.Position.z = q3transform.position.z;
+
+				// Set Rotation
+				// Assuming right-handed system, Y-up
+				const auto& r = body->GetTransform().rotation;
+				float sy = -r.ex.z;
+				float cy = sqrtf(r.ex.x * r.ex.x + r.ex.y * r.ex.y);
+
+				float pitch, yaw, roll;
+
+				if (cy > 1e-6f)
+				{
+					pitch = atan2f(r.ey.z, r.ez.z);
+					yaw = atan2f(sy, cy);
+					roll = atan2f(r.ex.y, r.ex.x);
+				}
+				else
+				{
+					// Gimbal lock fallback
+					pitch = atan2f(-r.ez.y, r.ey.y);
+					yaw = atan2f(sy, cy);
+					roll = 0.0f;
+				}
+
+				transform.Rotation.x = pitch; // or however your engine orders XYZ
+				transform.Rotation.y = yaw;
+				transform.Rotation.z = roll;
+			}
 		}
 
 		// View: ideal for 1 component
@@ -294,6 +408,9 @@ namespace Entry {
 			ET_CORE_WARN("Light Limit Reached: Cannot duplicate light.");
 		}
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		CopyComponentIfExists<LightComponent>(newEntity, entity);
+		CopyComponentIfExists<RigidbodyComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxColliderComponent>(newEntity, entity);
 
 		return newEntity;
 	}
@@ -318,6 +435,11 @@ namespace Entry {
 		{
 			return Entity{ entity, this };
 		}
+	}
+
+	void Scene::SetLightEnvironment(Ref<LightEnvironment> lightEnv)
+	{
+		// TODO: Fix Light Envs across scenes
 	}
 
 	void Scene::UpdateLights(glm::mat4& viewMatrix)
@@ -380,6 +502,18 @@ namespace Entry {
 
 	template<>
 	void Scene::OnComponentAdded<LightComponent>(Entity entity, LightComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<RigidbodyComponent>(Entity entity, RigidbodyComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<BoxColliderComponent>(Entity entity, BoxColliderComponent& component)
 	{
 
 	}

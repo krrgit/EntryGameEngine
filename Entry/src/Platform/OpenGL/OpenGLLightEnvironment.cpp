@@ -48,6 +48,18 @@ namespace Entry
 		
 	}
 
+	OpenGLLightEnvironment::~OpenGLLightEnvironment()
+	{
+		if (m_LightEnvUBO)
+			glDeleteBuffers(1, &m_LightEnvUBO);
+
+		if (m_MaterialUBO)
+			glDeleteBuffers(1, &m_MaterialUBO);
+
+		if (m_TexEnvUBO)
+			glDeleteBuffers(1, &m_TexEnvUBO);
+	}
+
 	void OpenGLLightEnvironment::Bind()
 	{
 		// Do nothing ?

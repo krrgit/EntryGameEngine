@@ -123,8 +123,9 @@ namespace Entry
 
 			RendererLight = Light::Create(props);
 		}
+
 		LightComponent(const LightComponent& other)
-			: Type(other.Type), Intensity(other.Intensity), Angle(other.Angle), Color(other.Color)
+			: Type(other.Type), Intensity(other.Intensity), Range(other.Range), Angle(other.Angle), Color(other.Color)
 		{
 			LightProps props{
 				glm::vec3(0.0f),
@@ -138,10 +139,43 @@ namespace Entry
 
 			RendererLight = Light::Create(props);
 		}
+
 		LightComponent(LightProps& props)
 			: Type(props.Type), Intensity(props.Intensity), Range(props.Range), Angle(props.Angle), Color(props.Color)
 		{
 			RendererLight = Light::Create(props);
 		}
+	};
+
+	// Physics 
+	struct RigidbodyComponent
+	{
+
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type = BodyType::Static;
+		glm::bvec3 FixedRotation{ false, false, false };
+
+		// Runtime storage
+		void* RuntimeBody = nullptr;
+		RigidbodyComponent() = default;
+		RigidbodyComponent(const RigidbodyComponent&) = default;
+	};
+
+	struct BoxColliderComponent
+	{
+		glm::vec3 Offset = { 0, 0, 0};
+		glm::vec3 Size = { 0.5f, 0.5f, 0.5f };
+
+		// TODO: maybe move into physics material?
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		// Runtime storage
+		void* RuntimeFixture = nullptr;
+
+		BoxColliderComponent() = default;
+		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
 }

@@ -110,6 +110,28 @@ namespace Entry
 		return out;
 	}
 
+	std::string RigidbodyBodyTypeToString(RigidbodyComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+		case RigidbodyComponent::BodyType::Static:	  return "Static";
+		case RigidbodyComponent::BodyType::Dynamic:	  return "Dynamic";
+		case RigidbodyComponent::BodyType::Kinematic: return "Kinematic";
+		}
+		ET_CORE_ASSERT(false, "Unknown body type");
+		return {};
+	}
+
+	RigidbodyComponent::BodyType RigidbodyBodyTypeFromString(std::string bodyType)
+	{
+		if (bodyType == "Static")    return RigidbodyComponent::BodyType::Static;
+		if (bodyType == "Dynamic")   return RigidbodyComponent::BodyType::Dynamic;
+		if (bodyType == "Kinematic") return RigidbodyComponent::BodyType::Kinematic;
+
+		ET_CORE_ASSERT(false, "Unknown body type");
+		return RigidbodyComponent::BodyType::Static;
+	}
+
 	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
 		: m_Scene(scene)
 	{
@@ -200,6 +222,37 @@ namespace Entry
 			out << YAML::Key << "Range" << lightComponent.Range;
 			out << YAML::Key << "Angle" << lightComponent.Angle;
 			out << YAML::Key << "Type" << (int)lightComponent.Type;
+			out << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<RigidbodyComponent>())
+		{
+			out << YAML::Key << "RigidbodyComponent";
+			out << YAML::BeginMap; // RigidbodyComponent
+
+			auto& rbComponent = entity.GetComponent<RigidbodyComponent>();
+
+			out << YAML::Key << "BodyType" << YAML::Value << RigidbodyBodyTypeToString(rbComponent.Type);
+			out << YAML::Key << "FixedRotationX" << YAML::Value << rbComponent.FixedRotation.x;
+			out << YAML::Key << "FixedRotationY" << YAML::Value << rbComponent.FixedRotation.y;
+			out << YAML::Key << "FixedRotationZ" << YAML::Value << rbComponent.FixedRotation.z;
+			out << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<BoxColliderComponent>())
+		{
+			out << YAML::Key << "BoxColliderComponent";
+			out << YAML::BeginMap; // BoxColliderComponent
+
+			auto& bcComponent = entity.GetComponent<BoxColliderComponent>();
+
+			out << YAML::Key << "Offset" << YAML::Value << bcComponent.Offset;
+			out << YAML::Key << "Size" << YAML::Value << bcComponent.Size;
+			out << YAML::Key << "Density" << YAML::Value << bcComponent.Density;
+			out << YAML::Key << "Friction" << YAML::Value << bcComponent.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << bcComponent.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << bcComponent.RestitutionThreshold;
+
 			out << YAML::EndMap;
 		}
 
@@ -374,6 +427,28 @@ namespace Entry
 						(LightType)lightComponent["Type"].as<int>(),
 					};
 					deserializedEntity.AddComponent<LightComponent>(props);
+				}
+
+				auto rigidbodyComponent = entity["RigidbodyComponent"];
+				if (rigidbodyComponent)
+				{
+					RigidbodyComponent& rb = deserializedEntity.AddComponent<RigidbodyComponent>();
+					rb.Type = RigidbodyBodyTypeFromString(rigidbodyComponent["BodyType"].as<std::string>());
+					rb.FixedRotation.x = rigidbodyComponent["FixedRotationX"].as<bool>();
+					rb.FixedRotation.y = rigidbodyComponent["FixedRotationY"].as<bool>();
+					rb.FixedRotation.z = rigidbodyComponent["FixedRotationZ"].as<bool>();
+				}
+
+				auto boxColliderComponent = entity["BoxColliderComponent"];
+				if (boxColliderComponent)
+				{
+					BoxColliderComponent& bc = deserializedEntity.AddComponent<BoxColliderComponent>();
+					bc.Offset = boxColliderComponent["Offset"].as<glm::vec3>();
+					bc.Size = boxColliderComponent["Size"].as<glm::vec3>();
+					bc.Density = boxColliderComponent["Density"].as<float>();
+					bc.Friction = boxColliderComponent["Friction"].as<float>();
+					bc.Restitution = boxColliderComponent["Restitution"].as<float>();
+					bc.RestitutionThreshold = boxColliderComponent["RestitutionThreshold"].as<float>();
 				}
 			}
 		}

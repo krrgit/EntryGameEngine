@@ -11,7 +11,7 @@ namespace Entry {
 	void OpenGLMaterial::Bind()
 	{
 		BindTexEnvs();
-		m_Props.DiffuseMap->Bind();
+		if (m_Props.DiffuseMap) m_Props.DiffuseMap->Bind();
 	}
 
 	void OpenGLMaterial::BindTexEnvs()

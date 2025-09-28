@@ -22,6 +22,7 @@ IncludeDir["spdlog"] = "Entry/vendor/spdlog/include"
 IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
 IncludeDir["assimp"] = "Entry/vendor/assimp/assimp/include"
+IncludeDir["qu3e"] = "Entry/vendor/qu3e/src"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -29,6 +30,7 @@ group "Dependencies"
 	include "Entry/vendor/imgui-3ds"
 	include "Entry/vendor/yaml-cpp"
 	include "Entry/vendor/assimp"
+	include "Entry/vendor/qu3e"
 
 group ""
 
@@ -84,6 +86,7 @@ project "Entry"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.assimp}",
+		"%{IncludeDir.qu3e}",
 	}
 
 	links 
@@ -94,7 +97,8 @@ project "Entry"
 		"yaml-cpp",
 		"opengl32.lib",
 		"dwmapi.lib",
-		"assimp"
+		"assimp",
+		"qu3e",
 	}
 
 	filter "files:Entry/vendor/ImGuizmo/**.cpp"

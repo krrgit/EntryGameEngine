@@ -36,7 +36,7 @@ namespace Entry
 	{
 	public:
 		OpenGLLightEnvironment();
-		~OpenGLLightEnvironment() = default;
+		~OpenGLLightEnvironment();
 		
 		virtual void Bind() override;
 		virtual void BindMaterial(Material* material) override;

@@ -55,12 +55,24 @@ Entities:
       Tag: Plane
     TransformComponent:
       Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/plane.obj
       MeshID: 0
       MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0, 0]
+      Size: [10, 0.5, 10]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 4202415533053521135
     TagComponent:
       Tag: Light
@@ -74,3 +86,67 @@ Entities:
       Range: 10
       Angle: 90
       Type: 1
+  - Entity: 5634013686493956607
+    TagComponent:
+      Tag: Entity
+    TransformComponent:
+      Position: [-1.03599811, 1.48279905, -0.00420159055]
+      Rotation: [0.00084947201, -0.000706348917, 1.59040689]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/monkey.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Dynamic
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0.5, 0]
+      Size: [1, 1, 1]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 6218790160372639551
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0, 5, -10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 3027687680836517763
+    TagComponent:
+      Tag: Entity
+    TransformComponent:
+      Position: [1.49901938, 0.999000788, 0.00141542428]
+      Rotation: [0.000283578789, -0.00123964052, -0.000569220982]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/monkey.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Dynamic
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0.5, 0]
+      Size: [1, 1, 1]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5

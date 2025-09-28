@@ -43,6 +43,7 @@ namespace Entry
 		m_LightData.params.y = props.Range;
 		m_LightData.params.z = props.Angle;
 
+		//printf("Light Parent UBO: %d\n", m_Parent);
 		glBindBuffer(GL_UNIFORM_BUFFER, m_Parent);
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(OGL_Light) * m_LightID, sizeof(OGL_Light), &m_LightData);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
