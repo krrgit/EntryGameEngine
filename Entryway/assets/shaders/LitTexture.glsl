@@ -286,9 +286,10 @@ vec4 ComputeTexEnvOutput(int texEnvID) {
 	float aSource2 = GetSource(aS2ID).a;
 	float aSource3 = GetSource(aS3ID).a;
 
-	previous = CombineSources(combineFunc, source1, source2, source3);
-	previous.a = texEnvConfig[texEnvID].x == RGB_A ? CombineAlpha(aCombineFunc, aSource1, aSource2, aSource3) : previous.a;
-	return previous;
+	vec4 result = CombineSources(combineFunc, source1, source2, source3);
+	result.a = texEnvConfig[texEnvID].x == RGB_A ? CombineAlpha(aCombineFunc, aSource1, aSource2, aSource3) : result.a;
+	previous = result;
+	return result;
 }
 
 void main()
@@ -319,7 +320,7 @@ void main()
 		// Per Light Variables
 		int lightType = int(lights[i].params.x);
 		float strength = lights[i].color.a;
-		float sp_cutoff = lights[i].params.z;
+		float sp_cutoff = lights[i].params.z; // TODO: Remove
 
 		//Per Light Vectors
 		lut_LightDir = (lights[i].position.w == 0.0) ?
@@ -342,17 +343,12 @@ void main()
 			spotLightFactor = sampleSPLutLinear(i, GetInput(4));
 
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
-			attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
 			float r = lights[i].params.y;
-			float falloff = r * 0.2; // Fade 20% of radius
-			attenuation *= d <= r-falloff ? 1.0 : max(r-d, 0.0) / falloff;
+			attenuation = sampleDALutLinear(i,d / r);
 		} else if (lightType == TYPE_POINTLIGHT) 
 		{
 			float d = length(lights[i].position.xyz - v_FragPos.xyz);
-			//attenuation = 1.0 / (1.0 + da_linear * d + da_quad * d * d);
 			float r = lights[i].params.y;
-			//float falloff = r * 0.2; // Fade 20% of radius
-			//attenuation *= d <= r-falloff ? 1.0 : max(r-d, 0.0) / falloff;
 			attenuation = sampleDALutLinear(i,d / r);
 		}
 
@@ -367,7 +363,9 @@ void main()
 	}
 
 	vec4 outputColor = vec4(0);
-	outputColor = ComputeTexEnvOutput(0);
+	for (int i=0;i<6;i++) {
+		outputColor = ComputeTexEnvOutput(i);
+	}
 
 	color = outputColor;
 	color2 = v_EntityID; // Entity ID (Viewport Selection)

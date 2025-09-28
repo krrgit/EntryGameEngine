@@ -193,11 +193,12 @@ namespace Entry {
 				boxDef.SetDensity(bc.Density);
 				boxDef.SetFriction(bc.Friction);
 				boxDef.SetRestitution(bc.Restitution);
+				q3Vec3 boxSize = q3Vec3(bc.Size.x * 2.0f * transform.Scale.x, bc.Size.y * 2.0f * transform.Scale.y, bc.Size.z * 2.0f * transform.Scale.z);
 				localSpace.position.x = bc.Offset.x;
 				localSpace.position.y = bc.Offset.y;
 				localSpace.position.z = bc.Offset.z;
 
-				boxDef.Set(localSpace, q3Vec3(bc.Size.x * 2.0f * transform.Scale.x, bc.Size.y * 2.0f * transform.Scale.y, bc.Size.z * 2.0f * transform.Scale.z));
+				boxDef.Set(localSpace, boxSize);
 				body->AddBox(boxDef);
 			}
 		}

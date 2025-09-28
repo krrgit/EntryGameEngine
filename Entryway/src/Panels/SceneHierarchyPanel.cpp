@@ -315,11 +315,22 @@ namespace Entry
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 		 
-		TexEnvProps te = material->GetTexEnvProps(); // TODO: PASS ID HERE
+		TexEnvProps te = material->GetTexEnvProps(id); // TODO: PASS ID HERE
 
 		const char* channels[2] = {"RGBA", "RGB + Alpha" };
 		const char* blendModes[10] = { "Replace", "Modulate", "Add", "Signed Add", "Interpolate", "Subtract", "Dot3 RGB", "Dot3 RGBA", "Multiply Add", "Add Multiply" };
-		const char* sources[10] = { "Primary Color", "Fragment Primary Color", "Fragment Secondary Color", "Texture0", "Texture1", "Texture2", "Texture3", "Previous Buffer", "Constant", "Previous"};
+		const char* sourcesText[10] = { "Primary Color", "Fragment Primary Color", "Fragment Secondary Color", "Texture0", "Texture1", "Texture2", "Texture3", "Previous Buffer", "Constant", "Previous"};
+		TexEnvSource sources[10] = { ET_GPU_PRIMARY_COLOR,
+			ET_GPU_FRAGMENT_PRIMARY_COLOR,
+			ET_GPU_FRAGMENT_SECONDARY_COLOR,
+			ET_GPU_TEXTURE0,
+			ET_GPU_TEXTURE1,
+			ET_GPU_TEXTURE2,
+			ET_GPU_TEXTURE3,
+			ET_GPU_PREVIOUS_BUFFER,
+			ET_GPU_CONSTANT,
+			ET_GPU_PREVIOUS,
+		};
 
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
@@ -331,7 +342,7 @@ namespace Entry
 			DrawCombo("Channels", channels, (int)te.Channels - 3, 2, material, [&](Ref<Material> mat, int newSelection) {
 
 				te.Channels = (TexEnvChannels)(newSelection + 3);
-				mat->SetTexEnvProps(te);
+				mat->SetTexEnvProps(te, id);
 				printf("Channels Changed: %d\n", (int)te.Channels);
 			});
 
@@ -345,25 +356,26 @@ namespace Entry
 					printf("Blend Mode Changed\n");
 
 					te.BlendMode = (TexEnvBlendMode)newSelection;
-					mat->SetTexEnvProps(te);
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 1", sources, (int)te.Source1 - (te.Source1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				// (te.Source1 > 6 ? 6 : 0) Maps the enum from 0-6|13-15 to 0-10
+				DrawCombo("Source 1", sourcesText, (int)te.Source1 - (te.Source1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 1 Changed\n");
-
-					te.Source1 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					// sources[newSelection] Maps the enum back to 0-6|13-15
+					te.Source1 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 2", sources, (int)te.Source2 - (te.Source2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				DrawCombo("Source 2", sourcesText, (int)te.Source2 - (te.Source2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 2 Changed\n");
 
-					te.Source2 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					te.Source2 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 3", sources, (int)te.Source3 - (te.Source3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				DrawCombo("Source 3", sourcesText, (int)te.Source3 - (te.Source3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 3 Changed\n");
 
-					te.Source3 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					te.Source3 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
 			}
 
@@ -378,25 +390,25 @@ namespace Entry
 					printf("Blend Mode Changed\n");
 
 					te.AlphaBlendMode = (TexEnvBlendMode)newSelection;
-					mat->SetTexEnvProps(te);
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 1##Alpha", sources, (int)te.AlphaSource1 - (te.AlphaSource1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				DrawCombo("Source 1##Alpha", sourcesText, (int)te.AlphaSource1 - (te.AlphaSource1 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 1 Changed\n");
 
-					te.AlphaSource1 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					te.AlphaSource1 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 2##Alpha", sources, (int)te.AlphaSource2 - (te.AlphaSource2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				DrawCombo("Source 2##Alpha", sourcesText, (int)te.AlphaSource2 - (te.AlphaSource2 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 2 Changed\n");
 
-					te.AlphaSource2 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					te.AlphaSource2 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
-				DrawCombo("Source 3##Alpha", sources, (int)te.AlphaSource3 - (te.AlphaSource3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
+				DrawCombo("Source 3##Alpha", sourcesText, (int)te.AlphaSource3 - (te.AlphaSource3 > 6 ? 6 : 0), 10, material, [&](Ref<Material> mat, int newSelection) {
 					printf("Source 3 Changed\n");
 
-					te.AlphaSource3 = (TexEnvSource)newSelection;
-					mat->SetTexEnvProps(te);
+					te.AlphaSource3 = sources[newSelection];
+					mat->SetTexEnvProps(te, id);
 				});
 			}
 

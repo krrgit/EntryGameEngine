@@ -82,9 +82,9 @@ namespace Entry
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		// Bind TexEnvs
-		int texEnvCount = material->TexEnvCount();
+		//int texEnvCount = material->TexEnvCount();
 		UBOTexEnvData uboTexEnvData;
-		for (int i = 0; i < texEnvCount; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			const TexEnvProps& tep = material->GetTexEnvProps(i);
 
