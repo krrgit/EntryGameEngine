@@ -90,8 +90,8 @@ Entities:
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [-1.03599811, 1.48279905, -0.00420159055]
-      Rotation: [0.00084947201, -0.000706348917, 1.59040689]
+      Position: [0, 5, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj

@@ -62,7 +62,9 @@ namespace Entry
 
 	void OpenGLLightEnvironment::Bind()
 	{
-		// Do nothing ?
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_LightEnvUBO);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_MaterialUBO);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 2, m_TexEnvUBO);
 	}
 
 	void OpenGLLightEnvironment::BindMaterial(Material* material)

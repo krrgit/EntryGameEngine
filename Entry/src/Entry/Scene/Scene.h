@@ -45,6 +45,8 @@ namespace Entry {
 		Ref<LightEnvironment> GetLightEnvironment() { return m_LightEnv; }
 		void SetLightEnvironment(Ref<LightEnvironment> lightEnv);
 
+		void BindLightEnv();
+
 	private:	
 		void UpdateLights(glm::mat4& viewMatrix);
 

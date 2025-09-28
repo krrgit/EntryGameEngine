@@ -101,6 +101,16 @@ namespace Entry {
 		newScene->m_ViewportWidth = other->m_ViewportWidth;
 		newScene->m_ViewportHeight = other->m_ViewportHeight;
 
+		newScene->GetLightEnvironment()->SetSceneAmbientColor(other->GetLightEnvironment()->GetSceneAmbientColor());
+
+		ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
+
+		for (int i = 0; i < 6; i++)
+		{
+			auto& lutconfig = other->GetLightEnvironment()->GetLutConfig(ids[i]);
+			newScene->GetLightEnvironment()->ConfigureLut(lutconfig);
+		}
+
 		std::unordered_map<UUID, ECS::Entity> entityMap;
 
 		auto& srcSceneRegistry = other->m_Registry;
@@ -440,6 +450,11 @@ namespace Entry {
 	void Scene::SetLightEnvironment(Ref<LightEnvironment> lightEnv)
 	{
 		// TODO: Fix Light Envs across scenes
+	}
+
+	void Scene::BindLightEnv()
+	{
+		m_LightEnv->Bind();
 	}
 
 	void Scene::UpdateLights(glm::mat4& viewMatrix)

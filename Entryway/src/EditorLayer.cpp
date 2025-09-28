@@ -627,6 +627,7 @@ namespace Entry {
         m_SceneState = SceneState::Edit;
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
+        m_ActiveScene->BindLightEnv();
 
         SetPanelContexts(m_ActiveScene);
     }
