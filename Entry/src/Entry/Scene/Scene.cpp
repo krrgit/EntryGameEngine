@@ -456,6 +456,7 @@ namespace Entry {
 	void Scene::BindLightEnv()
 	{
 		m_LightEnv->Bind();
+		Renderer3D::BindLightEnv(m_LightEnv);
 	}
 
 	void Scene::UpdateLights(glm::mat4& viewMatrix)

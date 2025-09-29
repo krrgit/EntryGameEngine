@@ -67,7 +67,7 @@ namespace Entry
 		GLuint m_TexEnvUBO;
 		UBOTexEnvData m_TexEnvData;
 
-		OGL_Light* m_Lights[MAX_LIGHTS];
+		Ref<Light> m_Lights[MAX_LIGHTS];
 
 		glm::vec3 m_SceneAmbient;
 

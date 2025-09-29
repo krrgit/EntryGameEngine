@@ -62,6 +62,7 @@ namespace Entry
 
 	void OpenGLLightEnvironment::Bind()
 	{
+		ET_CORE_INFO("Bind LightEnv");
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_LightEnvUBO);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_MaterialUBO);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 2, m_TexEnvUBO);
@@ -118,16 +119,20 @@ namespace Entry
 
 		light->SetID(id);
 		light->SetParent(m_LightEnvUBO);
+		
+		m_Lights[id] = light;
 
 		m_LightCount++;
 		return id;
 	}
 	void OpenGLLightEnvironment::LightDestroy(Ref<Light> light)
 	{
-		if (light->GetID() == -1) return;
+		int id = light->GetID();
+ 		if (id == -1) return;
 
-		m_HasLight[light->GetID()] = false;
+		m_HasLight[id] = false;
 		m_LightCount--;
+		m_Lights[id] = nullptr;
 
 		OGL_Light empty = {};
 
