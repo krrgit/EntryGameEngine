@@ -3,10 +3,10 @@ LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
   TexEnv0:
     LUTID: 0
-    LUTFunction: 0
-    LUTInput: 2
+    LUTFunction: 1
+    LUTInput: 0
     Negative: false
-    Pow: 30
+    Pow: 100
     SpotlightCutoff: 90
     toonShininess: 0.5
   TexEnv1:
@@ -54,8 +54,8 @@ Entities:
     TagComponent:
       Tag: Plane
     TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, -0, 0]
+      Position: [-2.38418579e-07, 0, -2.38418579e-07]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/plane.obj
@@ -71,32 +71,25 @@ Entities:
       Size: [10, 0.5, 10]
       Density: 1
       Friction: 0.5
-      Restitution: 0
+      Restitution: 0.670000017
       RestitutionThreshold: 0.5
-  - Entity: 4202415533053521135
-    TagComponent:
-      Tag: Light
-    TransformComponent:
-      Position: [0, 5, -3.29999995]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 1, 1]
-      Intensity: 1
-      Range: 10
-      Angle: 90
-      Type: 1
   - Entity: 5634013686493956607
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [0, 4.91706181, -1.63430333]
-      Rotation: [0, 0, 0]
+      Position: [-5.62541199, 6.22598124, -0.987394035]
+      Rotation: [0.459021568, 0, 0]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [1, 0, 0]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -107,7 +100,7 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
       RestitutionThreshold: 0.5
   - Entity: 6218790160372639551
     TagComponent:
@@ -131,13 +124,19 @@ Entities:
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [1.49901938, 0.999000788, 0.00141542428]
-      Rotation: [0.000283578789, -0.00123964052, -0.000569220982]
-      Scale: [1, 1, 1]
+      Position: [-1.29999995, 2.9000001, 1.79999995]
+      Rotation: [0.000283578585, -0.00123963982, -0.000569221505]
+      Scale: [0.999999166, 1, 0.999999166]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [0, 1, 0]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -148,19 +147,25 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
       RestitutionThreshold: 0.5
   - Entity: 4795115716335317962
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [2.17174911, 7.43124342, -4.76806235e-07]
-      Rotation: [0, 0, 0]
+      Position: [2.17174911, 7.43124342, -4.77768481e-07]
+      Rotation: [0, 0, -1.13446403]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [1, 1, 0]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -171,19 +176,25 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
       RestitutionThreshold: 0.5
   - Entity: 3387203651805901992
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [0.229335904, 9.74612808, 1.24737966]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Position: [-0.0700000077, 9.74612808, 1.24737966]
+      Rotation: [0.47996667, 1.27409065, -5.09665483e-08]
+      Scale: [1.00000048, 0.999999702, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [1, 0, 1]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -194,19 +205,25 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
       RestitutionThreshold: 0.5
   - Entity: 5503580309922133657
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [0.255915374, 12.4233761, -0.187098861]
-      Rotation: [0, 0, 0]
+      Position: [0.255915374, 12.4233761, 4.30999994]
+      Rotation: [0.743510246, -0.0209439509, 0.0715584978]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [0, 1, 1]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -217,19 +234,25 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
       RestitutionThreshold: 0.5
   - Entity: 8927032563923028557
     TagComponent:
       Tag: Entity
     TransformComponent:
-      Position: [3.30893826, 4.25618124, -1.63430333]
-      Rotation: [0, 0, 0]
+      Position: [3.26690412, 4.25663519, -1.63382936]
+      Rotation: [-0.202458203, 1.01927233, 0]
       Scale: [1, 1, 1]
     MeshRendererComponent:
       Model: assets/models/monkey.obj
       MeshID: 0
       MaterialID: 0
+    LightComponent:
+      Color: [0, 0, 1]
+      Intensity: 0.5
+      Range: 75
+      Angle: 90
+      Type: 1
     RigidbodyComponent:
       BodyType: Dynamic
       FixedRotationX: false
@@ -240,5 +263,97 @@ Entities:
       Size: [1, 1, 1]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 0.200000003
+      RestitutionThreshold: 0.5
+  - Entity: 13646154903794672115
+    TagComponent:
+      Tag: Plane
+    TransformComponent:
+      Position: [10, 10, 0]
+      Rotation: [0, -0, 1.57079637]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/plane.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0, 0]
+      Size: [10, 0.5, 10]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 9147190097545927831
+    TagComponent:
+      Tag: Plane
+    TransformComponent:
+      Position: [-10, 10, 0]
+      Rotation: [0, -0, -1.57079637]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/plane.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0, 0]
+      Size: [10, 0.5, 10]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 1162103398870776518
+    TagComponent:
+      Tag: Plane
+    TransformComponent:
+      Position: [0, 20, 0]
+      Rotation: [0, 0, 3.14159274]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/plane.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0, 0]
+      Size: [10, 0.5, 10]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 12499571736224637177
+    TagComponent:
+      Tag: Plane
+    TransformComponent:
+      Position: [0, 10, 10]
+      Rotation: [-1.57079637, -0, 0]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/plane.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, 0, 0]
+      Size: [10, 0.5, 10]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
       RestitutionThreshold: 0.5

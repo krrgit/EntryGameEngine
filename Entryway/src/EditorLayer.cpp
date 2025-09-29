@@ -592,7 +592,7 @@ namespace Entry {
         std::string filepath = FileDialogs::SaveFile("Entry Scene (*.entry)\0*.entry\0");
         if (!filepath.empty())
         {
-            SerializeScene(m_ActiveScene, filepath);
+            SerializeScene(m_EditorScene, filepath);
             m_EditorScenePath = filepath;
         }
 
@@ -601,7 +601,7 @@ namespace Entry {
     void EditorLayer::SaveScene()
     {
         if (!m_EditorScenePath.empty())
-            SerializeScene(m_ActiveScene, m_EditorScenePath);
+            SerializeScene(m_EditorScene, m_EditorScenePath);
         else
             SaveSceneAs();
     }
@@ -628,6 +628,7 @@ namespace Entry {
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
         m_ActiveScene->BindLightEnv();
+        m_HoveredEntity = {};
 
         SetPanelContexts(m_ActiveScene);
     }
