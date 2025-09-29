@@ -185,6 +185,7 @@ struct q3BodyDef
 		q3Identity( position );
 		q3Identity( linearVelocity );
 		q3Identity( angularVelocity );
+		rotation.w = 1.0f;
 
 		// Usually a gravity scale of 1 is the best
 		gravityScale = r32( 1.0 );
@@ -207,6 +208,7 @@ struct q3BodyDef
 	q3Vec3 axis;			// Initial world transformation.
 	r32 angle;				// Initial world transformation. Radians.
 	q3Vec3 position;		// Initial world transformation.
+	q3Quaternion rotation;	// Initial world transformation.
 	q3Vec3 linearVelocity;	// Initial linear velocity in world space.
 	q3Vec3 angularVelocity;	// Initial angular velocity in world space.
 	r32 gravityScale;		// Convenient scale values for gravity x, y and z directions.

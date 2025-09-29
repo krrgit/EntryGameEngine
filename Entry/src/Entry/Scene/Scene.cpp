@@ -173,7 +173,10 @@ namespace Entry {
 			q3BodyDef bodyDef;
 			bodyDef.bodyType = RigidbodyTypeToQu3eBody(rb.Type);
 			bodyDef.position = { transform.Position.x, transform.Position.y, transform.Position.z };
-			// TODO: rotation 
+
+			glm::quat quat = glm::quat(transform.Rotation);
+			bodyDef.rotation = q3Quaternion(quat.x, quat.y, quat.z, quat.w);
+
 			bodyDef.angle = transform.Rotation.z;
 			bodyDef.lockAxisX = rb.FixedRotation.x;
 			bodyDef.lockAxisY = rb.FixedRotation.y;

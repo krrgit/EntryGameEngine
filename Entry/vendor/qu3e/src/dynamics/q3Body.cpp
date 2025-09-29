@@ -39,7 +39,8 @@ q3Body::q3Body( const q3BodyDef& def, q3Scene* scene )
 	m_angularVelocity = def.angularVelocity;
 	q3Identity( m_force );
 	q3Identity( m_torque );
-	m_q.Set( q3Normalize( def.axis ), def.angle );
+	//m_q.Set( q3Normalize( def.axis ), def.angle );
+	m_q = def.rotation;
 	m_tx.rotation = m_q.ToMat3( );
 	m_tx.position = def.position;
 	m_sleepTime = r32( 0.0 );
