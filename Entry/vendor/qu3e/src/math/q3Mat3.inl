@@ -88,12 +88,12 @@ inline const q3Mat3 q3OuterProduct( const q3Vec3& u, const q3Vec3& v )
 }
 
 //--------------------------------------------------------------------------------------------------
-inline const q3Mat3 q3Covariance( q3Vec3 *points, u32 numPoints )
+inline const q3Mat3 q3Covariance( q3Vec3 *points, ui32 numPoints )
 {
 	r32 invNumPoints = r32( 1.0 ) / r32( numPoints );
 	q3Vec3 c = q3Vec3( r32( 0.0 ), r32( 0.0 ), r32( 0.0 ) );
 
-	for ( u32 i = 0; i < numPoints; ++i )
+	for ( ui32 i = 0; i < numPoints; ++i )
 		c += points[ i ];
 
 	c /= r32( numPoints );
@@ -101,7 +101,7 @@ inline const q3Mat3 q3Covariance( q3Vec3 *points, u32 numPoints )
 	r32 m00, m11, m22, m01, m02, m12;
 	m00 = m11 = m22 = m01 = m02 = m12 = r32( 0.0 );
 
-	for ( u32 i = 0; i < numPoints; ++i )
+	for ( ui32 i = 0; i < numPoints; ++i )
 	{
 		q3Vec3 p = points[ i ] - c;
 

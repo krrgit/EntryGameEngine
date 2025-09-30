@@ -136,7 +136,7 @@ q3Mat3& q3Mat3::operator-=( const q3Mat3& rhs )
 }
 
 //--------------------------------------------------------------------------------------------------
-q3Vec3& q3Mat3::operator[]( u32 index )
+q3Vec3& q3Mat3::operator[]( ui32 index )
 {
 	switch ( index )
 	{
@@ -153,7 +153,7 @@ q3Vec3& q3Mat3::operator[]( u32 index )
 }
 
 //--------------------------------------------------------------------------------------------------
-const q3Vec3& q3Mat3::operator[]( u32 index ) const
+const q3Vec3& q3Mat3::operator[]( ui32 index ) const
 {
 	switch ( index )
 	{

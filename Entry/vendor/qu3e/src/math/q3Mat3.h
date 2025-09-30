@@ -54,8 +54,8 @@ struct q3Mat3
 	q3Mat3& operator+=( const q3Mat3& rhs );
 	q3Mat3& operator-=( const q3Mat3& rhs );
 
-	q3Vec3& operator[]( u32 index );
-	const q3Vec3& operator[]( u32 index ) const;
+	q3Vec3& operator[]( ui32 index );
+	const q3Vec3& operator[]( ui32 index ) const;
 	const q3Vec3 Column0( ) const;
 	const q3Vec3 Column1( ) const;
 	const q3Vec3 Column2( ) const;

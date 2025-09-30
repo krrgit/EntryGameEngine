@@ -63,6 +63,7 @@ namespace Entry
 		Ref<Model> model;
 		const Mesh* mesh;
 		Ref<Material> material;
+		bool instancedMtl = false;
 
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;

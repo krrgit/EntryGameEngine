@@ -718,6 +718,7 @@ namespace Entry
 			std::string mtlName = component.material ? component.material->GetProps().Name : "None";
 			DrawDragnDropField(label, mtlName, columnWidth);
 			ImGui::Columns(1);
+			ImGui::Checkbox("Instanced", &component.instancedMtl);
 
 			entityMaterial = component.material;
 		});

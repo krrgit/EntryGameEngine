@@ -40,6 +40,14 @@ SOURCES		:=	$(shell find Entry/src -type d \
 	Entry/vendor/imgui-3ds/imgui \
 	Entry/vendor/yaml-cpp/src \
 	Entry/vendor/yaml-cpp/include \
+	Entry/vendor/qu3e/src \
+	Entry/vendor/qu3e/src/broadphase \
+	Entry/vendor/qu3e/src/collision \
+	Entry/vendor/qu3e/src/common \
+	Entry/vendor/qu3e/src/debug \
+	Entry/vendor/qu3e/src/dynamics \
+	Entry/vendor/qu3e/src/math \
+	Entry/vendor/qu3e/src/scene \
 
 DATA		:=	data
 INCLUDES	:=  $(shell find Entry/src -type d \
@@ -51,6 +59,7 @@ INCLUDES	:=  $(shell find Entry/src -type d \
 	Entry/vendor/glm \
 	Entry/vendor/fast_obj/include \
 	Entry/vendor/yaml-cpp/include \
+	Entry/vendor/qu3e/src \
 
 GRAPHICS	:=	Sandbox/assets/**
 # GFXBUILD	:=	$(BUILD)

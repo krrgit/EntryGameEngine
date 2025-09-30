@@ -161,6 +161,7 @@ namespace Entry {
 
 	void Scene::OnRuntimeStart()
 	{
+		// Create Physics Simulation
 		m_PhysicsWorld = new q3Scene(1.0f / 60.0f);
 
 		auto view = m_Registry.view<RigidbodyComponent>();
@@ -205,6 +206,17 @@ namespace Entry {
 				body->AddBox(boxDef);
 			}
 		}
+
+		// Create Native Scripts
+		m_Registry.view<NativeScriptComponent>().each([=](ECS::Entity entity, NativeScriptComponent& nsc)
+		{
+			if (!nsc.Instance)
+			{
+				nsc.Instance = nsc.InstantiateScript();
+				nsc.Instance->m_Entity = Entity{ entity, this };
+				nsc.Instance->OnCreate();
+			}
+		});
 	}
 
 	void Scene::OnRuntimeStop()
@@ -286,21 +298,13 @@ namespace Entry {
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](ECS::Entity entity, NativeScriptComponent& nsc) 
 			{ 
-				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
-				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->OnCreate();
-				}
-
 				nsc.Instance->OnUpdate(ts);
 			});
 		}
 
 		// Physics
 		{
-			m_PhysicsWorld->Step();
+			//m_PhysicsWorld->Step();
 			
 			// Retrieve transform form qu3e
 			auto view = m_Registry.view<RigidbodyComponent>();
@@ -449,11 +453,6 @@ namespace Entry {
 		{
 			return Entity{ entity, this };
 		}
-	}
-
-	void Scene::SetLightEnvironment(Ref<LightEnvironment> lightEnv)
-	{
-		// TODO: Fix Light Envs across scenes
 	}
 
 	void Scene::BindLightEnv()

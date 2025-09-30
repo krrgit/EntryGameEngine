@@ -64,7 +64,7 @@ public:
 	q3Stack( );
 	~q3Stack( );
 
-	void Reserve( u32 size );
+	void Reserve( ui32 size );
 	void *Allocate( i32 size );
 	void Free( void *data );
 
@@ -72,12 +72,12 @@ private:
 	u8* m_memory;
 	q3StackEntry* m_entries;
 
-	u32 m_index;
+	ui32 m_index;
 
 	i32 m_allocation;
 	i32 m_entryCount;
 	i32 m_entryCapacity;
-	u32 m_stackSize;
+	ui32 m_stackSize;
 };
 
 //--------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #include "etpch.h"
 #include "ContentBrowserPanel.h"
-
+#include "Entry/Renderer/Material.h"
 #include <imgui.h>
 
 
@@ -18,8 +18,12 @@ namespace Entry
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
+		bool show = true;
+		ImGui::ShowDemoWindow(&show);
+
 		ImGui::Begin("Project");
 
+		// Header
 		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
 		{
 			if (ImGui::Button("<-"))
@@ -28,6 +32,7 @@ namespace Entry
 			}
 		}
 
+		// Body
 		static float padding = 6.0f;
 		static float thumbnailSize = 64.0f;
 		float cellSize = thumbnailSize + padding;
@@ -40,7 +45,6 @@ namespace Entry
 		if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened, ImGuiWindowFlags_HorizontalScrollbar))
 		{
 			ImGui::Columns(columnCount, 0, false);
-
 
 			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 			{
@@ -76,15 +80,24 @@ namespace Entry
 			}
 
 			ImGui::Columns(1);
+
+			// Right-click on blank space
+			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+			{
+				if (ImGui::BeginMenu("Create"))
+				{
+					if (ImGui::MenuItem("Material"))
+						CreateNewMaterial();
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndPopup();
+			}
 		}
 		ImGui::EndChild();
 
-		//bool show = true;
-		//ImGui::ShowDemoWindow(&show);
-
+		// Footer
 		ImGui::Separator();
-
-
 		ImGui::SetCursorPosX(panelWidth * 3.0f / 4.0f);
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("sm");
@@ -97,6 +110,11 @@ namespace Entry
 
 
         ImGui::End();
+	}
+
+	void ContentBrowserPanel::CreateNewMaterial()
+	{
+		// TODO
 	}
 
 }

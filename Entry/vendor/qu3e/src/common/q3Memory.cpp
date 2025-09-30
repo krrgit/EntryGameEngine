@@ -53,7 +53,7 @@ q3Stack::~q3Stack( )
 }
 
 //--------------------------------------------------------------------------------------------------
-void q3Stack::Reserve( u32 size )
+void q3Stack::Reserve( ui32 size )
 {
 	assert( !m_index );
 

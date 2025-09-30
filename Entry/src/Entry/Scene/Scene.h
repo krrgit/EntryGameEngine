@@ -43,8 +43,6 @@ namespace Entry {
 		bool LightLimitReached() { return m_LightCount >= MAX_LIGHTS; }
 
 		Ref<LightEnvironment> GetLightEnvironment() { return m_LightEnv; }
-		void SetLightEnvironment(Ref<LightEnvironment> lightEnv);
-
 		void BindLightEnv();
 
 	private:	

@@ -60,8 +60,8 @@ struct q3Vec3
 	q3Vec3& operator*=( r32 f );
 	q3Vec3& operator/=( r32 f );
 
-	r32& operator[]( u32 i );
-	r32 operator[]( u32 i ) const;
+	r32& operator[]( ui32 i );
+	r32 operator[]( ui32 i ) const;
 
 	q3Vec3 operator-( void ) const;
 

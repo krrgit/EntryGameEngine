@@ -137,6 +137,39 @@ namespace Entry
 	{
 	}
 
+	static void SerializeMaterial(YAML::Emitter& out, Ref<Material> material)
+	{
+		MaterialProps& props = material->GetProps();
+		MaterialValues& values = props.Values;
+		out << YAML::Key << "InstancedMaterial" << YAML::Value << YAML::BeginMap;
+		out << YAML::Key << "Name" << YAML::Value << props.Name;
+
+		out << YAML::Key << "Ambient" << YAML::Value << glm::vec3(values.Ambient[0], values.Ambient[1], values.Ambient[2]);
+		out << YAML::Key << "Diffuse" << YAML::Value << glm::vec3(values.Diffuse[0], values.Diffuse[1], values.Diffuse[2]);
+		out << YAML::Key << "Specular0" << YAML::Value << glm::vec3(values.Specular0[0], values.Specular0[1], values.Specular0[2]);
+		out << YAML::Key << "Specular1" << YAML::Value << glm::vec3(values.Specular1[0], values.Specular1[1], values.Specular1[2]);
+		out << YAML::Key << "Emission" << YAML::Value << glm::vec3(values.Emission[0], values.Emission[1], values.Emission[2]);
+
+		std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+		for (int i = 0; i < 6; ++i)
+		{
+			out << YAML::Key << texEnvLabels[i];
+			auto& texEnv = material->GetTexEnvProps(i);
+			out << YAML::BeginMap;
+			out << YAML::Key << "Channels" << (int)texEnv.Channels;
+			out << YAML::Key << "BlendMode" << (int)texEnv.BlendMode;
+			out << YAML::Key << "Source1" << (int)texEnv.Source1;
+			out << YAML::Key << "Source2" << (int)texEnv.Source2;
+			out << YAML::Key << "Source3" << (int)texEnv.Source3;
+			out << YAML::Key << "AlphaBlendMode" << (int)texEnv.AlphaBlendMode;
+			out << YAML::Key << "AlphaSource1" << (int)texEnv.AlphaSource1;
+			out << YAML::Key << "AlphaSource2" << (int)texEnv.AlphaSource2;
+			out << YAML::Key << "AlphaSource3" << (int)texEnv.AlphaSource3;
+			out << YAML::EndMap;
+		}
+		out << YAML::EndMap; // Material
+	}
+
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		ET_CORE_ASSERT(entity.HasComponent<IDComponent>());
@@ -207,6 +240,9 @@ namespace Entry
 			out << YAML::Key << "Model" << modelPath;
 			out << YAML::Key << "MeshID" << meshRendererComponent.mesh->MeshID;
 			out << YAML::Key << "MaterialID" << meshRendererComponent.mesh->MaterialID;
+			if (meshRendererComponent.instancedMtl)
+				SerializeMaterial(out, meshRendererComponent.material);
+
 			out << YAML::EndMap;
 		}
 
@@ -265,10 +301,10 @@ namespace Entry
 		out << YAML::Key << "SceneAmbientColor" << YAML::Value << lightEnv->GetSceneAmbientColor();
 
 		static ET_LIGHTLUTID ids[] = { ET_LUT_D0, ET_LUT_D1, ET_LUT_FR, ET_LUT_RB, ET_LUT_RG, ET_LUT_RR };
-		std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+		std::string lightEnvLabels[] = { "Specular0", "Specular1" ,"Fresnel" ,"ReflectionRed" ,"ReflectionGreen" ,"ReflectionBlue" };
 		for (int i = 0; i < 6; ++i)
 		{
-			out << YAML::Key << texEnvLabels[i];
+			out << YAML::Key << lightEnvLabels[i];
 			auto& lutConfig = lightEnv->GetLutConfig(ids[i]);
 			out << YAML::BeginMap;
 			out << YAML::Key << "LUTID" << (int)lutConfig.id;
@@ -335,11 +371,11 @@ namespace Entry
 			Ref<LightEnvironment> sceneLightEnv = m_Scene->GetLightEnvironment();
 			sceneLightEnv->SetSceneAmbientColor(ambientColor);
 			
-			std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+			std::string lightEnvLabels[] = { "Specular0", "Specular1" ,"Fresnel" ,"ReflectionRed" ,"ReflectionGreen" ,"ReflectionBlue" };
 
 			for (int i = 0; i < 6; i++) 
 			{
-				auto lutConfigData = lightEnv[texEnvLabels[i]];
+				auto lutConfigData = lightEnv[lightEnvLabels[i]];
 				if (!lutConfigData) break;
 
 				LutConfig lutconfig;
@@ -409,7 +445,56 @@ namespace Entry
 					Ref<Model> model = Model::Create(meshRendererComponent["Model"].as<std::string>());
 					const Mesh* mesh = model->GetMesh(meshRendererComponent["MeshID"].as<int>());
 					Ref<Material> material = model->GetMaterial(meshRendererComponent["MaterialID"].as<int>());
-					deserializedEntity.AddComponent<MeshRendererComponent>(model, mesh, material);
+					auto instancedMtl = meshRendererComponent["InstancedMaterial"];
+					if (instancedMtl)
+					{
+						MaterialValues& values = material->GetProps().Values;
+						glm::vec3 ambient = instancedMtl["Ambient"].as<glm::vec3>();
+						values.Ambient[0] = ambient.x;
+						values.Ambient[1] = ambient.y;
+						values.Ambient[2] = ambient.z;
+
+						glm::vec3 diffuse = instancedMtl["Diffuse"].as<glm::vec3>();
+						values.Diffuse[0] = diffuse.x;
+						values.Diffuse[1] = diffuse.y;
+						values.Diffuse[2] = diffuse.z;
+
+						glm::vec3 spec0 = instancedMtl["Specular0"].as<glm::vec3>();
+						values.Specular0[0] = spec0.x;
+						values.Specular0[1] = spec0.y;
+						values.Specular0[2] = spec0.z;
+
+						glm::vec3 spec1 = instancedMtl["Specular1"].as<glm::vec3>();
+						values.Specular1[0] = spec1.x;
+						values.Specular1[1] = spec1.y;
+						values.Specular1[2] = spec1.z;
+
+						glm::vec3 emission = instancedMtl["Emission"].as<glm::vec3>();
+						values.Emission[0] = emission.x;
+						values.Emission[1] = emission.y;
+						values.Emission[2] = emission.z;
+
+						std::string texEnvLabels[] = { "TexEnv0", "TexEnv1" ,"TexEnv2" ,"TexEnv3" ,"TexEnv4" ,"TexEnv5" };
+						for (int i = 0; i < 6; i++)
+						{
+							auto texEnv = instancedMtl[texEnvLabels[i]];
+							TexEnvProps teProps(
+								(TexEnvChannels)texEnv["Channels"].as<int>(),
+								(TexEnvBlendMode)texEnv["BlendMode"].as<int>(),
+								(TexEnvSource)texEnv["Source1"].as<int>(),
+								(TexEnvSource)texEnv["Source2"].as<int>(),
+								(TexEnvSource)texEnv["Source3"].as<int>(),
+								(TexEnvBlendMode)texEnv["AlphaBlendMode"].as<int>(),
+								(TexEnvSource)texEnv["AlphaSource1"].as<int>(),
+								(TexEnvSource)texEnv["AlphaSource2"].as<int>(),
+								(TexEnvSource)texEnv["AlphaSource3"].as<int>()
+							);
+							material->SetTexEnvProps(teProps, i);
+						}
+					}
+
+					auto& mrc = deserializedEntity.AddComponent<MeshRendererComponent>(model, mesh, material);
+					mrc.instancedMtl = instancedMtl ? true : false;
 				}
 
 				auto lightComponent = entity["LightComponent"];
