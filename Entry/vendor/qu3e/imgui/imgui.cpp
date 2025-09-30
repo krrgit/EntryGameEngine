@@ -252,7 +252,7 @@ static bool         ButtonBehaviour(const ImGuiAabb& bb, const ImGuiID& id, bool
 static void         LogText(const ImVec2& ref_pos, const char* text, const char* text_end = NULL);
 
 static void         RenderText(ImVec2 pos, const char* text, const char* text_end = NULL, bool hide_text_after_hash = true, float wrap_width = 0.0f);
-static void         RenderFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, bool border = true, float rounding = 0.0f);
+static void         RenderFrame(ImVec2 p_min, ImVec2 p_max, Imui32 fill_col, bool border = true, float rounding = 0.0f);
 static void         RenderCollapseTriangle(ImVec2 p_min, bool open, float scale = 1.0f, bool shadow = false);
 
 static void         ItemSize(ImVec2 size, ImVec2* adjust_start_offset = NULL);
@@ -480,21 +480,21 @@ static const char* ImStristr(const char* haystack, const char* needle, const cha
     return NULL;
 }
 
-static ImU32 crc32(const void* data, size_t data_size, ImU32 seed = 0) 
+static Imui32 crc32(const void* data, size_t data_size, Imui32 seed = 0) 
 { 
-    static ImU32 crc32_lut[256] = { 0 };
+    static Imui32 crc32_lut[256] = { 0 };
     if (!crc32_lut[1])
     {
-        const ImU32 polynomial = 0xEDB88320;
-        for (ImU32 i = 0; i < 256; i++) 
+        const Imui32 polynomial = 0xEDB88320;
+        for (Imui32 i = 0; i < 256; i++) 
         { 
-            ImU32 crc = i; 
-            for (ImU32 j = 0; j < 8; j++) 
-                crc = (crc >> 1) ^ (ImU32(-int(crc & 1)) & polynomial); 
+            Imui32 crc = i; 
+            for (Imui32 j = 0; j < 8; j++) 
+                crc = (crc >> 1) ^ (Imui32(-int(crc & 1)) & polynomial); 
             crc32_lut[i] = crc; 
         }
     }
-    ImU32 crc = ~seed; 
+    Imui32 crc = ~seed; 
     const unsigned char* current = (const unsigned char*)data; 
     while (data_size--) 
         crc = (crc >> 8) ^ crc32_lut[(crc & 0xFF) ^ *current++]; 
@@ -518,12 +518,12 @@ static size_t ImFormatStringV(char* buf, size_t buf_size, const char* fmt, va_li
     return (w == -1) ? buf_size : (size_t)w;
 }
 
-static ImU32 ImConvertColorFloat4ToU32(const ImVec4& in)
+static Imui32 ImConvertColorFloat4Toui32(const ImVec4& in)
 {
-    ImU32 out  = ((ImU32)(ImSaturate(in.x)*255.f));
-    out |= ((ImU32)(ImSaturate(in.y)*255.f) << 8);
-    out |= ((ImU32)(ImSaturate(in.z)*255.f) << 16);
-    out |= ((ImU32)(ImSaturate(in.w)*255.f) << 24);
+    Imui32 out  = ((Imui32)(ImSaturate(in.x)*255.f));
+    out |= ((Imui32)(ImSaturate(in.y)*255.f) << 8);
+    out |= ((Imui32)(ImSaturate(in.z)*255.f) << 16);
+    out |= ((Imui32)(ImSaturate(in.w)*255.f) << 24);
     return out;
 }
 
@@ -843,8 +843,8 @@ public:
     float       TitleBarHeight() const                  { return (Flags & ImGuiWindowFlags_NoTitleBar) ? 0 : FontSize() + GImGui.Style.FramePadding.y * 2.0f; }
     ImGuiAabb   TitleBarAabb() const                    { return ImGuiAabb(Pos, Pos + ImVec2(SizeFull.x, TitleBarHeight())); }
     ImVec2      WindowPadding() const                   { return ((Flags & ImGuiWindowFlags_ChildWindow) && !(Flags & ImGuiWindowFlags_ShowBorders)) ? ImVec2(1,1) : GImGui.Style.WindowPadding; }
-    ImU32       Color(ImGuiCol idx, float a=1.f) const  { ImVec4 c = GImGui.Style.Colors[idx]; c.w *= GImGui.Style.Alpha * a; return ImConvertColorFloat4ToU32(c); }
-    ImU32       Color(const ImVec4& col) const          { ImVec4 c = col; c.w *= GImGui.Style.Alpha; return ImConvertColorFloat4ToU32(c); }
+    Imui32       Color(ImGuiCol idx, float a=1.f) const  { ImVec4 c = GImGui.Style.Colors[idx]; c.w *= GImGui.Style.Alpha * a; return ImConvertColorFloat4Toui32(c); }
+    Imui32       Color(const ImVec4& col) const          { ImVec4 c = col; c.w *= GImGui.Style.Alpha; return ImConvertColorFloat4Toui32(c); }
 };
 
 static ImGuiWindow* GetCurrentWindow()
@@ -869,7 +869,7 @@ void ImGuiStorage::Clear()
 }
 
 // std::lower_bound but without the bullshit
-static ImVector<ImGuiStorage::Pair>::iterator LowerBound(ImVector<ImGuiStorage::Pair>& data, ImU32 key)
+static ImVector<ImGuiStorage::Pair>::iterator LowerBound(ImVector<ImGuiStorage::Pair>& data, Imui32 key)
 {
     ImVector<ImGuiStorage::Pair>::iterator first = data.begin();
     ImVector<ImGuiStorage::Pair>::iterator last = data.end();
@@ -891,7 +891,7 @@ static ImVector<ImGuiStorage::Pair>::iterator LowerBound(ImVector<ImGuiStorage::
     return first;
 }
 
-int* ImGuiStorage::Find(ImU32 key)
+int* ImGuiStorage::Find(Imui32 key)
 {
     ImVector<Pair>::iterator it = LowerBound(Data, key);
     if (it == Data.end())
@@ -901,7 +901,7 @@ int* ImGuiStorage::Find(ImU32 key)
     return &it->val;
 }
 
-int ImGuiStorage::GetInt(ImU32 key, int default_val)
+int ImGuiStorage::GetInt(Imui32 key, int default_val)
 {
     int* pval = Find(key);
     if (!pval)
@@ -911,7 +911,7 @@ int ImGuiStorage::GetInt(ImU32 key, int default_val)
 
 // FIXME-OPT: We are wasting time because all SetInt() are preceeded by GetInt() calls so we should have the result from lower_bound already in place.
 // However we only use SetInt() on explicit user action (so that's maximum once a frame) so the optimisation isn't much needed.
-void ImGuiStorage::SetInt(ImU32 key, int val)
+void ImGuiStorage::SetInt(Imui32 key, int val)
 {
     ImVector<Pair>::iterator it = LowerBound(Data, key);
     if (it != Data.end() && it->key == key)
@@ -1753,7 +1753,7 @@ static void RenderText(ImVec2 pos, const char* text, const char* text_end, bool 
 }
 
 // Render a rectangle shaped with optional rounding and borders
-static void RenderFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, bool border, float rounding)
+static void RenderFrame(ImVec2 p_min, ImVec2 p_max, Imui32 fill_col, bool border, float rounding)
 {
     ImGuiWindow* window = GetCurrentWindow();
 
@@ -2243,7 +2243,7 @@ bool ImGui::Begin(const char* name, bool* open, ImVec2 size, float fill_alpha, I
         {
             window->Size = window->SizeFull;
 
-            ImU32 resize_col = 0;
+            Imui32 resize_col = 0;
             if ((window->Flags & ImGuiWindowFlags_Tooltip) != 0)
             {
                 // Tooltip always resize
@@ -2350,7 +2350,7 @@ bool ImGui::Begin(const char* name, bool* open, ImVec2 size, float fill_alpha, I
 
                 // Normalized height of the grab
                 const float pos_y_norm = ImSaturate(window->ScrollY / ImMax(0.0f, window->SizeContentsFit.y));
-                const ImU32 grab_col = window->Color(held ? ImGuiCol_ScrollbarGrabActive : hovered ? ImGuiCol_ScrollbarGrabHovered : ImGuiCol_ScrollbarGrab);
+                const Imui32 grab_col = window->Color(held ? ImGuiCol_ScrollbarGrabActive : hovered ? ImGuiCol_ScrollbarGrabHovered : ImGuiCol_ScrollbarGrab);
                 window->DrawList->AddRectFilled(
                     ImVec2(scrollbar_bb.Min.x, ImLerp(scrollbar_bb.Min.y, scrollbar_bb.Max.y, pos_y_norm)), 
                     ImVec2(scrollbar_bb.Max.x, ImLerp(scrollbar_bb.Min.y, scrollbar_bb.Max.y, pos_y_norm + grab_size_y_norm)), grab_col);
@@ -3153,7 +3153,7 @@ bool ImGui::Button(const char* label, ImVec2 size, bool repeat_when_held)
     bool pressed = ButtonBehaviour(bb, id, &hovered, &held, true, repeat_when_held);
 
     // Render
-    const ImU32 col = window->Color((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+    const Imui32 col = window->Color((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderFrame(bb.Min, bb.Max, col);
 
     if (size.x < text_size.x || size.y < text_size.y)
@@ -3187,7 +3187,7 @@ bool ImGui::SmallButton(const char* label)
     bool pressed = ButtonBehaviour(bb, id, &hovered, &held, true);
 
     // Render
-    const ImU32 col = window->Color((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+    const Imui32 col = window->Color((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderFrame(bb.Min, bb.Max, col);
     RenderText(bb.Min + ImVec2(style.FramePadding.x,0), label);
 
@@ -3207,7 +3207,7 @@ static bool CloseWindowButton(bool* open)
     bool pressed = ButtonBehaviour(bb, id, &hovered, &held, true);
 
     // Render
-    const ImU32 col = window->Color((held && hovered) ? ImGuiCol_CloseButtonActive : hovered ? ImGuiCol_CloseButtonHovered : ImGuiCol_CloseButton);
+    const Imui32 col = window->Color((held && hovered) ? ImGuiCol_CloseButtonActive : hovered ? ImGuiCol_CloseButtonHovered : ImGuiCol_CloseButton);
     const ImVec2 center = bb.GetCenter();
     window->DrawList->AddCircleFilled(center, ImMax(2.0f,size*0.5f), col, 16);
 
@@ -3355,7 +3355,7 @@ bool ImGui::CollapsingHeader(const char* label, const char* str_id, const bool d
     }
 
     // Render
-    const ImU32 col = window->Color((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+    const Imui32 col = window->Color((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
     if (display_frame)
     {
         // Framed type
@@ -3910,8 +3910,8 @@ static void Plot(ImGuiPlotType plot_type, const char* label, float (*values_gett
     float t0 = 0.0f;
     ImVec2 p0 = ImVec2( t0, 1.0f - ImSaturate((v0 - scale_min) / (scale_max - scale_min)) );
 
-    const ImU32 col_base = window->Color((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLines : ImGuiCol_PlotHistogram);
-    const ImU32 col_hovered = window->Color((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLinesHovered : ImGuiCol_PlotHistogramHovered);
+    const Imui32 col_base = window->Color((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLines : ImGuiCol_PlotHistogram);
+    const Imui32 col_hovered = window->Color((plot_type == ImGuiPlotType_Lines) ? ImGuiCol_PlotLinesHovered : ImGuiCol_PlotHistogramHovered);
 
     for (int n = 0; n < res_w; n++)
     {
@@ -4806,7 +4806,7 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
 
             if (item_hovered || item_selected)
             {
-                const ImU32 col = window->Color((item_held && item_hovered) ? ImGuiCol_HeaderActive : item_hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+                const Imui32 col = window->Color((item_held && item_hovered) ? ImGuiCol_HeaderActive : item_hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
                 RenderFrame(item_aabb.Min, item_aabb.Max, col, false);
             }
 
@@ -5269,7 +5269,7 @@ void ImGui::Columns(int columns_count, const char* id, bool border)
             ButtonBehaviour(column_aabb, column_id, &hovered, &held, true);
 
             // Draw before resize so our items positioning are in sync with the line being drawn
-            const ImU32 col = window->Color(held ? ImGuiCol_ColumnActive : hovered ? ImGuiCol_ColumnHovered : ImGuiCol_Column);
+            const Imui32 col = window->Color(held ? ImGuiCol_ColumnActive : hovered ? ImGuiCol_ColumnHovered : ImGuiCol_Column);
             const float xi = (float)(int)x;
             window->DrawList->AddLine(ImVec2(xi, y1), ImVec2(xi, y2), col);
 
@@ -5437,7 +5437,7 @@ void ImDrawList::ReserveVertices(unsigned int vtx_count)
     }
 }
 
-void ImDrawList::AddVtx(const ImVec2& pos, ImU32 col)
+void ImDrawList::AddVtx(const ImVec2& pos, Imui32 col)
 {
     vtx_write->pos = pos;
     vtx_write->col = col;
@@ -5445,7 +5445,7 @@ void ImDrawList::AddVtx(const ImVec2& pos, ImU32 col)
     vtx_write++;
 }
 
-void ImDrawList::AddVtxLine(const ImVec2& a, const ImVec2& b, ImU32 col)
+void ImDrawList::AddVtxLine(const ImVec2& a, const ImVec2& b, Imui32 col)
 {
     const float offset = GImGui.IO.PixelCenterOffset;
     const ImVec2 hn = (b - a) * (0.50f / ImLength(b - a));     // half normal
@@ -5461,7 +5461,7 @@ void ImDrawList::AddVtxLine(const ImVec2& a, const ImVec2& b, ImU32 col)
     AddVtx(a + hp1, col);
 }
 
-void ImDrawList::AddLine(const ImVec2& a, const ImVec2& b, ImU32 col)
+void ImDrawList::AddLine(const ImVec2& a, const ImVec2& b, Imui32 col)
 {
     if ((col >> 24) == 0)
         return;
@@ -5470,7 +5470,7 @@ void ImDrawList::AddLine(const ImVec2& a, const ImVec2& b, ImU32 col)
     AddVtxLine(a, b, col);
 }
 
-void ImDrawList::AddArc(const ImVec2& center, float rad, ImU32 col, int a_min, int a_max, bool tris, const ImVec2& third_point_offset)
+void ImDrawList::AddArc(const ImVec2& center, float rad, Imui32 col, int a_min, int a_max, bool tris, const ImVec2& third_point_offset)
 {
     if ((col >> 24) == 0)
         return;
@@ -5506,7 +5506,7 @@ void ImDrawList::AddArc(const ImVec2& center, float rad, ImU32 col, int a_min, i
     }
 }
 
-void ImDrawList::AddRect(const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners)
+void ImDrawList::AddRect(const ImVec2& a, const ImVec2& b, Imui32 col, float rounding, int rounding_corners)
 {
     if ((col >> 24) == 0)
         return;
@@ -5538,7 +5538,7 @@ void ImDrawList::AddRect(const ImVec2& a, const ImVec2& b, ImU32 col, float roun
     }
 }
 
-void ImDrawList::AddRectFilled(const ImVec2& a, const ImVec2& b, ImU32 col, float rounding, int rounding_corners)
+void ImDrawList::AddRectFilled(const ImVec2& a, const ImVec2& b, Imui32 col, float rounding, int rounding_corners)
 {
     if ((col >> 24) == 0)
         return;
@@ -5593,7 +5593,7 @@ void ImDrawList::AddRectFilled(const ImVec2& a, const ImVec2& b, ImU32 col, floa
     }
 }
 
-void ImDrawList::AddTriangleFilled(const ImVec2& a, const ImVec2& b, const ImVec2& c, ImU32 col)
+void ImDrawList::AddTriangleFilled(const ImVec2& a, const ImVec2& b, const ImVec2& c, Imui32 col)
 {
     if ((col >> 24) == 0)
         return;
@@ -5606,7 +5606,7 @@ void ImDrawList::AddTriangleFilled(const ImVec2& a, const ImVec2& b, const ImVec
     AddVtx(c + offset, col);
 }
 
-void ImDrawList::AddCircle(const ImVec2& centre, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddCircle(const ImVec2& centre, float radius, Imui32 col, int num_segments)
 {
     if ((col >> 24) == 0)
         return;
@@ -5624,7 +5624,7 @@ void ImDrawList::AddCircle(const ImVec2& centre, float radius, ImU32 col, int nu
     }
 }
 
-void ImDrawList::AddCircleFilled(const ImVec2& centre, float radius, ImU32 col, int num_segments)
+void ImDrawList::AddCircleFilled(const ImVec2& centre, float radius, Imui32 col, int num_segments)
 {
     if ((col >> 24) == 0)
         return;
@@ -5644,7 +5644,7 @@ void ImDrawList::AddCircleFilled(const ImVec2& centre, float radius, ImU32 col, 
     }
 }
 
-void ImDrawList::AddText(ImFont font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end, float wrap_width)
+void ImDrawList::AddText(ImFont font, float font_size, const ImVec2& pos, Imui32 col, const char* text_begin, const char* text_end, float wrap_width)
 {
     if ((col >> 24) == 0)
         return;
@@ -5754,9 +5754,9 @@ bool    ImBitmapFont::LoadFromMemory(const void* data, size_t data_size)
     {
         const unsigned char block_type = *(unsigned char*)p;
         p += sizeof(unsigned char);
-        ImU32 block_size;   // use memcpy to read 4-byte because they may be unaligned. This seems to break when compiling for Emscripten.
-        memcpy(&block_size, p, sizeof(ImU32));
-        p += sizeof(ImU32);
+        Imui32 block_size;   // use memcpy to read 4-byte because they may be unaligned. This seems to break when compiling for Emscripten.
+        memcpy(&block_size, p, sizeof(Imui32));
+        p += sizeof(Imui32);
 
         switch (block_type)
         {
@@ -5792,7 +5792,7 @@ bool    ImBitmapFont::LoadFromMemory(const void* data, size_t data_size)
 
 void ImBitmapFont::BuildLookupTable()
 {
-    ImU32 max_c = 0;
+    Imui32 max_c = 0;
     for (size_t i = 0; i != GlyphsCount; i++)
         if (max_c < Glyphs[i].Id)
             max_c = Glyphs[i].Id;
@@ -6225,7 +6225,7 @@ ImVec2 ImBitmapFont::CalcTextSizeW(float size, float max_width, const ImWchar* t
     return text_size;
 }
 
-void ImBitmapFont::RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& clip_rect_ref, const char* text_begin, const char* text_end, ImDrawVert*& out_vertices, float wrap_width) const
+void ImBitmapFont::RenderText(float size, ImVec2 pos, Imui32 col, const ImVec4& clip_rect_ref, const char* text_begin, const char* text_end, ImDrawVert*& out_vertices, float wrap_width) const
 {
     if (!text_end)
         text_end = text_begin + strlen(text_begin);

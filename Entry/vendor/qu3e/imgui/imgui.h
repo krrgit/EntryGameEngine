@@ -29,9 +29,9 @@ struct ImGuiWindow;
 #define IMGUI_API
 #endif
 
-typedef unsigned int ImU32;
+typedef unsigned int Imui32;
 typedef unsigned short ImWchar;
-typedef ImU32 ImGuiID;
+typedef Imui32 ImGuiID;
 typedef int ImGuiCol;               // enum ImGuiCol_
 typedef int ImGuiStyleVar;          // enum ImGuiStyleVar_
 typedef int ImGuiKey;               // enum ImGuiKey_
@@ -593,16 +593,16 @@ struct ImGuiTextBuffer
 // Declare your own storage if you want to manipulate the open/close state of a particular sub-tree in your interface.
 struct ImGuiStorage
 {
-    struct Pair { ImU32 key; int val; };
+    struct Pair { Imui32 key; int val; };
     ImVector<Pair>  Data;
 
     IMGUI_API void    Clear();
-    IMGUI_API int     GetInt(ImU32 key, int default_val = 0);
-    IMGUI_API void    SetInt(ImU32 key, int val);
+    IMGUI_API int     GetInt(Imui32 key, int default_val = 0);
+    IMGUI_API void    SetInt(Imui32 key, int val);
     IMGUI_API void    SetAllInt(int val);
 
-    IMGUI_API int*    Find(ImU32 key);
-    IMGUI_API void    Insert(ImU32 key, int val);
+    IMGUI_API int*    Find(Imui32 key);
+    IMGUI_API void    Insert(Imui32 key, int val);
 };
 
 // Shared state of InputText(), passed to callback when a ImGuiInputTextFlags_Callback* flag is used.
@@ -640,11 +640,11 @@ struct ImDrawVert
 {
     ImVec2  pos;
     ImVec2  uv;
-    ImU32   col;
+    Imui32   col;
 };
 #else
 // You can change the vertex format layout by defining IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT.
-// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes), but you can re-order them or add other fields as needed to simplify integration in your engine.
+// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), Imui32 col (4 bytes), but you can re-order them or add other fields as needed to simplify integration in your engine.
 // The type has to be described by the #define (you can either declare the struct or use a typedef)
 IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT;
 #endif
@@ -671,18 +671,18 @@ struct ImDrawList
     IMGUI_API void  PushClipRect(const ImVec4& clip_rect);
     IMGUI_API void  PopClipRect();
     IMGUI_API void  ReserveVertices(unsigned int vtx_count);
-    IMGUI_API void  AddVtx(const ImVec2& pos, ImU32 col);
-    IMGUI_API void  AddVtxLine(const ImVec2& a, const ImVec2& b, ImU32 col);
+    IMGUI_API void  AddVtx(const ImVec2& pos, Imui32 col);
+    IMGUI_API void  AddVtxLine(const ImVec2& a, const ImVec2& b, Imui32 col);
 
     // Primitives   
-    IMGUI_API void  AddLine(const ImVec2& a, const ImVec2& b, ImU32 col);
-    IMGUI_API void  AddRect(const ImVec2& a, const ImVec2& b, ImU32 col, float rounding = 0.0f, int rounding_corners=0x0F);
-    IMGUI_API void  AddRectFilled(const ImVec2& a, const ImVec2& b, ImU32 col, float rounding = 0.0f, int rounding_corners=0x0F);
-    IMGUI_API void  AddTriangleFilled(const ImVec2& a, const ImVec2& b, const ImVec2& c, ImU32 col);
-    IMGUI_API void  AddCircle(const ImVec2& centre, float radius, ImU32 col, int num_segments = 12);
-    IMGUI_API void  AddCircleFilled(const ImVec2& centre, float radius, ImU32 col, int num_segments = 12);
-    IMGUI_API void  AddArc(const ImVec2& center, float rad, ImU32 col, int a_min, int a_max, bool tris = false, const ImVec2& third_point_offset = ImVec2(0,0));
-    IMGUI_API void  AddText(ImFont font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL, float wrap_width = 0.0f);
+    IMGUI_API void  AddLine(const ImVec2& a, const ImVec2& b, Imui32 col);
+    IMGUI_API void  AddRect(const ImVec2& a, const ImVec2& b, Imui32 col, float rounding = 0.0f, int rounding_corners=0x0F);
+    IMGUI_API void  AddRectFilled(const ImVec2& a, const ImVec2& b, Imui32 col, float rounding = 0.0f, int rounding_corners=0x0F);
+    IMGUI_API void  AddTriangleFilled(const ImVec2& a, const ImVec2& b, const ImVec2& c, Imui32 col);
+    IMGUI_API void  AddCircle(const ImVec2& centre, float radius, Imui32 col, int num_segments = 12);
+    IMGUI_API void  AddCircleFilled(const ImVec2& centre, float radius, Imui32 col, int num_segments = 12);
+    IMGUI_API void  AddArc(const ImVec2& center, float rad, Imui32 col, int a_min, int a_max, bool tris = false, const ImVec2& third_point_offset = ImVec2(0,0));
+    IMGUI_API void  AddText(ImFont font, float font_size, const ImVec2& pos, Imui32 col, const char* text_begin, const char* text_end = NULL, float wrap_width = 0.0f);
 };
 
 // Optional bitmap font data loader & renderer into vertices
@@ -766,7 +766,7 @@ struct ImBitmapFont
     // 'wrap_width' enable automatic word-wrapping across multiple lines to fit into given width. 0.0f to disable.
     IMGUI_API ImVec2               CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
     IMGUI_API ImVec2               CalcTextSizeW(float size, float max_width, const ImWchar* text_begin, const ImWchar* text_end, const ImWchar** remaining = NULL) const;                 // wchar
-    IMGUI_API void                 RenderText(float size, ImVec2 pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, ImDrawVert*& out_vertices, float wrap_width = 0.0f) const;
+    IMGUI_API void                 RenderText(float size, ImVec2 pos, Imui32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, ImDrawVert*& out_vertices, float wrap_width = 0.0f) const;
 
 private:
     IMGUI_API const char*          CalcWordWrapPositionA(float scale, const char* text, const char* text_end, float wrap_width, const FntGlyph* fallback_glyph) const;

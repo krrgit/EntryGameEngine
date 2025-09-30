@@ -188,7 +188,7 @@ float sampleDALutLinear(int lightIndex, float input)
 	int val  = raw & 0xFFF;       // low 12 bits
     int slope = (raw >> 12) & 0xFFF;
 
-    return fIdx < 255 ?(float(val) + float(1.0/slope) * t) / 2048.0 : 0.0;
+    return fIdx < 255 ?(float(val) + float(1.0/slope) * t) / 4095.0 : 0.0;
 }
 
 float GetInput(int inputID) 

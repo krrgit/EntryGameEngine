@@ -482,8 +482,8 @@ void InitImGui( )
 int InitApp( int argc, char** argv )
 {
 	// Starting width / height of the window
-	const u32 kWindowWidth = 1000;
-	const u32 kWindowHeight = 600;
+	const ui32 kWindowWidth = 1000;
+	const ui32 kWindowHeight = 600;
 
 	// Initialize GLUT
 	glutInit( &argc, argv );

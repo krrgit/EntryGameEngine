@@ -3,10 +3,10 @@ LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
   Specular0:
     LUTID: 0
-    LUTFunction: 0
-    LUTInput: 2
+    LUTFunction: 1
+    LUTInput: 0
     Negative: false
-    Pow: 30
+    Pow: 100
     SpotlightCutoff: 90
     toonShininess: 0.5
   Specular1:
