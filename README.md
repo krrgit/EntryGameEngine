@@ -51,17 +51,17 @@ Sandbox()
 [x] Use assigned materials of objects when rendering with lights.
 [ ] Implement Shadows. (Realtime(?), Projection, faded circle fake shadow thing)
 [-] Shaders for certain art styles (Custom Luts, Custom TexEnvs per material added) (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
-[ ] Implement Vertex Lighting (Vertex Painting + Vertex Lights)
 [x] "Bind" shaders to materials.
 [ ] Implement Effects (built-in to the GPU.)
 [ ] Implement Animations.
+[ ] Implement Vertex Lighting (Vertex Painting + Vertex Lights)
 [ ] (Refactor for Meshes) Simple Batch Rendering (works for quads/cubes only (useless.))
 [ ] Implement Texture Generation.
 
 ## Game Systems (the big ones)
 [x] Entity Component System (Custom ECS system)
 [x] Scene Management System
-[ ] Physics Engine + Collision System/Components (Bullet? Newton Dynamics? PhysX? Jolt?)
+[x] Physics Engine + Collision System/Components (qu3e, switch later) (MuJoCo? Tiny Differentiable Simulator?)
 [ ] Figure out how the hell to handle/arcitect using the bottom screen (has own scene? camera inside top screen's scene? treat as UI Canvas? other??)
 [-] Native Scripting/C# Scripting (C# not implemented)
 [ ] Asset Management System
