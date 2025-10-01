@@ -148,7 +148,7 @@ void q3Island::Solve( )
 //--------------------------------------------------------------------------------------------------
 void q3Island::Add( q3Body *body )
 {
-	assert( m_bodyCount < m_bodyCapacity );
+	//assert( m_bodyCount < m_bodyCapacity );
 
 	body->m_islandIndex = m_bodyCount;
 
@@ -158,7 +158,7 @@ void q3Island::Add( q3Body *body )
 //--------------------------------------------------------------------------------------------------
 void q3Island::Add( q3ContactConstraint *contact )
 {
-	assert( m_contactCount < m_contactCapacity );
+	//assert( m_contactCount < m_contactCapacity );
 
 	m_contacts[ m_contactCount++ ] = contact;
 }

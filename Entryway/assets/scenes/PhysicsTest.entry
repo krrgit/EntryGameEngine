@@ -1,4 +1,4 @@
-Scene: DATest
+Scene: PhysicsTest
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
   Specular0:
@@ -85,12 +85,12 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
         Specular1: [0, 0, 0]
-        Emission: [1, 0, 0]
+        Emission: [0, 0, 1]
         TexEnv0:
           Channels: 4
           BlendMode: 8
@@ -199,7 +199,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -295,12 +295,12 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
         Specular1: [0, 0, 0]
-        Emission: [1, 1, 0]
+        Emission: [0, 1, 1]
         TexEnv0:
           Channels: 4
           BlendMode: 8
@@ -391,7 +391,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -487,12 +487,12 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
         Specular1: [0, 0, 0]
-        Emission: [0, 1, 1]
+        Emission: [1, 1, 0]
         TexEnv0:
           Channels: 4
           BlendMode: 8
@@ -583,12 +583,12 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: DefaultMaterial
+        Name: Default Material
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
         Specular1: [0, 0, 0]
-        Emission: [0, 0, 1]
+        Emission: [1, 0, 0]
         TexEnv0:
           Channels: 4
           BlendMode: 8
@@ -741,8 +741,8 @@ Entities:
       Tag: Plane
     TransformComponent:
       Position: [0, 10, 10]
-      Rotation: [-1.57079637, 0, 0]
-      Scale: [1, 0.999994934, 0.999994934]
+      Rotation: [-1.57062173, 0, 0]
+      Scale: [1, 1, 1.00999999]
     MeshRendererComponent:
       Model: assets/models/plane.obj
       MeshID: 0

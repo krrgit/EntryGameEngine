@@ -153,7 +153,7 @@ float sampleLUTLinear(int lutId, float input, bool negative)
 	float val = unpacked.x;
 	float slope = unpacked.y;
 	int raw_denom = fetchLUT(lutId, 255);
-	float denom = unpackLUT(raw_denom).x;
+	float denom = negative ? 2048.0 : 4095.0;
 	
 	return (val + slope * t) / denom;
 }

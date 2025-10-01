@@ -304,7 +304,7 @@ namespace Entry {
 
 		// Physics
 		{
-			//m_PhysicsWorld->Step();
+			m_PhysicsWorld->Step();
 			
 			// Retrieve transform form qu3e
 			auto view = m_Registry.view<RigidbodyComponent>();

@@ -114,15 +114,42 @@ namespace Entry
 			materials.push_back(Material::Create(props));
 		}
 
+        // Create default material if none exists
+        if (obj_mesh->material_count == 0)
+        {
+            MaterialProps props = {
+                {	// Default Material Values
+                    0,0,0,
+                    0.8f, 0.8f, 0.8f,
+                    0.5f, 0.5f, 0.5f,
+                    0,0,0,
+                    0,0,0
+                },
+                "Default Material",
+                0,
+                Renderer3D::GetDefaultShader()
+            };
+            Ref<Material> mtl = Material::Create(props);
+            TexEnvProps teProps;
+            teProps.Channels = TexEnvChannels::ET_RGBA;
+            teProps.Source1 = TexEnvSource::ET_GPU_FRAGMENT_PRIMARY_COLOR;
+            teProps.Source2 = TexEnvSource::ET_GPU_FRAGMENT_SECONDARY_COLOR;
+            teProps.Source3 = TexEnvSource::ET_GPU_PRIMARY_COLOR;
+            mtl->SetTexEnvProps(teProps, 0);
+
+            materials.push_back(Material::Create(props));
+        }
+
 		// Create meshes from objects (-o)
 		for (uint32_t o = 0; o < obj_mesh->object_count; ++o)
 		{
 			auto currentObj = obj_mesh->objects[o];
+            std::string name = currentObj.name ? currentObj.name : "Mesh";
 			uint32_t nextIndexOffset = o + 1 >= obj_mesh->object_count ? obj_mesh->index_count : obj_mesh->objects[o + 1].index_offset;
 			uint32_t indexCount = nextIndexOffset - currentObj.index_offset;
 
 			Mesh mesh {
-                currentObj.name,
+                name,
 				indexCount,
 				currentObj.index_offset,
                 o,

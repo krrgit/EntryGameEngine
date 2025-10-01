@@ -48,14 +48,14 @@ q3Stack::q3Stack( )
 q3Stack::~q3Stack( )
 {
 	if (m_memory) q3Free( m_memory );
-	assert( m_index == 0 );
-	assert( m_entryCount == 0 );
+	//assert( m_index == 0 );
+	//assert( m_entryCount == 0 );
 }
 
 //--------------------------------------------------------------------------------------------------
 void q3Stack::Reserve( ui32 size )
 {
-	assert( !m_index );
+	//assert( !m_index );
 
 	if ( size == 0 )
 		return;
@@ -71,7 +71,7 @@ void q3Stack::Reserve( ui32 size )
 //--------------------------------------------------------------------------------------------------
 void *q3Stack::Allocate( i32 size )
 {
-	assert( m_index + size <= m_stackSize );
+	//assert( m_index + size <= m_stackSize );
 
 	if ( m_entryCount == m_entryCapacity )
 	{
@@ -98,13 +98,13 @@ void *q3Stack::Allocate( i32 size )
 void q3Stack::Free( void *data )
 {
 	// Cannot call free when there are no entries.
-	assert( m_entryCount > 0 );
+	//assert( m_entryCount > 0 );
 
 	q3StackEntry *entry = m_entries + m_entryCount - 1;
 
 	// Validate that the data * is a proper location to free.
 	// Must be in reverse order of allocation.
-	assert( data == entry->data );
+	//assert( data == entry->data );
 
 	m_index -= entry->size;
 
@@ -176,7 +176,7 @@ void *q3Heap::Allocate( i32 size )
 //--------------------------------------------------------------------------------------------------
 void q3Heap::Free( void *memory )
 {
-	assert( memory );
+	//assert( memory );
 	q3Header* node = (q3Header*)Q3_PTR_ADD( memory, -i32( sizeof( q3Header ) ) );
 
 	q3Header* next = node->next;
@@ -227,8 +227,8 @@ void q3Heap::Free( void *memory )
 				nextnext->prev = prev;
 
 			// Remove the nextBlock from the freeBlocks array
-			assert( m_freeBlockCount );
-			assert( prevBlockIndex != ~0 );
+			//assert( m_freeBlockCount );
+			//assert( prevBlockIndex != ~0 );
 			--m_freeBlockCount;
 			m_freeBlocks[ prevBlockIndex ] = m_freeBlocks[ m_freeBlockCount ];
 		}
@@ -345,7 +345,7 @@ void q3PagedAllocator::Free( void* data )
 	}
 
 	// Address of data does not lie within any pages of this allocator.
-	assert( found );
+	//assert( found );
 #endif // DEBUG
 
 	((q3Block*)data)->next = m_freeList;

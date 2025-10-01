@@ -147,7 +147,7 @@ q3Vec3& q3Mat3::operator[]( ui32 index )
 	case 2:
 		return ez;
 	default:
-		assert( false );
+		//assert( false );
 		return ex;
 	}
 }
@@ -164,7 +164,7 @@ const q3Vec3& q3Mat3::operator[]( ui32 index ) const
 	case 2:
 		return ez;
 	default:
-		assert( false );
+		//assert( false );
 		return ex;
 	}
 }

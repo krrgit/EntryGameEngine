@@ -78,12 +78,14 @@ void Sandbox3D::OnAttach()
 #endif
 
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/MaxLightTest.entry");
+    serializer.Deserialize("romfs:/assets/scenes/PhysicsTest.entry");
 
     m_ActiveScene->OnViewportResize(400, 240);
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     m_LightEntity = m_ActiveScene->GetLightEntity();
+
+    m_ActiveScene->OnRuntimeStart();
 }
 
 void Sandbox3D::OnDetach()

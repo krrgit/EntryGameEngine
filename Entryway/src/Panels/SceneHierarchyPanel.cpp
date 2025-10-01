@@ -488,8 +488,21 @@ namespace Entry
 				if (true) // TODO: fix switching between color and black & white
 				{
 					// Color
-					for(int i=0; i < 5; i++) 
-						ImGui::ColorEdit3(matValueLabels[i].c_str(), matValues[i]);
+					for (int i = 0; i < 5; i++) 
+					{
+						float temp[3] = { matValues[i][2],  // R <- B
+						  matValues[i][1],  // G <- G
+						  matValues[i][0] };// B <- R
+
+						if (ImGui::ColorEdit3(matValueLabels[i].c_str(), temp))
+						{
+							// copy back with swapped channels
+							matValues[i][0] = temp[2]; // B
+							matValues[i][1] = temp[1]; // G
+							matValues[i][2] = temp[0]; // R
+						}
+
+					}
 				}
 				else
 				{

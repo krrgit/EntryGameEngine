@@ -72,11 +72,11 @@ namespace Entry
 	{
 		// Bind Material Values
 		MaterialValues& values   = material->GetProps().Values;
-		m_MaterialData.ambient   = { values.Ambient[0],   values.Ambient[1],   values.Ambient[2],   1.0f };
-		m_MaterialData.diffuse   = { values.Diffuse[0],   values.Diffuse[1],   values.Diffuse[2],   1.0f };
-		m_MaterialData.specular0 = { values.Specular0[0], values.Specular0[1], values.Specular0[2], 1.0f };
-		m_MaterialData.specular1 = { values.Specular1[0], values.Specular1[1], values.Specular1[2], 1.0f };
-		m_MaterialData.emissive  = { values.Emission[0],  values.Emission[1],  values.Emission[2],  1.0f };
+		m_MaterialData.ambient   = { values.Ambient[2],   values.Ambient[1],   values.Ambient[0],   1.0f };
+		m_MaterialData.diffuse   = { values.Diffuse[2],   values.Diffuse[1],   values.Diffuse[0],   1.0f };
+		m_MaterialData.specular0 = { values.Specular0[2], values.Specular0[1], values.Specular0[0], 1.0f };
+		m_MaterialData.specular1 = { values.Specular1[2], values.Specular1[1], values.Specular1[0], 1.0f };
+		m_MaterialData.emissive  = { values.Emission[2],  values.Emission[1],  values.Emission[0],  1.0f };
 
 		glBindBuffer(GL_UNIFORM_BUFFER, m_MaterialUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(UBOMaterialData), &m_MaterialData);

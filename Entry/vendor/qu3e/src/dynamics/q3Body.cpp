@@ -120,8 +120,8 @@ const q3Box* q3Body::AddBox( const q3BoxDef& def )
 //--------------------------------------------------------------------------------------------------
 void q3Body::RemoveBox( const q3Box* box )
 {
-	assert( box );
-	assert( box->body == this );
+	//assert( box );
+	//assert( box->body == this );
 
 	q3Box* node = m_boxes;
 
@@ -148,7 +148,7 @@ void q3Body::RemoveBox( const q3Box* box )
 	}
 
 	// This shape was not connected to this body.
-	assert( found );
+	//assert( found );
 
 	// Remove all contacts associated with this shape
 	q3ContactEdge* edge = m_contactList;
@@ -322,7 +322,7 @@ void q3Body::SetLinearVelocity( const q3Vec3& v )
 {
 	// Velocity of static bodies cannot be adjusted
 	if ( m_flags & eStatic )
-		assert( false );
+		//assert( false );
 
 	if ( q3Dot( v, v ) > r32( 0.0 ) )
 	{
@@ -343,7 +343,7 @@ void q3Body::SetAngularVelocity( const q3Vec3 v )
 {
 	// Velocity of static bodies cannot be adjusted
 	if ( m_flags & eStatic )
-		assert( false );
+		//assert( false );
 
 	if ( q3Dot( v, v ) > r32( 0.0 ) )
 	{

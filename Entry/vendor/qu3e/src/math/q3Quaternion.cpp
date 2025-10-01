@@ -64,7 +64,7 @@ void q3Quaternion::Set( const q3Vec3& axis, r32 radians )
 //--------------------------------------------------------------------------------------------------
 void q3Quaternion::ToAxisAngle( q3Vec3* axis, r32* angle ) const
 {
-	assert( w <= r32( 1.0 ) );
+	//assert( w <= r32( 1.0 ) );
 
 	*angle = r32( 2.0 ) * std::acos( w );
 

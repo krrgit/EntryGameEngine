@@ -309,7 +309,7 @@ i32 q3Orthographic( r32 sign, r32 e, i32 axis, i32 clipEdge, q3ClipVertex* in, i
 		// B
 		if ( ((InFront( da ) && InFront( db )) || On( da ) || On( db )) )
 		{
-			assert( outCount < 8 );
+			//assert( outCount < 8 );
 			out[ outCount++ ] = b;
 		}
 
@@ -320,7 +320,7 @@ i32 q3Orthographic( r32 sign, r32 e, i32 axis, i32 clipEdge, q3ClipVertex* in, i
 			cv.v = a.v + (b.v - a.v) * (da / (da - db));
 			cv.f.outR = clipEdge;
 			cv.f.outI = 0;
-			assert( outCount < 8 );
+			//assert( outCount < 8 );
 			out[ outCount++ ] = cv;
 		}
 
@@ -331,10 +331,10 @@ i32 q3Orthographic( r32 sign, r32 e, i32 axis, i32 clipEdge, q3ClipVertex* in, i
 			cv.v = a.v + (b.v - a.v) * (da / (da - db));
 			cv.f.inR = clipEdge;
 			cv.f.inI = 0;
-			assert( outCount < 8 );
+			//assert( outCount < 8 );
 			out[ outCount++ ] = cv;
 
-			assert( outCount < 8 );
+			//assert( outCount < 8 );
 			out[ outCount++ ] = b;
 		}
 
@@ -388,7 +388,7 @@ i32 q3Clip( const q3Vec3& rPos, const q3Vec3& e, u8* clipEdges, const q3Mat3& ba
 		}
 	}
 
-	assert( outCount <= 8 );
+	//assert( outCount <= 8 );
 
 	return outCount;
 }

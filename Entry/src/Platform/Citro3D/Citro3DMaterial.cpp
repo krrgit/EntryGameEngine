@@ -11,7 +11,7 @@ namespace Entry {
 	void Citro3DMaterial::Bind()
 	{
 		//BindTexEnvs();
-		m_Props.DiffuseMap->Bind();
+		if (m_Props.DiffuseMap) m_Props.DiffuseMap->Bind();
 	}
 
 	//void Citro3DMaterial::BindTexEnvs()
