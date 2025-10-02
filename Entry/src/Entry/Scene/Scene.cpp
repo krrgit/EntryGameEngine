@@ -257,6 +257,10 @@ namespace Entry {
 		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		glm::mat4 viewMatrix;
+
+		SceneCamera* bottomCamera = nullptr;
+		glm::mat4 bottomCameraTransform;
+		glm::mat4 bottomViewMatrix;
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view)
@@ -266,18 +270,28 @@ namespace Entry {
 
 				if (camera.Primary)
 				{
-					mainCamera = &camera.Camera;
-					cameraTransform = transform.GetTransform();
-					viewMatrix = glm::inverse(cameraTransform);
-					break;
+					if (camera.RenderTarget == ET_GFX_SCREEN::GFX_TOP)
+					{
+						mainCamera = &camera.Camera;
+						cameraTransform = transform.GetTransform();
+						viewMatrix = glm::inverse(cameraTransform);
+						//break;
+					}
+					else if (camera.RenderTarget == ET_GFX_SCREEN::GFX_BOTTOM)
+					{
+						bottomCamera = &camera.Camera;
+						bottomCameraTransform = transform.GetTransform();
+						bottomViewMatrix = glm::inverse(bottomCameraTransform);
+					}
 				}
 			}
 		}
 
-		UpdateLights(viewMatrix);
 
 		if (mainCamera)
 		{
+			UpdateLights(viewMatrix);
+
 			mainCamera->GetFramebuffer()->Bind();
 			RenderCommand::SetClearColor(0x68B0D8FF);
 			RenderCommand::Clear();
@@ -295,6 +309,29 @@ namespace Entry {
 
 			Renderer3D::EndScene();
 			mainCamera->GetFramebuffer()->Unbind();
+		}
+
+		if (bottomCamera)
+		{
+			UpdateLights(bottomViewMatrix);
+
+			bottomCamera->GetFramebuffer()->Bind();
+			RenderCommand::SetClearColor(0x68B0D8FF);
+			RenderCommand::Clear();
+
+			Renderer3D::BeginScene(bottomCamera->GetProjection(screenSide), bottomCameraTransform);
+
+			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
+			{
+				auto transform = m_Registry.get<TransformComponent>(entity);
+				auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
+
+				if (!meshRenderer.model) continue;
+				Renderer3D::DrawMesh(meshRenderer, transform.GetTransform());
+			}
+
+			Renderer3D::EndScene();
+			bottomCamera->GetFramebuffer()->Unbind();
 		}
 	}
 
@@ -358,49 +395,83 @@ namespace Entry {
 		// Group: ideal for multiple components
 		
 		// Render Meshes
-		glm::mat4 viewMatrix(1.0f);
 		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
+		glm::mat4 viewMatrix;
+
+		SceneCamera* touchCamera = nullptr;
+		glm::mat4 touchCameraTransform;
+		glm::mat4 touchViewMatrix;
+
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view) 
+			for (auto entity : view)
 			{
 				auto& transform = view.get<TransformComponent>(entity);
 				auto& camera = view.get<CameraComponent>(entity);
 
-				if (camera.Primary) 
+				if (camera.Primary && camera.RenderTarget == ET_GFX_SCREEN::GFX_TOP)
 				{
 					mainCamera = &camera.Camera;
 					cameraTransform = transform.GetTransform();
-					viewMatrix = glm::inverse(transform.GetTransform());
-					break;
+					viewMatrix = glm::inverse(cameraTransform);
+					//break;
+				}
+				if (camera.Primary && camera.RenderTarget == ET_GFX_SCREEN::GFX_BOTTOM)
+				{
+					touchCamera = &camera.Camera;
+					touchCameraTransform = transform.GetTransform();
+					touchViewMatrix = glm::inverse(touchCameraTransform);
+					//break;
 				}
 			}
 		}
 
-		// Update Lights
-		UpdateLights(viewMatrix);
 
-		if (mainCamera) 
+		if (mainCamera)
 		{
+			UpdateLights(viewMatrix);
+
 			mainCamera->GetFramebuffer()->Bind();
 			RenderCommand::SetClearColor(0x68B0D8FF);
 			RenderCommand::Clear();
 
 			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
 
-			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
+			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
+			{
 				auto transform = m_Registry.get<TransformComponent>(entity);
 				auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
 
-				if (!meshRenderer.model) {
-					continue; 
-				}
+				if (!meshRenderer.model) continue;
 				Renderer3D::DrawMesh(meshRenderer, transform.GetTransform());
 			}
 
 			Renderer3D::EndScene();
 			mainCamera->GetFramebuffer()->Unbind();
+		}
+
+		if (touchCamera)
+		{
+			UpdateLights(touchViewMatrix);
+
+			touchCamera->GetFramebuffer()->Bind();
+			RenderCommand::SetClearColor(0x68B0D8FF);
+			RenderCommand::Clear();
+
+			Renderer3D::BeginScene(touchCamera->GetProjection(screenSide), touchCameraTransform);
+
+			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
+			{
+				auto transform = m_Registry.get<TransformComponent>(entity);
+				auto& meshRenderer = m_Registry.get<MeshRendererComponent>(entity);
+
+				if (!meshRenderer.model) continue;
+				Renderer3D::DrawMesh(meshRenderer, transform.GetTransform());
+			}
+
+			Renderer3D::EndScene();
+			touchCamera->GetFramebuffer()->Unbind();
 		}
 	}
 
@@ -444,14 +515,16 @@ namespace Entry {
 		return newEntity;
 	}
 
-	Entity Scene::GetPrimaryCameraEntity()
+	Entity Scene::GetPrimaryCameraEntity(ET_GFX_SCREEN screen)
 	{
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
 			const auto& camera = view.get<CameraComponent>(entity);
-			if (camera.Primary)
+			if (camera.Primary && camera.RenderTarget == screen)
+			{
 				return Entity { entity, this };
+			}
 		}
 
 		return {0, this};

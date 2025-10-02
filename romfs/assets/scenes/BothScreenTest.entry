@@ -1,4 +1,4 @@
-Scene: PhysicsTest
+Scene: BothScreenTest
 LightEnvironment:
   SceneAmbientColor: [0, 0, 0]
   Specular0:
@@ -85,7 +85,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -187,6 +187,7 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+      RenderTarget: 0
   - Entity: 3027687680836517763
     TagComponent:
       Tag: Entity
@@ -199,7 +200,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -295,7 +296,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -391,7 +392,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -487,7 +488,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -583,7 +584,7 @@ Entities:
       MeshID: 0
       MaterialID: 0
       InstancedMaterial:
-        Name: Default Material
+        Name: DefaultMaterial
         Ambient: [0, 0, 0]
         Diffuse: [0.600000024, 0.600000024, 0.600000024]
         Specular0: [0, 0, 0]
@@ -742,7 +743,7 @@ Entities:
     TransformComponent:
       Position: [0, 10, 10]
       Rotation: [-1.57062173, 0, 0]
-      Scale: [1, 1, 1.00999999]
+      Scale: [1, 0.999994934, 1.00999999]
     MeshRendererComponent:
       Model: assets/models/plane.obj
       MeshID: 0
@@ -759,3 +760,22 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+  - Entity: 16673684311576917627
+    TagComponent:
+      Tag: BottomCamera
+    TransformComponent:
+      Position: [0, 2, -5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      RenderTarget: 1

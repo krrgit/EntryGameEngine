@@ -3,7 +3,22 @@
 #include "Entry/Core/Core.h"
 #include <vector>
 
-namespace Entry {
+namespace Entry 
+{
+
+	typedef enum
+	{
+		GFX_TOP = 0,    ///< Top screen
+		GFX_BOTTOM = 1,
+		GFX_NONE = 2,
+	} ET_GFX_SCREEN;
+
+	typedef enum
+	{
+		GFX_LEFT = 0, ///< Left eye framebuffer
+		GFX_RIGHT = 1, ///< Right eye framebuffer
+	} ET_GFX_3D_SIDE;
+
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
@@ -43,6 +58,8 @@ namespace Entry {
 		uint32_t Width, Height;
 		FramebufferAttachmentSpecification Attachments;
 		int Samples = 1;
+		ET_GFX_SCREEN Screen = ET_GFX_SCREEN::GFX_TOP;
+		ET_GFX_3D_SIDE Side = ET_GFX_3D_SIDE::GFX_LEFT;
 
 		bool SwapChainTarget = false;
 	};

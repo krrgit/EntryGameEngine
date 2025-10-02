@@ -29,12 +29,12 @@ namespace Entry {
     {
         WindowProps mainEditorWindow("Entryway", 1600, 900, 0, false, false);
         mainEditorWindow.Title = "Entryway";
-        WindowProps touchWindow(WindowProps::WINDOW_3DS_BOTTOM);
-        touchWindow.Title = "Entryway - Bottom Screen";
+        //WindowProps touchWindow(WindowProps::WINDOW_3DS_BOTTOM);
+        //touchWindow.Title = "Entryway - Bottom Screen";
 
         AppProperties appProps;
         appProps.windowProps.push_back(mainEditorWindow);
-        appProps.windowProps.push_back(touchWindow);
+        //appProps.windowProps.push_back(touchWindow);
 
         appProps.ImGuiWindow = ET_WINDOW_TOP;
 

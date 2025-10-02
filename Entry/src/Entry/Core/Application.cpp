@@ -172,7 +172,7 @@ namespace Entry
     void Application::InitDefaultAppProperties()
     {
         m_AppProps.windowProps.push_back(WindowProps(WindowProps::WINDOW_3DS_TOP));
-        m_AppProps.windowProps.push_back(WindowProps(WindowProps::WINDOW_3DS_BOTTOM));
+        //m_AppProps.windowProps.push_back(WindowProps(WindowProps::WINDOW_3DS_BOTTOM));
     }
 
 #ifdef ET_PLATFORM_WINDOWS

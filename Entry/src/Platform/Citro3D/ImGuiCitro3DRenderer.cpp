@@ -38,9 +38,9 @@ bool ImGui_ImplC3D_Init()
 
 	// Set render target and parameters
 	Citro3DWindow* citroWindow = static_cast<Citro3DWindow*>(&Application::Get().GetWindow());
-	bd->m_RenderTarget = citroWindow->GetRenderTarget();
-	bd->m_Width = citroWindow->GetWidth();
-	bd->m_Height = citroWindow->GetHeight();
+	bd->m_RenderTarget = citroWindow->GetRenderTarget(); // This does nothing atm (rendertargets owned by SceneCameras)
+	bd->m_Width = 320; // TODO: FIX; Bottom Screen Dimensions
+	bd->m_Height = 240;
 	
 	imgui_sw::bind_imgui_painting();
 	imgui_sw::make_style_fast();
@@ -69,8 +69,8 @@ bool ImGui_ImplC3D_NewFrame()
 void ImGui_ImplC3D_RenderDrawData() {
 	ImGui_ImplC3D_Data* bd = ImGui_ImplC3D_GetBackendData();
 
-	C3D_FrameDrawOn(bd->m_RenderTarget);
-	C2D_SceneTarget(bd->m_RenderTarget);
+	//C3D_FrameDrawOn(bd->m_RenderTarget);
+	//C2D_SceneTarget(bd->m_RenderTarget);
 
 	imgui_sw::paint_imgui(bd->m_Width, bd->m_Height, bd->sw_options);
 }

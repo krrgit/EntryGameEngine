@@ -42,7 +42,7 @@ namespace Entry
 		virtual void Shutdown();
 		void TriggerEvents();
 
-		void FrameDrawOn(gfx3dSide_t side = GFX_LEFT);
+		void FrameDrawOn(gfx3dSide_t side = gfx3dSide_t::GFX_LEFT);
 		void LayerStackOnUpdate(Timestep ts, uint16_t screenSide = 0);
 	private:
 		C3D_RenderTarget* m_RenderTarget;

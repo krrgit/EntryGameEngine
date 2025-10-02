@@ -19,11 +19,9 @@ class Sandbox3D : public Entry::Layer
     Entry::PerspectiveCameraController m_CameraController;
     bool m_ShowImGui = true;
 
-    // Temp
-    Entry::Ref<Entry::Framebuffer> m_Framebuffer; // removing this stops checkerboard from working??? T-T
-
     Entry::Ref<Entry::Scene> m_ActiveScene;
     
+    // Temp
     Entry::Entity m_ShieldEntity;
     Entry::Entity m_CameraEntity;
     Entry::Entity m_SecondCamera;

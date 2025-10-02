@@ -223,6 +223,7 @@ namespace Entry
 
 			out << YAML::Key << "Primary" << YAML::Value << cameraComponent.Primary;
 			out << YAML::Key << "FixedAspectRatio" << YAML::Value << cameraComponent.FixedAspectRatio;
+			out << YAML::Key << "RenderTarget" << YAML::Value << (int)cameraComponent.RenderTarget;
 
 			out << YAML::EndMap; // CameraComponent
 		}
@@ -422,6 +423,7 @@ namespace Entry
 				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
+					ET_PROFILE_SCOPE("Deserialize Camera Component");
 					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
 					
 					auto cameraProps = cameraComponent["Camera"];
@@ -437,6 +439,8 @@ namespace Entry
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+					cc.RenderTarget = (ET_GFX_SCREEN)cameraComponent["RenderTarget"].as<int>();
+					cc.Camera.SetRenderTarget(cc.RenderTarget);
 				}
 
 				auto meshRendererComponent = entity["MeshRendererComponent"];

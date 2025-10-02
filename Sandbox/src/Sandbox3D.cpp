@@ -2,17 +2,11 @@
 #include "imgui.h"
 #include "Entry/Core/Input.h"
 #include "Entry/Scene/Components.h"
+#include "Entry/Scene/SceneSerializer.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
-#include "Entry/Scene/SceneSerializer.h"
-
-//#include <citro3d.h>
-//static C3D_LightEnv lightEnv;
-//static C3D_Light light;
-//static C3D_LightLut lut_Phong;
-//static C3D_FVec lightVec;
 
 Sandbox3D::Sandbox3D()
     : Layer("Sandbox3D"), m_CameraController(400.0f/ 240.0f, 80.0f)
@@ -23,8 +17,6 @@ Sandbox3D::Sandbox3D()
 void Sandbox3D::OnAttach()
 {
 	ET_PROFILE_FUNCTION();
-
-    m_ActiveScene.reset(new Entry::Scene());
     
 #if 0
     auto plane = m_ActiveScene->CreateEntity("Plane");
@@ -76,11 +68,9 @@ void Sandbox3D::OnAttach()
 
     m_CameraEntity.AddComponent<Entry::NativeScriptComponent>().Bind<CameraController>();
 #endif
-
+    m_ActiveScene.reset(new Entry::Scene());
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/PhysicsTest.entry");
-
-    m_ActiveScene->OnViewportResize(400, 240);
+    serializer.Deserialize("romfs:/assets/scenes/BothScreenTest.entry");
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     m_LightEntity = m_ActiveScene->GetLightEntity();
@@ -101,16 +91,6 @@ void Sandbox3D::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
         ET_PROFILE_SCOPE("CameraController::OnUpdate");
         m_CameraController.OnUpdate(ts);
     }
-
-    //m_LightPosition.x = std::cos(m_Rotation) * 5;
-    //m_LightPosition.y = 2.0f;
-    //m_LightPosition.z = std::sin(m_Rotation) * 5;
-    // auto clip = m_CameraController.GetCamera().GetViewMatrix() * m_LightPosition;
-
-    //lightVec.x = clip.x;
-    //lightVec.y = clip.y;
-    //lightVec.z = clip.z;
-    //C3D_LightPosition(&light, &lightVec);
 
     Entry::Renderer3D::ResetStats();
     Entry::Renderer3D::SetStatsTimestep(ts);

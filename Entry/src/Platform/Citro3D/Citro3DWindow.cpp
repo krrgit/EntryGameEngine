@@ -59,15 +59,15 @@ namespace Entry
 		ET_CORE_INFO("Create screen {0} ({1},{2})", props.Title, props.Width, props.Height);
 
 		// C3D flips height and width (screen draws left to right)
-		m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+		//m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		//C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 
-		// 2nd render target for 3D
-		if (m_Data.Stereo3D)
-		{
-			m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-			C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
-		}
+		//// 2nd render target for 3D
+		//if (m_Data.Stereo3D)
+		//{
+		//	m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+		//	C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
+		//}
 	}
 
 	void Citro3DWindow::Shutdown()
@@ -155,25 +155,7 @@ namespace Entry
 			if (m_Data.Screen == GFX_TOP) 
 			{
 				C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-
-				// Reset TexEnvs
-				// Pass through vertex color
-				C3D_TexEnv* env = C3D_GetTexEnv(0);
-				C3D_TexEnvInit(env);
-				C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
-				C3D_TexEnvFunc(env, C3D_Both, GPU_ADD);
-
-				// Clear out the other texenvs
-				C3D_TexEnvInit(C3D_GetTexEnv(1));
-				C3D_TexEnvInit(C3D_GetTexEnv(2));
-				C3D_TexEnvInit(C3D_GetTexEnv(3));
-				C3D_TexEnvInit(C3D_GetTexEnv(4));
-				C3D_TexEnvInit(C3D_GetTexEnv(5));
 			}
-
-			C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
-			C3D_FrameDrawOn(m_RenderTarget);
-			C2D_SceneTarget(m_RenderTarget);
 		}
 		else if (side == GFX_RIGHT)
 		{	

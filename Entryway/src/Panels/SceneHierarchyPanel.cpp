@@ -501,7 +501,6 @@ namespace Entry
 							matValues[i][1] = temp[1]; // G
 							matValues[i][2] = temp[0]; // R
 						}
-
 					}
 				}
 				else

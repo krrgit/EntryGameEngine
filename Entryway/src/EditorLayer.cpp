@@ -112,10 +112,19 @@ namespace Entry {
     {
         if (!m_GameFramebuffer)
         {
-            auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity();
+            auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_TOP);
             if (primaryCam)
             {
                 m_GameFramebuffer = primaryCam.GetComponent<CameraComponent>().Camera.GetFramebuffer();
+            }
+        }
+
+        if (!m_TouchFramebuffer)
+        {
+            auto touchCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_BOTTOM);
+            if (touchCam)
+            {
+                m_TouchFramebuffer = touchCam.GetComponent<CameraComponent>().Camera.GetFramebuffer();
             }
         }
         ET_PROFILE_FUNCTION();
@@ -140,6 +149,18 @@ namespace Entry {
                 //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
                 m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
                 m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+            }
+        }
+
+        if (m_TouchFramebuffer)
+        {
+            FramebufferSpecification touchSpec = m_TouchFramebuffer->GetSpecification();
+            if (m_TouchViewportSize.x > 0.0f && m_TouchViewportSize.y > 0.0f && // zero size framebuffer is invalid 
+                (touchSpec.Width != m_TouchViewportSize.x || touchSpec.Height != m_TouchViewportSize.y))
+            {
+                //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
+                m_TouchFramebuffer->Resize((uint32_t)m_TouchViewportSize.x, (uint32_t)m_TouchViewportSize.y);
+                m_ActiveScene->OnViewportResize((uint32_t)m_TouchViewportSize.x, (uint32_t)m_TouchViewportSize.y); // TODO: fix; separate top and bottom
             }
         }
 
@@ -410,6 +431,28 @@ namespace Entry {
         }
         ImGui::End(); // Game [Top Screen] Panel
         ImGui::PopStyleVar();
+
+        {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+            ImGui::Begin("Game [Bottom Screen]"); // BEGIN: Game [Top Screen] Panel
+
+            ImVec2 touchViewportPanelSize = ImGui::GetContentRegionAvail();
+            static float cameraAspectRatio = 320.0f / 240.0f;
+            float panelAspectRatio = touchViewportPanelSize.x / touchViewportPanelSize.y;
+
+            m_TouchViewportSize = (cameraAspectRatio > panelAspectRatio) ?
+                glm::vec2{ touchViewportPanelSize.x, touchViewportPanelSize.x / cameraAspectRatio } :
+                glm::vec2{ touchViewportPanelSize.y * cameraAspectRatio, touchViewportPanelSize.y };
+
+            if (m_TouchFramebuffer)
+            {
+                void* touchTextureID = (void*)m_TouchFramebuffer->GetColorAttachmentRendererID(0);
+                ImGui::SetCursorPosX((touchViewportPanelSize.x - m_TouchViewportSize.x) * 0.5f); // Center Horizontally
+                ImGui::Image(touchTextureID, ImVec2{ m_TouchViewportSize.x, m_TouchViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1,0 });
+            }
+            ImGui::End(); // Game [Bottom Screen] Panel
+            ImGui::PopStyleVar();
+        }
         
         UI_Toolbar();
 

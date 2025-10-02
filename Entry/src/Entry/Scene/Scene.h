@@ -5,6 +5,8 @@
 #include "Entry/ECS/ecs.hpp"
 #include "Entry/Renderer/EditorCamera.h"
 #include "Entry/Renderer/LightEnvironment.h"
+#include "Entry/Renderer/Framebuffer.h"
+
 
 #define MAX_LIGHTS 8
 
@@ -36,7 +38,7 @@ namespace Entry {
 
 		Entity DuplicateEntity(Entity entity);
 
-		Entity GetPrimaryCameraEntity();
+		Entity GetPrimaryCameraEntity(ET_GFX_SCREEN screen = ET_GFX_SCREEN::GFX_TOP);
 		Entity GetLightEntity();
 
 		int GetLightCount() { return m_LightCount; }

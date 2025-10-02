@@ -99,7 +99,8 @@ namespace Entry {
 		SetDarkThemeColors();
 
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		//io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(320.0f, 240.0f); // TODO: Fix; Hardcoded for now
 		
 		// Align touch input horizontally with top screen
 		m_TouchInputShift = (io.DisplaySize.x > 320) ? TOUCH_INPUT_SHIFT : 0;

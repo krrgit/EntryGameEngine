@@ -5,19 +5,6 @@
 
 namespace Entry 
 {
-	typedef enum
-	{
-		GFX_TOP = 0,    ///< Top screen
-		GFX_BOTTOM = 1,
-		GFX_NONE = 2,
-	} ET_GFX_SCREEN;
-
-	typedef enum
-	{
-		GFX_LEFT = 0, ///< Left eye framebuffer
-		GFX_RIGHT = 1, ///< Right eye framebuffer
-	} ET_GFX_3D_SIDE;
-
 	class SceneCamera : public Camera {
 	public:
 		enum class ProjectionType { Persepective = 0, Orthographic = 1 };

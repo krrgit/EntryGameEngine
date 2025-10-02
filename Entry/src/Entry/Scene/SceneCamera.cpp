@@ -8,8 +8,7 @@
 namespace Entry {
 	SceneCamera::SceneCamera()
 	{
-		RecalculateProjection();
-		SetRenderTarget(ET_GFX_SCREEN::GFX_TOP);
+		//SetRenderTarget(ET_GFX_SCREEN::GFX_TOP);
 	}
 
 	void SceneCamera::SetRenderTarget(ET_GFX_SCREEN screen)
@@ -18,28 +17,40 @@ namespace Entry {
 		{
 		case ET_GFX_SCREEN::GFX_TOP:
 		{
+			ET_PROFILE_SCOPE("Create Top Framebuffer");
 			m_Framebuffer.reset();
 			FramebufferSpecification frameBufSpec;
 			frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 			frameBufSpec.Width = 400;
 			frameBufSpec.Height = 240;
+			frameBufSpec.Screen = ET_GFX_SCREEN::GFX_TOP;
+			frameBufSpec.Side = ET_GFX_3D_SIDE::GFX_LEFT;
 			m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+			m_AspectRatio = 400.0f / 240.0f;
+			RecalculateProjection();
 			break;
 		}
 		case ET_GFX_SCREEN::GFX_BOTTOM:
 		{
+			ET_PROFILE_SCOPE("Create Bottom Framebuffer");
 			m_Framebuffer.reset();
 			FramebufferSpecification frameBufSpec;
 			frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 			frameBufSpec.Width = 320;
 			frameBufSpec.Height = 240;
+			frameBufSpec.Screen = ET_GFX_SCREEN::GFX_BOTTOM;
+			frameBufSpec.Side = ET_GFX_3D_SIDE::GFX_LEFT;
 			m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+			m_AspectRatio = 320.0f / 240.0f;
+			RecalculateProjection();
 			break;
 		}
 		default:
 			m_Framebuffer.reset();
 			break;
 		}
+
+		ET_CORE_ASSERT("Invalid render target for framebuffer");
 	}
 
 	void SceneCamera::SetPerspective(float fov, float nearClip, float farClip)
