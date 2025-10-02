@@ -1,15 +1,32 @@
 #pragma once
 
 #include "Entry/Renderer/Camera.h"
+#include "Entry/Renderer/Framebuffer.h"
 
 namespace Entry 
 {
+	typedef enum
+	{
+		GFX_TOP = 0,    ///< Top screen
+		GFX_BOTTOM = 1,
+		GFX_NONE = 2,
+	} ET_GFX_SCREEN;
+
+	typedef enum
+	{
+		GFX_LEFT = 0, ///< Left eye framebuffer
+		GFX_RIGHT = 1, ///< Right eye framebuffer
+	} ET_GFX_3D_SIDE;
+
 	class SceneCamera : public Camera {
 	public:
 		enum class ProjectionType { Persepective = 0, Orthographic = 1 };
 	public:
 		SceneCamera();
 		virtual ~SceneCamera() = default;
+
+		Ref<Framebuffer> GetFramebuffer() { return m_Framebuffer; }
+		void SetRenderTarget(ET_GFX_SCREEN screen);
 
 		void SetPerspective(float fov, float nearClip, float farClip);
 		void SetOrthographic(float size, float nearClip, float farClip);
@@ -36,6 +53,7 @@ namespace Entry
 	private:
 		void RecalculateProjection();
 	private:
+		Ref<Framebuffer> m_Framebuffer;
 		ProjectionType m_ProjectionType = ProjectionType::Persepective;
 
 		float m_PerspectiveFOV = 80.0f;

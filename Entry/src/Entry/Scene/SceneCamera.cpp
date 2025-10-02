@@ -9,6 +9,37 @@ namespace Entry {
 	SceneCamera::SceneCamera()
 	{
 		RecalculateProjection();
+		SetRenderTarget(ET_GFX_SCREEN::GFX_TOP);
+	}
+
+	void SceneCamera::SetRenderTarget(ET_GFX_SCREEN screen)
+	{
+		switch (screen)
+		{
+		case ET_GFX_SCREEN::GFX_TOP:
+		{
+			m_Framebuffer.reset();
+			FramebufferSpecification frameBufSpec;
+			frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+			frameBufSpec.Width = 400;
+			frameBufSpec.Height = 240;
+			m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+			break;
+		}
+		case ET_GFX_SCREEN::GFX_BOTTOM:
+		{
+			m_Framebuffer.reset();
+			FramebufferSpecification frameBufSpec;
+			frameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+			frameBufSpec.Width = 320;
+			frameBufSpec.Height = 240;
+			m_Framebuffer = Entry::Framebuffer::Create(frameBufSpec);
+			break;
+		}
+		default:
+			m_Framebuffer.reset();
+			break;
+		}
 	}
 
 	void SceneCamera::SetPerspective(float fov, float nearClip, float farClip)

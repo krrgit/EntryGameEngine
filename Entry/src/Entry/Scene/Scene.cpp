@@ -5,6 +5,7 @@
 #include "ScriptableEntity.h"
 #include "Entity.h"
 #include "Entry/Renderer/Renderer3D.h"
+#include "Entry/Renderer/RenderCommand.h"
 
 #include <glm/glm.hpp>
 #include <iostream>
@@ -253,7 +254,7 @@ namespace Entry {
 	void Scene::OnUpdateEditorInGame(Timestep ts, uint16_t screenSide)
 	{
 		// Render Meshes
-		Camera* mainCamera = nullptr;
+		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		glm::mat4 viewMatrix;
 		{
@@ -277,6 +278,10 @@ namespace Entry {
 
 		if (mainCamera)
 		{
+			mainCamera->GetFramebuffer()->Bind();
+			RenderCommand::SetClearColor(0x68B0D8FF);
+			RenderCommand::Clear();
+			
 			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
 
 			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>())
@@ -289,6 +294,7 @@ namespace Entry {
 			}
 
 			Renderer3D::EndScene();
+			mainCamera->GetFramebuffer()->Unbind();
 		}
 	}
 
@@ -353,7 +359,7 @@ namespace Entry {
 		
 		// Render Meshes
 		glm::mat4 viewMatrix(1.0f);
-		Camera* mainCamera = nullptr;
+		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
@@ -377,6 +383,10 @@ namespace Entry {
 
 		if (mainCamera) 
 		{
+			mainCamera->GetFramebuffer()->Bind();
+			RenderCommand::SetClearColor(0x68B0D8FF);
+			RenderCommand::Clear();
+
 			Renderer3D::BeginScene(mainCamera->GetProjection(screenSide), cameraTransform);
 
 			for (ECS::Entity entity : m_Registry.view<TransformComponent, MeshRendererComponent>()) {
@@ -390,6 +400,7 @@ namespace Entry {
 			}
 
 			Renderer3D::EndScene();
+			mainCamera->GetFramebuffer()->Unbind();
 		}
 	}
 
@@ -443,7 +454,7 @@ namespace Entry {
 				return Entity { entity, this };
 		}
 
-		return {};
+		return {0, this};
 	}
 
 	Entity Scene::GetLightEntity()

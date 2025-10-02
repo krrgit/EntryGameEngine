@@ -691,6 +691,25 @@ namespace Entry
 					camera.SetOrthographicFarClip(farClip);
 				}
 			}
+			const char* targetTypeStrings[] = { "Top Screen", "Bottom Screen"};
+			const char* currentTargetTypeString = targetTypeStrings[(int)component.RenderTarget];
+			if (ImGui::BeginCombo("Render Target", currentTargetTypeString))
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					bool isSelected = currentTargetTypeString == targetTypeStrings[i];
+					if (ImGui::Selectable(targetTypeStrings[i], isSelected))
+					{
+						currentTargetTypeString = targetTypeStrings[i];
+						component.RenderTarget = (ET_GFX_SCREEN)i;
+						camera.SetRenderTarget((ET_GFX_SCREEN)i);
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
 		});
 
 		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](MeshRendererComponent& component)

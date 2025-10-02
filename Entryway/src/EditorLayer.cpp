@@ -37,11 +37,11 @@ namespace Entry {
         sceneFrameBufSpec.Height = 240;
         m_SceneFramebuffer = Entry::Framebuffer::Create(sceneFrameBufSpec);
 
-        FramebufferSpecification gameFrameBufSpec;
-        gameFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
-        gameFrameBufSpec.Width = 400;
-        gameFrameBufSpec.Height = 240;
-        m_GameFramebuffer = Entry::Framebuffer::Create(sceneFrameBufSpec);
+        //FramebufferSpecification gameFrameBufSpec;
+        //gameFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+        //gameFrameBufSpec.Width = 400;
+        //gameFrameBufSpec.Height = 240;
+        //m_GameFramebuffer = Entry::Framebuffer::Create(gameFrameBufSpec);
 
         m_ActiveScene.reset(new Scene());
 
@@ -110,6 +110,14 @@ namespace Entry {
 
     void EditorLayer::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     {
+        if (!m_GameFramebuffer)
+        {
+            auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity();
+            if (primaryCam)
+            {
+                m_GameFramebuffer = primaryCam.GetComponent<CameraComponent>().Camera.GetFramebuffer();
+            }
+        }
         ET_PROFILE_FUNCTION();
 
         // Resize 
@@ -123,13 +131,16 @@ namespace Entry {
             //m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         }
 
-        FramebufferSpecification gameSpec = m_GameFramebuffer->GetSpecification();
-        if (m_GameViewportSize.x > 0.0f && m_GameViewportSize.y > 0.0f && // zero size framebuffer is invalid 
-            (gameSpec.Width != m_GameViewportSize.x || gameSpec.Height != m_GameViewportSize.y))
+        if (m_GameFramebuffer)
         {
-            //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
-            m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
-            m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+            FramebufferSpecification gameSpec = m_GameFramebuffer->GetSpecification();
+            if (m_GameViewportSize.x > 0.0f && m_GameViewportSize.y > 0.0f && // zero size framebuffer is invalid 
+                (gameSpec.Width != m_GameViewportSize.x || gameSpec.Height != m_GameViewportSize.y))
+            {
+                //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
+                m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+                m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+            }
         }
 
         m_EditorCamera.OnUpdate(ts);
@@ -163,10 +174,6 @@ namespace Entry {
         }
 
         m_SceneFramebuffer->Unbind();
-
-        m_GameFramebuffer->Bind();
-        RenderCommand::SetClearColor(0x68B0D8FF);
-        RenderCommand::Clear();
         
         switch (m_SceneState)
         {
@@ -177,8 +184,6 @@ namespace Entry {
             m_ActiveScene->OnUpdateRuntime(ts, screenSide); // TODO: Fix when play button is properly setup
             break;
         }
-
-        m_GameFramebuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -397,10 +402,12 @@ namespace Entry {
             glm::vec2{ gameViewportPanelSize.x, gameViewportPanelSize.x / cameraAspectRatio } :
             glm::vec2{ gameViewportPanelSize.y * cameraAspectRatio, gameViewportPanelSize.y };
 
-
-        void* gameTextureID = (void*)m_GameFramebuffer->GetColorAttachmentRendererID(0);
-        ImGui::SetCursorPosX((gameViewportPanelSize.x - m_GameViewportSize.x) * 0.5f); // Center Horizontally
-        ImGui::Image(gameTextureID, ImVec2{ m_GameViewportSize.x, m_GameViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1,0 });
+        if (m_GameFramebuffer)
+        {
+            void* gameTextureID = (void*)m_GameFramebuffer->GetColorAttachmentRendererID(0);
+            ImGui::SetCursorPosX((gameViewportPanelSize.x - m_GameViewportSize.x) * 0.5f); // Center Horizontally
+            ImGui::Image(gameTextureID, ImVec2{ m_GameViewportSize.x, m_GameViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1,0 });
+        }
         ImGui::End(); // Game [Top Screen] Panel
         ImGui::PopStyleVar();
         
@@ -579,6 +586,7 @@ namespace Entry {
             m_EditorScenePath = path;
 
             m_ActiveScene = m_EditorScene;
+            m_GameFramebuffer.reset();
             SetPanelContexts(m_ActiveScene);
             
             // TODO: Set window title here;
