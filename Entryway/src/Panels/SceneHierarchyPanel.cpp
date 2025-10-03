@@ -586,7 +586,8 @@ namespace Entry
 		{
 			if (ImGui::MenuItem("Camera", nullptr, nullptr, !entity.HasComponent<CameraComponent>()))
 			{
-				m_SelectionContext.AddComponent<CameraComponent>();
+				auto& cc = m_SelectionContext.AddComponent<CameraComponent>();
+				cc.Camera.SetRenderTarget(ET_GFX_SCREEN::GFX_TOP);
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("Mesh Renderer", nullptr, nullptr, !entity.HasComponent<MeshRendererComponent>()))
@@ -828,11 +829,6 @@ namespace Entry
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
-
-			//if (transformComponent) {
-			//	ET_CORE_INFO("RENDER WIREFRAME BOX");
-			//	Renderer3D::DrawWireframeBox(glm::mat4(1.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(0.0f, 1.0f, 0.3f, 1.0f), entity);
-			//}
 		});
 
 		DrawMaterialProperties(entityMaterial, columnWidth);

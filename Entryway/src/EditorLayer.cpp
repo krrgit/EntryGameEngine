@@ -178,6 +178,8 @@ namespace Entry {
            m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
         }
 
+        OnOverlayRender();
+
         m_SceneFramebuffer->Unbind();
         
         switch (m_SceneState)
@@ -301,14 +303,15 @@ namespace Entry {
         ImGui::Text("Hovered: %s", hovered.c_str());
         
         ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);
-
-
         ImGui::Text("Draw Calls: %ld", stats.DrawCalls);
-
         ImGui::Text("Polygon Count: %ld", stats.PolygonCount);
         ImGui::Text("Vertices: %ld", stats.GetTotalVertexCount());
         ImGui::Text("Indices: %ld", stats.GetTotalIndexCount());
 
+        ImGui::End(); // END: Stats Panel
+
+        ImGui::Begin("Gizmos");
+        ImGui::Checkbox("Show Colliders", &m_ShowColliders);
         ImGui::End(); // END: Stats Panel
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
@@ -579,9 +582,31 @@ namespace Entry {
         }
         return false;
     }
+
+    void EditorLayer::OnOverlayRender()
+    {
+        Renderer3D::BeginScene(m_EditorCamera);
+
+        // Render Colliders
+        auto& selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if (m_ShowColliders && selectedEntity && selectedEntity.HasComponent<BoxColliderComponent>())
+        {
+            auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxColliderComponent>();
+            for (auto entity : view)
+            {
+                auto& tc = view.get<TransformComponent>(entity);
+                auto& bc = view.get<BoxColliderComponent>(entity);
+            
+                Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(0.3f, 1.0f, 0.3f, 0.9f));
+            }
+        }
+        Renderer3D::EndScene();
+    }
+
     void EditorLayer::NewScene()
     {
-        m_ActiveScene.reset(new Scene());
+        m_EditorScene.reset(new Scene());
+        m_ActiveScene = m_EditorScene;
         m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         SetPanelContexts(m_ActiveScene);

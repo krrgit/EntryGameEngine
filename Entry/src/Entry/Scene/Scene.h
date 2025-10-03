@@ -2,11 +2,11 @@
 
 #include "Entry/Core/UUID.h"
 #include "Entry/Core/Timestep.h"
-#include "Entry/ECS/ecs.hpp"
 #include "Entry/Renderer/EditorCamera.h"
 #include "Entry/Renderer/LightEnvironment.h"
 #include "Entry/Renderer/Framebuffer.h"
 
+#include "Entry/ECS/ecs.hpp"
 
 #define MAX_LIGHTS 8
 
@@ -46,6 +46,12 @@ namespace Entry {
 
 		Ref<LightEnvironment> GetLightEnvironment() { return m_LightEnv; }
 		void BindLightEnv();
+
+		template<typename... Components>
+		ECS::Registry::View<Components...> GetAllEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
 
 	private:	
 		void UpdateLights(glm::mat4& viewMatrix);

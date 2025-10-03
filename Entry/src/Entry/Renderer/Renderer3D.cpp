@@ -229,6 +229,9 @@ namespace Entry {
 
             RenderCommand::SetLineWidth(s_Data.LineWidth);
             RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+
+            s_Data.LineVertexCount = 0;
+            s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
         }
 #endif // ET_PLATFORM_WINDOWS
 
@@ -279,8 +282,8 @@ namespace Entry {
         }
 
         s_Data.Stats.PolygonCount += Model->GetPolygonCount();
-        s_Data.Stats.VertexCount += Model->GetVertexCount();
-        s_Data.Stats.IndexCount += Model->GetIndexCount();
+        s_Data.Stats.VertexCount  += Model->GetVertexCount();
+        s_Data.Stats.IndexCount   += Model->GetIndexCount();
         s_Data.Stats.DrawCalls++;
     }
 

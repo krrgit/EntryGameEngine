@@ -34,12 +34,12 @@ Sandbox()
 [x] Implement OpenGL API.
 [x] Build Standalone Windows program.
 [x] Play/Stop Scenes (scene resets after stopping).
+[x] Render collider wireframes.
+[x] Bottom screen scene editing into editor.
+[x] Render Bottom Screen to ImGui (need to figure out how to handle bottom screen.)
 [ ] Render mesh wireframe in editor camera. 
 [ ] Render editor grid in editor camera.
-[ ] Render collider wireframes.
 [ ] Options to build/clean build/clean game from editor.
-[ ] Bottom screen scene editing into editor.
-[ ] Render Bottom Screen to ImGui (need to figure out how to handle bottom screen.)
 
 ## Renderer
 [x] Simple3D Renderer (has Camera, renders cubes, quads.)
@@ -49,11 +49,11 @@ Sandbox()
 [-] Support other model files (Assimp in editor, need to create custom .bin format to load at runtime.)
 [x] Implement Fragment Lighting (Directional, Point, Spotlight)
 [x] Use assigned materials of objects when rendering with lights.
-[ ] Implement Shadows. (Realtime(?), Projection, faded circle fake shadow thing)
-[-] Shaders for certain art styles (Custom Luts, Custom TexEnvs per material added) (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
+[x] Shaders for certain art styles (Custom Luts, Custom TexEnvs per material added) (Toon, Unlit/Baked Lighting, Lit, Vertex Lit.)
 [x] "Bind" shaders to materials.
-[ ] Implement Effects (built-in to the GPU.)
 [ ] Implement Animations.
+[ ] Implement Effects (built-in to the GPU.)
+[ ] Implement Shadows. (Realtime(?), Projection, faded circle fake shadow thing) (NOTE: citro3d has no shadows?)
 [ ] Implement Vertex Lighting (Vertex Painting + Vertex Lights)
 [ ] (Refactor for Meshes) Simple Batch Rendering (works for quads/cubes only (useless.))
 [ ] Implement Texture Generation.
@@ -62,7 +62,7 @@ Sandbox()
 [x] Entity Component System (Custom ECS system)
 [x] Scene Management System
 [x] Physics Engine + Collision System/Components (qu3e, switch later) (MuJoCo? Tiny Differentiable Simulator?)
-[ ] Figure out how the hell to handle/arcitect using the bottom screen (has own scene? camera inside top screen's scene? treat as UI Canvas? other??)
+[x] Figure out how the hell to handle/arcitect using the bottom screen (has own scene? camera inside top screen's scene? treat as UI Canvas? other??)
 [-] Native Scripting/C# Scripting (C# not implemented)
 [ ] Asset Management System
 [ ] Audio

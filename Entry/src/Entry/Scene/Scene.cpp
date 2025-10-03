@@ -241,7 +241,6 @@ namespace Entry {
 
 			if (!meshRenderer.model) continue;
 			Renderer3D::DrawMeshEntity(meshRenderer, transform.GetTransform(), entity);
-			//Renderer3D::DrawWireframeBox(transform.GetTransform(), glm::vec3(0, 0.0f, 0), transform.Scale, glm::vec4(0, 1, 0.3f, 1));
 		}
 		Renderer3D::EndScene();
 	}
