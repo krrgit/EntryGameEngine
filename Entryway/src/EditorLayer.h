@@ -55,10 +55,12 @@ namespace Entry {
 
             Ref<Framebuffer> m_GameFramebuffer;
             glm::vec2 m_GameViewportSize = { 0, 0 };
+            CameraComponent* m_GameCameraComponent;
 
             Ref<Framebuffer> m_TouchFramebuffer;
             glm::vec2 m_TouchViewportSize = { 0, 0 };
-        
+            CameraComponent* m_TouchCameraComponent;
+
             Ref<Scene> m_ActiveScene;
             Ref<Scene> m_EditorScene;
 

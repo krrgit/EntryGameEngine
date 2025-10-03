@@ -108,10 +108,12 @@ namespace Entry {
         ET_PROFILE_FUNCTION();
         
         auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_TOP);
-        m_GameFramebuffer = primaryCam ? primaryCam.GetComponent<CameraComponent>().Camera.GetFramebuffer() : nullptr;
+        m_GameCameraComponent = primaryCam ? &primaryCam.GetComponent<CameraComponent>() : nullptr;
+        m_GameFramebuffer = primaryCam ? m_GameCameraComponent->Camera.GetFramebuffer() : nullptr;
 
         auto touchCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_BOTTOM);
-        m_TouchFramebuffer = touchCam ? touchCam.GetComponent<CameraComponent>().Camera.GetFramebuffer() : nullptr;
+        m_TouchCameraComponent = touchCam ? &touchCam.GetComponent<CameraComponent>() : nullptr;
+        m_TouchFramebuffer = touchCam ? m_TouchCameraComponent->Camera.GetFramebuffer() : nullptr;
        
         // Resize 
         FramebufferSpecification sceneSpec = m_SceneFramebuffer->GetSpecification();
@@ -132,7 +134,8 @@ namespace Entry {
             {
                 //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
                 m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);  // TODO: FIX
-                m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+                m_GameCameraComponent->Camera.SetViewportSize(m_GameViewportSize.x, m_GameViewportSize.y);
+                //m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
             }
         }
 
@@ -144,7 +147,8 @@ namespace Entry {
             {
                 //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
                 m_TouchFramebuffer->Resize((uint32_t)m_TouchViewportSize.x, (uint32_t)m_TouchViewportSize.y);
-                m_ActiveScene->OnViewportResize((uint32_t)m_TouchViewportSize.x, (uint32_t)m_TouchViewportSize.y); // TODO: fix; separate top and bottom
+                m_TouchCameraComponent->Camera.SetViewportSize(m_TouchViewportSize.x, m_TouchViewportSize.y);
+                //m_ActiveScene->OnViewportResize((uint32_t)m_TouchViewportSize.x, (uint32_t)m_TouchViewportSize.y); // TODO: fix; separate top and bottom
             }
         }
 
@@ -176,6 +180,10 @@ namespace Entry {
         {
            int pixelData = m_SceneFramebuffer->ReadPixel(1, mouseX, mouseY);
            m_HoveredEntity = pixelData <= -1 ? Entity() : Entity((ECS::Entity)pixelData, m_ActiveScene.get());
+        }
+        else
+        {
+            m_HoveredEntity = Entity();
         }
 
         OnOverlayRender();
@@ -591,7 +599,7 @@ namespace Entry {
 
         {
             // Render Colliders
-            auto& selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+            Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
             if (m_ShowColliders && selectedEntity && selectedEntity.HasComponent<BoxColliderComponent>())
             {
                 auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxColliderComponent>();
@@ -614,6 +622,9 @@ namespace Entry {
         m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
         SetPanelContexts(m_ActiveScene);
+        
+        m_HoveredEntity = { };
+        m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
 
         m_EditorScenePath = std::filesystem::path();
     }
@@ -692,7 +703,7 @@ namespace Entry {
         m_ActiveScene->OnRuntimeStop();
         m_ActiveScene = m_EditorScene;
         m_ActiveScene->BindLightEnv();
-        m_HoveredEntity = {};
+        m_HoveredEntity = { };
 
         SetPanelContexts(m_ActiveScene);
     }

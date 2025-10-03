@@ -524,7 +524,7 @@ namespace Entry {
 			}
 		}
 
-		return {0, this};
+		return Entity();
 	}
 
 	Entity Scene::GetLightEntity()
@@ -534,6 +534,8 @@ namespace Entry {
 		{
 			return Entity{ entity, this };
 		}
+
+		return Entity();
 	}
 
 	void Scene::BindLightEnv()

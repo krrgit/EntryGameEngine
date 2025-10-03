@@ -445,13 +445,12 @@ namespace Entry {
 
     void Renderer3D::DrawGrid(EditorCamera& camera)
     {
-        camera.GetPosition();
         s_Data.GridShader->Bind();
         glm::mat4 modelView = s_Data.m_ViewMatrix;
         s_Data.GridShader->SetMat4("u_ModelView", modelView);
         s_Data.GridShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
         s_Data.GridShader->SetFloat3("u_CameraWorldPos", camera.GetPosition());
-
+        s_Data.GridVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data.GridVertexArray, 6, 0);
 
         s_Data.GridShader->Unbind();

@@ -49,7 +49,7 @@ namespace Entry {
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
-		operator bool() const { return m_EntityHandle != 0; }
+		operator bool() const { return m_EntityHandle != ECS::null; }
 		//operator ECS::Entity() const { return m_EntityHandle; } // operator uint32_t() is the same
 		operator uint32_t() const { return m_EntityHandle; }
 
@@ -64,7 +64,7 @@ namespace Entry {
 			return !(*this == other);
 		}
 	private:
-		ECS::Entity m_EntityHandle { 0 };
+		ECS::Entity m_EntityHandle { ECS::null };
 		Scene* m_Scene = nullptr;
 	};
 }

@@ -38,7 +38,7 @@ in float v_GridSize;
 uniform float g_GridMinPixelsBetweenCells = 2.0;
 uniform float g_GridCellSize = 1.0;
 uniform vec4 g_GridColorThin = vec4(1.0, 1.0, 1.0, 0.5);
-uniform vec4 g_GridColorThick = vec4(1.0, 1.0, 1.0, 0.85);
+uniform vec4 g_GridColorThick = vec4(1.0, 1.0, 1.0, 0.75);
 
 float log10(float x)
 {
@@ -82,7 +82,7 @@ void main()
     float GridCellSizeLod1 = GridCellSizeLod0 * 10.0;
     float GridCellSizeLod2 = GridCellSizeLod1 * 10.0;
 
-    dudv *= 2.0;
+    dudv *= 1.5;
 
     vec2 mod_div_dudv = mod(v_WorldPos.xz, GridCellSizeLod0) / dudv;
     float Lod0a = max2(vec2(1.0) - abs(satv(mod_div_dudv) * 2.0 - vec2(1.0)) );
@@ -98,14 +98,15 @@ void main()
 
     if (Lod2a > 0.0) {
         Color = g_GridColorThick;
-        Color.a *= Lod2a;
+        //Color.a *= Lod2a;
     } else {
         if (Lod1a > 0.0) {
-            Color = g_GridColorThick;// mix(g_GridColorThick, g_GridColorThin, LOD_fade);
-	        Color.a *= Lod1a;
+            Color = g_GridColorThick; //mix(g_GridColorThick, g_GridColorThin, LOD_fade);
+	        //Color.a *= Lod1a;
         } else {
             Color = g_GridColorThin;
-	        Color.a *= (Lod0a * (1.0 - LOD_fade));
+	        //Color.a *= (Lod0a * (1.0 - LOD_fade));
+            Color.a *= (Lod0a * (1.0 - LOD_fade));
         }
     }
     
