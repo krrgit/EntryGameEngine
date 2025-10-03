@@ -37,12 +37,6 @@ namespace Entry {
         sceneFrameBufSpec.Height = 240;
         m_SceneFramebuffer = Entry::Framebuffer::Create(sceneFrameBufSpec);
 
-        //FramebufferSpecification gameFrameBufSpec;
-        //gameFrameBufSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
-        //gameFrameBufSpec.Width = 400;
-        //gameFrameBufSpec.Height = 240;
-        //m_GameFramebuffer = Entry::Framebuffer::Create(gameFrameBufSpec);
-
         m_ActiveScene.reset(new Scene());
 
         m_EditorCamera = EditorCamera(80.0f, 1.778f, 0.01f, 1000.0f);
@@ -110,31 +104,20 @@ namespace Entry {
 
     void EditorLayer::OnUpdate(Entry::Timestep ts, uint16_t screenSide)
     {
-        if (!m_GameFramebuffer)
-        {
-            auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_TOP);
-            if (primaryCam)
-            {
-                m_GameFramebuffer = primaryCam.GetComponent<CameraComponent>().Camera.GetFramebuffer();
-            }
-        }
-
-        if (!m_TouchFramebuffer)
-        {
-            auto touchCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_BOTTOM);
-            if (touchCam)
-            {
-                m_TouchFramebuffer = touchCam.GetComponent<CameraComponent>().Camera.GetFramebuffer();
-            }
-        }
         ET_PROFILE_FUNCTION();
+        
+        auto primaryCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_TOP);
+        m_GameFramebuffer = primaryCam ? primaryCam.GetComponent<CameraComponent>().Camera.GetFramebuffer() : nullptr;
 
+        auto touchCam = m_ActiveScene->GetPrimaryCameraEntity(ET_GFX_SCREEN::GFX_BOTTOM);
+        m_TouchFramebuffer = touchCam ? touchCam.GetComponent<CameraComponent>().Camera.GetFramebuffer() : nullptr;
+       
         // Resize 
         FramebufferSpecification sceneSpec = m_SceneFramebuffer->GetSpecification();
         if (m_SceneViewportSize.x > 0.0f && m_SceneViewportSize.y > 0.0f && // zero size framebuffer is invalid 
             (sceneSpec.Width != m_SceneViewportSize.x || sceneSpec.Height != m_SceneViewportSize.y))
         {
-            m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
+            m_SceneFramebuffer->Resize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y); // TODO: FIX
             m_EditorCamera.SetViewportSize(m_SceneViewportSize.x, m_SceneViewportSize.y);
             //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
             //m_ActiveScene->OnViewportResize((uint32_t)m_SceneViewportSize.x, (uint32_t)m_SceneViewportSize.y);
@@ -147,7 +130,7 @@ namespace Entry {
                 (gameSpec.Width != m_GameViewportSize.x || gameSpec.Height != m_GameViewportSize.y))
             {
                 //m_CameraController.OnResize(m_SceneViewportSize.x, m_SceneViewportSize.y);
-                m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
+                m_GameFramebuffer->Resize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);  // TODO: FIX
                 m_ActiveScene->OnViewportResize((uint32_t)m_GameViewportSize.x, (uint32_t)m_GameViewportSize.y);
             }
         }

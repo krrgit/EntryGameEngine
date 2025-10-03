@@ -186,7 +186,7 @@ Entities:
         OrthographicNear: 0
         OrthographicFar: 1
       Primary: true
-      FixedAspectRatio: false
+      FixedAspectRatio: true
       RenderTarget: 0
   - Entity: 3027687680836517763
     TagComponent:
@@ -777,5 +777,5 @@ Entities:
         OrthographicNear: 0
         OrthographicFar: 1
       Primary: true
-      FixedAspectRatio: false
+      FixedAspectRatio: true
       RenderTarget: 1

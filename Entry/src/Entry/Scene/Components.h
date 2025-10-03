@@ -78,7 +78,7 @@ namespace Entry
 	{
 		Entry::SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to scene 
-		bool FixedAspectRatio = false;
+		bool FixedAspectRatio = true;
 		ET_GFX_SCREEN RenderTarget;
 
 		CameraComponent() = default;

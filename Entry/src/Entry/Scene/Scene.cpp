@@ -487,8 +487,6 @@ namespace Entry {
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			if (!cameraComponent.FixedAspectRatio)
 				cameraComponent.Camera.SetViewportSize(width, height);
-			else 
-				cameraComponent.Camera.SetViewportSize(width, height); // Do something else?
 		}
 	}
 
