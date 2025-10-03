@@ -89,6 +89,12 @@ namespace Entry {
         LineVertex* LineVertexBufferPtr = nullptr;
 
         float LineWidth = 1.5f;
+
+        Ref<VertexArray> GridVertexArray;
+        Ref<VertexBuffer> GridVertexBuffer;
+        Ref<IndexBuffer> GridIndexBuffer;
+        Ref<Shader> GridShader;
+
     };
 
     static Renderer3DData s_Data;
@@ -129,6 +135,28 @@ namespace Entry {
         s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
         s_Data.LineVertexBufferBase = new LineVertex[MaxLines];
         s_Data.LineShader.reset(Shader::Create("assets/shaders/Renderer_Line.glsl"));
+
+        // --- GRID --- 
+        float gridVertices[12] =
+        {
+            -1.0f, 0.0f, -1.0f,
+             1.0f, 0.0f, -1.0f,
+             1.0f, 0.0f,  1.0f,
+            -1.0f, 0.0f,  1.0f,
+        };
+        uint16_t gridIndices[6] = { 0,1,2,2,0,3 };
+
+        s_Data.GridVertexArray = VertexArray::Create();
+        s_Data.GridVertexBuffer.reset(VertexBuffer::Create(sizeof(gridVertices)));
+        s_Data.GridVertexBuffer->SetLayout({
+            { ShaderDataType::Float3, "a_Position" }
+        });
+        s_Data.GridVertexBuffer->SetData(gridVertices, sizeof(gridVertices));
+        s_Data.GridIndexBuffer.reset(IndexBuffer::Create(gridIndices, 6));
+        
+        s_Data.GridVertexArray->AddVertexBuffer(s_Data.GridVertexBuffer);
+        s_Data.GridVertexArray->SetIndexBuffer(s_Data.GridIndexBuffer);
+        s_Data.GridShader.reset(Shader::Create("assets/shaders/Renderer_Grid.glsl"));
 
 #endif // ET_PLATFORM_WINDOWS
 
@@ -232,6 +260,7 @@ namespace Entry {
 
             s_Data.LineVertexCount = 0;
             s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+            s_Data.LineShader->Unbind();
         }
 #endif // ET_PLATFORM_WINDOWS
 
@@ -412,6 +441,20 @@ namespace Entry {
     void Renderer3D::SetLineWidth(float width)
     {
         s_Data.LineWidth = width;
+    }
+
+    void Renderer3D::DrawGrid(EditorCamera& camera)
+    {
+        camera.GetPosition();
+        s_Data.GridShader->Bind();
+        glm::mat4 modelView = s_Data.m_ViewMatrix;
+        s_Data.GridShader->SetMat4("u_ModelView", modelView);
+        s_Data.GridShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+        s_Data.GridShader->SetFloat3("u_CameraWorldPos", camera.GetPosition());
+
+        RenderCommand::DrawIndexed(s_Data.GridVertexArray, 6, 0);
+
+        s_Data.GridShader->Unbind();
     }
 
     void Renderer3D::ResetStats()

@@ -30,4 +30,7 @@
       <Filter>Panels</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\Renderer_Grid.glsl" />
+  </ItemGroup>
 </Project>

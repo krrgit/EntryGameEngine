@@ -587,17 +587,21 @@ namespace Entry {
     {
         Renderer3D::BeginScene(m_EditorCamera);
 
-        // Render Colliders
-        auto& selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-        if (m_ShowColliders && selectedEntity && selectedEntity.HasComponent<BoxColliderComponent>())
+        Renderer3D::DrawGrid(m_EditorCamera);
+
         {
-            auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxColliderComponent>();
-            for (auto entity : view)
+            // Render Colliders
+            auto& selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+            if (m_ShowColliders && selectedEntity && selectedEntity.HasComponent<BoxColliderComponent>())
             {
-                auto& tc = view.get<TransformComponent>(entity);
-                auto& bc = view.get<BoxColliderComponent>(entity);
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxColliderComponent>();
+                for (auto entity : view)
+                {
+                    auto& tc = view.get<TransformComponent>(entity);
+                    auto& bc = view.get<BoxColliderComponent>(entity);
             
-                Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(0.3f, 1.0f, 0.3f, 0.9f));
+                    Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(0.3f, 1.0f, 0.3f, 0.9f));
+                }
             }
         }
         Renderer3D::EndScene();
