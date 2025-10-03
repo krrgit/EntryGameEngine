@@ -26,7 +26,6 @@ namespace Entry {
 
 	private:
 		C3D_RenderTarget* m_RenderTarget;
-		C3D_FrameBuf* m_FrameBuf;
 		C3D_Tex* m_ColorAttachment;
 		FramebufferSpecification m_Specification;
 	};

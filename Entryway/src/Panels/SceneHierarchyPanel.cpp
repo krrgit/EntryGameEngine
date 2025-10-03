@@ -1,5 +1,5 @@
 ﻿#include "SceneHierarchyPanel.h"
-
+#include "Entry/Renderer/Renderer3D.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -544,6 +544,8 @@ namespace Entry
 		auto boldFont = io.Fonts->Fonts[0];
 
 		Ref<Material> entityMaterial = nullptr;
+		
+		TransformComponent* transformComponent = nullptr;
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -617,6 +619,7 @@ namespace Entry
 
 		DrawComponent<TransformComponent>("Transform", entity, [&](TransformComponent& component)
 		{
+			transformComponent = &component;
 			DrawVec3Control("Position", component.Position, 0.0f, columnWidth);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
 			DrawVec3Control("Rotation", rotation, 0.0f, columnWidth);
@@ -807,7 +810,6 @@ namespace Entry
 						currentBodyTypeString = bodyTypeStrings[i];
 						component.Type = (RigidbodyComponent::BodyType)i;
 					}
-
 					if (isSelected)
 						ImGui::SetItemDefaultFocus();
 				}
@@ -826,6 +828,11 @@ namespace Entry
 			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
+
+			//if (transformComponent) {
+			//	ET_CORE_INFO("RENDER WIREFRAME BOX");
+			//	Renderer3D::DrawWireframeBox(glm::mat4(1.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(0.0f, 1.0f, 0.3f, 1.0f), entity);
+			//}
 		});
 
 		DrawMaterialProperties(entityMaterial, columnWidth);

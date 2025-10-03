@@ -14,6 +14,10 @@ namespace Entry {
 		virtual void Clear() override;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount = 0, uint16_t indexOffset = 0) override;
+		
+		// Editor Functions
+		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint16_t vertexCount) override = 0;
+		virtual void SetLineWidth(float width) override = 0;
 	private:
 		C3D_RenderTarget* m_RenderTarget;
 	};

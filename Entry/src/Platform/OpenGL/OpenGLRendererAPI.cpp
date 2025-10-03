@@ -18,6 +18,7 @@ namespace Entry {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_LINE_SMOOTH);
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, void* window)
@@ -49,8 +50,17 @@ namespace Entry {
 		//ET_PROFILE_FUNCTION();
 		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (void*)(indexOffset * sizeof(uint16_t)));
-		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint16_t vertexCount)
+	{
+		//ET_PROFILE_FUNCTION();
+		vertexArray->Bind();
+		glDrawArrays(GL_LINES, 0, vertexCount);
+	}
 
+	void OpenGLRendererAPI::SetLineWidth(float width)
+	{
+		glLineWidth(width);
+	}
 }

@@ -27,6 +27,14 @@ namespace Entry {
 #endif // ET_PLATFORM_WINDOWS
     };
 
+    // Editor-only
+    struct LineVertex
+    {
+        glm::vec3 Position;
+        glm::vec4 Color;
+        int EntityID = 0;
+    };
+
     struct RenderBatch {
         Ref <VertexArray> MeshVertexArray;
         Ref <VertexBuffer> MeshVertexBuffer;
@@ -70,6 +78,19 @@ namespace Entry {
         ShaderProgram BindedShader;
 
         Ref<LightEnvironment> BindedLightEnv;
+
+#ifdef ET_PLATFORM_WINDOWS
+        Ref<VertexArray> LineVertexArray;
+        Ref<VertexBuffer> LineVertexBuffer;
+        Ref<Shader> LineShader;
+
+        uint32_t LineVertexCount = 0;
+        LineVertex* LineVertexBufferBase = nullptr;
+        LineVertex* LineVertexBufferPtr = nullptr;
+
+        float LineWidth = 1.5f;
+#endif // ET_PLATFORM_WINDOWS
+
     };
 
     static Renderer3DData s_Data;
@@ -80,11 +101,12 @@ namespace Entry {
 
 
 #ifdef ET_PLATFORM_3DS
-        // SHADERS
+        // --- SHADERS ---
         s_Data.Shaders.push_back(Ref<Shader>(Shader::Create(LitTexture_shbin, LitTexture_shbin_size)));
         s_Data.Shaders.push_back(Ref<Shader>(Shader::Create(UnlitTexture_shbin, UnlitTexture_shbin_size)));
 #endif // ET_PLATFORM_3DS
 #ifdef ET_PLATFORM_WINDOWS
+        // --- SHADERS ---
         int32_t samplers[s_Data.MaxTextureSlots];
         for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
             samplers[i] = i;
@@ -96,6 +118,19 @@ namespace Entry {
         {
             s->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
         }
+
+        // --- GIZMO LINES ---
+        int MaxLines = 1000;
+        s_Data.LineVertexArray = VertexArray::Create();
+        s_Data.LineVertexBuffer.reset(VertexBuffer::Create(MaxLines * sizeof(LineVertex)));
+        s_Data.LineVertexBuffer->SetLayout({
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float4, "a_Color"    },
+            { ShaderDataType::Int, "a_EntityID"    },
+            });
+        s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+        s_Data.LineVertexBufferBase = new LineVertex[MaxLines];
+        s_Data.LineShader.reset(Shader::Create("assets/shaders/Renderer_Line.glsl"));
 
 #endif // ET_PLATFORM_WINDOWS
 
@@ -177,10 +212,28 @@ namespace Entry {
         s_Data.m_ViewProjectionMatrix = s_Data.m_ProjectionMatrix * s_Data.m_ViewMatrix;
 
         s_Data.BindedShader = ShaderProgramEnum::NoShader; // Reset
+
+        s_Data.LineVertexCount = 0;
+        s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
     }
 
     void Renderer3D::EndScene()
     {
+#ifdef ET_PLATFORM_WINDOWS
+        // Draw Lines
+        if (s_Data.LineVertexCount)
+        {
+            uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+            s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+            s_Data.LineShader->Bind();
+            s_Data.LineShader->SetMat4("u_ModelView", s_Data.m_ViewMatrix);
+            s_Data.LineShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
+
+            RenderCommand::SetLineWidth(s_Data.LineWidth);
+            RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+        }
+#endif // ET_PLATFORM_WINDOWS
+
         ET_PROFILE_FUNCTION();
     }
 
@@ -273,6 +326,91 @@ namespace Entry {
 
         s_Data.Shaders[(int)mrc.material->GetShader()]->SetInt("u_EntityID", entityID);
         DrawMesh(mrc, transform);
+    }
+
+    void Renderer3D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+    {
+        s_Data.LineVertexBufferPtr->Position = p0;
+        s_Data.LineVertexBufferPtr->Color = color;
+        s_Data.LineVertexBufferPtr->EntityID = entityID;
+        s_Data.LineVertexBufferPtr++;
+
+        s_Data.LineVertexBufferPtr->Position = p1;
+        s_Data.LineVertexBufferPtr->Color = color;
+        s_Data.LineVertexBufferPtr->EntityID = entityID;
+        s_Data.LineVertexBufferPtr++;
+
+        s_Data.LineVertexCount += 2;
+    }
+
+    void Renderer3D::DrawWireframeRect(const glm::mat4& transform, const glm::vec3& offset, const glm::vec3& size, const glm::vec4& color, int entityID)
+    {
+        static const glm::vec4 QuadVertexPositions[4] = {
+            {-0.5f, -0.5f, 0.0f, 1.0f},
+            { 0.5f, -0.5f, 0.0f, 1.0f},
+            { 0.5f,  0.5f, 0.0f, 1.0f},
+            {-0.5f,  0.5f, 0.0f, 1.0f},
+        };
+           
+        glm::vec3 lineVertices[4];
+
+        for (int i = 0; i < 4; i++)
+        {
+            lineVertices[i] = transform * ((QuadVertexPositions[i] + glm::vec4(offset, 0.0f)) * glm::vec4(size, 1.0f));
+        }
+
+        DrawLine(lineVertices[0], lineVertices[1], color);
+        DrawLine(lineVertices[1], lineVertices[2], color);
+        DrawLine(lineVertices[2], lineVertices[3], color);
+        DrawLine(lineVertices[3], lineVertices[0], color);
+    }
+
+    void Renderer3D::DrawWireframeBox(const glm::mat4& transform, const glm::vec3& offset, const glm::vec3& size, const glm::vec4& color, int entityID)
+    {
+        static const glm::vec4 BoxVertexPositions[8] = {
+            {-0.5f, -0.5f, 0.5f, 1.0f},
+            { 0.5f, -0.5f, 0.5f, 1.0f},
+            { 0.5f,  0.5f, 0.5f, 1.0f},
+            {-0.5f,  0.5f, 0.5f, 1.0f},
+            {-0.5f, -0.5f, -0.5f, 1.0f},
+            { 0.5f, -0.5f, -0.5f, 1.0f},
+            { 0.5f,  0.5f, -0.5f, 1.0f},
+            {-0.5f,  0.5f, -0.5f, 1.0f},
+        };
+
+        glm::vec3 lineVertices[8];
+        for (int i = 0; i < 8; i++)
+        {
+            lineVertices[i] = transform * ((BoxVertexPositions[i] * glm::vec4(size,1.0f)) + glm::vec4(offset, 0.0f));
+        }
+
+        // Front
+        DrawLine(lineVertices[0], lineVertices[1], color);
+        DrawLine(lineVertices[1], lineVertices[2], color);
+        DrawLine(lineVertices[2], lineVertices[3], color);
+        DrawLine(lineVertices[3], lineVertices[0], color);
+
+        // Sides
+        DrawLine(lineVertices[0], lineVertices[4], color);
+        DrawLine(lineVertices[1], lineVertices[5], color);
+        DrawLine(lineVertices[2], lineVertices[6], color);
+        DrawLine(lineVertices[3], lineVertices[7], color);
+
+        // Back
+        DrawLine(lineVertices[4], lineVertices[5], color);
+        DrawLine(lineVertices[5], lineVertices[6], color);
+        DrawLine(lineVertices[6], lineVertices[7], color);
+        DrawLine(lineVertices[7], lineVertices[4], color);
+    }
+
+    float Renderer3D::GetLineWidth()
+    {
+        return s_Data.LineWidth;
+    }
+
+    void Renderer3D::SetLineWidth(float width)
+    {
+        s_Data.LineWidth = width;
     }
 
     void Renderer3D::ResetStats()

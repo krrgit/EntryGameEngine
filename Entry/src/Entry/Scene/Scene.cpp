@@ -198,7 +198,7 @@ namespace Entry {
 				boxDef.SetDensity(bc.Density);
 				boxDef.SetFriction(bc.Friction);
 				boxDef.SetRestitution(bc.Restitution);
-				q3Vec3 boxSize = q3Vec3(bc.Size.x * 2.0f * transform.Scale.x, bc.Size.y * 2.0f * transform.Scale.y, bc.Size.z * 2.0f * transform.Scale.z);
+				q3Vec3 boxSize = q3Vec3(bc.Size.x * transform.Scale.x, bc.Size.y * transform.Scale.y, bc.Size.z * transform.Scale.z);
 				localSpace.position.x = bc.Offset.x;
 				localSpace.position.y = bc.Offset.y;
 				localSpace.position.z = bc.Offset.z;
@@ -241,8 +241,8 @@ namespace Entry {
 
 			if (!meshRenderer.model) continue;
 			Renderer3D::DrawMeshEntity(meshRenderer, transform.GetTransform(), entity);
+			//Renderer3D::DrawWireframeBox(transform.GetTransform(), glm::vec3(0, 0.0f, 0), transform.Scale, glm::vec4(0, 1, 0.3f, 1));
 		}
-
 		Renderer3D::EndScene();
 	}
 

@@ -31,6 +31,13 @@ namespace Entry {
 			static void DrawMesh(MeshRendererComponent& mrc, const glm::mat4& transform);
 
 			static void DrawMeshEntity(MeshRendererComponent& mrc, const glm::mat4& transform, int entityID);
+
+			static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID = -1);
+			static void DrawWireframeRect(const glm::mat4& transform, const glm::vec3& offset, const glm::vec3& size, const glm::vec4& color, int entityID = -1);
+			static void DrawWireframeBox(const glm::mat4& transform, const glm::vec3& offset, const glm::vec3& size, const glm::vec4& color, int entityID = -1);
+
+			static float GetLineWidth();
+			static void SetLineWidth(float width);
 	
 			struct Statistics {
 				uint32_t DrawCalls = 0;

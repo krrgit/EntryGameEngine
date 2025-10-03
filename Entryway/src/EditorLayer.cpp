@@ -298,7 +298,7 @@ namespace Entry {
         auto stats = Entry::Renderer3D::GetStats();
 
         std::string hovered = m_HoveredEntity ? m_HoveredEntity.GetName() : "None";
-        ImGui::Text("Hovered:, %s", hovered.c_str());
+        ImGui::Text("Hovered: %s", hovered.c_str());
         
         ImGui::Text("FPS: %.1f fps\nDeltaTime: %.2f ms\n", 1000.0f / stats.DeltaTime, stats.DeltaTime);
 

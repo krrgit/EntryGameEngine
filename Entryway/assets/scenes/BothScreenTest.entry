@@ -68,7 +68,7 @@ Entities:
       FixedRotationZ: false
     BoxColliderComponent:
       Offset: [0, 0, 0]
-      Size: [10, 0.5, 10]
+      Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
       Restitution: 0.670000017
@@ -686,7 +686,7 @@ Entities:
       FixedRotationZ: false
     BoxColliderComponent:
       Offset: [0, 0, 0]
-      Size: [10, 0.5, 10]
+      Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -709,7 +709,7 @@ Entities:
       FixedRotationZ: false
     BoxColliderComponent:
       Offset: [0, 0, 0]
-      Size: [10, 0.5, 10]
+      Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -732,7 +732,7 @@ Entities:
       FixedRotationZ: false
     BoxColliderComponent:
       Offset: [0, 0, 0]
-      Size: [10, 0.5, 10]
+      Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -755,7 +755,7 @@ Entities:
       FixedRotationZ: false
     BoxColliderComponent:
       Offset: [0, 0, 0]
-      Size: [10, 0.5, 10]
+      Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
       Restitution: 0
