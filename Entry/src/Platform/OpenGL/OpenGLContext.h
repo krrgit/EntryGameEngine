@@ -1,3 +1,5 @@
+// Source: https://github.com/TheCherno/Hazel
+// Written by: TheCherno
 #pragma once
 
 #include "Platform/Windows/GraphicsContext.h"

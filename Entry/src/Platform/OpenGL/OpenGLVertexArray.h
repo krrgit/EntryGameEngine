@@ -1,3 +1,5 @@
+// Source: https://github.com/TheCherno/Hazel
+// Written by: TheCherno
 #pragma once
 
 #include "Entry/Renderer/VertexArray.h"

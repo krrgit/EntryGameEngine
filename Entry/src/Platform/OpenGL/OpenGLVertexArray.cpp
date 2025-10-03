@@ -1,3 +1,5 @@
+// Source: https://github.com/TheCherno/Hazel
+// Written by: TheCherno
 #include "etpch.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
