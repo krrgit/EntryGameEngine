@@ -84,7 +84,7 @@ namespace Entry {
             ContentBrowserPanel m_ContentBrowserPanel;
             LightEnvironmentPanel m_LightEnvironmentPanel;
 
-            Ref<Texture2D> m_IconPlay, m_IconPause, m_IconAdvance;
+            Ref<Texture2D> m_IconPlay, m_IconStop, m_IconPause, m_IconAdvance;
 
             SceneState m_SceneState = SceneState::Edit;
 

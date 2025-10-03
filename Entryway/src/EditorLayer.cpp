@@ -28,6 +28,7 @@ namespace Entry {
 	    ET_PROFILE_FUNCTION();
 
         m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+        m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
         m_IconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
         m_IconAdvance = Texture2D::Create("Resources/Icons/StepButton.png");
 
@@ -463,7 +464,7 @@ namespace Entry {
         ImGui::Begin("##Toolbar", nullptr, window_flags);
         
         float buttonSize = 20.0f;
-        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconPause;
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
         ImVec4 activeButtonColor = ImVec4(0.24f, 0.52f, 0.88f, 1.0f);
         
         auto& colors = ImGui::GetStyle().Colors;
