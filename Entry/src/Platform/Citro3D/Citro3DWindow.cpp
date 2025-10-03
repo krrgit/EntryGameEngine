@@ -9,7 +9,6 @@
 
 #include "Platform/Citro3D/C2DPrepareLayer.h"
 
-
 //#define CLEAR_COLOR 0x68B0D8FF
 #define CLEAR_COLOR 0x68B0D8FF //0x191919FF
 
@@ -57,17 +56,6 @@ namespace Entry
 		m_Data.Stereo3D = props.Stereo3D && (m_Data.Screen == GFX_TOP);
 
 		ET_CORE_INFO("Create screen {0} ({1},{2})", props.Title, props.Width, props.Height);
-
-		// C3D flips height and width (screen draws left to right)
-		//m_RenderTarget = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		//C3D_RenderTargetSetOutput(m_RenderTarget, m_Data.Screen, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
-
-		//// 2nd render target for 3D
-		//if (m_Data.Stereo3D)
-		//{
-		//	m_RenderTargetR = C3D_RenderTargetCreate((int)props.Height, (int)props.Width, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-		//	C3D_RenderTargetSetOutput(m_RenderTargetR, m_Data.Screen, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
-		//}
 	}
 
 	void Citro3DWindow::Shutdown()
@@ -149,21 +137,18 @@ namespace Entry
 	{
 		ET_PROFILE_FUNCTION();
 
-		if (side == GFX_LEFT)
+		// Begin Frame when drawing top left screen
+		if (side == GFX_LEFT && m_Data.Screen == GFX_TOP)
 		{	
-			// Begin Frame when drawing top left screen
-			if (m_Data.Screen == GFX_TOP) 
-			{
-				C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			}
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		}
-		else if (side == GFX_RIGHT)
-		{	
-			// Draw On Right Screen (Top only)
-			C3D_RenderTargetClear(m_RenderTargetR, C3D_CLEAR_ALL, m_ClearColor, 0);
-			C3D_FrameDrawOn(m_RenderTargetR);
-			C2D_SceneTarget(m_RenderTargetR);
-		}
+		//else if (side == GFX_RIGHT)
+		//{	
+		//	// Draw On Right Screen (Top only)
+		//	C3D_RenderTargetClear(m_RenderTargetR, C3D_CLEAR_ALL, m_ClearColor, 0);
+		//	C3D_FrameDrawOn(m_RenderTargetR);
+		//	C2D_SceneTarget(m_RenderTargetR);
+		//}
 	}
 
 	void Citro3DWindow::FrameEnd()

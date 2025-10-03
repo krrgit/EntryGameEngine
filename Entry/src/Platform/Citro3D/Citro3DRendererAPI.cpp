@@ -1,9 +1,11 @@
-#include"etpch.h"
+#include "etpch.h"
 #include "Citro3DRendererAPI.h"
+#include "Citro3DFramebuffer.h"
+#include "Citro3DWindow.h"
+#include "Entry/Core/Application.h"
 
 #include<citro3d.h>
-#include"Citro3DWindow.h"
-#include"Entry/Core/Application.h"
+
 
 namespace Entry {
 	void Citro3DRendererAPI::Init()
@@ -29,12 +31,13 @@ namespace Entry {
 
 	void Citro3DRendererAPI::SetClearColor(const uint32_t color)
 	{
-		static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
+		Citro3DFramebuffer::SetClearColor(color);
+		//static_cast<Citro3DWindow*>(&Application::Get().GetWindow())->SetClearColor(color);
 	}
 
 	void Citro3DRendererAPI::Clear()
 	{
-		//C3D_RenderTargetClear(m_RenderTarget, C3D_CLEAR_ALL, m_ClearColor, 0);
+		C3D_RenderTargetClear(Citro3DFramebuffer::GetCurrentRenderTarget(), C3D_CLEAR_ALL, Citro3DFramebuffer::GetClearColor(), 0);
 	}
 
 	void Citro3DRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint16_t indexCount, uint16_t indexOffset)

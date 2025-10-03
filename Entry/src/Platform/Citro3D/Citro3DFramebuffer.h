@@ -3,9 +3,10 @@
 #include "Entry/Renderer/Framebuffer.h"
 
 #include <citro3d.h>
-
+#include <citro2d.h>
 
 namespace Entry {
+	
 	class Citro3DFramebuffer : public Framebuffer {
 	public:
 		Citro3DFramebuffer(const FramebufferSpecification& spec);
@@ -24,9 +25,17 @@ namespace Entry {
 		virtual void* GetColorAttachmentRendererID(uint32_t index = 0) const override { return m_ColorAttachment; }
 		virtual const FramebufferSpecification& GetSpecification() const override { return m_Specification;  };
 
+	public:
+		static C3D_RenderTarget* GetCurrentRenderTarget();
+		static void SetCurrentRenderTarget(C3D_RenderTarget* target);
+
+		static uint32_t GetClearColor();
+		static void SetClearColor(uint32_t color);
 	private:
 		C3D_RenderTarget* m_RenderTarget;
 		C3D_Tex* m_ColorAttachment;
 		FramebufferSpecification m_Specification;
+
+		static C3D_RenderTarget* s_CurrentRenderTarget;
 	};
 }

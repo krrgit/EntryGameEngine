@@ -19,6 +19,5 @@ namespace Entry {
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint16_t vertexCount) override {}
 		virtual void SetLineWidth(float width) override {}
 	private:
-		C3D_RenderTarget* m_RenderTarget;
 	};
 }

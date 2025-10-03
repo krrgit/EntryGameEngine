@@ -37,6 +37,7 @@ namespace Entry
 		void SetClearColor(uint32_t color) { m_ClearColor = color; }
 
 		virtual void SetTitle(std::string& title) override {}
+
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
