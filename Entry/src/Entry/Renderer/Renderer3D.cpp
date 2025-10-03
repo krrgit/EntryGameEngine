@@ -79,7 +79,7 @@ namespace Entry {
 
         Ref<LightEnvironment> BindedLightEnv;
 
-#ifdef ET_PLATFORM_WINDOWS
+        // --- EDITOR VARIABLES --- 
         Ref<VertexArray> LineVertexArray;
         Ref<VertexBuffer> LineVertexBuffer;
         Ref<Shader> LineShader;
@@ -89,8 +89,6 @@ namespace Entry {
         LineVertex* LineVertexBufferPtr = nullptr;
 
         float LineWidth = 1.5f;
-#endif // ET_PLATFORM_WINDOWS
-
     };
 
     static Renderer3DData s_Data;
