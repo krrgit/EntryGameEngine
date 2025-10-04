@@ -88,7 +88,7 @@ namespace Entry {
         LineVertex* LineVertexBufferBase = nullptr;
         LineVertex* LineVertexBufferPtr = nullptr;
 
-        float LineWidth = 1.5f;
+        float LineWidth = 1.2f;
 
         Ref<VertexArray> GridVertexArray;
         Ref<VertexBuffer> GridVertexBuffer;

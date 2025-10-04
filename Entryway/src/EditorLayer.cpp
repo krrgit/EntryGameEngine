@@ -158,7 +158,7 @@ namespace Entry {
         Entry::Renderer3D::SetStatsTimestep(ts);
 
         m_SceneFramebuffer->Bind();
-        RenderCommand::SetClearColor(0x68B0D8FF);
+        RenderCommand::SetClearColor(0x3F3F3FFF);
         RenderCommand::Clear();
 
         // Clear our entity ID attachment to -1
@@ -608,7 +608,7 @@ namespace Entry {
                     auto& tc = view.get<TransformComponent>(entity);
                     auto& bc = view.get<BoxColliderComponent>(entity);
             
-                    Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(0.3f, 1.0f, 0.3f, 0.9f));
+                    Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(1.0f, 0.7f, 0.3f, 0.9f));
                 }
             }
         }

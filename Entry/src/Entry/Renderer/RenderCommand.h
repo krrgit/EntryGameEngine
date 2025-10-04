@@ -2,6 +2,8 @@
 
 #include "RendererAPI.h"
 
+#include <glm/glm.hpp>
+
 namespace Entry {
 	class RenderCommand
 	{
@@ -19,6 +21,7 @@ namespace Entry {
 		{
 			s_RendererAPI->SetClearColor(color);
 		}
+
 		inline static void Clear() {
 			s_RendererAPI->Clear();
 		}
