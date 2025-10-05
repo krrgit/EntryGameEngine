@@ -37,6 +37,11 @@ namespace Entry
 		return angle >= cutoff ? 1.0f : 0.0f;
 	}
 
+	static inline float ET_orennayer(float angle, float arg)
+	{
+		return 0;
+	}
+
 	#define NUM_DIFFUSE_TONES 3
 	static float ET_toon_diffuse(float x, float arg)
 	{
@@ -66,6 +71,7 @@ namespace Entry
 #define ET_LightLut_ToonDiffuse(lut, arg)		ET_LightLut_FromFunc((lut), ET_toon_diffuse, arg, false)
 #define ET_LightLut_ToonSpecular(lut, angle)	ET_LightLut_FromFunc((lut), ET_toon_specular, arg, false)
 #define ET_LightLut_Zeroes(lut, arg)			ET_LightLut_FromFunc((lut), ET_zeroes, arg, false)
+#define ET_LightLut_OrenNayar(lut, roughness)			ET_LightLut_FromFunc((lut), ET_orennayer, roughness, false)
 #define ET_LightLutDA_Quadratic(lut, from, to, linear, quad) ET_LightLutDA_Create((lut), ET_quadratic_dist_attn, (from), (to), (linear), (quad))
 #define ET_LightLutDA_Quadratic_Falloff(lut, from, to, range, arg) ET_LightLutDA_Create((lut), ET_quadratic_dist_attn_falloff, (from), (to), (range), (arg))
 }

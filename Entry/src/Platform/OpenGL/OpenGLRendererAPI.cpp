@@ -63,4 +63,20 @@ namespace Entry {
 	{
 		glLineWidth(width);
 	}
+	void OpenGLRendererAPI::IgnoreDepthBuffer(bool ignore)
+	{
+		glDepthMask(ignore ? GL_FALSE : GL_TRUE);  // Disable depth writes
+		glEnable(GL_DEPTH_TEST);  // (optional) Still test against existing depth
+	}
+	void OpenGLRendererAPI::IgnoreDepth(bool ignore)
+	{
+		if (ignore)
+		{
+			glDisable(GL_DEPTH_TEST); // No depth test at all
+			glDepthMask(GL_FALSE);    // (Probably redundant here, but explicit is good)
+		} else {
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+		}
+	}
 }

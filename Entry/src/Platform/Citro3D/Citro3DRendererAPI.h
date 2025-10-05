@@ -18,6 +18,9 @@ namespace Entry {
 		// Editor Functions
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint16_t vertexCount) override {}
 		virtual void SetLineWidth(float width) override {}
+
+		virtual void IgnoreDepthBuffer(bool ignore) override {}
+		virtual void IgnoreDepth(bool ignore) override {}
 	private:
 	};
 }

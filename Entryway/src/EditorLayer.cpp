@@ -608,7 +608,7 @@ namespace Entry {
                     auto& tc = view.get<TransformComponent>(entity);
                     auto& bc = view.get<BoxColliderComponent>(entity);
             
-                    Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(1.0f, 0.7f, 0.3f, 0.9f));
+                    Renderer3D::DrawWireframeBox(tc.GetTransform(), bc.Offset, bc.Size * tc.Scale, glm::vec4(0.0f, 1.0f, 0.5f, 0.9f));
                 }
             }
         }

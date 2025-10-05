@@ -23,8 +23,12 @@ namespace Entry {
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint16_t vertexCount) = 0;
 		
 		virtual void SetLineWidth(float width) = 0;
+		
+		virtual void IgnoreDepthBuffer(bool ignore) = 0;
+		virtual void IgnoreDepth(bool ignore) = 0;;
 
 		inline static API GetAPI() { return s_API; }
+
 	private:
 		static API s_API;
 	};

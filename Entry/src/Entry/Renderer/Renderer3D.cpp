@@ -255,8 +255,10 @@ namespace Entry {
             s_Data.LineShader->SetMat4("u_ModelView", s_Data.m_ViewMatrix);
             s_Data.LineShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
 
+            RenderCommand::IgnoreDepthBuffer(true);
             RenderCommand::SetLineWidth(s_Data.LineWidth);
             RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+            RenderCommand::IgnoreDepthBuffer(false);
 
             s_Data.LineVertexCount = 0;
             s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
@@ -451,7 +453,9 @@ namespace Entry {
         s_Data.GridShader->SetMat4("u_Projection", s_Data.m_ProjectionMatrix);
         s_Data.GridShader->SetFloat3("u_CameraWorldPos", camera.GetPosition());
         s_Data.GridVertexArray->Bind();
+        RenderCommand::IgnoreDepthBuffer(true);
         RenderCommand::DrawIndexed(s_Data.GridVertexArray, 6, 0);
+        RenderCommand::IgnoreDepthBuffer(false);
 
         s_Data.GridShader->Unbind();
     }

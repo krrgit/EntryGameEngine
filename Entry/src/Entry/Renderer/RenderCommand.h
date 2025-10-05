@@ -40,6 +40,17 @@ namespace Entry {
 		{
 			s_RendererAPI->SetLineWidth(width);
 		}
+
+		inline static void IgnoreDepthBuffer(bool ignore)
+		{
+			s_RendererAPI->IgnoreDepthBuffer(ignore);
+		}
+
+		inline static void IgnoreDepth(bool ignore)
+		{
+			s_RendererAPI->IgnoreDepth(ignore);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};
