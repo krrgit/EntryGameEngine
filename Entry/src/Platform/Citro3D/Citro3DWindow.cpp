@@ -8,6 +8,7 @@
 #include "Entry/Events/Slider3DEvent.h"
 
 #include "Platform/Citro3D/C2DPrepareLayer.h"
+#include "Platform/N3DS/N3DSAudioClip.h"
 
 //#define CLEAR_COLOR 0x68B0D8FF
 #define CLEAR_COLOR 0x68B0D8FF //0x191919FF
@@ -19,6 +20,19 @@
 
 namespace Entry 
 {
+	// Audio initialisation code
+// This sets up NDSP and our primary audio buffer
+	bool audioInit(void)
+	{
+		// Setup NDSP
+		ndspChnReset(0);
+		ndspSetOutputMode(NDSP_OUTPUT_STEREO);
+		ndspChnSetInterp(0, NDSP_INTERP_POLYPHASE);
+		ndspChnSetRate(0, SAMPLE_RATE);
+		ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
+
+		return true;
+	}
 
 	Window* Window::Create(const WindowProps& props)
 	{
@@ -47,6 +61,17 @@ namespace Entry
 			Result rc = romfsInit();
 			if (rc) { ET_CORE_INFO("romfs Init Successful!\n"); }
 			else { ET_CORE_INFO("romfsInit: {0}\n", rc); }
+			
+			// Audio
+			// Enable N3DS 804MHz operation, where available
+			osSetSpeedupEnable(true);
+			ndspInit();
+
+			if (!audioInit())
+			{
+				printf("Failed to initialise audio\n");
+				ndspExit();
+			}
 		}
 
 		m_Data.Title = props.Title;

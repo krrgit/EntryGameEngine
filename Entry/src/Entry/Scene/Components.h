@@ -180,4 +180,5 @@ namespace Entry
 		BoxColliderComponent() = default;
 		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
+
 }

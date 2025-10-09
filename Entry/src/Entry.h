@@ -34,3 +34,5 @@
 #include "Entry/Renderer/PerspectiveCamera.h"
 #include "Entry/Renderer/PerspectiveCameraController.h"
 // ------------------------------------
+
+#include "Entry/Audio/AudioClip.h"

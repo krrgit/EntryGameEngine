@@ -2,6 +2,7 @@
 
 #include "Entry.h"
 
+
 class Sandbox3D : public Entry::Layer
 {
     public:
@@ -33,5 +34,7 @@ class Sandbox3D : public Entry::Layer
     glm::vec4 m_LightPosition = { 0.0f, 1.0f, 0.0f, 1.0f };
 
     float m_Rotation = 0.0f;
+
+    Entry::Ref<Entry::AudioClip> m_AudioClip;
 
 };

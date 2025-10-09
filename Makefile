@@ -34,7 +34,7 @@ include $(DEVKITARM)/3ds_rules
 TARGET		:=	/3ds_game/$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	$(shell find Entry/src -type d \
-		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
+		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src/Platform/N3DS" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
 	) \
 	$(shell find Sandbox -type d) \
 	Entry/vendor/imgui-3ds/imgui \
@@ -51,7 +51,7 @@ SOURCES		:=	$(shell find Entry/src -type d \
 
 DATA		:=	data
 INCLUDES	:=  $(shell find Entry/src -type d \
-		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
+		\( -path "Entry/src/Platform/Citro3D" -o -path "Entry/src/Platform/N3DS" -o -path "Entry/src" -o -path "Entry/src/*" ! -path "Entry/src/Platform/*" \) \
 	) \
 	$(shell find Sandbox -type d) \
 	Entry/vendor/spdlog/include \
@@ -75,14 +75,14 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -D__3DS__
+CFLAGS	+=	$(INCLUDE) -D__3DS__ `$(PREFIX)pkg-config opusfile --cflags`
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11 -DET_PLATFORM_3DS
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcitro2d -lcitro3d -lctru -lm
+LIBS	:= -lcitro2d -lcitro3d -lctru -lm `$(PREFIX)pkg-config opusfile --libs` 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

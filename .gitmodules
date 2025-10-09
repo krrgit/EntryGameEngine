@@ -10,3 +10,6 @@
 [submodule "Entry/vendor/ImGuizmo"]
 	path = Entry/vendor/ImGuizmo
 	url = https://github.com/krrgit/ImGuizmo
+[submodule "Entry/vendor/angelscript"]
+	path = Entry/vendor/angelscript
+	url = https://github.com/krrgit/angelscript

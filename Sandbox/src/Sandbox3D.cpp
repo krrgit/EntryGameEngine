@@ -76,6 +76,9 @@ void Sandbox3D::OnAttach()
     m_LightEntity = m_ActiveScene->GetLightEntity();
 
     m_ActiveScene->OnRuntimeStart();
+
+    m_AudioClip = Entry::AudioClip::Create("sample.opus");
+    m_AudioClip->Play();
 }
 
 void Sandbox3D::OnDetach()

@@ -23,6 +23,7 @@ IncludeDir["yaml_cpp"] = "Entry/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
 IncludeDir["assimp"] = "Entry/vendor/assimp/assimp/include"
 IncludeDir["qu3e"] = "Entry/vendor/qu3e/src"
+IncludeDir["angelscript"] = "Entry/vendor/angelscript/sdk/angelscript/include"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -31,6 +32,7 @@ group "Dependencies"
 	include "Entry/vendor/yaml-cpp"
 	include "Entry/vendor/assimp"
 	include "Entry/vendor/qu3e"
+	include "Entry/vendor/angelscript/sdk/angelscript"
 
 group ""
 
@@ -217,7 +219,7 @@ project "Entryway" -- EDITOR
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
 	}
 
 	includedirs
