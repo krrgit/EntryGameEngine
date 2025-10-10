@@ -30,6 +30,8 @@ namespace Entry
 		void DrawComponents(Entity entity);
 
 		void LoadMeshInMRC(std::string& filepath, int meshID, MeshRendererComponent& component);
+
+		void LoadAudioClipInASC(std::string& filepath, AudioSourceComponent& component);
 	private:
 		Ref<Scene> m_Context;
 

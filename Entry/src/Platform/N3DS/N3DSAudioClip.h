@@ -31,10 +31,12 @@ namespace Entry
 		virtual void Pause() override;
 		virtual void Stop() override;
 
+		virtual std::string& GetName() override { return m_Name; }
+
 	private:
-		static void audioCallback(void* const nul_);
+		static void audioCallback(void* userData);
+		static void audioThread(void* userData);
 		void audioExit(void);
-		static void audioThread(void* const opusFile_);
 		bool fillBuffer(OggOpusFile* opusFile_, ndspWaveBuf* waveBuf_);
 
 		// Actual instance logic
@@ -42,10 +44,11 @@ namespace Entry
 		void OnAudioThread();
 
 	private:
+		std::string m_Name;
+
 		OggOpusFile* m_OpusFile = nullptr;
 		Thread m_ThreadId = nullptr;
 
-	private:
 		ndspWaveBuf m_WaveBufs[3];
 		int16_t* m_AudioBuffer = NULL;
 		LightEvent m_Event;

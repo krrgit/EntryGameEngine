@@ -18,6 +18,11 @@ namespace Entry
 			wcsstr(path, L".fbx") != 0;
 	}
 
+	bool IsAudioFile(const wchar_t* path)
+	{
+		return	wcsstr(path, L".opus") != 0;
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
@@ -614,6 +619,12 @@ namespace Entry
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Audio Source", nullptr, nullptr, true))
+			{
+				m_SelectionContext.AddComponent<AudioSourceComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopItemWidth();
@@ -831,6 +842,29 @@ namespace Entry
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_ClampOnInput);
 		});
 
+		DrawComponent<AudioSourceComponent>("AudioSource", entity, [&](AudioSourceComponent& component)
+		{
+			std::string clipName = component.Clip ? component.Clip->GetName() : "None";
+			DrawDragnDropField("AudioClip", clipName, columnWidth);
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					if (IsAudioFile(path))
+					{
+						std::string clipPath = (std::filesystem::path(g_AssetPath) / path).string();
+						LoadAudioClipInASC(clipPath, component);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::Columns(1);
+
+			ImGui::Checkbox("Play On Awake", &component.PlayOnAwake);
+		});
+
 		DrawMaterialProperties(entityMaterial, columnWidth);
 	}
 
@@ -845,6 +879,20 @@ namespace Entry
 			component.model = model;
 			component.mesh = mesh; // TODO: only allow dragging of meshes not models
 			component.material = model->GetMaterial(mesh->MaterialID);
+		}
+		else
+		{
+			auto errorMsg = filepath + " does not exist!";
+			ET_CORE_ERROR(errorMsg);
+		}
+	}
+	void SceneHierarchyPanel::LoadAudioClipInASC(std::string& filepath, AudioSourceComponent& component)
+	{
+		std::ifstream file(filepath.c_str());
+		if (file.good())
+		{
+			Ref<AudioClip> audioClip = AudioClip::Create(filepath);
+			component.Clip = audioClip;
 		}
 		else
 		{

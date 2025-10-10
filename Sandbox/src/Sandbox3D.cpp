@@ -77,7 +77,7 @@ void Sandbox3D::OnAttach()
 
     m_ActiveScene->OnRuntimeStart();
 
-    m_AudioClip = Entry::AudioClip::Create("sample.opus");
+    m_AudioClip = Entry::AudioClip::Create("audio/lacrimosa.opus");
     m_AudioClip->Play();
 }
 

@@ -218,6 +218,12 @@ namespace Entry {
 				nsc.Instance->OnCreate();
 			}
 		});
+
+		m_Registry.view<AudioSourceComponent>().each([=](ECS::Entity entity, AudioSourceComponent& asc)
+		{
+			if (asc.PlayOnAwake) 
+				asc.Play();
+		});
 	}
 
 	void Scene::OnRuntimeStop()
@@ -616,6 +622,12 @@ namespace Entry {
 
 	template<>
 	void Scene::OnComponentAdded<BoxColliderComponent>(Entity entity, BoxColliderComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 
 	}

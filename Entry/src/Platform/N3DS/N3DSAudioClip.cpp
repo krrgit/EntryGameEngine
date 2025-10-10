@@ -117,7 +117,7 @@ namespace Entry
 		// If no samples were read in the last decode cycle, we're done
 		if (totalSamples == 0)
 		{
-			printf("Playback complete, press Start to exit\n");
+			printf("Playback complete.\n");
 			return false;
 		}
 
@@ -140,7 +140,7 @@ namespace Entry
 	N3DSAudioClip::N3DSAudioClip(const std::string& path)
 	{
 		std::string romfsPath = "romfs:/" + path;
-
+		m_Name = path;
 
 		// Allocate audio buffer
 		const size_t bufferSize = WAVEBUF_SIZE * ARRAY_SIZE(m_WaveBufs);
@@ -188,7 +188,7 @@ namespace Entry
 			op_free(m_OpusFile);
 
 		// Cleanup audio things and de-init platform features
-		//audioExit();
+		audioExit();
 		//ndspExit();
 	}
 

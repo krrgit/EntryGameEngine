@@ -89,6 +89,7 @@ namespace Entry
 
 		C3D_Fini();
 		gfxExit();
+		ndspExit();
 	}
 
 	void Citro3DWindow::PushLayer(Layer* layer)

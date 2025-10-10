@@ -24,6 +24,9 @@ IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
 IncludeDir["assimp"] = "Entry/vendor/assimp/assimp/include"
 IncludeDir["qu3e"] = "Entry/vendor/qu3e/src"
 IncludeDir["angelscript"] = "Entry/vendor/angelscript/sdk/angelscript/include"
+IncludeDir["libogg_win"] = "Entry/vendor/libogg-win/include"
+IncludeDir["opusfile_win"] = "Entry/vendor/opusfile-win/include"
+IncludeDir["opus_win"] = "Entry/vendor/opus-win/include"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -33,6 +36,8 @@ group "Dependencies"
 	include "Entry/vendor/assimp"
 	include "Entry/vendor/qu3e"
 	include "Entry/vendor/angelscript/sdk/angelscript"
+	include "Entry/vendor/libogg-win"
+	include "Entry/vendor/opusfile-win"
 
 group ""
 
@@ -89,6 +94,14 @@ project "Entry"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.qu3e}",
+		"%{IncludeDir.libogg_win}",
+		"%{IncludeDir.opusfile_win}",
+		"%{IncludeDir.opus_win}"
+	}
+
+	libdirs 
+	{
+		"Entry/vendor/opus-win/build/Release" -- Opus.lib location (pre-built)
 	}
 
 	links 
@@ -101,6 +114,7 @@ project "Entry"
 		"dwmapi.lib",
 		"assimp",
 		"qu3e",
+		"opus.lib"
 	}
 
 	filter "files:Entry/vendor/ImGuizmo/**.cpp"

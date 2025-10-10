@@ -7,6 +7,9 @@
     <Filter Include="src\Entry">
       <UniqueIdentifier>{8EF7DAB2-FA61-8F29-43A0-40CFAF496D7E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entry\Audio">
+      <UniqueIdentifier>{0F784284-7B03-B048-8414-333DF01E0C49}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Entry\Core">
       <UniqueIdentifier>{A6040304-92D2-F609-7B66-673067D3D26E}</UniqueIdentifier>
     </Filter>
@@ -107,6 +110,9 @@
   <ItemGroup>
     <ClInclude Include="src\Entry.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entry\Audio\AudioClip.h">
+      <Filter>src\Entry\Audio</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry\Core\Application.h">
       <Filter>src\Entry\Core</Filter>
@@ -301,6 +307,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\GraphicsContext.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsAudioClip.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
@@ -1881,10 +1890,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry\Audio\AudioClip.h" />
-    <ClInclude Include="src\Platform\N3DS\N3DSAudioClip.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entry\Audio\AudioClip.cpp">
+      <Filter>src\Entry\Audio</Filter>
+    </ClCompile>
     <ClCompile Include="src\Entry\Core\Application.cpp">
       <Filter>src\Entry\Core</Filter>
     </ClCompile>
@@ -2005,6 +2015,9 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsAudioClip.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -2029,7 +2042,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entry\Audio\AudioClip.cpp" />
-    <ClCompile Include="src\Platform\N3DS\N3DSAudioClip.cpp" />
   </ItemGroup>
 </Project>

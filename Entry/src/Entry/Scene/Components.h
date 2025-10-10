@@ -4,6 +4,7 @@
 #include "Entry/Core/Core.h"
 #include "Entry/Renderer/Light.h"
 #include "Entry/Renderer/Model.h"
+#include "Entry/Audio/AudioClip.h"
 #include "Entry/Core/UUID.h"
 
 #include <glm/glm.hpp>
@@ -181,4 +182,16 @@ namespace Entry
 		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
 
+	struct AudioSourceComponent
+	{
+		Ref<AudioClip> Clip;
+		bool PlayOnAwake = true;
+
+		AudioSourceComponent() = default;
+		AudioSourceComponent(const AudioSourceComponent&) = default;
+
+		void Play() const { Clip->Play(); }
+		void Pause() const { Clip->Pause(); }
+		void Stop() const { Clip->Stop(); }
+	};
 }

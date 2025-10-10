@@ -14,6 +14,8 @@ namespace Entry
 		virtual void Pause() = 0;
 		virtual void Stop() = 0;
 
+		virtual std::string& GetName() = 0;
+
 		static Ref<AudioClip> Create(const std::string& path);
 	private:
 
