@@ -1,4 +1,4 @@
-project "libogg-win"
+project "libogg"
 	kind "StaticLib"
 	language "C++"
     staticruntime "on"

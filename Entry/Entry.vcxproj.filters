@@ -79,6 +79,45 @@
     <Filter Include="vendor\imgui-3ds\imgui\backends">
       <UniqueIdentifier>{8885A57C-F468-B4BC-FD6B-E2F869CE7A0D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\miniaudio-win">
+      <UniqueIdentifier>{7C9D9C13-682C-26DD-114B-3AD8FDB83683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras">
+      <UniqueIdentifier>{4253D451-AE60-0238-3747-FE22A353CEEE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\decoders">
+      <UniqueIdentifier>{9AE56412-86CC-260A-2F1D-8D271BE39F70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\decoders\libopus">
+      <UniqueIdentifier>{C76B1770-B37E-17C9-5C68-F4B5485AB416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\decoders\libvorbis">
+      <UniqueIdentifier>{F59DE1E3-E11B-327D-CA13-F014B63074A5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\miniaudio_split">
+      <UniqueIdentifier>{9B737D48-07D9-10CF-90B1-B2A7FC15063E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes">
+      <UniqueIdentifier>{AACEB1D0-163D-0750-5F26-C24FCBD3FCEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes\ma_channel_combiner_node">
+      <UniqueIdentifier>{722A9C5B-5EEA-2C00-C707-150BB3E63F12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes\ma_channel_separator_node">
+      <UniqueIdentifier>{B46D28CD-202B-D103-A9F5-BC6B15B24358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes\ma_ltrim_node">
+      <UniqueIdentifier>{D336149A-3F72-745D-4867-F1ECB421F98D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes\ma_reverb_node">
+      <UniqueIdentifier>{111DE667-FDC5-4D97-265C-6916126468D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\nodes\ma_vocoder_node">
+      <UniqueIdentifier>{DD36C1C4-49FD-1DE1-9258-AC43FE5D8C45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\miniaudio-win\extras\osaudio">
+      <UniqueIdentifier>{254B811A-9104-ECC4-1A64-069F861CA234}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\spdlog">
       <UniqueIdentifier>{8BBC5F22-F77C-DB58-C0B7-24D62C372035}</UniqueIdentifier>
     </Filter>
@@ -1578,6 +1617,48 @@
     <ClInclude Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>vendor\imgui-3ds\imgui\backends</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\decoders\libopus\miniaudio_libopus.h">
+      <Filter>vendor\miniaudio-win\extras\decoders\libopus</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\decoders\libvorbis\miniaudio_libvorbis.h">
+      <Filter>vendor\miniaudio-win\extras\decoders\libvorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\miniaudio_libopus.h">
+      <Filter>vendor\miniaudio-win\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\miniaudio_libvorbis.h">
+      <Filter>vendor\miniaudio-win\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\miniaudio_split\miniaudio.h">
+      <Filter>vendor\miniaudio-win\extras\miniaudio_split</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_channel_combiner_node\ma_channel_combiner_node.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_channel_combiner_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_channel_separator_node\ma_channel_separator_node.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_channel_separator_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_ltrim_node\ma_ltrim_node.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_ltrim_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_reverb_node\ma_reverb_node.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_reverb_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_reverb_node\verblib.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_reverb_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_vocoder_node\ma_vocoder_node.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_vocoder_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\nodes\ma_vocoder_node\voclib.h">
+      <Filter>vendor\miniaudio-win\extras\nodes\ma_vocoder_node</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\extras\osaudio\osaudio.h">
+      <Filter>vendor\miniaudio-win\extras\osaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\miniaudio-win\miniaudio.h">
+      <Filter>vendor\miniaudio-win</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\spdlog\include\spdlog\async.h">
       <Filter>vendor\spdlog\include\spdlog</Filter>
     </ClInclude>
@@ -2038,6 +2119,9 @@
     </ClCompile>
     <ClCompile Include="vendor\imgui-3ds\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>vendor\imgui-3ds\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\miniaudio-win\miniaudio.cpp">
+      <Filter>vendor\miniaudio-win</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>

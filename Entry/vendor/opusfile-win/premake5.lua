@@ -1,4 +1,4 @@
-project "opusfile-win"
+project "opusfile"
 	kind "StaticLib"
 	language "C++"
     staticruntime "on"
@@ -16,8 +16,15 @@ project "opusfile-win"
 	includedirs
 	{
 		"include",
+		"../opus-win/include",
 		"../libogg-win/include"
 	}
+
+	libdirs 
+	{
+		"../opus-win/build/Release" -- Opus.lib location (pre-built)
+	}
+
 
 	links
 	{

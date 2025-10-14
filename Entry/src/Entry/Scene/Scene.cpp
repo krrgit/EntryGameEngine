@@ -135,6 +135,7 @@ namespace Entry {
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 		CopyComponent<RigidbodyComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 		CopyComponent<BoxColliderComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
+		CopyComponent<AudioSourceComponent>(dstSceneRegistry, srcSceneRegistry, entityMap);
 
 		return newScene;
 	}
@@ -230,6 +231,11 @@ namespace Entry {
 	{
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
+
+		m_Registry.view<AudioSourceComponent>().each([=](ECS::Entity entity, AudioSourceComponent& asc)
+		{
+			asc.Stop();
+		});
 	}
 
 
@@ -514,6 +520,7 @@ namespace Entry {
 		CopyComponentIfExists<LightComponent>(newEntity, entity);
 		CopyComponentIfExists<RigidbodyComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxColliderComponent>(newEntity, entity);
+		CopyComponentIfExists<AudioSourceComponent>(newEntity, entity);
 
 		return newEntity;
 	}

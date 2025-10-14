@@ -24,9 +24,10 @@ IncludeDir["ImGuizmo"] = "Entry/vendor/ImGuizmo"
 IncludeDir["assimp"] = "Entry/vendor/assimp/assimp/include"
 IncludeDir["qu3e"] = "Entry/vendor/qu3e/src"
 IncludeDir["angelscript"] = "Entry/vendor/angelscript/sdk/angelscript/include"
+IncludeDir["opus_win"] = "Entry/vendor/opus-win/include"
 IncludeDir["libogg_win"] = "Entry/vendor/libogg-win/include"
 IncludeDir["opusfile_win"] = "Entry/vendor/opusfile-win/include"
-IncludeDir["opus_win"] = "Entry/vendor/opus-win/include"
+IncludeDir["miniaudio_win"] = "Entry/vendor/miniaudio-win"
 
 group "Dependencies"
 	include "Entry/vendor/GLFW"
@@ -38,7 +39,6 @@ group "Dependencies"
 	include "Entry/vendor/angelscript/sdk/angelscript"
 	include "Entry/vendor/libogg-win"
 	include "Entry/vendor/opusfile-win"
-
 group ""
 
 project "Entry"
@@ -71,6 +71,10 @@ project "Entry"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
+		"%{prj.name}/vendor/miniaudio-win/miniaudio.h",
+		"%{prj.name}/vendor/miniaudio-win/miniaudio.cpp",
+		"%{prj.name}/vendor/miniaudio-win/extras/**.h",
+		"%{prj.name}/vendor/miniaudio-win/extras/**.cpp",
 	}
 
 	defines
@@ -94,9 +98,10 @@ project "Entry"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.qu3e}",
+		"%{IncludeDir.opus_win}",
 		"%{IncludeDir.libogg_win}",
 		"%{IncludeDir.opusfile_win}",
-		"%{IncludeDir.opus_win}"
+		"%{IncludeDir.miniaudio_win}"
 	}
 
 	libdirs 
@@ -114,13 +119,18 @@ project "Entry"
 		"dwmapi.lib",
 		"assimp",
 		"qu3e",
-		"opus.lib"
+		"opusfile",
+		"opus",
+		"libogg"
 	}
 
 	filter "files:Entry/vendor/ImGuizmo/**.cpp"
     flags { "NoPCH" }
 	
 	filter "files:Entry/vendor/tinygltf/**.cpp"
+    flags { "NoPCH" }
+
+	filter "files:Entry/vendor/miniaudio-win/**.cpp"
     flags { "NoPCH" }
 
 	filter "system:windows"
