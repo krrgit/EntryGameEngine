@@ -18,6 +18,7 @@ namespace Entry
 		virtual void Stop() override;
 
 		virtual std::string& GetName() override { return m_Name; }
+		virtual std::string& GetPath() override { return m_Path; }
 
 	private:
 		std::string m_Name;

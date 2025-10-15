@@ -35,6 +35,6 @@ class Sandbox3D : public Entry::Layer
 
     float m_Rotation = 0.0f;
 
-    Entry::Ref<Entry::AudioClip> m_AudioClip;
+    //Entry::Ref<Entry::AudioClip> m_AudioClip;
 
 };

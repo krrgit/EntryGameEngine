@@ -1,0 +1,126 @@
+Scene: SpecularTest
+LightEnvironment:
+  SceneAmbientColor: [0, 0, 0]
+  Specular0:
+    LUTID: 0
+    LUTFunction: 1
+    LUTInput: 0
+    Negative: false
+    Pow: 100
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  Specular1:
+    LUTID: 1
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  Fresnel:
+    LUTID: 3
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  ReflectionRed:
+    LUTID: 4
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  ReflectionGreen:
+    LUTID: 5
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+  ReflectionBlue:
+    LUTID: 6
+    LUTFunction: 0
+    LUTInput: 2
+    Negative: false
+    Pow: 30
+    SpotlightCutoff: 90
+    toonShininess: 0.5
+Entities:
+  - Entity: 6218790160372639551
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Position: [0, 5, -10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: true
+      RenderTarget: 0
+  - Entity: 16673684311576917627
+    TagComponent:
+      Tag: BottomCamera
+    TransformComponent:
+      Position: [0, 2, -5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 80
+        PerspectiveNear: 0.00100000005
+        PerspectiveFar: 1000
+        OrthographicSize: 8
+        OrthographicNear: 0
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: true
+      RenderTarget: 1
+  - Entity: 12730608564875332035
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    MeshRendererComponent:
+      Model: assets/models/plane.obj
+      MeshID: 0
+      MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, -0.25, 0]
+      Size: [20, 0.5, 20]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.800000012
+      RestitutionThreshold: 0.5
+  - Entity: 17101241386477826654
+    TagComponent:
+      Tag: Light
+    TransformComponent:
+      Position: [0, 1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    LightComponent:
+      Color: [1, 1, 1]
+      Intensity: 1
+      Range: 75
+      Angle: 90
+      Type: 1

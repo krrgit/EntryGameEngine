@@ -69,11 +69,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [0, 0, 1]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -144,7 +144,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 6218790160372639551
     TagComponent:
@@ -184,11 +184,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [0, 1, 0]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -259,7 +259,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 4795115716335317962
     TagComponent:
@@ -280,11 +280,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [0, 1, 1]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -355,7 +355,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 3387203651805901992
     TagComponent:
@@ -376,11 +376,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [1, 0, 1]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -451,7 +451,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 5503580309922133657
     TagComponent:
@@ -472,11 +472,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [1, 1, 0]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -547,7 +547,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 8927032563923028557
     TagComponent:
@@ -568,11 +568,11 @@ Entities:
         Specular1: [0, 0, 0]
         Emission: [1, 0, 0]
         TexEnv0:
-          Channels: 4
-          BlendMode: 8
-          Source1: 3
-          Source2: 1
-          Source3: 2
+          Channels: 3
+          BlendMode: 2
+          Source1: 1
+          Source2: 2
+          Source3: 0
           AlphaBlendMode: 0
           AlphaSource1: 3
           AlphaSource2: 0
@@ -643,7 +643,7 @@ Entities:
       Size: [2, 2, 2]
       Density: 1
       Friction: 0.5
-      Restitution: 0.200000003
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 13646154903794672115
     TagComponent:
@@ -754,7 +754,7 @@ Entities:
       Size: [20, 0.5, 20]
       Density: 1
       Friction: 0.5
-      Restitution: 0.670000017
+      Restitution: 0.800000012
       RestitutionThreshold: 0.5
   - Entity: 10723371653759115670
     TagComponent:
@@ -767,6 +767,35 @@ Entities:
       Model: assets/models/plane.obj
       MeshID: 0
       MaterialID: 0
+    RigidbodyComponent:
+      BodyType: Static
+      FixedRotationX: false
+      FixedRotationY: false
+      FixedRotationZ: false
+    BoxColliderComponent:
+      Offset: [0, -0.25, 0]
+      Size: [20, 0.5, 20]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 1563888199286933921
+    TagComponent:
+      Tag: BGM
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    AudioSourceComponent:
+      AudioClip: assets/audio/lacrimosa.opus
+      PlayOnAwake: true
+  - Entity: 1459773958869536015
+    TagComponent:
+      Tag: FrontWall
+    TransformComponent:
+      Position: [0, 10, -10]
+      Rotation: [-1.57062173, 0, 0]
+      Scale: [1, 1, 1.00999999]
     RigidbodyComponent:
       BodyType: Static
       FixedRotationX: false

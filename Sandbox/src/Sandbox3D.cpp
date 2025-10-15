@@ -70,15 +70,15 @@ void Sandbox3D::OnAttach()
 #endif
     m_ActiveScene.reset(new Entry::Scene());
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/BothScreenTest.entry");
+    serializer.Deserialize("romfs:/assets/scenes/SpecularTest.entry");
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     m_LightEntity = m_ActiveScene->GetLightEntity();
 
     m_ActiveScene->OnRuntimeStart();
 
-    m_AudioClip = Entry::AudioClip::Create("audio/lacrimosa.opus");
-    m_AudioClip->Play();
+    //m_AudioClip = Entry::AudioClip::Create("audio/lacrimosa.opus");
+    //m_AudioClip->Play();
 }
 
 void Sandbox3D::OnDetach()

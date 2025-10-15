@@ -292,6 +292,22 @@ namespace Entry
 
 			out << YAML::EndMap;
 		}
+		
+		if (entity.HasComponent<AudioSourceComponent>())
+		{
+			out << YAML::Key << "AudioSourceComponent";
+			out << YAML::BeginMap; // AudioSourceComponent
+
+			auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
+			std::string filePath = audioSourceComponent.Clip->GetPath();
+
+			std::replace(filePath.begin(), filePath.end(), '\\', '/');
+
+			out << YAML::Key << "AudioClip" << filePath;
+			out << YAML::Key << "PlayOnAwake" << audioSourceComponent.PlayOnAwake;
+
+			out << YAML::EndMap;
+		}
 
 		out << YAML::EndMap; // Entity
 	}
@@ -538,6 +554,17 @@ namespace Entry
 					bc.Friction = boxColliderComponent["Friction"].as<float>();
 					bc.Restitution = boxColliderComponent["Restitution"].as<float>();
 					bc.RestitutionThreshold = boxColliderComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto audioSourceComponent = entity["AudioSourceComponent"];
+				if (audioSourceComponent)
+				{
+					AudioSourceComponent& asc = deserializedEntity.AddComponent<AudioSourceComponent>();
+					std::string filePath = audioSourceComponent["AudioClip"].as<std::string>();
+					if (!filePath.empty())
+						asc.Clip = AudioClip::Create(filePath);
+					
+					asc.PlayOnAwake = audioSourceComponent["PlayOnAwake"].as<bool>();
 				}
 			}
 		}

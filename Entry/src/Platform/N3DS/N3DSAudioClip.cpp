@@ -141,6 +141,7 @@ namespace Entry
 	{
 		std::string romfsPath = "romfs:/" + path;
 		m_Name = path;
+		m_Path = path;
 
 		// Allocate audio buffer
 		const size_t bufferSize = WAVEBUF_SIZE * ARRAY_SIZE(m_WaveBufs);

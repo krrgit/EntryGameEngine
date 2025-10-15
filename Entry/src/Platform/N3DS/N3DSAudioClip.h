@@ -32,6 +32,7 @@ namespace Entry
 		virtual void Stop() override;
 
 		virtual std::string& GetName() override { return m_Name; }
+		virtual std::string& GetPath() override { return m_Path; }
 
 	private:
 		static void audioCallback(void* userData);
@@ -45,6 +46,7 @@ namespace Entry
 
 	private:
 		std::string m_Name;
+		std::string m_Path;
 
 		OggOpusFile* m_OpusFile = nullptr;
 		Thread m_ThreadId = nullptr;
