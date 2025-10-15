@@ -33,10 +33,10 @@ namespace Entry
 		}
 
 		// Reset Unused TexEnvs
-		for (; i < 6; i++)
-		{
-			C3D_TexEnvInit(C3D_GetTexEnv(i));
-		}
+		//for (; i < 6; i++)
+		//{
+		//	C3D_TexEnvInit(C3D_GetTexEnv(i));
+		//}
 	}
 
 	void Citro3DLightEnvironment::SetTexEnv(int id, const TexEnvProps& texEnvProps)

@@ -43,7 +43,7 @@ namespace Entry {
 			for (int i = 0; i < 6; i++)
 				m_TexEnvProps[i] = s_TexEnvLitProps[i];
 
-			m_TexEnvCount = 1;
+			m_TexEnvCount = 2;
 			break;
 		case ShaderProgramEnum::Unlit:
 			for (int i = 0; i < 6; i++)

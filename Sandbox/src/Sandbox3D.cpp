@@ -70,7 +70,7 @@ void Sandbox3D::OnAttach()
 #endif
     m_ActiveScene.reset(new Entry::Scene());
     Entry::SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize("romfs:/assets/scenes/SpecularTest.entry");
+    serializer.Deserialize("romfs:/assets/scenes/BothScreenTest.entry");
 
     m_CameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
     m_LightEntity = m_ActiveScene->GetLightEntity();
